@@ -7,8 +7,13 @@
 // Copyright 2011 Xamarin Inc
 //
 using System;
-using MonoTouch.CoreGraphics;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+#if MONOMAC
+using MonoMac.CoreGraphics;
+#else
+using MonoTouch.CoreGraphics;
+#endif
 
 namespace System.Drawing {
 
@@ -62,6 +67,18 @@ namespace System.Drawing {
 		{
 			Stroke (pen);
 			// FIXME: draw custom start/end caps
+		}
+		
+		public void DrawImage (Image image, RectangleF rect)
+		{
+			DrawImage (image, rect.X, rect.Y, rect.Width, rect.Height);
+		}
+		
+		public void DrawImage (Image image, float x, float y, float width, float height)
+		{
+			if (image == null)
+				throw new ArgumentNullException ("image");
+			// TODO
 		}
 		
 		public void DrawLine (Pen pen, Point pt1, Point pt2)
@@ -123,6 +140,17 @@ namespace System.Drawing {
 			set {
 				compositing_mode = value;
 			}
+		}
+		
+		public static Graphics FromImage (Image image)
+		{
+			if (image == null) 
+				throw new ArgumentNullException ("image");
+
+			if ((image.PixelFormat & PixelFormat.Indexed) != 0)
+				throw new Exception (Locale.GetText ("Cannot create Graphics from an indexed bitmap."));
+			
+			return null; // TODO
 		}
 	}
 }
