@@ -44,7 +44,12 @@ namespace System.Drawing.Drawing2D
 		public Matrix ()
 		{
 		}
-	
+
+		internal Matrix (CGAffineTransform transform)
+		{
+			this.transform = transform;
+		}
+		
 		public Matrix (Rectangle rect, Point[] plgpts)
 		{
 			if (plgpts == null)

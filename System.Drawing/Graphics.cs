@@ -14,6 +14,10 @@ namespace System.Drawing {
 
 	public sealed partial class Graphics : MarshalByRefObject, IDisposable {
 		internal CGContext context;
+
+		// Need to keep a transform around, since it is not possible to
+		// set the transform on the context, merely to concatenate.
+		CGAffineTransform transform;
 		
 		~Graphics ()
 		{
@@ -50,12 +54,16 @@ namespace System.Drawing {
 
 		void Stroke (Pen pen)
 		{
+			pen.Setup (this, false);
+			context.StrokePath ();
+		}
+
+		void StrokePen (Pen pen)
+		{
+			Stroke (pen);
+			// FIXME: draw custom start/end caps
 		}
 		
-		
-		// TODO: clear, we can get the dimensions for some kinds of CGContexts, like bitmaps, but need a general case
-
-		// from: cairo_DrawLine
 		public void DrawLine (Pen pen, Point pt1, Point pt2)
 		{
 			if (pen == null)
@@ -63,10 +71,50 @@ namespace System.Drawing {
 
 			MoveTo (pt1.X, pt1.Y);
 			LineTo (pt2.X, pt2.Y);
-			Stroke (pen);
-			// FIXME: draw custom start/end caps
+			StrokePen (pen);
 		}
 
+		public void DrawLine (Pen pen, PointF pt1, PointF pt2)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+
+			MoveTo (pt1.X, pt1.Y);
+			LineTo (pt2.X, pt2.Y);
+			StrokePen (pen);
+		}
+
+		public void DrawLine (Pen pen, int x1, int y1, int x2, int y2)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+
+			MoveTo (x1, y1);
+			LineTo (x2, y2);
+			StrokePen (pen);
+		}
+
+		public void DrawLine (Pen pen, float x1, float y1, float x2, float y2)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+
+			MoveTo (x1, y1);
+			LineTo (x2, y2);
+			StrokePen (pen);
+		}
+
+		public Matrix Transform {
+			get {
+				return new Matrix (context.GetCTM ());
+			}
+			set {
+				// since there is no set ctm on the context,
+				// we need to multiply by the inverse of the last value to get the
+				// identity, and then set the new value
+			}
+		}
+		
 		CompositingMode compositing_mode;
 		public CompositingMode CompositingMode {
 			get {
