@@ -8,7 +8,11 @@
 //
 using System;
 using System.Drawing.Drawing2D;
+#if MONOMAC
+using MonoMac.CoreGraphics;
+#else
 using MonoTouch.CoreGraphics;
+#endif
 
 namespace System.Drawing {
 

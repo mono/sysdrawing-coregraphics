@@ -33,7 +33,11 @@
 //
 
 using System.Runtime.InteropServices;
+#if MONOMAC
+using MonoMac.CoreGraphics;
+#else
 using MonoTouch.CoreGraphics;
+#endif
 
 namespace System.Drawing.Drawing2D
 {
