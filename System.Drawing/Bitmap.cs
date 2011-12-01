@@ -2,7 +2,8 @@
 // System.Drawing.Bitmap.cs
 //
 // Copyright (C) 2002 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 // Authors: 
 //	Alexandre Pigolkine (pigolkine@gmx.de)
@@ -10,10 +11,7 @@
 //	Miguel de Icaza (miguel@ximian.com)
 //	Jordi Mas i Hernandez (jmas@softcatala.org)
 //	Ravindra (rkumar@novell.com)
-//
-
-//
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+//	Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the

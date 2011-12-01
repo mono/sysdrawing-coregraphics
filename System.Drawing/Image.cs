@@ -6,10 +6,11 @@
 //		Jordi Mas i Hernandez (jordi@ximian.com)
 //		Sanjay Gupta (gsanjay@novell.com)
 //		Ravindra (rkumar@novell.com)
-//		Sebastien Pouliot  <sebastien@ximian.com>
+//		Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // Copyright (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
