@@ -68,6 +68,12 @@ namespace System.Drawing {
 			Stroke (pen);
 			// FIXME: draw custom start/end caps
 		}
+
+		void FillBrush (Brush brush)
+		{
+			brush.Setup (this, true);
+			context.FillPath ();
+		}
 		
 		public void DrawImage (Image image, RectangleF rect)
 		{
@@ -121,17 +127,123 @@ namespace System.Drawing {
 			StrokePen (pen);
 		}
 
+		void RectanglePath (float x1, float y1, float x2, float y2)
+		{
+			MoveTo (x1, y1);
+			LineTo (x1, y2);
+			LineTo (x2, y2);
+			LineTo (x1, y2);
+			context.ClosePath ();
+		}
+			
+		public void DrawRectangle (Pen pen, float x1, float y1, float x2, float y2)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			RectanglePath (x1, y1, x2, y2);
+			StrokePen (pen);
+		}
+		
+		public void DrawRectangle (Pen pen, int x1, int y1, int x2, int y2)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			RectanglePath (x1, y1, x2, y2);
+			StrokePen (pen);
+		}
+		
+		public void DrawRectangle (Pen pen, RectangleF rect)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			RectanglePath (rect.X, rect.Y, rect.Right, rect.Bottom);
+			StrokePen (pen);
+		}
+
+		public void DrawRectangle (Pen pen, Rectangle rect)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			RectanglePath (rect.X, rect.Y, rect.Right, rect.Bottom);
+			StrokePen (pen);
+		}
+
+		public void FillRectangle (Brush brush, float x1, float y1, float x2, float y2)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			RectanglePath (x1, y1, x2, y2);
+			FillBrush (brush);
+		}
+
+		public void FillRectangle (Brush brush, Rectangle rect)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			RectanglePath (rect.X, rect.Y, rect.Right, rect.Bottom);
+			FillBrush (brush);
+		}
+		
+		public void FillRectangle (Brush brush, int x1, int y1, int x2, int y2)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			RectanglePath (x1, y1, x2, y2);
+			FillBrush (brush);
+		}
+
+		public void DrawEllipse (Pen pen, RectangleF rect)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			pen.Setup (this, false);
+			context.StrokeEllipseInRect (rect);
+		}
+
+		public void DrawEllipse (Pen pen, int x1, int y1, int x2, int y2)
+		{
+			DrawEllipse (pen, new RectangleF (x1, y1, x2, y2));
+		}
+
+		public void FillEllipse (Brush brush, RectangleF rect)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			brush.Setup (this, true);
+			context.FillEllipseInRect (rect);
+		}
+
+		public void FillEllipse (Brush brush, int x1, int y1, int x2, int y2)
+		{
+			FillEllipse (brush, new RectangleF (x1, y1, x2, y2));
+		}
+		
+		public void ResetTransform ()
+		{
+			// Since there is no context.SetCTM, only ConcatCTM
+			// get the current transform, invert it, and concat this to
+			// obtain the identity.   Then we concatenate the value passed
+			var transform = context.GetCTM ();
+			transform.Invert ();
+			context.ConcatCTM (transform);
+		}
+		
 		public Matrix Transform {
 			get {
 				return new Matrix (context.GetCTM ());
 			}
 			set {
-				// since there is no set ctm on the context,
-				// we need to multiply by the inverse of the last value to get the
-				// identity, and then set the new value
+				ResetTransform ();
+				// Set the new value
+				context.ConcatCTM (value.transform);
 			}
 		}
-		
+
+		public void RotateTransform (float angle)
+		{
+			context.RotateCTM (angle);
+		}
+
 		CompositingMode compositing_mode;
 		public CompositingMode CompositingMode {
 			get {

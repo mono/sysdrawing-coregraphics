@@ -43,7 +43,7 @@ namespace System.Drawing.Drawing2D
 {
 	public sealed class Matrix : MarshalByRefObject, IDisposable
 	{
-		CGAffineTransform transform;
+		internal CGAffineTransform transform;
 		
 		public Matrix ()
 		{
