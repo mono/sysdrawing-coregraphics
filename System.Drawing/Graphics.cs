@@ -244,6 +244,11 @@ namespace System.Drawing {
 			context.RotateCTM (angle);
 		}
 
+		public void TranslateTransform (float tx, float ty)
+		{
+			context.TranslateCTM (tx, ty);
+		}
+
 		CompositingMode compositing_mode;
 		public CompositingMode CompositingMode {
 			get {
