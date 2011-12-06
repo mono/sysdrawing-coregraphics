@@ -336,12 +336,31 @@ namespace System.Drawing.Drawing2D {
 			if (points == null)
 				throw new ArgumentNullException ("points");
 			if (points.Length < 2)
-				throw new ArgumentException ("points");
+				throw new ArgumentException ("not enough points for polygon", "points");
 			
 			var tangents = OpenCurveTangents (CURVE_MIN_TERMS, points, points.Length, tension);
 			AppendCurve (points, tangents, 0, points.Length-1, CurveType.Open);
 		}
 				      
+		public void AddPolygon (PointF [] points)
+		{
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			if (points.Length < 3)
+				throw new ArgumentException ("not enough points for polygon", "points");
+			AppendPoint (points [0], PathPointType.Start, false);
+			for (int i = 1; i < points.Length; i++)
+				AppendPoint (points [i], PathPointType.Line, false);
+
+			// Add a line from the last point back to the first point if
+			// they're not the same
+			var last = points [points.Length-1];
+			if (points [0] != last)
+				AppendPoint (points [0], PathPointType.Line, false);
+        
+			/* close the path */
+			ClosePathFigure ();
+		}
 		
 		void ClosePathFigure ()
 		{
