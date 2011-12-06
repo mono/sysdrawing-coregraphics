@@ -286,15 +286,20 @@ namespace System.Drawing.Drawing2D {
 				ClosePathFigure ();
 			}
 		}
-		
-		public void AddCurve (Point[] points, int offset, int numberOfSegments, float tension)
+
+		static PointF [] ToFloat (Point [] points)
 		{
 			if (points == null)
 				throw new ArgumentNullException ("points");
 			PointF []f = new PointF [points.Length];
 			for (int i = 0; i < points.Length; i++)
 				f [i] = new PointF (points [i].X, points [i].Y);
-			AddCurve (f, offset, numberOfSegments, tension);
+			return f;
+		}
+		
+		public void AddCurve (Point[] points, int offset, int numberOfSegments, float tension)
+		{
+			AddCurve (ToFloat (points), offset, numberOfSegments, tension);
 		}
 		
 		public void AddCurve (PointF[] points, int offset, int numberOfSegments, float tension)
@@ -315,6 +320,28 @@ namespace System.Drawing.Drawing2D {
 			var tangents = OpenCurveTangents (CURVE_MIN_TERMS, points, count, tension);
 			AppendCurve (points, tangents, offset, numberOfSegments, CurveType.Open);
 		}
+
+		public void AddCurve (Point [] points)
+		{
+			AddCurve (ToFloat (points), 0.5f);
+		}
+
+		public void AddCurve (PointF [] points)
+		{
+			AddCurve (points, 0.5f);
+		}
+
+		public void AddCurve (PointF [] points, float tension)
+		{
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			if (points.Length < 2)
+				throw new ArgumentException ("points");
+			
+			var tangents = OpenCurveTangents (CURVE_MIN_TERMS, points, points.Length, tension);
+			AppendCurve (points, tangents, 0, points.Length-1, CurveType.Open);
+		}
+				      
 		
 		void ClosePathFigure ()
 		{
