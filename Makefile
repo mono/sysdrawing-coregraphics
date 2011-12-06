@@ -12,7 +12,9 @@ MONO_SOURCES = \
 	$(MONO_SYSD)/System.Drawing.Drawing2D/Blend.cs			\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/ColorBlend.cs		\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/CompostingMode.cs		\
+	$(MONO_SYSD)/System.Drawing.Drawing2D/FillMode.cs		\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/MatrixOrder.cs		\
+	$(MONO_SYSD)/System.Drawing.Drawing2D/PathPointType.cs		\
 	$(MONO_SYSD)/System.Drawing.Imaging/ImageFormat.cs		\
 	$(MONO_SYSD)/System.Drawing.Imaging/PixelFormat.cs		\
 	$(MONO_SYSD)/System.Drawing.Printing/PrintPageEventHandler.cs	\
@@ -37,6 +39,7 @@ SOURCES =	\
 	./System.Drawing/Region.cs			\
 	./System.Drawing/SolidBrush.cs			\
 	./System.Drawing/StringFormat.cs		\
+	./System.Drawing.Drawing2D/GraphicsPath.cs	\
 	./System.Drawing.Drawing2D/Matrix.cs		\
 	./System.Drawing.Printing/PageSettings.cs	\
 	./System.Drawing.Printing/PrintDocument.cs	\

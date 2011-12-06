@@ -41,7 +41,7 @@ namespace System.Drawing {
 			}
 		}
 		
-		public virtual void Dispose (bool disposing)
+		public override void Dispose (bool disposing)
 		{
 			if (disposing){
 			}
