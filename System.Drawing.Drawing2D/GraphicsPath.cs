@@ -342,6 +342,11 @@ namespace System.Drawing.Drawing2D {
 			AppendCurve (points, tangents, 0, points.Length-1, CurveType.Open);
 		}
 				      
+		public void AddPolygon (Point [] points)
+		{
+			AddPolygon (ToFloat (points));
+		}
+		
 		public void AddPolygon (PointF [] points)
 		{
 			if (points == null)
