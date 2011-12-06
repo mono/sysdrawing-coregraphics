@@ -283,7 +283,7 @@ namespace System.Drawing.Drawing2D {
 				float y3 = points [0].Y;
 
 				AppendBezier (x1, y1, x2, y2, x3, y3);
-				ClosePathFigure ();
+				CloseFigure ();
 			}
 		}
 
@@ -364,10 +364,15 @@ namespace System.Drawing.Drawing2D {
 				AppendPoint (points [0], PathPointType.Line, false);
         
 			/* close the path */
-			ClosePathFigure ();
+			CloseFigure ();
+		}
+
+		public void StartFigure ()
+		{
+			start_new_fig = true;
 		}
 		
-		void ClosePathFigure ()
+		public void CloseFigure ()
 		{
 			if (points.Count > 0)
 				types [types.Count-1] = (byte) (types [types.Count-1] | (byte) PathPointType.CloseSubpath);
@@ -405,7 +410,7 @@ namespace System.Drawing.Drawing2D {
 				      cx + rx, cy + C1 * ry,
 				      cx + rx, cy);
 
-			ClosePathFigure ();
+			CloseFigure ();
 		}
 		       
 			
@@ -482,7 +487,7 @@ namespace System.Drawing.Drawing2D {
 			if (Math.Abs (sweepAngle) < 360)
 				Append (cx, cy, PathPointType.Line, false);
 
-			ClosePathFigure ();
+			CloseFigure ();
 		}
 
 		public void AddPie(Rectangle rect, float startAngle, float sweepAngle)
@@ -520,6 +525,11 @@ namespace System.Drawing.Drawing2D {
 			
 		}
 
+		public void Transform (Matrix matrix)
+		{
+			matrix.TransformPoints (points);
+		}
+		
 		public void Dispose ()
 		{
 		}

@@ -33,6 +33,7 @@
 //
 
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 #if MONOMAC
 using MonoMac.CoreGraphics;
 #else
@@ -298,6 +299,15 @@ namespace System.Drawing.Drawing2D
 				throw new ArgumentNullException ("pts");
 
 			for (int i = 0; i < pts.Length; i++)
+				pts [i] = transform.TransformPoint (pts [i]);
+		}
+
+		internal void TransformPoints (List<PointF> pts)
+		{
+			if (pts == null)
+				throw new ArgumentNullException ("pts");
+
+			for (int i = 0; i < pts.Count; i++)
 				pts [i] = transform.TransformPoint (pts [i]);
 		}
 	
