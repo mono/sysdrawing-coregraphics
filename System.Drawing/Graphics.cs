@@ -249,6 +249,66 @@ namespace System.Drawing {
 			context.TranslateCTM (tx, ty);
 		}
 
+		
+		void MakeCurve (PointF [] points, PointF [] tangents, int offset, int length, CurveType type)
+		{
+			MoveTo (points [offset].X, points [offset].Y);
+			int i = offset;
+			
+			for (; i < offset + length; i++) {
+				int j = i + 1;
+
+				float x1 = points [i].X + tangents [i].X;
+				float y1 = points [i].Y + tangents [i].Y;
+
+				float x2 = points [j].X - tangents [j].X;
+				float y2 = points [j].Y - tangents [j].Y;
+
+				float x3 = points [j].X;
+				float y3 = points [j].Y;
+
+				context.AddCurveToPoint (x1, y1, x2, y2, x3, y3);
+			}
+
+			if (type == CurveType.Close) {
+				/* complete (close) the curve using the first point */
+				float x1 = points [i].X + tangents [i].X;
+				float y1 = points [i].Y + tangents [i].Y;
+
+				float x2 = points [0].X - tangents [0].X;
+				float y2 = points [0].Y - tangents [0].Y;
+
+				float x3 = points [0].X;
+				float y3 = points [0].Y;
+
+				context.AddCurveToPoint (x1, y1, x2, y2, x3, y3);
+
+				context.ClosePath ();
+			}
+		}
+		
+		public void DrawCurve (Pen pen, PointF[] points, int offset, int numberOfSegments, float tension)
+		{
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			if (numberOfSegments < 1)
+				throw new ArgumentException ("numberOfSegments");
+
+			int count = points.Length;
+			// we need 3 points for the first curve, 2 more for each curves 
+			// and it's possible to use a point prior to the offset (to calculate) 
+			if (offset == 0 && numberOfSegments == 1 && count < 3)
+				throw new ArgumentException ("invalid parameters");
+			if (numberOfSegments >= points.Length - offset)
+				throw new ArgumentException ("offset");
+
+			var tangents = GraphicsPath.OpenCurveTangents (GraphicsPath.CURVE_MIN_TERMS, points, count, tension);
+			MakeCurve (points, tangents, offset, numberOfSegments, CurveType.Open);
+			StrokePen (pen);
+		}
+
 		CompositingMode compositing_mode;
 		public CompositingMode CompositingMode {
 			get {

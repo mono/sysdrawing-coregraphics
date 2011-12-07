@@ -36,15 +36,16 @@ using System.Drawing;
 using MonoTouch.CoreGraphics;
 
 namespace System.Drawing.Drawing2D {
+	internal enum CurveType { Open, Close }
+	
 	public sealed class GraphicsPath : ICloneable, IDisposable {
 		List<PointF> points;
 		List<byte> types;
 		FillMode fillMode;
 		bool start_new_fig;
 
-		enum CurveType { Open, Close }
-		const int CURVE_MIN_TERMS = 1;
-		const int CURVE_MAX_TERMS = 7;
+		internal const int CURVE_MIN_TERMS = 1;
+		internal const int CURVE_MAX_TERMS = 7;
 			
 		public GraphicsPath () : this (FillMode.Alternate)
 		{
@@ -500,7 +501,7 @@ namespace System.Drawing.Drawing2D {
 			AddPie (x, y, width, height, startAngle, sweepAngle);
 		}
 
-		static PointF [] OpenCurveTangents (int terms, PointF [] points, int count, float tension)
+		internal static PointF [] OpenCurveTangents (int terms, PointF [] points, int count, float tension)
 		{
 			float coefficient = tension / 3f;
 			PointF [] tangents = new PointF [count];
