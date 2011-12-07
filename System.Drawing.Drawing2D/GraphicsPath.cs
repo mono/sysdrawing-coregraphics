@@ -544,5 +544,35 @@ namespace System.Drawing.Drawing2D {
 
 			return copy;
 		}
+
+		public PointF [] PathPoints {
+			get {
+				return points.ToArray ();
+			}
+		}
+
+		public byte [] PathTypes {
+			get {
+				return types.ToArray ();
+			}
+		}
+
+		public int PointCount {
+			get {
+				return points.Count;
+			}
+		}
+
+		public PathData PathData {
+			get {
+				return new PathData (points.ToArray (), types.ToArray ());
+			}
+		}
+
+		public FillMode FillMode {
+			get {
+				return fillMode;
+			}
+		}
 	}
 }

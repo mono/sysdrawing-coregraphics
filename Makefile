@@ -41,6 +41,7 @@ SOURCES =	\
 	./System.Drawing/StringFormat.cs		\
 	./System.Drawing.Drawing2D/GraphicsPath.cs	\
 	./System.Drawing.Drawing2D/Matrix.cs		\
+	./System.Drawing.Drawing2D/PathData.cs		\
 	./System.Drawing.Printing/PageSettings.cs	\
 	./System.Drawing.Printing/PrintDocument.cs	\
 	./System.Drawing.Printing/PrinterSettings.cs	\

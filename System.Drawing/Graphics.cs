@@ -2,9 +2,13 @@
 // Graphics.cs: The graphics context API from System.Drawing, MonoTouch implementation
 //
 // Authors:
+//   Sebastien Pouliot  <sebastien@xamarin.com>
+//   Alexandre Pigolkine (pigolkine@gmx.de)
+//   Duncan Mak (duncan@xamarin.com)
 //   Miguel de Icaza (miguel@xamarin.com)
 //
 // Copyright 2011 Xamarin Inc
+// Copyright 2003-2009 Novell, Inc.
 //
 using System;
 using System.Drawing.Drawing2D;
@@ -309,6 +313,76 @@ namespace System.Drawing {
 			StrokePen (pen);
 		}
 
+		void PlotPath (GraphicsPath path)
+		{
+			float x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0;
+			var points = path.PathPoints;
+			var types = path.PathTypes;
+			int bidx = 0;
+			
+			for (int i = 0; i < points.Length; i++){
+				var point = points [i];
+				var type = (PathPointType) types [i];
+
+				switch (type & PathPointType.PathTypeMask){
+				case PathPointType.Start:
+					MoveTo (point.X, point.Y);
+					break;
+					
+				case PathPointType.Line:
+					LineTo (point.X, point.Y);
+					break;
+					
+				case PathPointType.Bezier3:
+					// collect 3 points
+					switch (bidx++){
+					case 0:
+						x1 = point.X;
+						y1 = point.Y;
+						break;
+					case 1:
+						x2 = point.X;
+						y2 = point.Y;
+						break;
+					case 2:
+						x3 = point.X;
+						y3 = point.Y;
+						break;
+					}
+					if (bidx == 3){
+						context.AddCurveToPoint (x1, y1, x2, y2, x3, y3);
+						bidx = 0;
+					}
+					break;
+				default:
+					throw new Exception ("Inconsistent internal state, path type=" + type);
+				}
+				if ((type & PathPointType.CloseSubpath) != 0)
+					context.ClosePath ();
+			}
+		}
+		
+		public void DrawPath (Pen pen, GraphicsPath path)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			if (path == null)
+				throw new ArgumentNullException ("path");
+
+			PlotPath (path);
+			StrokePen (pen);
+		}
+
+		public void FillPath (Brush brush, GraphicsPath path)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			PlotPath (path);
+			FillBrush (brush);
+		}
+		
 		CompositingMode compositing_mode;
 		public CompositingMode CompositingMode {
 			get {
