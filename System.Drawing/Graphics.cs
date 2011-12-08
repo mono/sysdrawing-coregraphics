@@ -24,6 +24,14 @@ namespace System.Drawing {
 	public sealed partial class Graphics : MarshalByRefObject, IDisposable {
 		internal CGContext context;
 
+		public Graphics (CGContext context)
+		{
+			if (context == null)
+				throw new ArgumentNullException ("context");
+			
+			this.context = context;
+		}
+		
 		// Need to keep a transform around, since it is not possible to
 		// set the transform on the context, merely to concatenate.
 		CGAffineTransform transform;

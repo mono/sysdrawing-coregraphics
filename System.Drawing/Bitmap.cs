@@ -38,12 +38,13 @@ using System.Drawing.Imaging;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using MonoTouch.CoreGraphics;
 
 namespace System.Drawing {
 	
 	[Serializable]
 	public sealed class Bitmap : Image {
-
+		CGImage image;
 		public Bitmap (Stream stream, bool useIcm)
 		{
 			// false: stream is owned by user code
@@ -66,7 +67,50 @@ namespace System.Drawing {
 		
 		public Bitmap (int width, int height, PixelFormat format)
 		{
-			// TODO
+			CGColorSpace colorSpace;
+			bool premultiplied = false;
+			int bitsPerComponent = 0;
+			int bitsPerPixel = 0;
+			CGBitmapFlags info;
+			
+			switch (format){
+			case PixelFormat.Format32bppPArgb:
+				premultiplied = true;
+				colorSpace = CGColorSpace.CreateDeviceRGB ();
+				bitsPerComponent = 8;
+				bitsPerPixel = 32;
+				info = CGBitmapFlags.PremultipliedFirst;
+				break;
+			case PixelFormat.Format32bppArgb:
+				colorSpace = CGColorSpace.CreateDeviceRGB ();
+				bitsPerComponent = 8;
+				bitsPerPixel = 32;
+				info = CGBitmapFlags.First;
+				break;
+			case PixelFormat.Format32bppRgb:
+				colorSpace = CGColorSpace.CreateDeviceRGB ();
+				bitsPerComponent = 8;
+				bitsPerPixel = 32;
+				info = CGBitmapFlags.None;
+				break;
+			default:
+				throw new Exception ("Format not supported: " + format);
+			}
+			int size = width * bitsPerPixel/bitsPerComponent * height;
+			IntPtr block = Marshal.AllocHGlobal (size);
+			var provider = new CGDataProvider (block, size, true);
+			image = new CGImage (width, height, bitsPerComponent, bitsPerPixel, width * bitsPerPixel/bitsPerComponent, colorSpace, info, provider, null, false, CGColorRenderingIntent.Default);
+		}
+
+		protected override void Dispose (bool disposing)
+		{
+			if (disposing){
+				if (image != null){
+					image.Dispose ();
+					image = null;
+				}
+			}
+			base.Dispose (disposing);
 		}
 		
 		public Color GetPixel (int x, int y)
