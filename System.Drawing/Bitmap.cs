@@ -121,6 +121,13 @@ namespace System.Drawing {
 		
 		public void SetResolution (float xDpi, float yDpi)
 		{
+			throw new NotImplementedException ();
 		}
+		
+		public void Save (string path)
+		{
+			throw new NotImplementedException ();
+		}
+		
 	}
 }

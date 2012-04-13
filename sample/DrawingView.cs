@@ -13,7 +13,10 @@ namespace sample
 		{
 			var ctx = new Graphics (UIGraphics.GetCurrentContext ());
 			
-			ctx.DrawLine (new Pen (new SolidBrush (Color.Red)), new PointF (1, 1), new PointF (100, 100));
+			var red = new SolidBrush (Color.Red);
+			
+			ctx.DrawLine (new Pen (red), new PointF (1, 1), new PointF (100, 100));
+			
 			ctx.Dispose ();
 		}
 	}

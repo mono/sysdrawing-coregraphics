@@ -4,6 +4,7 @@ MONO_SYSD=../mono/mcs/class/System.Drawing
 
 MONO_SOURCES = \
 	$(MONO_SYSD)/../../build/common/Locale.cs			\
+	$(MONO_SYSD)/System.Drawing/GraphicsUnit.cs			\
 	$(MONO_SYSD)/System.Drawing/ImageConverter.cs			\
 	$(MONO_SYSD)/System.Drawing/ImageFormatConverter.cs		\
 	$(MONO_SYSD)/System.Drawing/StringAligment.cs			\
@@ -11,10 +12,13 @@ MONO_SOURCES = \
 	$(MONO_SYSD)/System.Drawing/ToolboxBitmapAttribute.cs		\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/Blend.cs			\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/ColorBlend.cs		\
+	$(MONO_SYSD)/System.Drawing.Drawing2D/CombineMode.cs		\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/CompostingMode.cs		\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/FillMode.cs		\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/MatrixOrder.cs		\
+	$(MONO_SYSD)/System.Drawing.Drawing2D/PathData.cs		\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/PathPointType.cs		\
+	$(MONO_SYSD)/System.Drawing.Text/TextRenderingHint.cs		\
 	$(MONO_SYSD)/System.Drawing.Imaging/ImageFormat.cs		\
 	$(MONO_SYSD)/System.Drawing.Imaging/PixelFormat.cs		\
 	$(MONO_SYSD)/System.Drawing.Printing/PrintPageEventHandler.cs	\
@@ -41,7 +45,6 @@ SOURCES =	\
 	./System.Drawing/StringFormat.cs		\
 	./System.Drawing.Drawing2D/GraphicsPath.cs	\
 	./System.Drawing.Drawing2D/Matrix.cs		\
-	./System.Drawing.Drawing2D/PathData.cs		\
 	./System.Drawing.Printing/PageSettings.cs	\
 	./System.Drawing.Printing/PrintDocument.cs	\
 	./System.Drawing.Printing/PrinterSettings.cs	\

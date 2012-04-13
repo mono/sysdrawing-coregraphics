@@ -121,8 +121,26 @@
     <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\PathData.cs">
       <Link>External\PathData.cs</Link>
     </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing\GraphicsUnit.cs">
+      <Link>External\GraphicsUnit.cs</Link>
+    </Compile>
+    <Compile Include="Utilities\Locale.cs" />
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Text\TextRenderingHint.cs">
+      <Link>External\TextRenderingHint.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing\Pens.cs">
+      <Link>External\Pens.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing\Brushes.cs">
+      <Link>External\Brushes.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\CombineMode.cs">
+      <Link>External\CombineMode.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />
+    <Folder Include="Utilities\" />
+    <Folder Include="System.Drawing.Text\" />
   </ItemGroup>
 </Project>

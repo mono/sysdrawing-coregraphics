@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sysdrawing-coregraphics", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sample", "sample\sample.csproj", "{F6AEFFC5-4807-49A3-83C5-661E655CB59A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{AED51B37-AB93-4A7B-B293-2FABCDCAE4AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -21,6 +23,14 @@ Global
 		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.Release|iPhone.Build.0 = Release|iPhone
 		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{AED51B37-AB93-4A7B-B293-2FABCDCAE4AB}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{AED51B37-AB93-4A7B-B293-2FABCDCAE4AB}.Debug|iPhone.Build.0 = Debug|iPhone
+		{AED51B37-AB93-4A7B-B293-2FABCDCAE4AB}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{AED51B37-AB93-4A7B-B293-2FABCDCAE4AB}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{AED51B37-AB93-4A7B-B293-2FABCDCAE4AB}.Release|iPhone.ActiveCfg = Release|iPhone
+		{AED51B37-AB93-4A7B-B293-2FABCDCAE4AB}.Release|iPhone.Build.0 = Release|iPhone
+		{AED51B37-AB93-4A7B-B293-2FABCDCAE4AB}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{AED51B37-AB93-4A7B-B293-2FABCDCAE4AB}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{F6AEFFC5-4807-49A3-83C5-661E655CB59A}.Debug|iPhone.ActiveCfg = Debug|iPhone
 		{F6AEFFC5-4807-49A3-83C5-661E655CB59A}.Debug|iPhone.Build.0 = Debug|iPhone
 		{F6AEFFC5-4807-49A3-83C5-661E655CB59A}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator

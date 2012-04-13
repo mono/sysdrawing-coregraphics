@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{AED51B37-AB93-4A7B-B293-2FABCDCAE4AB}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Tests</RootNamespace>
+    <AssemblyName>Tests</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>DEBUG;MONOTOUCH</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchDebug>true</MtouchDebug>
+    <MtouchProfiling>true</MtouchProfiling>
+    <MtouchLink>None</MtouchLink>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchDebug>true</MtouchDebug>
+    <MtouchProfiling>true</MtouchProfiling>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="monotouch" />
+    <Reference Include="MonoTouch.NUnitLite" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Info.plist" />
+    <None Include="..\..\mono\mcs\class\System.Drawing\Test\DrawingTest\Exocortex.DSP\src\Exocortex.DSP.v1.csproj">
+      <Link>DrawingTest\Exocortex.DSP.v1.csproj</Link>
+    </None>
+    <None Include="..\..\mono\mcs\class\System.Drawing\Test\DrawingTest\Exocortex.DSP\src\Exocortex.DSP20.v1.csproj">
+      <Link>DrawingTest\Exocortex.DSP20.v1.csproj</Link>
+    </None>
+    <None Include="..\..\mono\mcs\class\System.Drawing\Test\DrawingTest\Exocortex.DSP\src\Exocortex.DSP20.v1.J2EE.csproj">
+      <Link>DrawingTest\Exocortex.DSP20.v1.J2EE.csproj</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="AppDelegate.cs" />
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\Test\DrawingTest\DrawingTestHelper\DrawingTest.cs">
+      <Link>DrawingTest\DrawingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\Test\DrawingTest\DrawingTestHelper\PDComparer.cs">
+      <Link>DrawingTest\PDComparer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\Test\DrawingTest\Exocortex.DSP\src\AssemblyInfo.cs">
+      <Link>DrawingTest\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\Test\DrawingTest\Exocortex.DSP\src\Complex.cs">
+      <Link>DrawingTest\Complex.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\Test\DrawingTest\Exocortex.DSP\src\ComplexArray.cs">
+      <Link>DrawingTest\ComplexArray.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\Test\DrawingTest\Exocortex.DSP\src\ComplexF.cs">
+      <Link>DrawingTest\ComplexF.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\Test\DrawingTest\Exocortex.DSP\src\ComplexMath.cs">
+      <Link>DrawingTest\ComplexMath.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\Test\DrawingTest\Exocortex.DSP\src\ComplexStats.cs">
+      <Link>DrawingTest\ComplexStats.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\Test\DrawingTest\Exocortex.DSP\src\Fourier.cs">
+      <Link>DrawingTest\Fourier.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\Test\DrawingTest\Exocortex.DSP\src\FourierDirection.cs">
+      <Link>DrawingTest\FourierDirection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\Test\DrawingTest\Test\Graphics.cs">
+      <Link>DrawingTest\Graphics.cs</Link>
+    </Compile>
+    <Compile Include="Helper\Attributes.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="DrawingTest\" />
+    <Folder Include="Helper\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\sysdrawing-coregraphics.csproj">
+      <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
+      <Name>sysdrawing-coregraphics</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

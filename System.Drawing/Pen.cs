@@ -20,7 +20,7 @@ namespace System.Drawing {
 		Brush brush;
 		Color color;
 		bool changed = true;
-		bool isModifiable;
+		internal bool isModifiable;
 		float width;
 		
 		public Pen (Brush brush) : this (brush, 1f) {}

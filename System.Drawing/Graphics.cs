@@ -13,6 +13,8 @@
 using System;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Drawing.Text;
+
 #if MONOMAC
 using MonoMac.CoreGraphics;
 #else
@@ -401,6 +403,10 @@ namespace System.Drawing {
 			}
 		}
 		
+		public GraphicsUnit PageUnit { get; set; }
+		public float PageScale { get; set; }
+		public TextRenderingHint TextRenderingHint { get; set; }
+		
 		public static Graphics FromImage (Image image)
 		{
 			if (image == null) 
@@ -410,6 +416,46 @@ namespace System.Drawing {
 				throw new Exception ("Cannot create Graphics from an indexed bitmap.");
 			
 			return null; // TODO
+		}
+		
+		public void SetClip (RectangleF rect)
+		{
+			SetClip (rect, CombineMode.Replace);
+		}
+
+		public void SetClip (Rectangle rect)
+		{
+			SetClip (rect, CombineMode.Replace);
+		}
+
+		public void SetClip (GraphicsPath graphicsPath)
+		{
+			SetClip (graphicsPath, CombineMode.Replace);
+		}
+		
+		public void SetClip (Graphics g)
+		{
+			SetClip (g, CombineMode.Replace);	
+		}
+
+		public void SetClip (RectangleF rect, CombineMode combineMode)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void SetClip (Rectangle rect, CombineMode combineMode)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void SetClip (GraphicsPath graphicsPath, CombineMode combineMode)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void SetClip (Graphics g, CombineMode combineMode)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }
