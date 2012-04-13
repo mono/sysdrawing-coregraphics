@@ -407,7 +407,7 @@ namespace System.Drawing {
 				throw new ArgumentNullException ("image");
 
 			if ((image.PixelFormat & PixelFormat.Indexed) != 0)
-				throw new Exception (Locale.GetText ("Cannot create Graphics from an indexed bitmap."));
+				throw new Exception ("Cannot create Graphics from an indexed bitmap.");
 			
 			return null; // TODO
 		}

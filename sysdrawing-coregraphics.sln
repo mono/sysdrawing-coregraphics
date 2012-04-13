@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sysdrawing-coregraphics", "sysdrawing-coregraphics.csproj", "{11A8D4A2-4C0C-46C1-916F-5968538C3490}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sample", "sample\sample.csproj", "{E8B93782-4A11-4D52-8802-B958558D8E85}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Debug|iPhoneSimulator = Debug|iPhoneSimulator
+		Release|iPhoneSimulator = Release|iPhoneSimulator
+		Debug|iPhone = Debug|iPhone
+		Release|iPhone = Release|iPhone
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{11A8D4A2-4C0C-46C1-916F-5968538C3490}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11A8D4A2-4C0C-46C1-916F-5968538C3490}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11A8D4A2-4C0C-46C1-916F-5968538C3490}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11A8D4A2-4C0C-46C1-916F-5968538C3490}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8B93782-4A11-4D52-8802-B958558D8E85}.Debug|Any CPU.ActiveCfg = Debug|iPhoneSimulator
+		{E8B93782-4A11-4D52-8802-B958558D8E85}.Debug|Any CPU.Build.0 = Debug|iPhoneSimulator
+		{E8B93782-4A11-4D52-8802-B958558D8E85}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{E8B93782-4A11-4D52-8802-B958558D8E85}.Debug|iPhone.Build.0 = Debug|iPhone
+		{E8B93782-4A11-4D52-8802-B958558D8E85}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{E8B93782-4A11-4D52-8802-B958558D8E85}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{E8B93782-4A11-4D52-8802-B958558D8E85}.Release|Any CPU.ActiveCfg = Release|iPhoneSimulator
+		{E8B93782-4A11-4D52-8802-B958558D8E85}.Release|Any CPU.Build.0 = Release|iPhoneSimulator
+		{E8B93782-4A11-4D52-8802-B958558D8E85}.Release|iPhone.ActiveCfg = Release|iPhone
+		{E8B93782-4A11-4D52-8802-B958558D8E85}.Release|iPhone.Build.0 = Release|iPhone
+		{E8B93782-4A11-4D52-8802-B958558D8E85}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{E8B93782-4A11-4D52-8802-B958558D8E85}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = sysdrawing-coregraphics.csproj
+	EndGlobalSection
+EndGlobal

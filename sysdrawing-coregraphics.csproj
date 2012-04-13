@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{11A8D4A2-4C0C-46C1-916F-5968538C3490}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>sysdrawingcoregraphics</RootNamespace>
+    <AssemblyName>sysdrawing-coregraphics</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="monotouch" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="System.Drawing\Bitmap.cs" />
+    <Compile Include="System.Drawing\Brush.cs" />
+    <Compile Include="System.Drawing\Color.cs" />
+    <Compile Include="System.Drawing\FontFamily.cs" />
+    <Compile Include="System.Drawing\Graphics.cs" />
+    <Compile Include="System.Drawing\Image.cs" />
+    <Compile Include="System.Drawing\KnownColor.cs" />
+    <Compile Include="System.Drawing\KnownColors.cs" />
+    <Compile Include="System.Drawing\Pen.cs" />
+    <Compile Include="System.Drawing\Region.cs" />
+    <Compile Include="System.Drawing\SolidBrush.cs" />
+    <Compile Include="System.Drawing\StringFormat.cs" />
+    <Compile Include="System.Drawing.Drawing2D\GraphicsPath.cs" />
+    <Compile Include="System.Drawing.Drawing2D\Matrix.cs" />
+    <Compile Include="System.Drawing.Printing\PageSettings.cs" />
+    <Compile Include="System.Drawing.Printing\PrintDocument.cs" />
+    <Compile Include="System.Drawing.Printing\PrinterSettings.cs" />
+    <Compile Include="System.Drawing.Printing\PrintPageEventArgs.cs" />
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing\ImageConverter.cs">
+      <Link>External\ImageConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing\ImageFormatConverter.cs">
+      <Link>External\ImageFormatConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing\StringAligment.cs">
+      <Link>External\StringAligment.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing\SystemColors.cs">
+      <Link>External\SystemColors.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing\ToolboxBitmapAttribute.cs">
+      <Link>External\ToolboxBitmapAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\Blend.cs">
+      <Link>External\Blend.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\ColorBlend.cs">
+      <Link>External\ColorBlend.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\CompostingMode.cs">
+      <Link>External\CompostingMode.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\FillMode.cs">
+      <Link>External\FillMode.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\MatrixOrder.cs">
+      <Link>External\MatrixOrder.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\PathPointType.cs">
+      <Link>External\PathPointType.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\ImageFormat.cs">
+      <Link>External\ImageFormat.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\PixelFormat.cs">
+      <Link>External\PixelFormat.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Printing\PrintPageEventHandler.cs">
+      <Link>External\PrintPageEventHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\PathData.cs">
+      <Link>External\PathData.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="External\" />
+  </ItemGroup>
+</Project>

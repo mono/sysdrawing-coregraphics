@@ -565,7 +565,7 @@ namespace System.Drawing.Drawing2D {
 
 		public PathData PathData {
 			get {
-				return new PathData (points.ToArray (), types.ToArray ());
+				return new PathData () { Points = points.ToArray (), Types = types.ToArray () };
 			}
 		}
 
