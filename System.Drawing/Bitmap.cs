@@ -129,5 +129,14 @@ namespace System.Drawing {
 			throw new NotImplementedException ();
 		}
 		
+		public BitmapData LockBits (RectangleF rect, ImageLockMode flags, PixelFormat format)
+		{
+			throw new NotImplementedException ();			
+		}
+		
+		public void UnlockBits (BitmapData data)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

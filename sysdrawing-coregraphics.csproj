@@ -137,6 +137,40 @@
     <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\CombineMode.cs">
       <Link>External\CombineMode.cs</Link>
     </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\BitmapData.cs">
+      <Link>External\BitmapData.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\ImageLockMode.cs">
+      <Link>External\ImageLockMode.cs</Link>
+    </Compile>
+    <Compile Include="System.Drawing.Drawing2D\GraphicsContainer.cs" />
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\DashCap.cs">
+      <Link>External\DashCap.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\DashStyle.cs">
+      <Link>External\DashStyle.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\InterpolationMode.cs">
+      <Link>External\InterpolationMode.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\LineCap.cs">
+      <Link>External\LineCap.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\LineJoin.cs">
+      <Link>External\LineJoin.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\PixelOffsetMode.cs">
+      <Link>External\PixelOffsetMode.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\SmoothingMode.cs">
+      <Link>External\SmoothingMode.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\WarpMode.cs">
+      <Link>External\WarpMode.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\WrapMode.cs">
+      <Link>External\WrapMode.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />

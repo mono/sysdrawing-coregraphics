@@ -262,7 +262,16 @@ namespace System.Drawing {
 		{
 			context.TranslateCTM (tx, ty);
 		}
-
+		
+		public void ScaleTransform (float sx, float sy)
+		{
+			ScaleTransform (sx, sy, MatrixOrder.Prepend);
+		}
+		
+		public void ScaleTransform (float sx, float sy, MatrixOrder order)
+		{
+			context.ScaleCTM (sx, sy);
+		}
 		
 		void MakeCurve (PointF [] points, PointF [] tangents, int offset, int length, CurveType type)
 		{
@@ -456,6 +465,132 @@ namespace System.Drawing {
 		public void SetClip (Graphics g, CombineMode combineMode)
 		{
 			throw new NotImplementedException ();
+		}
+		
+		public GraphicsContainer BeginContainer ()
+		{
+			throw new NotImplementedException ();		
+		}
+		
+		public GraphicsContainer BeginContainer (Rectangle dstRect, Rectangle srcRect, GraphicsUnit unit)
+		{
+			throw new NotImplementedException ();		
+		}
+
+		public GraphicsContainer BeginContainer (RectangleF dstRect, RectangleF srcRect, GraphicsUnit unit)
+		{
+			throw new NotImplementedException ();		
+		}
+
+		public void EndContainer (GraphicsContainer container)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public SmoothingMode SmoothingMode { get; set; }
+		
+		public bool IsClipEmpty {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public PixelOffsetMode PixelOffsetMode {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public Region Clip {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public RectangleF ClipBounds {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public RectangleF VisibleClipBounds {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public InterpolationMode InterpolationMode {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public PointF RenderingOrigin {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public int TextContrast {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public float DpiX { 
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public float DpiY { 
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public bool IsVisibleClipEmpty { 
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public void TranslateClip (int dx, int dy)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void TranslateClip (float dx, float dy)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void ResetClip ()
+		{
 		}
 	}
 }

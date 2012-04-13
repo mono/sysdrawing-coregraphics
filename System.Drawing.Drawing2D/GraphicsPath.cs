@@ -573,6 +573,9 @@ namespace System.Drawing.Drawing2D {
 			get {
 				return fillMode;
 			}
+			set {
+				FillMode = value;
+			}
 		}
 	}
 }
