@@ -66,5 +66,11 @@ namespace System.Drawing {
 		void Dispose (bool disposing)
 		{
 		}
+		
+		public static StringFormat GenericTypographic {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
 	}
 }

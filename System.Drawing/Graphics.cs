@@ -65,10 +65,25 @@ namespace System.Drawing {
 			// FIXME: Apply AA offset
 			context.MoveTo (x, y);
 		}
+		
+		void MoveTo (PointF point)
+		{
+			context.MoveTo (point.X, point.Y);
+		}
+
+		void LineTo (PointF point)
+		{
+			context.AddLineToPoint (point.X, point.Y);
+		}
 
 		void LineTo (float x, float y)
 		{
 			context.AddLineToPoint (x, y);
+		}
+		
+		void CurveTo (float x1, float y1, float x2, float y2, float x3, float y3)
+		{
+			context.AddCurveToPoint (x1, y1, x2, y2, x3, y3);
 		}
 
 		void Stroke (Pen pen)
@@ -89,18 +104,35 @@ namespace System.Drawing {
 			context.FillPath ();
 		}
 		
-		public void DrawImage (Image image, RectangleF rect)
+		public void DrawArc (Pen pen, Rectangle rect, float startAngle, float sweepAngle)
 		{
-			DrawImage (image, rect.X, rect.Y, rect.Width, rect.Height);
+			DrawArc (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 		}
+
 		
-		public void DrawImage (Image image, float x, float y, float width, float height)
+		public void DrawArc (Pen pen, RectangleF rect, float startAngle, float sweepAngle)
 		{
-			if (image == null)
-				throw new ArgumentNullException ("image");
-			// TODO
+			DrawArc (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 		}
-		
+
+		public void DrawArc (Pen pen, float x, float y, float width, float height, float startAngle, float sweepAngle)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+
+			throw new NotImplementedException ();
+		}
+
+		// Microsoft documentation states that the signature for this member should be
+		// public void DrawArc( Pen pen,  int x,  int y,  int width,  int height,   int startAngle,
+   		// int sweepAngle. However, GdipDrawArcI uses also float for the startAngle and sweepAngle params
+   		public void DrawArc (Pen pen, int x, int y, int width, int height, int startAngle, int sweepAngle)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			throw new NotImplementedException ();
+		}
+
 		public void DrawLine (Pen pen, Point pt1, Point pt2)
 		{
 			if (pen == null)
@@ -110,7 +142,75 @@ namespace System.Drawing {
 			LineTo (pt2.X, pt2.Y);
 			StrokePen (pen);
 		}
+		
+		public void DrawBezier (Pen pen, PointF pt1, PointF pt2, PointF pt3, PointF pt4)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			MoveTo (pt1.X, pt1.Y);
+			CurveTo (pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
+			StrokePen (pen);
+		}
 
+		public void DrawBezier (Pen pen, Point pt1, Point pt2, Point pt3, Point pt4)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			MoveTo (pt1.X, pt1.Y);
+			CurveTo (pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
+			StrokePen (pen);
+		}
+
+		public void DrawBezier (Pen pen, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			MoveTo (x1, y1);
+			CurveTo (x2, y2, x3, y3, x4, y4);
+			StrokePen (pen);
+		}
+		
+		public void DrawBeziers (Pen pen, Point [] points)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			
+            int length = points.Length;
+            if (length < 4)
+	            return;
+
+			for (int i = 0; i < length - 1; i += 3) {
+	            Point p1 = points [i];
+	            Point p2 = points [i + 1];
+	            Point p3 = points [i + 2];
+	            Point p4 = points [i + 3];
+
+				DrawBezier (pen, p1, p2, p3, p4);
+			}
+		}
+
+		public void DrawBeziers (Pen pen, PointF [] points)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			if (points == null)
+				throw new ArgumentNullException ("points");
+            int length = points.Length;
+            if (length < 4)
+	            return;
+
+			for (int i = 0; i < length - 1; i += 3) {
+	            var p1 = points [i];
+	            var p2 = points [i + 1];
+	            var p3 = points [i + 2];
+	            var p4 = points [i + 3];
+
+				DrawBezier (pen, p1, p2, p3, p4);
+			}
+		}
+		
 		public void DrawLine (Pen pen, PointF pt1, PointF pt2)
 		{
 			if (pen == null)
@@ -138,6 +238,40 @@ namespace System.Drawing {
 
 			MoveTo (x1, y1);
 			LineTo (x2, y2);
+			StrokePen (pen);
+		}
+		
+		public void DrawLines (Pen pen, Point [] points)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			int count = points.Length;
+			if (count < 2)
+				return;
+			
+			MoveTo (points [0]);
+			for (int i = 1; i < count; i++)
+				LineTo (points [i]);
+			StrokePen (pen);
+		}
+		
+		public void DrawLines (Pen pen, PointF [] points)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			int count = points.Length;
+			if (count < 2)
+				return;
+			
+			MoveTo (points [0]);
+			for (int i = 1; i < count; i++)
+				LineTo (points [i]);
 			StrokePen (pen);
 		}
 
@@ -591,6 +725,56 @@ namespace System.Drawing {
 		
 		public void ResetClip ()
 		{
+			throw new NotImplementedException ();
+		}
+		
+		public void ExcludeClip (Rectangle rect)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void IntersectClip (Rectangle rect)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public SizeF MeasureString (string text, Font font)
+		{
+			return MeasureString (text, font, SizeF.Empty);
+		}
+		
+		public SizeF MeasureString (string textg, Font font, int width)
+		{
+			return MeasureString (textg, font, new RectangleF (0, 0, width, Int32.MaxValue));
+		}
+
+		public SizeF MeasureString (string textg, Font font, SizeF layoutArea)
+		{
+			return MeasureString (textg, font, new RectangleF (new PointF (0, 0), layoutArea));
+		}
+		
+		public SizeF MeasureString (string text, Font font, PointF point, StringFormat stringFormat)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		SizeF MeasureString (string textg, Font font, RectangleF rect)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void Clear (Color color)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void Restore (GraphicsState gstate)
+		{
+		}
+		
+		public GraphicsState Save ()
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

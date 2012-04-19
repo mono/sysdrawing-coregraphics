@@ -108,13 +108,28 @@ namespace System.Drawing {
 		{
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
-			// TODO
+			throw new NotImplementedException ();
 			return null;
 		}
 
 		public void Save (Stream stream, ImageFormat format)
 		{
-			// TODO
+			throw new NotImplementedException ();
+		}
+		
+		public void Save (Stream stream)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void Save (string filename)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static Bitmap FromFile (string filename)
+		{
+			throw new NotImplementedException ();
 		}
 		
 		void ISerializable.GetObjectData (SerializationInfo si, StreamingContext context)

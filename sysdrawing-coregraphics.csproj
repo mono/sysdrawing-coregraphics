@@ -171,10 +171,18 @@
     <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\WrapMode.cs">
       <Link>External\WrapMode.cs</Link>
     </Compile>
+    <Compile Include="System.Drawing\Graphics-DrawImage.cs" />
+    <Compile Include="System.Drawing.Imaging\ImageAttributes.cs" />
+    <Compile Include="System.Drawing\Font.cs" />
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing\FontStyle.cs">
+      <Link>External\FontStyle.cs</Link>
+    </Compile>
+    <Compile Include="System.Drawing.Drawing2D\GraphicsState.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />
     <Folder Include="Utilities\" />
     <Folder Include="System.Drawing.Text\" />
+    <Folder Include="System.Drawing.Imaging\" />
   </ItemGroup>
 </Project>

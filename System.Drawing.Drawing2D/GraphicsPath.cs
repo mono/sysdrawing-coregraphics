@@ -453,7 +453,47 @@ namespace System.Drawing.Drawing2D {
 			Append (pt1.X, pt1.Y, PathPointType.Line, true);
 			Append (pt2.X, pt2.Y, PathPointType.Line, false);
 		}
-
+		
+		public void AddLines (Point [] points)
+		{
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			if (points.Length == 0)
+				throw new ArgumentException ("points");
+			
+			/* only the first point can be compressed (i.e. removed if identical to previous) */
+			for (int i = 0, count = points.Length; i < count; i++)
+				Append (points [i].X, points [i].Y, PathPointType.Line, (i == 0));
+		}
+		
+		public void AddLines (PointF [] points)
+		{
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			if (points.Length == 0)
+				throw new ArgumentException ("points");
+			
+			/* only the first point can be compressed (i.e. removed if identical to previous) */
+			for (int i = 0, count = points.Length; i < count; i++)
+				Append (points [i].X, points [i].Y, PathPointType.Line, (i == 0));
+		}
+		
+		public void AddRectangle (Rectangle rect)
+		{
+			Append (rect.X, rect.Y, PathPointType.Start, false);
+			Append (rect.Right, rect.Y, PathPointType.Start, false);
+			Append (rect.Right, rect.Bottom, PathPointType.Start, false);
+			Append (rect.X, rect.Y, PathPointType.Start, false);
+		}
+		
+		public void AddRectangle (RectangleF rect)
+		{
+			Append (rect.X, rect.Y, PathPointType.Start, false);
+			Append (rect.Right, rect.Y, PathPointType.Start, false);
+			Append (rect.Right, rect.Bottom, PathPointType.Start, false);
+			Append (rect.X, rect.Y, PathPointType.Start, false);
+		}
+		
 		public void AddPie (float x, float y, float width, float height, float startAngle, float sweepAngle)
 		{
 			float sin_alpha, cos_alpha;
@@ -500,6 +540,26 @@ namespace System.Drawing.Drawing2D {
 		{
 			AddPie (x, y, width, height, startAngle, sweepAngle);
 		}
+		
+        public void AddArc (Rectangle rect, float start_angle, float sweep_angle)
+        {
+			AppendArcs (rect.X, rect.Y, rect.Width, rect.Height, start_angle, sweep_angle);
+        }
+
+        public void AddArc (RectangleF rect, float start_angle, float sweep_angle)
+        {
+			AppendArcs (rect.X, rect.Y, rect.Width, rect.Height, start_angle, sweep_angle);
+        }
+
+        public void AddArc (int x, int y, int width, int height, float start_angle, float sweep_angle)
+        {
+			AppendArcs (x, y, width, height, start_angle, sweep_angle);
+        }
+
+        public void AddArc (float x, float y, float width, float height, float start_angle, float sweep_angle)
+        {
+			AppendArcs (x, y, width, height, start_angle, sweep_angle);
+        }
 
 		internal static PointF [] OpenCurveTangents (int terms, PointF [] points, int count, float tension)
 		{

@@ -42,9 +42,23 @@ namespace System.Drawing {
 		{
 		}
 		
+		public Region (RectangleF rect)
+		{
+		}
+
 		~Region ()
 		{
 			Dispose (false);
+		}
+		
+		public bool Equals(Region region, Graphics g)
+		{
+			if (region == null)
+				throw new ArgumentNullException ("region");
+			if (g == null)
+				throw new ArgumentNullException ("g");
+
+			throw new NotImplementedException ();
 		}
 		
 		public Region Clone ()
@@ -61,6 +75,13 @@ namespace System.Drawing {
 
 		void Dispose (bool disposing)
 		{
+		}
+		
+		public RectangleF GetBounds (Graphics g)
+		{
+			if (g == null)
+				throw new ArgumentNullException ();
+			throw new NotImplementedException ();
 		}
 	}
 }
