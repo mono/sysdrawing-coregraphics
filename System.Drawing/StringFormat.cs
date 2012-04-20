@@ -72,5 +72,21 @@ namespace System.Drawing {
 				throw new NotImplementedException ();
 			}
 		}
+		
+		public StringFormatFlags FormatFlags {
+			get {				
+				throw new NotImplementedException ();
+			}
+
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+  		public void SetMeasurableCharacterRanges (CharacterRange [] ranges)
+		{					
+			throw new NotImplementedException ();
+		}
+		
 	}
 }

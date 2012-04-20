@@ -57,7 +57,7 @@ namespace System.Drawing {
 				}
 			}
 		}
-
+		
 		// from: gdip_cairo_move_to, inlined to assume converts_unit=true, antialias=true
 		void MoveTo (float x, float y)
 		{
@@ -332,12 +332,31 @@ namespace System.Drawing {
 			FillBrush (brush);
 		}
 		
+		public void FillRectangle (Brush brush, RectangleF rect)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			RectanglePath (rect.X, rect.Y, rect.Right, rect.Bottom);
+			FillBrush (brush);
+		}
+
 		public void FillRectangle (Brush brush, int x1, int y1, int x2, int y2)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
 			RectanglePath (x1, y1, x2, y2);
 			FillBrush (brush);
+		}
+
+		
+		public void FillRegion (Brush brush, Region region)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			if (region == null)
+				throw new ArgumentNullException ("region");
+
+			throw new NotImplementedException ();
 		}
 
 		public void DrawEllipse (Pen pen, RectangleF rect)
@@ -353,6 +372,21 @@ namespace System.Drawing {
 			DrawEllipse (pen, new RectangleF (x1, y1, x2, y2));
 		}
 
+		public void DrawEllipse (Pen pen, Rectangle rect)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			
+			DrawEllipse (pen, new RectangleF (rect.X, rect.Y, rect.Width, rect.Height));
+		}
+
+		public void DrawEllipse (Pen pen, float x, float y, float width, float height)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			context.StrokeEllipseInRect (new RectangleF (x, y, width, height));
+		}
+
 		public void FillEllipse (Brush brush, RectangleF rect)
 		{
 			if (brush == null)
@@ -366,6 +400,11 @@ namespace System.Drawing {
 			FillEllipse (brush, new RectangleF (x1, y1, x2, y2));
 		}
 		
+		public void FillEllipse (Brush brush, float x1, float y1, float x2, float y2)
+		{
+			FillEllipse (brush, new RectangleF (x1, y1, x2, y2));
+		}
+
 		public void ResetTransform ()
 		{
 			// Since there is no context.SetCTM, only ConcatCTM
@@ -389,11 +428,23 @@ namespace System.Drawing {
 
 		public void RotateTransform (float angle)
 		{
-			context.RotateCTM (angle);
+			RotateTransform (angle, MatrixOrder.Prepend);
 		}
 
+		public void RotateTransform (float angle, MatrixOrder order)
+		{
+			Console.WriteLine ("Currently does not support anything bur prepend mode");
+			context.RotateCTM (angle);
+		}
+		
 		public void TranslateTransform (float tx, float ty)
 		{
+			TranslateTransform (tx, ty, MatrixOrder.Prepend);
+		}
+		
+		public void TranslateTransform (float tx, float ty, MatrixOrder order)
+		{
+			Console.WriteLine ("Currently does not support anything bur prepend mode");
 			context.TranslateCTM (tx, ty);
 		}
 		
@@ -444,7 +495,19 @@ namespace System.Drawing {
 			}
 		}
 		
-		public void DrawCurve (Pen pen, PointF[] points, int offset, int numberOfSegments, float tension)
+		internal PointF [] ConvertPoints (Point [] points)
+		{
+			if (points == null)
+				return null;
+			int len = points.Length;
+			var result = new PointF [len];
+			for (int i = 0; points.Length < len; i++)
+				result [i] = new PointF (points [i].X, points [i].Y);
+			return result;
+		}
+		
+		
+		public void DrawCurve (Pen pen, PointF[] points, int offset, int numberOfSegments, float tension = 0.5f)
 		{
 			if (points == null)
 				throw new ArgumentNullException ("points");
@@ -464,6 +527,30 @@ namespace System.Drawing {
 			var tangents = GraphicsPath.OpenCurveTangents (GraphicsPath.CURVE_MIN_TERMS, points, count, tension);
 			MakeCurve (points, tangents, offset, numberOfSegments, CurveType.Open);
 			StrokePen (pen);
+		}
+
+		public void DrawCurve (Pen pen, Point[] points, int offset, int numberOfSegments, float tension = 0.5f)
+		{
+			DrawCurve (pen, ConvertPoints (points), offset, numberOfSegments, tension);
+		}
+		
+		public void DrawCurve (Pen pen, Point [] points, float tension = 0.5f)
+		{
+			DrawCurve (pen, ConvertPoints (points), tension);
+		}
+
+		public void DrawCurve (Pen pen, PointF [] points, float tension = 0.5f)
+		{
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			int count = points.Length;
+			if (count == 2)
+				DrawLines (pen, points);
+			else {
+				int segments = (count > 3) ? (count-1) : (count-2);
+				
+				DrawCurve (pen, points, 0, segments, tension);
+			}
 		}
 
 		void PlotPath (GraphicsPath path)
@@ -601,6 +688,11 @@ namespace System.Drawing {
 			throw new NotImplementedException ();
 		}
 		
+		public void SetClip (Region region, CombineMode combineMode)
+		{
+			throw new NotImplementedException ();
+		}
+		
 		public GraphicsContainer BeginContainer ()
 		{
 			throw new NotImplementedException ();		
@@ -706,6 +798,14 @@ namespace System.Drawing {
 				throw new NotImplementedException ();
 			}
 		}
+		public CompositingQuality CompositingQuality {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
 		
 		public bool IsVisibleClipEmpty { 
 			get {
@@ -738,6 +838,16 @@ namespace System.Drawing {
 			throw new NotImplementedException ();
 		}
 		
+		public void IntersectClip (RectangleF rect)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void IntersectClip (Region region)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public SizeF MeasureString (string text, Font font)
 		{
 			return MeasureString (text, font, SizeF.Empty);
@@ -758,8 +868,32 @@ namespace System.Drawing {
 			throw new NotImplementedException ();
 		}
 		
-		SizeF MeasureString (string textg, Font font, RectangleF rect)
+		public SizeF MeasureString (string textg, Font font, RectangleF rect)
 		{
+			throw new NotImplementedException ();
+		}
+		public SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public SizeF MeasureString (string text, Font font, int width, StringFormat format)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat, 
+			out int charactersFitted, out int linesFilled)
+		{	
+			charactersFitted = 0;
+			linesFilled = 0;
+
+			if ((text == null) || (text.Length == 0))
+				return SizeF.Empty;
+
+			if (font == null)
+				throw new ArgumentNullException ("font");
+
 			throw new NotImplementedException ();
 		}
 		
@@ -776,5 +910,417 @@ namespace System.Drawing {
 		{
 			throw new NotImplementedException ();
 		}
+		
+		public void DrawClosedCurve (Pen pen, PointF [] points)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			
+			throw new NotImplementedException ();
+		}
+		
+		public void DrawClosedCurve (Pen pen, Point [] points)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			
+			throw new NotImplementedException ();
+		}
+ 			
+		// according to MSDN fillmode "is required but ignored" which makes _some_ sense since the unmanaged 
+		// GDI+ call doesn't support it (issue spotted using Gendarme's AvoidUnusedParametersRule)
+		public void DrawClosedCurve (Pen pen, Point [] points, float tension, FillMode fillmode)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			
+			throw new NotImplementedException ();
+		}
+
+		// according to MSDN fillmode "is required but ignored" which makes _some_ sense since the unmanaged 
+		// GDI+ call doesn't support it (issue spotted using Gendarme's AvoidUnusedParametersRule)
+		public void DrawClosedCurve (Pen pen, PointF [] points, float tension, FillMode fillmode)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			
+			throw new NotImplementedException ();
+		}
+		
+		public void FillClosedCurve (Brush brush, PointF [] points)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			
+			throw new NotImplementedException ();
+		}
+		
+		public void FillClosedCurve (Brush brush, Point [] points)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			
+			throw new NotImplementedException ();
+		}
+ 			
+		// according to MSDN fillmode "is required but ignored" which makes _some_ sense since the unmanaged 
+		// GDI+ call doesn't support it (issue spotted using Gendarme's AvoidUnusedParametersRule)
+		public void FillClosedCurve (Brush brush, Point [] points, FillMode fillmode, float tension = 0.5f)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			
+			throw new NotImplementedException ();
+		}
+
+		// according to MSDN fillmode "is required but ignored" which makes _some_ sense since the unmanaged 
+		// GDI+ call doesn't support it (issue spotted using Gendarme's AvoidUnusedParametersRule)
+		public void FillClosedCurve (Brush brush, PointF [] points, FillMode fillmode, float tension = 0.5f)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			
+			throw new NotImplementedException ();
+		}
+	
+		public void DrawIcon (Icon icon, Rectangle targetRect)
+		{
+			if (icon == null)
+				throw new ArgumentNullException ("icon");
+
+			//DrawImage (icon.GetInternalBitmap (), targetRect);
+			throw new NotImplementedException ();
+		}
+
+		public void DrawIcon (Icon icon, int x, int y)
+		{
+			if (icon == null)
+				throw new ArgumentNullException ("icon");
+
+			//DrawImage (icon.GetInternalBitmap (), x, y);
+			throw new NotImplementedException ();
+		}
+		
+		public void DrawIconUnstretched (Icon icon, Rectangle targetRect)
+		{
+			if (icon == null)
+				throw new ArgumentNullException ("icon");
+
+			//DrawImageUnscaled (icon.GetInternalBitmap (), targetRect);
+			throw new NotImplementedException ();
+		}
+		
+		void MakePie (float x, float y, float width, float height, float startAngle, float sweepAngle)
+		{
+			float rx, ry, cx, cy, alpha;
+			float sin_alpha, cos_alpha;
+				
+			rx = width / 2;
+			ry = height / 2;
+		
+			/* center */
+			cx = x + rx;
+			cy = y + ry;
+		
+			/* angles in radians */        
+			alpha = (float) startAngle * (float) Math.PI / 180;
+			
+	        /* adjust angle for ellipses */
+	        alpha = (float) Math.Atan2 (rx * Math.Sin (alpha), ry * Math.Cos (alpha));
+		
+			sin_alpha = (float) Math.Sin (alpha);
+			cos_alpha = (float) Math.Cos (alpha);
+		
+			/* draw pie edge */
+			if (Math.Abs (sweepAngle) >= 360)
+				MoveTo (cx + rx * cos_alpha, cy + ry * sin_alpha);
+			else {
+				MoveTo (cx, cy);
+				LineTo (cx + rx * cos_alpha, cy + ry * sin_alpha);
+			}
+		
+			/* draw the arcs */
+			//MakeArcs (x, y, width, height, startAngle, sweepAngle);
+			throw new NotImplementedException ();
+			// 
+		
+			if (Math.Abs (sweepAngle) >= 360)
+				MoveTo (cx, cy);
+			else
+				LineTo (cx, cy);
+		}
+
+		public void DrawPie (Pen pen, Rectangle rect, float startAngle, float sweepAngle)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			DrawPie (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
+		}
+		
+		public void DrawPie (Pen pen, RectangleF rect, float startAngle, float sweepAngle)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			DrawPie (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
+		}
+		
+		public void DrawPie (Pen pen, float x, float y, float width, float height, float startAngle, float sweepAngle)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			// 
+			throw new NotImplementedException ();
+		}
+		public void FillPie (Brush brush, Rectangle rect, float startAngle, float sweepAngle)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			throw new NotImplementedException ();
+		}
+
+		public void FillPie (Brush brush, int x, int y, int width, int height, int startAngle, int sweepAngle)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			throw new NotImplementedException ();
+		}
+
+		public void FillPie (Brush brush, float x, float y, float width, float height, float startAngle, float sweepAngle)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			throw new NotImplementedException ();
+		}
+
+		public void DrawPolygon (Pen pen, Point [] points)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			throw new NotImplementedException ();
+		}
+
+		public void DrawPolygon (Pen pen, PointF [] points)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			throw new NotImplementedException ();
+		}	
+
+		public void FillPolygon (Brush brush, PointF [] points)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			throw new NotImplementedException ();
+		}
+
+		public void FillPolygon (Brush brush, Point [] points)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			throw new NotImplementedException ();
+		}
+
+		public void FillPolygon (Brush brush, Point [] points, FillMode fillMode)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			throw new NotImplementedException ();
+		}
+
+		public void FillPolygon (Brush brush, PointF [] points, FillMode fillMode)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			throw new NotImplementedException ();
+		}
+		
+		public void DrawRectangles (Pen pen, RectangleF [] rects)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("image");
+			if (rects == null)
+				throw new ArgumentNullException ("rects");
+			throw new NotImplementedException ();
+		}
+
+		public void DrawRectangles (Pen pen, Rectangle [] rects)
+		{
+			if (pen == null)
+				throw new ArgumentNullException ("image");
+			if (rects == null)
+				throw new ArgumentNullException ("rects");
+			throw new NotImplementedException ();
+		}
+
+		public void FillRectangles (Brush brush, Rectangle [] rects)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			if (rects == null)
+				throw new ArgumentNullException ("rects");
+
+			throw new NotImplementedException ();
+		}
+
+		public void FillRectangles (Brush brush, RectangleF [] rects)
+		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			if (rects == null)
+				throw new ArgumentNullException ("rects");
+
+			throw new NotImplementedException ();
+		}
+
+		public void DrawString (string s, Font font, Brush brush, PointF point, StringFormat format = null)
+		{
+			DrawString(s, font, brush, new RectangleF(point.X, point.Y, 0, 0), format);
+		}
+
+		public void DrawString (string s, Font font, Brush brush, float x, float y, StringFormat format = null)
+		{
+			DrawString (s, font, brush, new RectangleF(x, y, 0, 0), format);
+		}
+
+		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format = null)
+		{
+			if (font == null)
+				throw new ArgumentNullException ("font");
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			if (s == null || s.Length == 0)
+				return;
+			throw new NotImplementedException ();
+		}	
+		
+		public void Flush ()
+		{
+			Flush (FlushIntention.Flush);
+		}
+
+		
+		public void Flush (FlushIntention intention)
+		{
+			if (context == null)
+				return;
+
+			throw new NotImplementedException ();
+		}
+		
+		public bool IsVisible (Point point)
+		{
+			throw new NotImplementedException();
+		}
+
+		
+		public bool IsVisible (RectangleF rect)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public bool IsVisible (PointF point)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public bool IsVisible (Rectangle rect)
+		{
+			bool isVisible = false;
+
+			throw new NotImplementedException ();
+		}
+		
+		public bool IsVisible (float x, float y)
+		{
+			return IsVisible (new PointF (x, y));
+		}
+		
+		public bool IsVisible (int x, int y)
+		{
+			return IsVisible (new Point (x, y));
+		}
+		
+		public bool IsVisible (float x, float y, float width, float height)
+		{
+			return IsVisible (new RectangleF (x, y, width, height));
+		}
+
+		
+		public bool IsVisible (int x, int y, int width, int height)
+		{
+			return IsVisible (new Rectangle (x, y, width, height));
+		}
+		
+		public Region[] MeasureCharacterRanges (string text, Font font, RectangleF layoutRect, StringFormat stringFormat)
+		{
+			if ((text == null) || (text.Length == 0))
+				return new Region [0];
+
+			if (font == null)
+				throw new ArgumentNullException ("font");
+
+			if (stringFormat == null)
+				throw new ArgumentException ("stringFormat");
+
+			throw new NotImplementedException ();
+		}
+		
+		public void MultiplyTransform (Matrix matrix)
+		{
+			MultiplyTransform (matrix, MatrixOrder.Prepend);
+		}
+
+		public void MultiplyTransform (Matrix matrix, MatrixOrder order)
+		{
+			if (matrix == null)
+				throw new ArgumentNullException ("matrix");
+
+			throw new NotImplementedException ();
+		}
+		
+		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, PointF [] pts)
+		{
+			if (pts == null)
+				throw new ArgumentNullException ("pts");
+
+			throw new NotImplementedException ();
+		}
+
+
+		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, Point [] pts)
+		{						
+			if (pts == null)
+				throw new ArgumentNullException ("pts");
+          throw new NotImplementedException ();
+		}
+		
 	}
 }

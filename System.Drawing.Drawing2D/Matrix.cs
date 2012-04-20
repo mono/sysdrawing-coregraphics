@@ -138,7 +138,13 @@ namespace System.Drawing.Drawing2D
 				return transform.y0;
 			}
 		}
-
+		
+		internal bool IsScaled {
+			get {
+				return transform.xx != 1f || transform.yy != 1f;
+			}
+		}
+		
 		public Matrix Clone()
 		{
 			var copy = new Matrix ();

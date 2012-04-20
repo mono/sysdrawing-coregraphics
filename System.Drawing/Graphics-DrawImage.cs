@@ -335,6 +335,50 @@ namespace System.Drawing
 			//	imageAttrs != null ? imageAttrs.NativeObject : IntPtr.Zero, callback, callbackData);
 			//GDIPlus.CheckStatus (status);
 		}		
+		public void DrawImageUnscaled (Image image, Point point)
+		{
+			DrawImageUnscaled (image, point.X, point.Y);
+		}
+		
+		public void DrawImageUnscaled (Image image, Rectangle rect)
+		{
+			DrawImageUnscaled (image, rect.X, rect.Y, rect.Width, rect.Height);
+		}
+		
+		public void DrawImageUnscaled (Image image, int x, int y)
+		{
+			if (image == null)
+				throw new ArgumentNullException ("image");
+			DrawImage (image, x, y, image.Width, image.Height);
+		}
+
+		public void DrawImageUnscaled (Image image, int x, int y, int width, int height)
+		{
+			if (image == null)
+				throw new ArgumentNullException ("image");
+
+			// avoid creating an empty, or negative w/h, bitmap...
+			if ((width <= 0) || (height <= 0))
+				return;
+
+			using (Image tmpImg = new Bitmap (width, height)) {
+				using (Graphics g = FromImage (tmpImg)) {
+					g.DrawImage (image, 0, 0, image.Width, image.Height);
+					DrawImage (tmpImg, x, y, width, height);
+				}
+			}
+		}
+
+		public void DrawImageUnscaledAndClipped (Image image, Rectangle rect)
+		{
+			if (image == null)
+				throw new ArgumentNullException ("image");
+
+			int width = (image.Width > rect.Width) ? rect.Width : image.Width;
+			int height = (image.Height > rect.Height) ? rect.Height : image.Height;
+
+			DrawImageUnscaled (image, rect.X, rect.Y, width, height);			
+		}
 
 	}
 }

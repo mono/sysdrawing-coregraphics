@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
-    <DefineConstants>DEBUG</DefineConstants>
+    <DefineConstants>DEBUG; MONOTOUCH</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <MtouchLink>None</MtouchLink>
@@ -178,6 +178,27 @@
       <Link>External\FontStyle.cs</Link>
     </Compile>
     <Compile Include="System.Drawing.Drawing2D\GraphicsState.cs" />
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing\Icon.cs">
+      <Link>External\Icon.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing\IconConverter.cs">
+      <Link>External\IconConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing\StringFormatFlags.cs">
+      <Link>External\StringFormatFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\FlushIntention.cs">
+      <Link>External\FlushIntention.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing\CharacterRange.cs">
+      <Link>External\CharacterRange.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\CoordinateSpace.cs">
+      <Link>External\CoordinateSpace.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\CompostingQuality.cs">
+      <Link>External\CompostingQuality.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />
