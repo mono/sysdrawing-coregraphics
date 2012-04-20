@@ -5,17 +5,24 @@ MONO_SYSD=../mono/mcs/class/System.Drawing
 MONO_SOURCES = \
 	$(MONO_SYSD)/../../build/common/Locale.cs			\
 	$(MONO_SYSD)/System.Drawing/FontStyle.cs			\
+	$(MONO_SYSD)/System.Drawing/CharacterRange.cs			\
 	$(MONO_SYSD)/System.Drawing/GraphicsUnit.cs			\
+	$(MONO_SYSD)/System.Drawing/Icon.cs				\
+	$(MONO_SYSD)/System.Drawing/IconConverter.cs			\
 	$(MONO_SYSD)/System.Drawing/ImageConverter.cs			\
 	$(MONO_SYSD)/System.Drawing/ImageFormatConverter.cs		\
 	$(MONO_SYSD)/System.Drawing/StringAligment.cs			\
+	$(MONO_SYSD)/System.Drawing/StringFormatFlags.cs		\
 	$(MONO_SYSD)/System.Drawing/SystemColors.cs			\
 	$(MONO_SYSD)/System.Drawing/ToolboxBitmapAttribute.cs		\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/Blend.cs			\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/ColorBlend.cs		\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/CombineMode.cs		\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/CompostingMode.cs		\
+	$(MONO_SYSD)/System.Drawing.Drawing2D/CompostingQuality.cs	\
+	$(MONO_SYSD)/System.Drawing.Drawing2D/CoordinateSpace.cs	\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/FillMode.cs		\
+	$(MONO_SYSD)/System.Drawing.Drawing2D/FlushIntention.cs		\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/InterpolationMode.cs	\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/MatrixOrder.cs		\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/PathData.cs		\
@@ -74,7 +81,7 @@ monotouch: monotouch/System.Drawing.dll
 
 monotouch/System.Drawing.dll: $(SOURCES) $(MONO_SOURCES) Makefile
 	mkdir -p monotouch
-	$(SMCS) -target:library -out:monotouch/System.Drawing.dll -debug $(SOURCES) $(MONO_SOURCES) -r:monotouch.dll 
+	$(SMCS) -define:MONOTOUCH -target:library -out:monotouch/System.Drawing.dll -debug $(SOURCES) $(MONO_SOURCES) -r:monotouch.dll 
 
 monomac: monomac/System.Drawing.dll
 
