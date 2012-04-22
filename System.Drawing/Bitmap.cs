@@ -38,13 +38,29 @@ using System.Drawing.Imaging;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+
 using MonoTouch.CoreGraphics;
+using MonoTouch.UIKit;
 
 namespace System.Drawing {
 	
 	[Serializable]
 	public sealed class Bitmap : Image {
-		CGImage image;
+		// if null, we created the bitmap in memory, otherwise, the backing file.
+		UIImage uiimage;
+		internal CGImage NativeCGImage;
+		internal IntPtr bitmapBlock;
+		
+		public Bitmap (string filename)
+		{
+			//
+			// This is a quick hack: we should use ImageIO to load the data into
+			// memory, so we always have the bitmapBlock availabe
+			//
+			var uiimage = UIImage.FromFileUncached (filename);
+			NativeCGImage = uiimage.CGImage;
+		}
+		
 		public Bitmap (Stream stream, bool useIcm)
 		{
 			// false: stream is owned by user code
@@ -67,11 +83,11 @@ namespace System.Drawing {
 		
 		public Bitmap (int width, int height, PixelFormat format)
 		{
+			int bitsPerComponent, bytesPerRow;
 			CGColorSpace colorSpace;
+			CGBitmapFlags bitmapInfo;
 			bool premultiplied = false;
-			int bitsPerComponent = 0;
 			int bitsPerPixel = 0;
-			CGBitmapFlags info;
 			
 			switch (format){
 			case PixelFormat.Format32bppPArgb:
@@ -79,36 +95,39 @@ namespace System.Drawing {
 				colorSpace = CGColorSpace.CreateDeviceRGB ();
 				bitsPerComponent = 8;
 				bitsPerPixel = 32;
-				info = CGBitmapFlags.PremultipliedFirst;
+				bitmapInfo = CGBitmapFlags.PremultipliedFirst;
 				break;
 			case PixelFormat.Format32bppArgb:
 				colorSpace = CGColorSpace.CreateDeviceRGB ();
 				bitsPerComponent = 8;
 				bitsPerPixel = 32;
-				info = CGBitmapFlags.First;
+				bitmapInfo = CGBitmapFlags.PremultipliedFirst;
 				break;
 			case PixelFormat.Format32bppRgb:
 				colorSpace = CGColorSpace.CreateDeviceRGB ();
 				bitsPerComponent = 8;
 				bitsPerPixel = 32;
-				info = CGBitmapFlags.None;
+				bitmapInfo = CGBitmapFlags.None;
 				break;
 			default:
 				throw new Exception ("Format not supported: " + format);
 			}
-			int size = width * bitsPerPixel/bitsPerComponent * height;
-			IntPtr block = Marshal.AllocHGlobal (size);
-			var provider = new CGDataProvider (block, size, true);
-			image = new CGImage (width, height, bitsPerComponent, bitsPerPixel, width * bitsPerPixel/bitsPerComponent, colorSpace, info, provider, null, false, CGColorRenderingIntent.Default);
+			bytesPerRow = width * bitsPerPixel/bitsPerComponent;
+			int size = bytesPerRow * height;
+			bitmapBlock = Marshal.AllocHGlobal (size);
+
+			var provider = new CGDataProvider (bitmapBlock, size, true);
+			NativeCGImage = new CGImage (width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace, bitmapInfo, provider, null, false, CGColorRenderingIntent.Default);
 		}
 
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing){
-				if (image != null){
-					image.Dispose ();
-					image = null;
+				if (NativeCGImage != null){
+					NativeCGImage.Dispose ();
+					NativeCGImage = null;
 				}
+				bitmapBlock = IntPtr.Zero;
 			}
 			base.Dispose (disposing);
 		}

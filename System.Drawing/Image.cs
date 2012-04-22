@@ -57,7 +57,8 @@ namespace System.Drawing {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Height {
 			get {
-				// TODO
+				var b = this as Bitmap;
+				return b == null ? 0 : b.NativeCGImage.Height;
 				return 0;
 			}
 		}
@@ -81,7 +82,9 @@ namespace System.Drawing {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Width {
 			get {
-				// TODO
+				var b = this as Bitmap;
+				return b == null ? 0 : b.NativeCGImage.Width;
+				
 				return 0;
 			}
 		}

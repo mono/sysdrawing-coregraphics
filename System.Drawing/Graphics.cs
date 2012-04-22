@@ -19,6 +19,7 @@ using System.Drawing.Text;
 using MonoMac.CoreGraphics;
 #else
 using MonoTouch.CoreGraphics;
+using MonoTouch.UIKit;
 #endif
 
 namespace System.Drawing {
@@ -645,7 +646,18 @@ namespace System.Drawing {
 			if ((image.PixelFormat & PixelFormat.Indexed) != 0)
 				throw new Exception ("Cannot create Graphics from an indexed bitmap.");
 			
-			return null; // TODO
+			Bitmap b = image as Bitmap;
+			if (b == null)
+				throw new Exception ("Can not create Graphics contexts from " + image.GetType () + " Images, only Bitmaps are supported");
+			var cgimage = b.NativeCGImage;
+			
+			if (b.bitmapBlock == IntPtr.Zero){
+				throw new Exception ("Missing functionality: currently we can not create graphics contexts from bitmaps loaded from disk, need to do some extra work");
+			}
+			
+			// Creates a context using the parameters that were used initially for the bitmap, 
+			// reusing the memory address space on it as well.
+			return new Graphics (new CGBitmapContext (b.bitmapBlock, cgimage.Width, cgimage.Height, cgimage.BitsPerComponent, cgimage.BytesPerRow, cgimage.ColorSpace, cgimage.BitmapInfo));
 		}
 		
 		public void SetClip (RectangleF rect)
