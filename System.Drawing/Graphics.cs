@@ -99,10 +99,13 @@ namespace System.Drawing {
 			// FIXME: draw custom start/end caps
 		}
 
-		void FillBrush (Brush brush)
+		void FillBrush (Brush brush, FillMode fillMode = FillMode.Alternate)
 		{
 			brush.Setup (this, true);
-			context.FillPath ();
+			if (fillMode == FillMode.Alternate)
+				context.EOFillPath ();
+			else
+				context.FillPath ();
 		}
 		
 		public void DrawArc (Pen pen, Rectangle rect, float startAngle, float sweepAngle)
@@ -1120,58 +1123,44 @@ namespace System.Drawing {
 			throw new NotImplementedException ();
 		}
 
-		public void DrawPolygon (Pen pen, Point [] points)
+		void PolygonSetup (PointF [] points)
 		{
-			if (pen == null)
-				throw new ArgumentNullException ("pen");
 			if (points == null)
 				throw new ArgumentNullException ("points");
-			throw new NotImplementedException ();
+			if (points.Length < 2)
+				throw new ArgumentException ("Needs at least two points");
+			MoveTo (points [0]);
+			for (int i = 0; i < points.Length; i++)
+				LineTo (points [i]);
+		}
+		
+		public void DrawPolygon (Pen pen, Point [] points)
+		{
+			DrawPolygon (pen, ConvertPoints (points));
 		}
 
 		public void DrawPolygon (Pen pen, PointF [] points)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			if (points == null)
-				throw new ArgumentNullException ("points");
-			throw new NotImplementedException ();
+			PolygonSetup (points);
+			StrokePen (pen);
 		}	
 
-		public void FillPolygon (Brush brush, PointF [] points)
+		public void FillPolygon (Brush brush, Point [] points, FillMode fillMode = FillMode.Alternate)
 		{
-			if (brush == null)
-				throw new ArgumentNullException ("brush");
-			if (points == null)
-				throw new ArgumentNullException ("points");
-			throw new NotImplementedException ();
+			FillPolygon (brush, ConvertPoints (points), fillMode);
 		}
 
-		public void FillPolygon (Brush brush, Point [] points)
+		public void FillPolygon (Brush brush, PointF [] points, FillMode fillMode = FillMode.Alternate)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
 			if (points == null)
 				throw new ArgumentNullException ("points");
-			throw new NotImplementedException ();
-		}
 
-		public void FillPolygon (Brush brush, Point [] points, FillMode fillMode)
-		{
-			if (brush == null)
-				throw new ArgumentNullException ("brush");
-			if (points == null)
-				throw new ArgumentNullException ("points");
-			throw new NotImplementedException ();
-		}
-
-		public void FillPolygon (Brush brush, PointF [] points, FillMode fillMode)
-		{
-			if (brush == null)
-				throw new ArgumentNullException ("brush");
-			if (points == null)
-				throw new ArgumentNullException ("points");
-			throw new NotImplementedException ();
+			PolygonSetup (points);
+			FillBrush (brush, fillMode);
 		}
 		
 		public void DrawRectangles (Pen pen, RectangleF [] rects)
@@ -1180,7 +1169,10 @@ namespace System.Drawing {
 				throw new ArgumentNullException ("image");
 			if (rects == null)
 				throw new ArgumentNullException ("rects");
-			throw new NotImplementedException ();
+
+			foreach (var rect in rects)
+				RectanglePath (rect.X, rect.Y, rect.Right, rect.Bottom);
+			StrokePen (pen);
 		}
 
 		public void DrawRectangles (Pen pen, Rectangle [] rects)
@@ -1189,7 +1181,10 @@ namespace System.Drawing {
 				throw new ArgumentNullException ("image");
 			if (rects == null)
 				throw new ArgumentNullException ("rects");
-			throw new NotImplementedException ();
+
+			foreach (var rect in rects)
+				RectanglePath (rect.X, rect.Y, rect.Right, rect.Bottom);
+			StrokePen (pen);
 		}
 
 		public void FillRectangles (Brush brush, Rectangle [] rects)
@@ -1199,7 +1194,9 @@ namespace System.Drawing {
 			if (rects == null)
 				throw new ArgumentNullException ("rects");
 
-			throw new NotImplementedException ();
+			foreach (var rect in rects)
+				RectanglePath (rect.X, rect.Y, rect.Right, rect.Bottom);
+			FillBrush (brush);
 		}
 
 		public void FillRectangles (Brush brush, RectangleF [] rects)
@@ -1209,7 +1206,10 @@ namespace System.Drawing {
 			if (rects == null)
 				throw new ArgumentNullException ("rects");
 
-			throw new NotImplementedException ();
+			foreach (var rect in rects)
+				RectanglePath (rect.X, rect.Y, rect.Right, rect.Bottom);
+
+			FillBrush (brush);
 		}
 
 		public void DrawString (string s, Font font, Brush brush, PointF point, StringFormat format = null)
@@ -1315,7 +1315,10 @@ namespace System.Drawing {
 			if (matrix == null)
 				throw new ArgumentNullException ("matrix");
 
-			throw new NotImplementedException ();
+			if (order == MatrixOrder.Prepend)
+				context.ConcatCTM (matrix.transform);
+			else
+				throw new NotImplementedException ();
 		}
 		
 		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, PointF [] pts)
