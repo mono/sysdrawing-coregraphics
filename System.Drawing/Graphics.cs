@@ -26,7 +26,8 @@ namespace System.Drawing {
 
 	public sealed partial class Graphics : MarshalByRefObject, IDisposable {
 		internal CGContext context;
-
+		internal Pen LastPen;
+		
 		public Graphics (CGContext context)
 		{
 			if (context == null)
@@ -141,7 +142,7 @@ namespace System.Drawing {
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-
+			
 			MoveTo (pt1.X, pt1.Y);
 			LineTo (pt2.X, pt2.Y);
 			StrokePen (pen);
@@ -1318,7 +1319,7 @@ namespace System.Drawing {
 			if (order == MatrixOrder.Prepend)
 				context.ConcatCTM (matrix.transform);
 			else
-				throw new NotImplementedException ();
+				context.ConcatCTM (matrix.transform);
 		}
 		
 		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, PointF [] pts)

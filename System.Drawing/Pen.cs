@@ -91,6 +91,19 @@ namespace System.Drawing {
 		internal void Setup (Graphics graphics, bool fill)
 		{
 			brush.Setup (graphics, fill);
+			// TODO: apply matrix
+			
+			if (graphics.LastPen == this && !changed)
+				return;
+			
+			graphics.context.SetLineWidth (width);
+			// miter limit
+			// join
+			// cap
+			// dashes
+			
+			changed = false;
+			graphics.LastPen = this;
 		}
 	}
 }

@@ -41,6 +41,7 @@ using System.ComponentModel;
 
 using MonoTouch.CoreGraphics;
 using MonoTouch.UIKit;
+using MonoTouch.Foundation;
 
 namespace System.Drawing {
 	
@@ -143,9 +144,51 @@ namespace System.Drawing {
 			throw new NotImplementedException ();
 		}
 		
+		public void Save (string path, ImageFormat format)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			
+			if (NativeCGImage == null)
+				throw new ObjectDisposedException ("cgimage");
+
+			using (var uiimage = new UIImage (NativeCGImage)){
+				NSError error;
+				
+				if (format == ImageFormat.Jpeg){
+					using (var data = uiimage.AsJPEG ()){
+						if (data.Save (path, NSDataWritingOptions.Atomic, out error))
+							return;
+						
+						throw new IOException ("Saving the file " + path + " " + error);
+					}
+				} else if (format == ImageFormat.Png){
+					using (var data = uiimage.AsPNG ()){
+						if (data.Save (path, NSDataWritingOptions.Atomic, out error))
+							return;
+						
+						throw new IOException ("Saving the file " + path + " " + error);
+					}
+				} else
+					throw new ArgumentException ("Unsupported format, only Jpeg and Png are supported", "format");
+			}
+			
+		}
+		
 		public void Save (string path)
 		{
-			throw new NotImplementedException ();
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			var format = ImageFormat.Png;
+			
+			var p = path.LastIndexOf (".");
+			if (p != -1 && p < path.Length){
+				switch (path.Substring (p + 1)){
+				case "png": break;
+				case "jpg": format = ImageFormat.Jpeg; break;
+				}
+			}
+			Save (path, format);
 		}
 		
 		public BitmapData LockBits (RectangleF rect, ImageLockMode flags, PixelFormat format)
