@@ -34,6 +34,9 @@ namespace System.Drawing
 	 * 
 	 * I like the implementation because you can select the degree as well error threshold for 
 	 * different graphics implementations.
+	 * 1st degree - Uses Line Segments
+	 * 2nd degree - Uses Quadratic Bezier
+	 * 3rd degree - Uses Cubic Bezier
 	 * 
 	 **/
 	public partial class Graphics 
