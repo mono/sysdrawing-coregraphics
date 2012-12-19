@@ -53,7 +53,7 @@ namespace Example1_5a
 			// Create a brush object with a transparent red color:
 			SolidBrush aBrush = new SolidBrush(Color.Red);
 
-			g.PageUnit = GraphicsUnit.Millimeter;
+			g.PageUnit = GraphicsUnit.Inch;
 
 			// Draw a rectangle:
 			g.DrawRectangle(aPen, .20f, .20f, 1.00f, .50f);

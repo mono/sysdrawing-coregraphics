@@ -32,6 +32,9 @@ namespace System.Drawing
 	 * so may be usable.  Read more in the comments.  It is messy though with a lot of constants
 	 * used for error estimation.
 	 * 
+	 * I like the implementation because you can select the degree as well error threshold for 
+	 * different graphics implementations.
+	 * 
 	 **/
 	public partial class Graphics 
 	{
