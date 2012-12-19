@@ -1,0 +1,25 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="System.Drawing/Graphics-DrawEllipticalArc.cs">
+    <Files>
+      <File FileName="System.Drawing/Graphics-DrawEllipticalArc.cs" Line="246" Column="1" />
+      <File FileName="System.Drawing/Graphics.cs" Line="27" Column="27" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="Samples.MonoMac" expanded="True">
+            <Node name="Example1_5" expanded="True" />
+          </Node>
+          <Node name="sysdrawing-coregraphics-Mac" expanded="True" selected="True">
+            <Node name="System.Drawing" expanded="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

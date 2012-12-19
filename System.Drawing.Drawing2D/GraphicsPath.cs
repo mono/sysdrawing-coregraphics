@@ -33,7 +33,11 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+#if MONOMAC
+using MonoMac.CoreGraphics;
+#else
 using MonoTouch.CoreGraphics;
+#endif
 
 namespace System.Drawing.Drawing2D {
 	internal enum CurveType { Open, Close }
@@ -108,7 +112,7 @@ namespace System.Drawing.Drawing2D {
 		void Append (float x, float y, PathPointType type, bool compress)
 		{
 			byte t = (byte) type;
-			PointF pt;
+			PointF pt = PointF.Empty;
 
 			/* in some case we're allowed to compress identical points */
 			if (compress && (points.Count > 0)) {

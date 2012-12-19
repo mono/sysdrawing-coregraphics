@@ -48,6 +48,7 @@ namespace System.Drawing.Drawing2D
 		
 		public Matrix ()
 		{
+			transform = CGAffineTransform.MakeIdentity();
 		}
 
 		internal Matrix (CGAffineTransform transform)
@@ -219,7 +220,8 @@ namespace System.Drawing.Drawing2D
 	
 		public void Rotate (float angle, MatrixOrder order)
 		{
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
+			transform.Rotate(angle);
 		}
 	
 		public void RotateAt (float angle, PointF point)
@@ -348,7 +350,7 @@ namespace System.Drawing.Drawing2D
 	
 		public void Translate (float offsetX, float offsetY, MatrixOrder order)
 		{
-			var affine = CGAffineTransform.MakeTranslation (offsetX, offsetY);
+			var affine = CGAffineTransform.MakeTranslation (offsetX, -offsetY);
 			if (order == MatrixOrder.Prepend)
 				transform.Multiply (affine);
 			else {

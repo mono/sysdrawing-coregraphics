@@ -1,0 +1,99 @@
+2012-12-17 10:38:23.844 Tests[52323:c07] [Runner executing:	Test.Sys.Drawing.GraphicsFixtures.DrawImage.DrawImage1]
+2012-12-17 10:38:23.845 Tests[52323:c07] [MonoTouch Version:	6.0.6]
+2012-12-17 10:38:23.845 Tests[52323:c07] [iPhone Simulator:	iPhone OS v6.0]
+2012-12-17 10:38:23.846 Tests[52323:c07] [Device Name:	iPhone Simulator]
+2012-12-17 10:38:23.846 Tests[52323:c07] [Device UDID:	d6209cc58d1e50b8b37d21c4841bb3bb00000000]
+2012-12-17 10:38:23.851 Tests[52323:c07] [Device Date/Time:	12/17/2012 10:38:23 AM]
+2012-12-17 10:38:23.852 Tests[52323:c07] [Bundle:	com.yourcompany.tests]
+2012-12-17 10:38:23.935 Tests[52323:c07] 	[FAIL] DrawImage1 : System.NotImplementedException : The requested feature is not implemented.
+2012-12-17 10:38:23.936 Tests[52323:c07] 		  at System.Drawing.Graphics.set_InterpolationMode (InterpolationMode value) [0x00000] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/sysdrawing-coregraphics/System.Drawing/Graphics.cs:988 
+2012-12-17 10:38:23.936 Tests[52323:c07] 		  at (wrapper remoting-invoke-with-check) System.Drawing.Graphics:set_InterpolationMode (System.Drawing.Drawing2D.InterpolationMode)
+2012-12-17 10:38:23.936 Tests[52323:c07] 		  at Test.Sys.Drawing.GraphicsFixtures.DrawImage.SetUp (System.String ownerClass) [0x00016] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/Test/Graphics.cs:308 
+2012-12-17 10:38:23.937 Tests[52323:c07] 		  at Test.Sys.Drawing.GraphicsFixtures.DrawImage.SetUp () [0x00000] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/Test/Graphics.cs:296 
+2012-12-17 10:38:23.937 Tests[52323:c07] 		  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&)
+2012-12-17 10:38:23.937 Tests[52323:c07] 		  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000c0] in /Developer/MonoTouch/Source/mono/mcs/class/corlib/System.Reflection/MonoMethod.cs:234 
+2012-12-17 10:38:23.938 Tests[52323:c07] Tests run: 1 Passed: 0 Inconclusive: 0 Failed: 1 Ignored: 0
+2012-12-17 10:38:57.595 Tests[52323:c07] [Runner executing:	Test.Sys.Drawing.GraphicsFixtures.GraphicsFixture.ClearTest]
+2012-12-17 10:38:57.595 Tests[52323:c07] [MonoTouch Version:	6.0.6]
+2012-12-17 10:38:57.595 Tests[52323:c07] [iPhone Simulator:	iPhone OS v6.0]
+2012-12-17 10:38:57.596 Tests[52323:c07] [Device Name:	iPhone Simulator]
+2012-12-17 10:38:57.596 Tests[52323:c07] [Device UDID:	d6209cc58d1e50b8b37d21c4841bb3bb00000000]
+2012-12-17 10:38:57.596 Tests[52323:c07] [Device Date/Time:	12/17/2012 10:38:57 AM]
+2012-12-17 10:38:57.596 Tests[52323:c07] [Bundle:	com.yourcompany.tests]
+2012-12-17 10:38:57.644 Tests[52323:c07] 	[FAIL] ClearTest : System.Exception : Error loading .Net reference image: Test.Sys.Drawing.GraphicsFixtures.GraphicsFixture.GraphicsFixture.ClearTest_1.png
+2012-12-17 10:38:57.644 Tests[52323:c07] 		  at DrawingTestHelper.NetDrawingTest.GetReferenceImage (System.String testName) [0x00037] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/DrawingTestHelper/DrawingTest.cs:623 
+2012-12-17 10:38:57.644 Tests[52323:c07] 		  at DrawingTestHelper.DrawingTest.PDCompare () [0x00000] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/DrawingTestHelper/DrawingTest.cs:387 
+2012-12-17 10:38:57.645 Tests[52323:c07] 		  at Test.Sys.Drawing.GraphicsFixtures.GraphicsFixture.ClearTest () [0x0000b] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/Test/Graphics.cs:739 
+2012-12-17 10:38:57.645 Tests[52323:c07] 		  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&)
+2012-12-17 10:38:57.645 Tests[52323:c07] 		  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000c0] in /Developer/MonoTouch/Source/mono/mcs/class/corlib/System.Reflection/MonoMethod.cs:234 
+2012-12-17 10:38:57.645 Tests[52323:c07] Tests run: 1 Passed: 0 Inconclusive: 0 Failed: 1 Ignored: 0
+2012-12-17 10:39:09.753 Tests[52323:c07] [Runner executing:	Test.Sys.Drawing.GraphicsFixtures.GraphicsFixture.DrawArcTest]
+2012-12-17 10:39:09.754 Tests[52323:c07] [MonoTouch Version:	6.0.6]
+2012-12-17 10:39:09.754 Tests[52323:c07] [iPhone Simulator:	iPhone OS v6.0]
+2012-12-17 10:39:09.754 Tests[52323:c07] [Device Name:	iPhone Simulator]
+2012-12-17 10:39:09.755 Tests[52323:c07] [Device UDID:	d6209cc58d1e50b8b37d21c4841bb3bb00000000]
+2012-12-17 10:39:09.755 Tests[52323:c07] [Device Date/Time:	12/17/2012 10:39:09 AM]
+2012-12-17 10:39:09.755 Tests[52323:c07] [Bundle:	com.yourcompany.tests]
+2012-12-17 10:39:09.762 Tests[52323:c07] 	[FAIL] DrawArcTest : System.NotImplementedException : The requested feature is not implemented.
+2012-12-17 10:39:09.763 Tests[52323:c07] 		  at System.Drawing.Graphics.DrawArc (System.Drawing.Pen pen, Int32 x, Int32 y, Int32 width, Int32 height, Int32 startAngle, Int32 sweepAngle) [0x00011] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/sysdrawing-coregraphics/System.Drawing/Graphics.cs:278 
+2012-12-17 10:39:09.763 Tests[52323:c07] 		  at (wrapper remoting-invoke-with-check) System.Drawing.Graphics:DrawArc (System.Drawing.Pen,int,int,int,int,int,int)
+2012-12-17 10:39:09.763 Tests[52323:c07] 		  at Test.Sys.Drawing.GraphicsFixtures.GraphicsFixture.DrawArcTest () [0x00037] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/Test/Graphics.cs:758 
+2012-12-17 10:39:09.763 Tests[52323:c07] 		  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&)
+2012-12-17 10:39:09.764 Tests[52323:c07] 		  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000c0] in /Developer/MonoTouch/Source/mono/mcs/class/corlib/System.Reflection/MonoMethod.cs:234 
+2012-12-17 10:39:09.764 Tests[52323:c07] Tests run: 1 Passed: 0 Inconclusive: 0 Failed: 1 Ignored: 0
+2012-12-17 10:39:22.679 Tests[52323:c07] [Runner executing:	Test.Sys.Drawing.GraphicsFixtures.GraphicsFixture.ClearTest]
+2012-12-17 10:39:22.679 Tests[52323:c07] [MonoTouch Version:	6.0.6]
+2012-12-17 10:39:22.679 Tests[52323:c07] [iPhone Simulator:	iPhone OS v6.0]
+2012-12-17 10:39:22.679 Tests[52323:c07] [Device Name:	iPhone Simulator]
+2012-12-17 10:39:22.680 Tests[52323:c07] [Device UDID:	d6209cc58d1e50b8b37d21c4841bb3bb00000000]
+2012-12-17 10:39:22.680 Tests[52323:c07] [Device Date/Time:	12/17/2012 10:39:22 AM]
+2012-12-17 10:39:22.680 Tests[52323:c07] [Bundle:	com.yourcompany.tests]
+2012-12-17 10:39:22.684 Tests[52323:c07] 	[FAIL] ClearTest : System.Exception : Error loading .Net reference image: Test.Sys.Drawing.GraphicsFixtures.GraphicsFixture.GraphicsFixture.ClearTest_2.png
+2012-12-17 10:39:22.685 Tests[52323:c07] 		  at DrawingTestHelper.NetDrawingTest.GetReferenceImage (System.String testName) [0x00037] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/DrawingTestHelper/DrawingTest.cs:623 
+2012-12-17 10:39:22.685 Tests[52323:c07] 		  at DrawingTestHelper.DrawingTest.PDCompare () [0x00000] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/DrawingTestHelper/DrawingTest.cs:387 
+2012-12-17 10:39:22.685 Tests[52323:c07] 		  at Test.Sys.Drawing.GraphicsFixtures.GraphicsFixture.ClearTest () [0x0000b] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/Test/Graphics.cs:739 
+2012-12-17 10:39:22.685 Tests[52323:c07] 		  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&)
+2012-12-17 10:39:22.686 Tests[52323:c07] 		  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000c0] in /Developer/MonoTouch/Source/mono/mcs/class/corlib/System.Reflection/MonoMethod.cs:234 
+2012-12-17 10:39:22.686 Tests[52323:c07] Tests run: 1 Passed: 0 Inconclusive: 0 Failed: 1 Ignored: 0
+2012-12-17 10:39:34.267 Tests[52323:c07] [Runner executing:	Test.Sys.Drawing.GraphicsFixtures.GraphicsFixture.DrawLinesTest]
+2012-12-17 10:39:34.267 Tests[52323:c07] [MonoTouch Version:	6.0.6]
+2012-12-17 10:39:34.268 Tests[52323:c07] [iPhone Simulator:	iPhone OS v6.0]
+2012-12-17 10:39:34.268 Tests[52323:c07] [Device Name:	iPhone Simulator]
+2012-12-17 10:39:34.268 Tests[52323:c07] [Device UDID:	d6209cc58d1e50b8b37d21c4841bb3bb00000000]
+2012-12-17 10:39:34.268 Tests[52323:c07] [Device Date/Time:	12/17/2012 10:39:34 AM]
+2012-12-17 10:39:34.268 Tests[52323:c07] [Bundle:	com.yourcompany.tests]
+2012-12-17 10:39:34.276 Tests[52323:c07] 	[FAIL] DrawLinesTest : System.Exception : Error loading .Net reference image: Test.Sys.Drawing.GraphicsFixtures.GraphicsFixture.GraphicsFixture.DrawLinesTest_1.png
+2012-12-17 10:39:34.276 Tests[52323:c07] 		  at DrawingTestHelper.NetDrawingTest.GetReferenceImage (System.String testName) [0x00037] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/DrawingTestHelper/DrawingTest.cs:623 
+2012-12-17 10:39:34.277 Tests[52323:c07] 		  at DrawingTestHelper.DrawingTest.PDCompare () [0x00000] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/DrawingTestHelper/DrawingTest.cs:387 
+2012-12-17 10:39:34.277 Tests[52323:c07] 		  at Test.Sys.Drawing.GraphicsFixtures.GraphicsFixture.DrawLinesTest () [0x00091] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/Test/Graphics.cs:1220 
+2012-12-17 10:39:34.277 Tests[52323:c07] 		  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&)
+2012-12-17 10:39:34.277 Tests[52323:c07] 		  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000c0] in /Developer/MonoTouch/Source/mono/mcs/class/corlib/System.Reflection/MonoMethod.cs:234 
+2012-12-17 10:39:34.278 Tests[52323:c07] Tests run: 1 Passed: 0 Inconclusive: 0 Failed: 1 Ignored: 0
+2012-12-17 10:40:40.222 Tests[52323:c07] [Runner executing:	Test.Sys.Drawing.GraphicsFixtures.GraphicsFixturePropPageUnit1.GraphicsFixture.ClearTest]
+2012-12-17 10:40:40.222 Tests[52323:c07] [MonoTouch Version:	6.0.6]
+2012-12-17 10:40:40.223 Tests[52323:c07] [iPhone Simulator:	iPhone OS v6.0]
+2012-12-17 10:40:40.223 Tests[52323:c07] [Device Name:	iPhone Simulator]
+2012-12-17 10:40:40.223 Tests[52323:c07] [Device UDID:	d6209cc58d1e50b8b37d21c4841bb3bb00000000]
+2012-12-17 10:40:40.223 Tests[52323:c07] [Device Date/Time:	12/17/2012 10:40:40 AM]
+2012-12-17 10:40:40.224 Tests[52323:c07] [Bundle:	com.yourcompany.tests]
+2012-12-17 10:40:40.229 Tests[52323:c07] 	[FAIL] GraphicsFixture.ClearTest : System.Exception : Error loading .Net reference image: Test.Sys.Drawing.GraphicsFixtures.GraphicsFixture.GraphicsFixturePropPageUnit1.ClearTest_1.png
+2012-12-17 10:40:40.229 Tests[52323:c07] 		  at DrawingTestHelper.NetDrawingTest.GetReferenceImage (System.String testName) [0x00037] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/DrawingTestHelper/DrawingTest.cs:623 
+2012-12-17 10:40:40.229 Tests[52323:c07] 		  at DrawingTestHelper.DrawingTest.PDCompare () [0x00000] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/DrawingTestHelper/DrawingTest.cs:387 
+2012-12-17 10:40:40.229 Tests[52323:c07] 		  at Test.Sys.Drawing.GraphicsFixtures.GraphicsFixture.ClearTest () [0x0000b] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/Test/Graphics.cs:739 
+2012-12-17 10:40:40.230 Tests[52323:c07] 		  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&)
+2012-12-17 10:40:40.230 Tests[52323:c07] 		  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000c0] in /Developer/MonoTouch/Source/mono/mcs/class/corlib/System.Reflection/MonoMethod.cs:234 
+2012-12-17 10:40:40.230 Tests[52323:c07] Tests run: 1 Passed: 0 Inconclusive: 0 Failed: 1 Ignored: 0
+2012-12-17 10:40:59.437 Tests[52323:c07] [Runner executing:	Test.Sys.Drawing.GraphicsFixtures.GraphicsFixturePropPageUnit1.GraphicsFixture.DrawLinesTest]
+2012-12-17 10:40:59.437 Tests[52323:c07] [MonoTouch Version:	6.0.6]
+2012-12-17 10:40:59.438 Tests[52323:c07] [iPhone Simulator:	iPhone OS v6.0]
+2012-12-17 10:40:59.438 Tests[52323:c07] [Device Name:	iPhone Simulator]
+2012-12-17 10:40:59.438 Tests[52323:c07] [Device UDID:	d6209cc58d1e50b8b37d21c4841bb3bb00000000]
+2012-12-17 10:40:59.438 Tests[52323:c07] [Device Date/Time:	12/17/2012 10:40:59 AM]
+2012-12-17 10:40:59.439 Tests[52323:c07] [Bundle:	com.yourcompany.tests]
+2012-12-17 10:40:59.444 Tests[52323:c07] 	[FAIL] GraphicsFixture.DrawLinesTest : System.Exception : Error loading .Net reference image: Test.Sys.Drawing.GraphicsFixtures.GraphicsFixture.GraphicsFixturePropPageUnit1.DrawLinesTest_1.png
+2012-12-17 10:40:59.444 Tests[52323:c07] 		  at DrawingTestHelper.NetDrawingTest.GetReferenceImage (System.String testName) [0x00037] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/DrawingTestHelper/DrawingTest.cs:623 
+2012-12-17 10:40:59.444 Tests[52323:c07] 		  at DrawingTestHelper.DrawingTest.PDCompare () [0x00000] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/DrawingTestHelper/DrawingTest.cs:387 
+2012-12-17 10:40:59.445 Tests[52323:c07] 		  at Test.Sys.Drawing.GraphicsFixtures.GraphicsFixture.DrawLinesTest () [0x00091] in /Users/Jimmy/Public/Share/MonoMacSource/kjpgit/mono/mcs/class/System.Drawing/Test/DrawingTest/Test/Graphics.cs:1220 
+2012-12-17 10:40:59.445 Tests[52323:c07] 		  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&)
+2012-12-17 10:40:59.445 Tests[52323:c07] 		  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000c0] in /Developer/MonoTouch/Source/mono/mcs/class/corlib/System.Reflection/MonoMethod.cs:234 
+2012-12-17 10:40:59.445 Tests[52323:c07] Tests run: 1 Passed: 0 Inconclusive: 0 Failed: 1 Ignored: 0
