@@ -44,6 +44,7 @@ namespace System.Drawing {
 		internal Matrix modelViewMatrix;
 		float userspaceScaleX = 1, userspaceScaleY = 1;
 		private GraphicsUnit graphicsUnit = GraphicsUnit.Display;
+		private float pageScale = 1;
 		
 		public Graphics (CGContext context)
 		{
@@ -827,15 +828,27 @@ namespace System.Drawing {
 				graphicsUnit = value;
 
 				initializeMatrix(ref viewMatrix, isFlipped);
-
 				userspaceScaleX = GraphicsUnitConvertX(1);
 				userspaceScaleY = GraphicsUnitConvertY(1);
-				viewMatrix.Scale(userspaceScaleX, userspaceScaleY, MatrixOrder.Append);
+				viewMatrix.Scale(userspaceScaleX * pageScale, userspaceScaleY * pageScale, MatrixOrder.Append);
 				applyModelView();
-				//setupUserSpace();
 			} 
 		}
-		public float PageScale { get; set; }
+
+		public float PageScale 
+		{ 
+			get { return pageScale; }
+			set {
+				// TODO: put some validation in here maybe?  Need to 
+				pageScale = value;
+				initializeMatrix(ref viewMatrix, isFlipped);
+				userspaceScaleX = GraphicsUnitConvertX(1);
+				userspaceScaleY = GraphicsUnitConvertY(1);
+				viewMatrix.Scale(userspaceScaleX * pageScale, userspaceScaleY * pageScale, MatrixOrder.Append);
+				applyModelView();
+			}
+		}
+
 		public TextRenderingHint TextRenderingHint { get; set; }
 		
 		public static Graphics FromImage (Image image)
