@@ -17,6 +17,8 @@ using System.Drawing.Text;
 
 #if MONOMAC
 using MonoMac.CoreGraphics;
+using MonoMac.AppKit;
+using MonoMac.Foundation;
 #else
 using MonoTouch.CoreGraphics;
 using MonoTouch.UIKit;
@@ -27,18 +29,143 @@ namespace System.Drawing {
 	public sealed partial class Graphics : MarshalByRefObject, IDisposable {
 		internal CGContext context;
 		internal Pen LastPen;
+		internal SizeF contextUserSpace;
+		internal RectangleF boundingBox, clipRegion;
+		internal GraphicsUnit quartzUnit = GraphicsUnit.Point;
+		internal object nativeObject;
+		internal bool isFlipped;
+		// Need to keep a transform around, since it is not possible to
+		// set the transform on the context, merely to concatenate.
+		CGAffineTransform transform;
+
+		// User Space variables
+		internal Matrix modelMatrix;
+		internal Matrix viewMatrix;
+		internal Matrix modelViewMatrix;
+		float userspaceScaleX = 1, userspaceScaleY = 1;
+		private GraphicsUnit graphicsUnit = GraphicsUnit.Display;
+		private float pageScale = 1;
 		
 		public Graphics (CGContext context)
 		{
 			if (context == null)
 				throw new ArgumentNullException ("context");
-			
-			this.context = context;
+
+			InitializeContext(context);
 		}
-		
-		// Need to keep a transform around, since it is not possible to
-		// set the transform on the context, merely to concatenate.
-		CGAffineTransform transform;
+#if MONOTOUCH
+		public Graphics() {
+
+			var gc = UIGraphics.GetCurrentContext ();
+			nativeObject = gc;
+			
+			InitializeContext(gc);
+		}
+#endif
+
+#if MONOMAC
+		public Graphics() {
+			var gc = NSGraphicsContext.CurrentContext;
+
+			nativeObject = gc;
+			
+			isFlipped = gc.IsFlipped;
+
+			InitializeContext(gc.GraphicsPort);
+		}
+#endif
+		private void InitializeContext(CGContext context) 
+		{
+			this.context = context;
+			
+			boundingBox = context.GetClipBoundingBox();
+
+			modelMatrix = new Matrix();
+			viewMatrix = new Matrix();
+
+			ResetTransform();
+
+			PageUnit = GraphicsUnit.Display;
+			PageScale = 1;
+		}
+
+		internal float GraphicsUnitConvertX (float x)
+		{
+			return GraphicsUnitConversion(PageUnit, GraphicsUnit.Display, DpiX, x);
+		}
+
+		internal float GraphicsUnitConvertY (float y)
+		{
+			return GraphicsUnitConversion(PageUnit, GraphicsUnit.Display, DpiY, y);
+		}
+
+		internal float GraphicsUnitConversion (GraphicsUnit from, GraphicsUnit to, float dpi, float nSrc)
+		{	
+			float inchs = 0;
+			
+			switch (from) {
+			case GraphicsUnit.Document:
+				inchs = nSrc / 300.0f;
+				break;
+			case GraphicsUnit.Inch:
+				inchs = nSrc;
+				break;
+			case GraphicsUnit.Millimeter:
+				inchs = nSrc / 25.4f;
+				break;
+			case GraphicsUnit.Display:
+				//if (type == gtPostScript) { /* Uses 1/100th on printers */
+				//	inchs = nSrc / 100;
+				//} else { /* Pixel for video display */
+					inchs = nSrc / dpi;
+				//}
+				break;
+			case GraphicsUnit.Pixel:
+			case GraphicsUnit.World:
+				inchs = nSrc / dpi;
+				break;
+			case GraphicsUnit.Point:
+				inchs = nSrc / 72.0f;
+				break;
+//			case GraphicsUnit.Display:
+//				if (type == gtPostScript) { /* Uses 1/100th on printers */
+//					inchs = nSrc / 72.0f;
+//				} else { /* Pixel for video display */
+//					inchs = nSrc / dpi;
+//				}
+//				break;
+			default:
+				return nSrc;
+			}
+			
+			switch (to) {
+			case GraphicsUnit.Document:
+				return inchs * 300.0f;
+			case GraphicsUnit.Inch:
+				return inchs;
+			case GraphicsUnit.Millimeter:
+				return inchs * 25.4f;
+			case GraphicsUnit.Display:
+				//if (type == gtPostScript) { /* Uses 1/100th on printers */
+				//	return inchs * 100;
+				//} else { /* Pixel for video display */
+					return inchs * dpi;
+				//}
+			case GraphicsUnit.Pixel:
+			case GraphicsUnit.World:
+				return inchs * dpi;
+			case GraphicsUnit.Point:
+				return inchs * 72.0f;
+//			case GraphicsUnit.Display:
+//				if (type == gtPostScript) { /* Uses 1/100th on printers */
+//					return inchs * 72.0f;
+//				} else { /* Pixel for video display */
+//					return inchs * dpi;
+//				}
+			default:
+				return nSrc;
+			}
+		}
 		
 		~Graphics ()
 		{
@@ -59,12 +186,10 @@ namespace System.Drawing {
 				}
 			}
 		}
-		
+
 		// from: gdip_cairo_move_to, inlined to assume converts_unit=true, antialias=true
 		void MoveTo (float x, float y)
 		{
-			// FIXME: Avoid conversion if possible
-			// FIXME: Apply AA offset
 			context.MoveTo (x, y);
 		}
 		
@@ -125,7 +250,8 @@ namespace System.Drawing {
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
 
-			throw new NotImplementedException ();
+			DrawEllipticalArc(x, y, width, height, startAngle, sweepAngle, false);
+			StrokePen (pen);
 		}
 
 		// Microsoft documentation states that the signature for this member should be
@@ -234,6 +360,7 @@ namespace System.Drawing {
 			MoveTo (x1, y1);
 			LineTo (x2, y2);
 			StrokePen (pen);
+
 		}
 
 		public void DrawLine (Pen pen, float x1, float y1, float x2, float y2)
@@ -244,6 +371,7 @@ namespace System.Drawing {
 			MoveTo (x1, y1);
 			LineTo (x2, y2);
 			StrokePen (pen);
+
 		}
 		
 		public void DrawLines (Pen pen, Point [] points)
@@ -256,7 +384,7 @@ namespace System.Drawing {
 			int count = points.Length;
 			if (count < 2)
 				return;
-			
+
 			MoveTo (points [0]);
 			for (int i = 1; i < count; i++)
 				LineTo (points [i]);
@@ -273,11 +401,12 @@ namespace System.Drawing {
 			int count = points.Length;
 			if (count < 2)
 				return;
-			
+
 			MoveTo (points [0]);
 			for (int i = 1; i < count; i++)
 				LineTo (points [i]);
 			StrokePen (pen);
+
 		}
 
 		void RectanglePath (float x1, float y1, float x2, float y2)
@@ -285,15 +414,23 @@ namespace System.Drawing {
 			MoveTo (x1, y1);
 			LineTo (x1, y2);
 			LineTo (x2, y2);
-			LineTo (x1, y2);
+			LineTo (x2, y1);
 			context.ClosePath ();
 		}
 			
+		void RectanglePath (RectangleF rectangle) 
+		{
+			MoveTo (rectangle.Location);
+			context.AddRect(rectangle);
+			context.ClosePath();
+		}
+
 		public void DrawRectangle (Pen pen, float x1, float y1, float x2, float y2)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			RectanglePath (x1, y1, x2, y2);
+
+			RectanglePath (new RectangleF(x1, y1, x2, y2));
 			StrokePen (pen);
 		}
 		
@@ -301,7 +438,7 @@ namespace System.Drawing {
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			RectanglePath (x1, y1, x2, y2);
+			RectanglePath (new RectangleF(x1, y1, x2, y2));
 			StrokePen (pen);
 		}
 		
@@ -309,48 +446,56 @@ namespace System.Drawing {
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			RectanglePath (rect.X, rect.Y, rect.Right, rect.Bottom);
+			RectanglePath (rect);
 			StrokePen (pen);
+
 		}
 
 		public void DrawRectangle (Pen pen, Rectangle rect)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			RectanglePath (rect.X, rect.Y, rect.Right, rect.Bottom);
+
+			RectanglePath (new RectangleF(rect.X, rect.Y, rect.Width, rect.Height));
 			StrokePen (pen);
+
 		}
 
 		public void FillRectangle (Brush brush, float x1, float y1, float x2, float y2)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
-			RectanglePath (x1, y1, x2, y2);
+			RectanglePath (new RectangleF(x1, y1, x2, y2));
 			FillBrush (brush);
+
 		}
 
 		public void FillRectangle (Brush brush, Rectangle rect)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
-			RectanglePath (rect.X, rect.Y, rect.Right, rect.Bottom);
+			RectanglePath (new RectangleF(rect.X, rect.Y, rect.Width, rect.Height));
 			FillBrush (brush);
+
 		}
 		
 		public void FillRectangle (Brush brush, RectangleF rect)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
-			RectanglePath (rect.X, rect.Y, rect.Right, rect.Bottom);
+			RectanglePath (new RectangleF(rect.X, rect.Y, rect.Width, rect.Height));
 			FillBrush (brush);
+
 		}
 
 		public void FillRectangle (Brush brush, int x1, int y1, int x2, int y2)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
-			RectanglePath (x1, y1, x2, y2);
+
+			RectanglePath (new RectangleF(x1, y1, x2, y2));
 			FillBrush (brush);
+
 		}
 
 		
@@ -370,6 +515,7 @@ namespace System.Drawing {
 				throw new ArgumentNullException ("pen");
 			pen.Setup (this, false);
 			context.StrokeEllipseInRect (rect);
+
 		}
 
 		public void DrawEllipse (Pen pen, int x1, int y1, int x2, int y2)
@@ -390,6 +536,7 @@ namespace System.Drawing {
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
 			context.StrokeEllipseInRect (new RectangleF (x, y, width, height));
+
 		}
 
 		public void FillEllipse (Brush brush, RectangleF rect)
@@ -398,6 +545,7 @@ namespace System.Drawing {
 				throw new ArgumentNullException ("brush");
 			brush.Setup (this, true);
 			context.FillEllipseInRect (rect);
+
 		}
 
 		public void FillEllipse (Brush brush, int x1, int y1, int x2, int y2)
@@ -410,24 +558,55 @@ namespace System.Drawing {
 			FillEllipse (brush, new RectangleF (x1, y1, x2, y2));
 		}
 
-		public void ResetTransform ()
+		private void initializeMatrix(ref Matrix matrix, bool isFlipped) 
 		{
+			if (!isFlipped) 
+			{
+//				matrix.Reset();
+//				matrix.Translate(0, boundingBox.Height, MatrixOrder.Append);
+//				matrix.Scale(1,-1, MatrixOrder.Append);
+				matrix = new Matrix(
+					1, 0, 0, -1, 0, boundingBox.Height);
+				
+			}
+			else {
+				matrix.Reset();
+			}
+			//matrix.Reset();
+		}
+
+		private void applyModelView() {
+			
 			// Since there is no context.SetCTM, only ConcatCTM
 			// get the current transform, invert it, and concat this to
 			// obtain the identity.   Then we concatenate the value passed
-			var transform = context.GetCTM ();
-			transform.Invert ();
-			context.ConcatCTM (transform);
+			context.ConcatCTM (context.GetCTM().Invert());
+			var modelView = modelMatrix.Clone();
+			modelView.Multiply(viewMatrix, MatrixOrder.Prepend);
+
+//			Console.WriteLine("------------ apply Model View ------");
+//			Console.WriteLine("Model: " + modelMatrix.transform);
+//			Console.WriteLine("View: " + viewMatrix.transform);
+//			Console.WriteLine("ModelView: " + modelView.transform);
+//			Console.WriteLine("------------ end apply Model View ------\n\n");
+			// we apply the matrix passed to the context
+			context.ConcatCTM (modelView.transform);
+			
+		} 
+
+		public void ResetTransform ()
+		{
+			modelMatrix.Reset();
+			applyModelView();
 		}
 		
 		public Matrix Transform {
 			get {
-				return new Matrix (context.GetCTM ());
+				return modelMatrix;
 			}
 			set {
-				ResetTransform ();
-				// Set the new value
-				context.ConcatCTM (value.transform);
+				modelMatrix = value;
+				applyModelView();
 			}
 		}
 
@@ -438,8 +617,9 @@ namespace System.Drawing {
 
 		public void RotateTransform (float angle, MatrixOrder order)
 		{
-			Console.WriteLine ("Currently does not support anything bur prepend mode");
-			context.RotateCTM (angle);
+			//Console.WriteLine ("Currently does not support anything bur prepend mode");
+			modelMatrix.Rotate(angle, order);
+			applyModelView();
 		}
 		
 		public void TranslateTransform (float tx, float ty)
@@ -449,8 +629,10 @@ namespace System.Drawing {
 		
 		public void TranslateTransform (float tx, float ty, MatrixOrder order)
 		{
-			Console.WriteLine ("Currently does not support anything bur prepend mode");
-			context.TranslateCTM (tx, ty);
+			//Console.WriteLine ("Currently does not support anything but prepend mode");
+			// Here we use the negative of y to turn the transform from left to right handed.
+			modelMatrix.Translate(tx, -ty, order);
+			applyModelView();
 		}
 		
 		public void ScaleTransform (float sx, float sy)
@@ -506,7 +688,7 @@ namespace System.Drawing {
 				return null;
 			int len = points.Length;
 			var result = new PointF [len];
-			for (int i = 0; points.Length < len; i++)
+			for (int i = 0; i < len; i++)
 				result [i] = new PointF (points [i].X, points [i].Y);
 			return result;
 		}
@@ -637,9 +819,36 @@ namespace System.Drawing {
 				compositing_mode = value;
 			}
 		}
-		
-		public GraphicsUnit PageUnit { get; set; }
-		public float PageScale { get; set; }
+
+		public GraphicsUnit PageUnit { 
+			get {
+				return graphicsUnit;
+			}
+			set {
+				graphicsUnit = value;
+
+				initializeMatrix(ref viewMatrix, isFlipped);
+				userspaceScaleX = GraphicsUnitConvertX(1);
+				userspaceScaleY = GraphicsUnitConvertY(1);
+				viewMatrix.Scale(userspaceScaleX * pageScale, userspaceScaleY * pageScale, MatrixOrder.Append);
+				applyModelView();
+			} 
+		}
+
+		public float PageScale 
+		{ 
+			get { return pageScale; }
+			set {
+				// TODO: put some validation in here maybe?  Need to 
+				pageScale = value;
+				initializeMatrix(ref viewMatrix, isFlipped);
+				userspaceScaleX = GraphicsUnitConvertX(1);
+				userspaceScaleY = GraphicsUnitConvertY(1);
+				viewMatrix.Scale(userspaceScaleX * pageScale, userspaceScaleY * pageScale, MatrixOrder.Append);
+				applyModelView();
+			}
+		}
+
 		public TextRenderingHint TextRenderingHint { get; set; }
 		
 		public static Graphics FromImage (Image image)
@@ -733,7 +942,7 @@ namespace System.Drawing {
 		
 		public bool IsClipEmpty {
 			get {
-				throw new NotImplementedException ();
+				return ClipBounds == RectangleF.Empty;
 			}
 			set {
 				throw new NotImplementedException ();
@@ -760,10 +969,10 @@ namespace System.Drawing {
 		
 		public RectangleF ClipBounds {
 			get {
-				throw new NotImplementedException ();
+				return context.GetClipBoundingBox();
 			}
 			set {
-				throw new NotImplementedException ();
+				context.ClipToRect(value);
 			}
 		}
 		
@@ -805,13 +1014,19 @@ namespace System.Drawing {
 		
 		public float DpiX { 
 			get {
-				throw new NotImplementedException ();
+				// We should probably read the NSScreen attributes and get the resolution
+				//    but there are problems getting the value from NSValue to a Rectangle
+				// We will set this to a fixed value for now
+				return 72.0f;
 			}
 		}
 
 		public float DpiY { 
 			get {
-				throw new NotImplementedException ();
+				// We should probably read the NSScreen attributes and get the resolution
+				//    but there are problems getting the value from NSValue to a Rectangle
+				// We will set this to a fixed value for now
+				return 72.0f;
 			}
 		}
 		public CompositingQuality CompositingQuality {
@@ -915,7 +1130,8 @@ namespace System.Drawing {
 		
 		public void Clear (Color color)
 		{
-			throw new NotImplementedException ();
+			context.SetFillColorWithColor(new CGColor(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f));
+			context.FillRect(ClipBounds);
 		}
 		
 		public void Restore (GraphicsState gstate)
@@ -1014,7 +1230,7 @@ namespace System.Drawing {
 			
 			throw new NotImplementedException ();
 		}
-	
+#if MONOTOUCH	
 		public void DrawIcon (Icon icon, Rectangle targetRect)
 		{
 			if (icon == null)
@@ -1041,47 +1257,7 @@ namespace System.Drawing {
 			//DrawImageUnscaled (icon.GetInternalBitmap (), targetRect);
 			throw new NotImplementedException ();
 		}
-		
-		void MakePie (float x, float y, float width, float height, float startAngle, float sweepAngle)
-		{
-			float rx, ry, cx, cy, alpha;
-			float sin_alpha, cos_alpha;
-				
-			rx = width / 2;
-			ry = height / 2;
-		
-			/* center */
-			cx = x + rx;
-			cy = y + ry;
-		
-			/* angles in radians */        
-			alpha = (float) startAngle * (float) Math.PI / 180;
-			
-	        /* adjust angle for ellipses */
-	        alpha = (float) Math.Atan2 (rx * Math.Sin (alpha), ry * Math.Cos (alpha));
-		
-			sin_alpha = (float) Math.Sin (alpha);
-			cos_alpha = (float) Math.Cos (alpha);
-		
-			/* draw pie edge */
-			if (Math.Abs (sweepAngle) >= 360)
-				MoveTo (cx + rx * cos_alpha, cy + ry * sin_alpha);
-			else {
-				MoveTo (cx, cy);
-				LineTo (cx + rx * cos_alpha, cy + ry * sin_alpha);
-			}
-		
-			/* draw the arcs */
-			//MakeArcs (x, y, width, height, startAngle, sweepAngle);
-			throw new NotImplementedException ();
-			// 
-		
-			if (Math.Abs (sweepAngle) >= 360)
-				MoveTo (cx, cy);
-			else
-				LineTo (cx, cy);
-		}
-
+#endif		
 		public void DrawPie (Pen pen, Rectangle rect, float startAngle, float sweepAngle)
 		{
 			if (pen == null)
@@ -1095,33 +1271,42 @@ namespace System.Drawing {
 				throw new ArgumentNullException ("pen");
 			DrawPie (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 		}
+
+		static double radians (float degrees) {
+			return degrees * Math.PI/180;
 		
+		}
+
 		public void DrawPie (Pen pen, float x, float y, float width, float height, float startAngle, float sweepAngle)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			// 
-			throw new NotImplementedException ();
+			DrawEllipticalArc(x,y,width,height, startAngle, sweepAngle, true);
+			StrokePen(pen);
+
 		}
 		public void FillPie (Brush brush, Rectangle rect, float startAngle, float sweepAngle)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
-			throw new NotImplementedException ();
+			DrawEllipticalArc(rect, startAngle, sweepAngle, true);
+			FillBrush(brush);
 		}
 
 		public void FillPie (Brush brush, int x, int y, int width, int height, int startAngle, int sweepAngle)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
-			throw new NotImplementedException ();
+			DrawEllipticalArc(x,y,width,height, startAngle, sweepAngle, true);
+			FillBrush(brush);
 		}
 
 		public void FillPie (Brush brush, float x, float y, float width, float height, float startAngle, float sweepAngle)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
-			throw new NotImplementedException ();
+			DrawEllipticalArc(x,y,width,height, startAngle, sweepAngle, true);
+			FillBrush(brush);
 		}
 
 		void PolygonSetup (PointF [] points)

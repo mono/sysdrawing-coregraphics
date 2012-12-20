@@ -1,0 +1,28 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="System.Drawing/SolidBrush.cs">
+    <Files>
+      <File FileName="../monomac/src/OpenGL/INativeWindow.cs" Line="44" Column="11" />
+      <File FileName="../monomac/src/OpenGL/MonoMacGameView.cs" Line="303" Column="3" />
+      <File FileName="System.Drawing/SolidBrush.cs" Line="59" Column="22" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="Samples.MonoMac" expanded="True">
+            <Node name="Example1_9" selected="True" />
+          </Node>
+          <Node name="Samples.MonoTouch" expanded="True" />
+          <Node name="sysdrawing-coregraphics" expanded="True" />
+          <Node name="sysdrawing-coregraphics-Mac" expanded="True">
+            <Node name="System.Drawing" expanded="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
