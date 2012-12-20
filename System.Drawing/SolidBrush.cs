@@ -52,19 +52,6 @@ namespace System.Drawing {
 			return new SolidBrush (color);
 		}
 
-#if MONOMAC
-		internal override void Setup (Graphics graphics, bool fill)
-		{
-			bool sourceCopy = graphics.CompositingMode == CompositingMode.SourceCopy;
-			var scolor = new CGColor(color.R / 255f, color.G/255f, color.B/255f, sourceCopy ? 1f : color.A/255f );
-			if (fill){
-				graphics.context.SetFillColorWithColor (scolor);
-
-			} else {
-				graphics.context.SetStrokeColorWithColor (scolor);
-			}
-		}
-#else
 		internal override void Setup (Graphics graphics, bool fill)
 		{
 			bool sourceCopy = graphics.CompositingMode == CompositingMode.SourceCopy;
@@ -75,6 +62,5 @@ namespace System.Drawing {
 				graphics.context.SetStrokeColor(color.R / 255f, color.G/255f, color.B/255f, sourceCopy ? 1f : color.A/255f );
 			}
 		}
-#endif
 	}
 }
