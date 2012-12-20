@@ -4,11 +4,11 @@ using System.Drawing;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
-namespace MTExample1_1
+namespace MTExample1_2
 {
-	public partial class MTExample1_1ViewController : UIViewController
+	public partial class MTExample1_2ViewController : UIViewController
 	{
-		public MTExample1_1ViewController () : base ("MTExample1_1ViewController", null)
+		public MTExample1_2ViewController () : base ("MTExample1_2ViewController", null)
 		{
 		}
 		
@@ -44,7 +44,6 @@ namespace MTExample1_1
 			// Return true for supported orientations
 			return true;
 		}
-
 	}
 }
 

@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sample", "Samples\MonoTouch
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTExample1_1", "Samples\MonoTouch\MTExample1_1\MTExample1_1.csproj", "{376D4335-5ED4-4A24-BF16-4DDFFCE61B6D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTExample1_2", "Samples\MonoTouch\MTExample1_2\MTExample1_2.csproj", "{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -166,6 +168,20 @@ Global
 		{C675FE3F-497D-4CE7-B441-3C0299B30C10}.Release|iPhone.Build.0 = Release|Any CPU
 		{C675FE3F-497D-4CE7-B441-3C0299B30C10}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{C675FE3F-497D-4CE7-B441-3C0299B30C10}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663}.AppStore|iPhone.Build.0 = AppStore|iPhone
+		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663}.AppStore|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663}.AppStore|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663}.Debug|iPhone.Build.0 = Debug|iPhone
+		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663}.Release|iPhone.ActiveCfg = Release|iPhone
+		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663}.Release|iPhone.Build.0 = Release|iPhone
+		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{F44C9F8D-979F-442C-B1BB-02B01FFBD2DB}.AppStore|iPhoneSimulator.ActiveCfg = AppStore|iPhoneSimulator
 		{F44C9F8D-979F-442C-B1BB-02B01FFBD2DB}.AppStore|iPhoneSimulator.Build.0 = AppStore|iPhoneSimulator
 		{F44C9F8D-979F-442C-B1BB-02B01FFBD2DB}.Debug|iPhone.ActiveCfg = Debug|iPhoneSimulator
@@ -209,9 +225,10 @@ Global
 		{754B158D-A774-4135-B1FB-47E1F1518024} = {A28D8EBD-ABB8-46BA-B536-7074058B0C84}
 		{F6AEFFC5-4807-49A3-83C5-661E655CB59A} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 		{376D4335-5ED4-4A24-BF16-4DDFFCE61B6D} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
+		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Samples\MonoTouch\MTExample1_1\MTExample1_1.csproj
+		StartupItem = Samples\MonoTouch\MTExample1_2\MTExample1_2.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.inheritsSet = Mono

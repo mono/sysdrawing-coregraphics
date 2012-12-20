@@ -8,8 +8,11 @@ namespace MTExample1_1
 	public class DrawingView : UIView {
 		public DrawingView (RectangleF rect) : base (rect)
 		{
+			ContentMode = UIViewContentMode.Redraw;
+			this.AutoresizingMask = UIViewAutoresizing.All;
+
 		}
-		
+
 		public override void Draw (RectangleF rect)
 		{
 			var g = new Graphics();
@@ -18,7 +21,7 @@ namespace MTExample1_1
 			
 			//RectangleF ClientRectangle = this.Bounds;
 			RectangleF ClientRectangle = rect;
-			
+			Console.WriteLine(rect);
 			// Following codes draw a line from (0, 0) to (1, 1) in unit of inch:
 			/*g.PageUnit = GraphicsUnit.Inch;
 			Pen blackPen = new Pen(Color.Black, 1/g.DpiX);
@@ -34,5 +37,6 @@ namespace MTExample1_1
 			
 			g.Dispose ();
 		}
+
 	}
 }

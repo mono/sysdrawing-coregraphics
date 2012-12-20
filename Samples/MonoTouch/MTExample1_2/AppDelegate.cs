@@ -5,7 +5,7 @@ using System.Linq;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
-namespace MTExample1_1
+namespace MTExample1_2
 {
 	// The UIApplicationDelegate for the application. This class is responsible for launching the 
 	// User Interface of the application, as well as listening (and optionally responding) to 
@@ -15,7 +15,7 @@ namespace MTExample1_1
 	{
 		// class-level declarations
 		UIWindow window;
-		MTExample1_1ViewController viewController;
+		MTExample1_2ViewController viewController;
 
 		//
 		// This method is invoked when the application has loaded and is ready to run. In this 
@@ -28,14 +28,14 @@ namespace MTExample1_1
 		{
 			window = new UIWindow (UIScreen.MainScreen.Bounds);
 			
-			viewController = new MTExample1_1ViewController ();
+			viewController = new MTExample1_2ViewController ();
 			viewController.View.AddSubview (new DrawingView (window.Bounds));
+
 			window.RootViewController = viewController;
 			window.MakeKeyAndVisible ();
-
+			
 			return true;
 		}
-
 	}
 }
 
