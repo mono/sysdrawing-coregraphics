@@ -52,6 +52,15 @@ namespace System.Drawing {
 
 			InitializeContext(context);
 		}
+#if MONOTOUCH
+		public Graphics() {
+
+			var gc = UIGraphics.GetCurrentContext ();
+			nativeObject = gc;
+			
+			InitializeContext(gc);
+		}
+#endif
 
 #if MONOMAC
 		public Graphics() {
@@ -1208,7 +1217,7 @@ namespace System.Drawing {
 			
 			throw new NotImplementedException ();
 		}
-#if MONOTOUCH || MONOMAC	
+#if MONOTOUCH	
 		public void DrawIcon (Icon icon, Rectangle targetRect)
 		{
 			if (icon == null)

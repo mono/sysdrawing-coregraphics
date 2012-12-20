@@ -155,9 +155,6 @@
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\SizeConverter.cs">
       <Link>External\SizeConverter.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\IconConverter.cs">
-      <Link>External\IconConverter.cs</Link>
-    </Compile>
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\RectangleConverter.cs">
       <Link>External\RectangleConverter.cs</Link>
     </Compile>
@@ -236,11 +233,12 @@
     <Compile Include="..\System.Drawing\StringFormat.cs">
       <Link>System.Drawing\StringFormat.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\Icon.cs">
-      <Link>External\Icon.cs</Link>
-    </Compile>
     <Compile Include="..\System.Drawing\Graphics-DrawEllipticalArc.cs">
       <Link>System.Drawing\Graphics-DrawEllipticalArc.cs</Link>
+    </Compile>
+    <Compile Include="System.Drawing\Icon.cs" />
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\IconConverter.cs">
+      <Link>System.Drawing\IconConverter.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

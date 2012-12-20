@@ -63,7 +63,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\sysdrawing-coregraphics.csproj">
+    <ProjectReference Include="..\..\..\sysdrawing-coregraphics.csproj">
       <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
       <Name>sysdrawing-coregraphics</Name>
     </ProjectReference>
