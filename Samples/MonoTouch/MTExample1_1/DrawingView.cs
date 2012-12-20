@@ -10,14 +10,14 @@ namespace MTExample1_1
 		{
 			ContentMode = UIViewContentMode.Redraw;
 			this.AutoresizingMask = UIViewAutoresizing.All;
-
+			BackgroundColor = UIColor.White;
 		}
 
 		public override void Draw (RectangleF rect)
 		{
 			var g = new Graphics();
 
-			g.Clear(Color.White);
+			//g.Clear(Color.White);
 			
 			//RectangleF ClientRectangle = this.Bounds;
 			RectangleF ClientRectangle = rect;
