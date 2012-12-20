@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTExample1_1", "Samples\Mon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTExample1_2", "Samples\MonoTouch\MTExample1_2\MTExample1_2.csproj", "{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTExample1_4", "Samples\MonoTouch\MTExample1_4\MTExample1_4.csproj", "{07474313-1134-49F6-BF0F-0D229CD505EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -48,6 +50,20 @@ Global
 		AppStore|iPhone = AppStore|iPhone
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{07474313-1134-49F6-BF0F-0D229CD505EA}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{07474313-1134-49F6-BF0F-0D229CD505EA}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{07474313-1134-49F6-BF0F-0D229CD505EA}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{07474313-1134-49F6-BF0F-0D229CD505EA}.AppStore|iPhone.Build.0 = AppStore|iPhone
+		{07474313-1134-49F6-BF0F-0D229CD505EA}.AppStore|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{07474313-1134-49F6-BF0F-0D229CD505EA}.AppStore|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{07474313-1134-49F6-BF0F-0D229CD505EA}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{07474313-1134-49F6-BF0F-0D229CD505EA}.Debug|iPhone.Build.0 = Debug|iPhone
+		{07474313-1134-49F6-BF0F-0D229CD505EA}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{07474313-1134-49F6-BF0F-0D229CD505EA}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{07474313-1134-49F6-BF0F-0D229CD505EA}.Release|iPhone.ActiveCfg = Release|iPhone
+		{07474313-1134-49F6-BF0F-0D229CD505EA}.Release|iPhone.Build.0 = Release|iPhone
+		{07474313-1134-49F6-BF0F-0D229CD505EA}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{07474313-1134-49F6-BF0F-0D229CD505EA}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}.AppStore|iPhoneSimulator.ActiveCfg = Debug|Any CPU
 		{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}.AppStore|iPhoneSimulator.Build.0 = Debug|Any CPU
 		{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}.Debug|iPhone.ActiveCfg = Debug|Any CPU
@@ -226,9 +242,10 @@ Global
 		{F6AEFFC5-4807-49A3-83C5-661E655CB59A} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 		{376D4335-5ED4-4A24-BF16-4DDFFCE61B6D} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
+		{07474313-1134-49F6-BF0F-0D229CD505EA} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Samples\MonoTouch\MTExample1_2\MTExample1_2.csproj
+		StartupItem = Samples\MonoTouch\MTExample1_4\MTExample1_4.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.inheritsSet = Mono
