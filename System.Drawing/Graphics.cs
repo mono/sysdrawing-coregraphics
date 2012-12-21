@@ -67,6 +67,13 @@ namespace System.Drawing {
 		public Graphics() {
 			var gc = NSGraphicsContext.CurrentContext;
 
+			// testing for now
+			//			var attribs = gc.Attributes;
+			//			attribs = NSScreen.MainScreen.DeviceDescription;
+			//			NSValue asdf = (NSValue)attribs["NSDeviceResolution"];
+			//			var size = asdf.SizeFValue;
+			// ----------------------
+
 			nativeObject = gc;
 			
 			isFlipped = gc.IsFlipped;
@@ -91,82 +98,14 @@ namespace System.Drawing {
 
 		internal float GraphicsUnitConvertX (float x)
 		{
-			return GraphicsUnitConversion(PageUnit, GraphicsUnit.Display, DpiX, x);
+			return ConversionHelpers.GraphicsUnitConversion(PageUnit, GraphicsUnit.Display, DpiX, x);
 		}
 
 		internal float GraphicsUnitConvertY (float y)
 		{
-			return GraphicsUnitConversion(PageUnit, GraphicsUnit.Display, DpiY, y);
+			return ConversionHelpers.GraphicsUnitConversion(PageUnit, GraphicsUnit.Display, DpiY, y);
 		}
 
-		internal float GraphicsUnitConversion (GraphicsUnit from, GraphicsUnit to, float dpi, float nSrc)
-		{	
-			float inchs = 0;
-			
-			switch (from) {
-			case GraphicsUnit.Document:
-				inchs = nSrc / 300.0f;
-				break;
-			case GraphicsUnit.Inch:
-				inchs = nSrc;
-				break;
-			case GraphicsUnit.Millimeter:
-				inchs = nSrc / 25.4f;
-				break;
-			case GraphicsUnit.Display:
-				//if (type == gtPostScript) { /* Uses 1/100th on printers */
-				//	inchs = nSrc / 100;
-				//} else { /* Pixel for video display */
-					inchs = nSrc / dpi;
-				//}
-				break;
-			case GraphicsUnit.Pixel:
-			case GraphicsUnit.World:
-				inchs = nSrc / dpi;
-				break;
-			case GraphicsUnit.Point:
-				inchs = nSrc / 72.0f;
-				break;
-//			case GraphicsUnit.Display:
-//				if (type == gtPostScript) { /* Uses 1/100th on printers */
-//					inchs = nSrc / 72.0f;
-//				} else { /* Pixel for video display */
-//					inchs = nSrc / dpi;
-//				}
-//				break;
-			default:
-				return nSrc;
-			}
-			
-			switch (to) {
-			case GraphicsUnit.Document:
-				return inchs * 300.0f;
-			case GraphicsUnit.Inch:
-				return inchs;
-			case GraphicsUnit.Millimeter:
-				return inchs * 25.4f;
-			case GraphicsUnit.Display:
-				//if (type == gtPostScript) { /* Uses 1/100th on printers */
-				//	return inchs * 100;
-				//} else { /* Pixel for video display */
-					return inchs * dpi;
-				//}
-			case GraphicsUnit.Pixel:
-			case GraphicsUnit.World:
-				return inchs * dpi;
-			case GraphicsUnit.Point:
-				return inchs * 72.0f;
-//			case GraphicsUnit.Display:
-//				if (type == gtPostScript) { /* Uses 1/100th on printers */
-//					return inchs * 72.0f;
-//				} else { /* Pixel for video display */
-//					return inchs * dpi;
-//				}
-			default:
-				return nSrc;
-			}
-		}
-		
 		~Graphics ()
 		{
 			Dispose (false);
@@ -582,8 +521,9 @@ namespace System.Drawing {
 			// get the current transform, invert it, and concat this to
 			// obtain the identity.   Then we concatenate the value passed
 			context.ConcatCTM (context.GetCTM().Invert());
-			var modelView = modelMatrix.Clone();
-			modelView.Multiply(viewMatrix, MatrixOrder.Prepend);
+//			var modelView = modelMatrix.Clone();
+//			modelView.Multiply(viewMatrix, MatrixOrder.Prepend);
+			var modelView = CGAffineTransform.Multiply(modelMatrix.transform, viewMatrix.transform);
 
 //			Console.WriteLine("------------ apply Model View ------");
 //			Console.WriteLine("Model: " + modelMatrix.transform);
@@ -591,8 +531,9 @@ namespace System.Drawing {
 //			Console.WriteLine("ModelView: " + modelView.transform);
 //			Console.WriteLine("------------ end apply Model View ------\n\n");
 			// we apply the matrix passed to the context
-			context.ConcatCTM (modelView.transform);
-			
+//			context.ConcatCTM (modelView.transform);
+			context.ConcatCTM (modelView);
+
 		} 
 
 		public void ResetTransform ()
@@ -618,8 +559,11 @@ namespace System.Drawing {
 
 		public void RotateTransform (float angle, MatrixOrder order)
 		{
-			//Console.WriteLine ("Currently does not support anything bur prepend mode");
-			modelMatrix.Rotate(angle, order);
+			//modelMatrix.Rotate(angle.ToRadians(), order);
+			var tmat = CGAffineTransform.MakeRotation(angle.ToRadians());
+			tmat.Multiply(modelMatrix.transform);
+			modelMatrix.transform = tmat;
+
 			applyModelView();
 		}
 		
@@ -632,7 +576,12 @@ namespace System.Drawing {
 		{
 			//Console.WriteLine ("Currently does not support anything but prepend mode");
 			// Here we use the negative of y to turn the transform from left to right handed.
-			modelMatrix.Translate(tx, -ty, order);
+			//modelMatrix.Translate(tx, -ty, order);
+
+			var tmat = CGAffineTransform.MakeTranslation(tx, ty);
+			tmat.Multiply(modelMatrix.transform);
+			modelMatrix.transform = tmat;
+
 			applyModelView();
 		}
 		
@@ -1102,8 +1051,30 @@ namespace System.Drawing {
 		
 		public SizeF MeasureString (string textg, Font font, RectangleF rect)
 		{
-			throw new NotImplementedException ();
+			
+			// As per documentation 
+			// https://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_text/dq_text.html#//apple_ref/doc/uid/TP30001066-CH213-TPXREF101
+			// 
+			// * Note * Not sure if we should save off the graphic state, set context transform to identity
+			//  and restore state to do the measurement.  Something to be looked into.
+			context.TextPosition = rect.Location;
+			var startPos = context.TextPosition;
+			context.SelectFont ( font.nativeFont.FullName,
+			                    font.SizeInPoints,
+			                    CGTextEncoding.MacRoman);
+			context.SetTextDrawingMode(CGTextDrawingMode.Invisible); 
+			
+			context.SetCharacterSpacing(1); 
+			var textMatrix = CGAffineTransform.MakeScale(1f,-1f);
+			context.TextMatrix = textMatrix;
+
+			context.ShowTextAtPoint(rect.X, rect.Y, textg, textg.Length); 
+			var endPos = context.TextPosition;
+			var measure = new SizeF(startPos.X - endPos.X, startPos.Y - endPos.Y);
+			
+			return measure;
 		}
+
 		public SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat)
 		{
 			throw new NotImplementedException ();
@@ -1417,7 +1388,29 @@ namespace System.Drawing {
 				throw new ArgumentNullException ("brush");
 			if (s == null || s.Length == 0)
 				return;
-			throw new NotImplementedException ();
+			
+			context.SaveState();
+			var saveMatrix = context.TextMatrix;
+			
+			context.SelectFont ( font.nativeFont.FullName,
+			                    font.SizeInPoints,
+			                    CGTextEncoding.MacRoman);
+			context.SetCharacterSpacing(1); // 4
+			context.SetTextDrawingMode(CGTextDrawingMode.Fill); // 5
+			
+			// Setup both the stroke and the fill ?
+			brush.Setup(this, true);
+			brush.Setup(this, false);
+			
+			var textMatrix = CGAffineTransform.MakeScale(1f,-1f);
+			
+			context.TextMatrix = textMatrix; //.transform;//CGAffineTransform.MakeIdentity();
+			
+			//textMatrix.transform;     // CGAffineTransform.MakeRotation(45 * (float)Math.PI / 180); // 9
+			context.ShowTextAtPoint(layoutRectangle.X, layoutRectangle.Y, s, s.Length); 
+			context.TextMatrix = saveMatrix;
+			context.RestoreState();
+			
 		}	
 		
 		public void Flush ()

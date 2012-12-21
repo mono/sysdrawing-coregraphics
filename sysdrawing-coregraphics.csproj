@@ -200,6 +200,7 @@
       <Link>External\BitmapData.cs</Link>
     </Compile>
     <Compile Include="System.Drawing\Graphics-DrawEllipticalArc.cs" />
+    <Compile Include="Utilities\ConversionHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />

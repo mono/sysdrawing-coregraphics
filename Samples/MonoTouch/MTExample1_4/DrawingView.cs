@@ -55,19 +55,19 @@ namespace MTExample1_4
 			                               (int)ClientRectangle.Width, (int)ClientRectangle.Height);
 			drawingRectangle = new Rectangle(rect.Location, rect.Size);
 			Size sz = new Size(rect.Width, rect.Height);
-			//var font = new Font("Arial",12.0f);
-			//SizeF stringSize = g.MeasureString(s, font);
-			//Point Middle = new Point(sz.Width / 30,
-			//                        sz.Height / 2 - (int)stringSize.Height / 2);
+			var font = new Font("Arial",14.0f);
+			SizeF stringSize = g.MeasureString(s, font);
+			Point Middle = new Point(sz.Width / 30,
+			                        sz.Height / 2 - (int)stringSize.Height / 2);
 			g.DrawLine(Pens.Black, new Point(0, rect.Height/2), new Point(rect.Width, rect.Height/2));
 			g.DrawLine(Pens.Black, new Point(rect.Width / 2, 0), new Point(rect.Width / 2, rect.Height));
-			//g.TranslateTransform(Middle.X, Middle.Y);
-			//g.RotateTransform (-90);
+			g.TranslateTransform(Middle.X, Middle.Y);
+			g.RotateTransform (-90);
 			//StringFormat format = new StringFormat(StringFormatFlags.NoClip);
 			StringFormat format = new StringFormat();
 			format.Alignment = StringAlignment.Center;
 			//format.LineAlignment = StringAlignment.Center;
-			//g.DrawString (s, font, Brushes.Black, 0, 0, format);
+			g.DrawString (s, font, Brushes.Black, 0, 0, format);
 			
 			g.Dispose();
 		}

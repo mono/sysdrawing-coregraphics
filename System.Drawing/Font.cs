@@ -13,8 +13,10 @@ namespace System.Drawing
 	public sealed class Font : MarshalByRefObject, ISerializable, ICloneable, IDisposable {
 		const byte DefaultCharSet = 1;
 
-		CGFont font;
-
+		internal CGFont nativeFont;
+		float sizeInPoints = 0;
+		GraphicsUnit unit = GraphicsUnit.Point;
+		float size;
 
 		public Font (FontFamily family, float emSize,  GraphicsUnit unit)
 			: this (family, emSize, FontStyle.Regular, unit, DefaultCharSet, false)
@@ -74,9 +76,18 @@ namespace System.Drawing
 		}
 
 		public Font (string familyName, float emSize, FontStyle style,
-				GraphicsUnit unit, byte gdiCharSet, bool  gdiVerticalFont )
+		             GraphicsUnit unit, byte gdiCharSet, bool  gdiVerticalFont )
 		{
-			throw new NotImplementedException ();
+			if (emSize <= 0)
+				throw new ArgumentException("emSize is less than or equal to 0, evaluates to infinity, or is not a valid number.","emSize");
+			
+			nativeFont = CGFont.CreateWithFontName(familyName);
+			sizeInPoints = emSize;
+			this.unit = unit;
+			
+			// FIXME
+			// I do not like the hard coded 72 but am just trying to boot strap the Font class right now
+			size = ConversionHelpers.GraphicsUnitConversion(GraphicsUnit.Point, unit, 72.0f, sizeInPoints); 
 		}
 
 		#region ISerializable implementation
@@ -94,11 +105,46 @@ namespace System.Drawing
 		#endregion
 
 		#region IDisposable implementation
+		~Font ()
+		{
+			Dispose (false);
+		}
+		
 		public void Dispose ()
 		{
-			throw new NotImplementedException ();
+			Dispose (true);
 		}
-		#endregion
+		
+		internal void Dispose (bool disposing)
+		{
+			if (disposing){
+				if (nativeFont != null){
+					nativeFont.Dispose ();
+					nativeFont = null;
+				}
+			}
+		}
+		
+#endregion
+		
+		public float SizeInPoints 
+		{
+			get { return sizeInPoints; }
+		}
+		
+		public GraphicsUnit Unit 
+		{
+			get { return unit; }
+			
+		}
+		
+		public float Size 
+		{
+			get { 
+				return size; 
+			}
+			
+		}
 	}
 }
 

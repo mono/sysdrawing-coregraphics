@@ -6,6 +6,7 @@ using System.Drawing.Drawing2D;
 
 using MonoMac.Foundation;
 using MonoMac.AppKit;
+using MonoMac.CoreGraphics;
 using System.Drawing;
 
 namespace Example1_4
@@ -53,6 +54,51 @@ namespace Example1_4
 		
 		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
 		{
+
+			// This is here for testing and nothing else
+			// Will take this out after I get things working again
+//			var context = NSGraphicsContext.CurrentContext.GraphicsPort;
+//			RectangleF contextRect = dirtyRect;
+//			
+//			float w, h;
+//			w = contextRect.Size.Width;
+//			h = contextRect.Size.Height;
+//
+//			context.SaveState();
+//			context.SelectFont (
+//				"Helvetica-Bold",
+//				h/20,
+//				CGTextEncoding.MacRoman);
+//			context.SetCharacterSpacing(10); // 4
+//			context.SetTextDrawingMode(CGTextDrawingMode.FillStroke); // 5
+//			
+//			
+//			var viewMatrix = new CGAffineTransform(1,0,0,-1,0,h);
+//			//			var scmat = CGAffineTransform.MakeScale(2f,2f);
+//			//			scmat.Multiply(viewMatrix);
+//			
+//			var modelMatrix = CGAffineTransform.MakeIdentity();
+//			var tmat = CGAffineTransform.MakeTranslation(w/2, h / 2);
+//			tmat.Multiply(modelMatrix);
+//			modelMatrix = tmat;
+//			var rotMat = CGAffineTransform.MakeRotation(-90 * (float)Math.PI / 180);
+//			rotMat.Multiply(modelMatrix);
+//			modelMatrix = rotMat;
+//			
+//			var modelView = CGAffineTransform.Multiply(modelMatrix, viewMatrix);
+//			
+//			context.ConcatCTM(modelView);
+//			
+//			context.SetFillColor(0f, 1f, 0f, .5f); 
+//			context.SetStrokeColor(0f, 0f, 1f, 1f); 
+//			context.TextMatrix = CGAffineTransform.MakeScale(1f,-1f); // 9
+//			context.ShowTextAtPoint(0, 0, "Quartz 2D", 9); 
+//			context.RestoreState();
+//			context.Dispose();
+			// End of testing ---------------------
+
+
+
 			Graphics g = new Graphics();
 			// Create a pen object:
 			Pen aPen = new Pen(Color.Blue, 4);
@@ -63,7 +109,6 @@ namespace Example1_4
 			aPen.DashStyle = DashStyle.Dot;
 			aPen.DashOffset = 50;
 
-			//g.ScaleTransform(4,4);
 			//draw straight line:
 			g.DrawLine(aPen, 50, 30, 200, 30);
 			// define point array to draw a curve:
@@ -86,19 +131,19 @@ namespace Example1_4
 			                               (int)ClientRectangle.Width, (int)ClientRectangle.Height);
 			drawingRectangle = new Rectangle(rect.Location, rect.Size);
 			Size sz = new Size(rect.Width, rect.Height);
-			//var font = new Font("Arial",12.0f);
-			//SizeF stringSize = g.MeasureString(s, font);
-			//Point Middle = new Point(sz.Width / 30,
-			 //                        sz.Height / 2 - (int)stringSize.Height / 2);
+			var font = new Font("Arial",20.0f);
+			SizeF stringSize = g.MeasureString(s, font);
+			Point Middle = new Point(sz.Width / 30,
+			                        sz.Height / 2 - (int)stringSize.Height / 2);
 			g.DrawLine(Pens.Black, new Point(0, rect.Height/2), new Point(rect.Width, rect.Height/2));
 			g.DrawLine(Pens.Black, new Point(rect.Width / 2, 0), new Point(rect.Width / 2, rect.Height));
-			//g.TranslateTransform(Middle.X, Middle.Y);
-			//g.RotateTransform (-90);
+			g.TranslateTransform(Middle.X, Middle.Y);
+			g.RotateTransform (-90);
 			//StringFormat format = new StringFormat(StringFormatFlags.NoClip);
 			StringFormat format = new StringFormat();
 			format.Alignment = StringAlignment.Center;
 			//format.LineAlignment = StringAlignment.Center;
-			//g.DrawString (s, font, Brushes.Black, 0, 0, format);
+			g.DrawString (s, font, Brushes.Black, 0, 0, format);
 
 			g.Dispose();
 		}

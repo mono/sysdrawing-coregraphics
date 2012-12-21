@@ -54,6 +54,7 @@ namespace Example1_5a
 			SolidBrush aBrush = new SolidBrush(Color.Red);
 
 			g.PageUnit = GraphicsUnit.Inch;
+			g.PageScale = 2;
 
 			// Draw a rectangle:
 			g.DrawRectangle(aPen, .20f, .20f, 1.00f, .50f);
