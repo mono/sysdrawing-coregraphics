@@ -521,8 +521,7 @@ namespace System.Drawing {
 			// get the current transform, invert it, and concat this to
 			// obtain the identity.   Then we concatenate the value passed
 			context.ConcatCTM (context.GetCTM().Invert());
-//			var modelView = modelMatrix.Clone();
-//			modelView.Multiply(viewMatrix, MatrixOrder.Prepend);
+
 			var modelView = CGAffineTransform.Multiply(modelMatrix.transform, viewMatrix.transform);
 
 //			Console.WriteLine("------------ apply Model View ------");
@@ -531,7 +530,6 @@ namespace System.Drawing {
 //			Console.WriteLine("ModelView: " + modelView.transform);
 //			Console.WriteLine("------------ end apply Model View ------\n\n");
 			// we apply the matrix passed to the context
-//			context.ConcatCTM (modelView.transform);
 			context.ConcatCTM (modelView);
 
 		} 
@@ -559,11 +557,7 @@ namespace System.Drawing {
 
 		public void RotateTransform (float angle, MatrixOrder order)
 		{
-			//modelMatrix.Rotate(angle.ToRadians(), order);
-			var tmat = CGAffineTransform.MakeRotation(angle.ToRadians());
-			tmat.Multiply(modelMatrix.transform);
-			modelMatrix.transform = tmat;
-
+			modelMatrix.Rotate(angle.ToRadians(), order);
 			applyModelView();
 		}
 		
@@ -575,13 +569,7 @@ namespace System.Drawing {
 		public void TranslateTransform (float tx, float ty, MatrixOrder order)
 		{
 			//Console.WriteLine ("Currently does not support anything but prepend mode");
-			// Here we use the negative of y to turn the transform from left to right handed.
-			//modelMatrix.Translate(tx, -ty, order);
-
-			var tmat = CGAffineTransform.MakeTranslation(tx, ty);
-			tmat.Multiply(modelMatrix.transform);
-			modelMatrix.transform = tmat;
-
+			modelMatrix.Translate(tx, ty, order);
 			applyModelView();
 		}
 		
@@ -592,7 +580,8 @@ namespace System.Drawing {
 		
 		public void ScaleTransform (float sx, float sy, MatrixOrder order)
 		{
-			context.ScaleCTM (sx, sy);
+			modelMatrix.Scale(sx,sy,order);
+			applyModelView();
 		}
 		
 		void MakeCurve (PointF [] points, PointF [] tangents, int offset, int length, CurveType type)

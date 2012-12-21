@@ -215,13 +215,18 @@ namespace System.Drawing.Drawing2D
 	
 		public void Rotate (float angle)
 		{
-			transform.Rotate (angle);
+			Rotate(angle, MatrixOrder.Prepend);
 		}
 	
 		public void Rotate (float angle, MatrixOrder order)
 		{
-			//throw new NotImplementedException ();
-			transform.Rotate(angle);
+			var affine = CGAffineTransform.MakeRotation (angle);
+			if (order == MatrixOrder.Append)
+				transform.Multiply (affine);
+			else {
+				affine.Multiply (transform);
+				transform = affine;
+			}
 		}
 	
 		public void RotateAt (float angle, PointF point)
@@ -265,7 +270,7 @@ namespace System.Drawing.Drawing2D
 		public void Scale (float scaleX, float scaleY, MatrixOrder order)
 		{
 			var affine = CGAffineTransform.MakeScale (scaleX, scaleY);
-			if (order == MatrixOrder.Prepend)
+			if (order == MatrixOrder.Append)
 				transform.Multiply (affine);
 			else {
 				affine.Multiply (transform);
@@ -275,13 +280,13 @@ namespace System.Drawing.Drawing2D
 	
 		public void Shear (float shearX, float shearY)
 		{
-			transform.Multiply (new CGAffineTransform (1, shearX, shearY, 1, 0, 0));
+			Shear(shearX, shearY, MatrixOrder.Prepend);
 		}
 	
 		public void Shear (float shearX, float shearY, MatrixOrder order)
 		{
 			var affine = new CGAffineTransform (1, shearX, shearY, 1, 0, 0);
-			if (order == MatrixOrder.Prepend)
+			if (order == MatrixOrder.Append)
 				transform.Multiply (affine);
 			else {
 				affine.Multiply (transform);
@@ -350,7 +355,7 @@ namespace System.Drawing.Drawing2D
 	
 		public void Translate (float offsetX, float offsetY, MatrixOrder order)
 		{
-			var affine = CGAffineTransform.MakeTranslation (offsetX, -offsetY);
+			var affine = CGAffineTransform.MakeTranslation (offsetX, offsetY);
 			if (order == MatrixOrder.Prepend)
 				transform.Multiply (affine);
 			else {
