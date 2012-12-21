@@ -1,12 +1,21 @@
 using System;
 using System.Runtime.Serialization;
 
+#if MONOMAC
+using MonoMac.CoreGraphics;
+#else
+using MonoTouch.CoreGraphics;
+#endif
+
 namespace System.Drawing
 {
 
 	public sealed class Font : MarshalByRefObject, ISerializable, ICloneable, IDisposable {
 		const byte DefaultCharSet = 1;
-		
+
+		CGFont font;
+
+
 		public Font (FontFamily family, float emSize,  GraphicsUnit unit)
 			: this (family, emSize, FontStyle.Regular, unit, DefaultCharSet, false)
 		{
@@ -42,8 +51,6 @@ namespace System.Drawing
 		{
 			if (family == null)
 				throw new ArgumentNullException ("family");
-
-			throw new NotImplementedException ();
 		}
 
 		public Font (string familyName, float emSize)

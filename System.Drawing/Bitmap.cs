@@ -39,16 +39,26 @@ using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 
+#if MONOMAC
+using MonoMac.CoreGraphics;
+using MonoMac.Foundation;
+using MonoMac.AppKit;
+#else
 using MonoTouch.CoreGraphics;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
+#endif
 
 namespace System.Drawing {
 	
 	[Serializable]
 	public sealed class Bitmap : Image {
 		// if null, we created the bitmap in memory, otherwise, the backing file.
+#if MONOMAC
+		NSImage uiimage;
+#else
 		UIImage uiimage;
+#endif
 		internal CGImage NativeCGImage;
 		internal IntPtr bitmapBlock;
 		
@@ -58,8 +68,15 @@ namespace System.Drawing {
 			// This is a quick hack: we should use ImageIO to load the data into
 			// memory, so we always have the bitmapBlock availabe
 			//
+			//uiimage.AsCGImage()
+
+#if MONOMAC
+			var image = new NSImage(filename);
+			NativeCGImage = image.AsCGImage(RectangleF.Empty, null, null);
+#else
 			var uiimage = UIImage.FromFileUncached (filename);
 			NativeCGImage = uiimage.CGImage;
+#endif
 		}
 		
 		public Bitmap (Stream stream, bool useIcm)
@@ -152,7 +169,32 @@ namespace System.Drawing {
 			if (NativeCGImage == null)
 				throw new ObjectDisposedException ("cgimage");
 
+#if MONOMAC
+			using (var uiimage = new NSImage (NativeCGImage, new SizeF(NativeCGImage.Width, NativeCGImage.Height))){
+				NSError error;
+				//  get an NSBitmapImageRep of the CGImage
+				NSBitmapImageRep rep = new NSBitmapImageRep (NativeCGImage);
+
+				if (format == ImageFormat.Jpeg){
+					using (var data = rep.RepresentationUsingTypeProperties (NSBitmapImageFileType.Jpeg, new NSDictionary ())){
+						if (data.Save (path, NSDataWritingOptions.Atomic, out error))
+							return;
+						
+						throw new IOException ("Saving the file " + path + " " + error);
+					}
+				} else if (format == ImageFormat.Png){
+					using (var data = rep.RepresentationUsingTypeProperties (NSBitmapImageFileType.Png, new NSDictionary ())){
+						if (data.Save (path, NSDataWritingOptions.Atomic, out error))
+							return;
+						
+						throw new IOException ("Saving the file " + path + " " + error);
+					}
+				} else
+					throw new ArgumentException ("Unsupported format, only Jpeg and Png are supported", "format");
+			}
+#else
 			using (var uiimage = new UIImage (NativeCGImage)){
+
 				NSError error;
 				
 				if (format == ImageFormat.Jpeg){
@@ -172,9 +214,12 @@ namespace System.Drawing {
 				} else
 					throw new ArgumentException ("Unsupported format, only Jpeg and Png are supported", "format");
 			}
+#endif
 			
 		}
-		
+
+
+
 		public void Save (string path)
 		{
 			if (path == null)
