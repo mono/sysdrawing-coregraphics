@@ -261,7 +261,8 @@ namespace System.Drawing {
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			throw new NotImplementedException ();
+			DrawEllipticalArc(x, y, width, height, startAngle, sweepAngle, false);
+			StrokePen (pen);
 		}
 
 		public void DrawLine (Pen pen, Point pt1, Point pt2)
