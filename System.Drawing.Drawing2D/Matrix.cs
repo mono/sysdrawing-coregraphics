@@ -220,6 +220,7 @@ namespace System.Drawing.Drawing2D
 	
 		public void Rotate (float angle, MatrixOrder order)
 		{
+			angle *= (float) (Math.PI / 180.0);  // degrees to radians 
 			var affine = CGAffineTransform.MakeRotation (angle);
 			if (order == MatrixOrder.Append)
 				transform.Multiply (affine);
@@ -264,7 +265,7 @@ namespace System.Drawing.Drawing2D
 	
 		public void Scale (float scaleX, float scaleY)
 		{
-			transform.Scale (scaleX, scaleY);
+			Scale(scaleX,scaleY,MatrixOrder.Prepend);
 		}
 	
 		public void Scale (float scaleX, float scaleY, MatrixOrder order)
@@ -285,7 +286,7 @@ namespace System.Drawing.Drawing2D
 	
 		public void Shear (float shearX, float shearY, MatrixOrder order)
 		{
-			var affine = new CGAffineTransform (1, shearX, shearY, 1, 0, 0);
+			var affine = new CGAffineTransform (1, shearY, shearX, 1, 0, 0);
 			if (order == MatrixOrder.Append)
 				transform.Multiply (affine);
 			else {

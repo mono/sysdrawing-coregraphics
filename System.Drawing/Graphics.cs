@@ -557,7 +557,7 @@ namespace System.Drawing {
 
 		public void RotateTransform (float angle, MatrixOrder order)
 		{
-			modelMatrix.Rotate(angle.ToRadians(), order);
+			modelMatrix.Rotate(angle, order);
 			applyModelView();
 		}
 		
