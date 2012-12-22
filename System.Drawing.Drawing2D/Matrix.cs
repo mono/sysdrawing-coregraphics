@@ -191,7 +191,7 @@ namespace System.Drawing.Drawing2D
 		{
 			if (matrix == null)
 				throw new ArgumentNullException ("matrix");
-			transform.Multiply (matrix.transform);
+			Multiply(matrix, MatrixOrder.Prepend);
 		}
 	
 		public void Multiply (Matrix matrix, MatrixOrder order)
@@ -199,7 +199,7 @@ namespace System.Drawing.Drawing2D
 			if (matrix == null)
 				throw new ArgumentNullException ("matrix");
 
-			if (order == MatrixOrder.Prepend)
+			if (order == MatrixOrder.Append)
 				transform.Multiply (matrix.transform);
 			else {
 				var mtrans = matrix.transform;
@@ -356,7 +356,7 @@ namespace System.Drawing.Drawing2D
 		public void Translate (float offsetX, float offsetY, MatrixOrder order)
 		{
 			var affine = CGAffineTransform.MakeTranslation (offsetX, offsetY);
-			if (order == MatrixOrder.Prepend)
+			if (order == MatrixOrder.Append)
 				transform.Multiply (affine);
 			else {
 				affine.Multiply (transform);

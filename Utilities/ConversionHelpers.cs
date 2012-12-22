@@ -27,6 +27,7 @@ namespace System.Drawing
 		{
 			return degrees * F_PI / 180f;
 		}
+
 		internal static float GraphicsUnitConversion (GraphicsUnit from, GraphicsUnit to, float dpi, float nSrc)
 		{	
 			float inchs = 0;
