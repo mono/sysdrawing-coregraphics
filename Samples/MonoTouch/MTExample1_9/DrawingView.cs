@@ -22,7 +22,10 @@ namespace MTExample1_9
 			DrawObjects(g);
 			g.Dispose();
 		}
-		
+
+
+		Font Font = new Font("Helvetica",12);
+
 		private void DrawObjects(Graphics g)
 		{
 			ColorMap cm = new ColorMap();
@@ -75,7 +78,8 @@ namespace MTExample1_9
 					aBrush.Dispose();
 				}
 			}
-			//g.DrawString("Direct Color Map", this.Font, Brushes.Black, 50, 190);   
+
+			g.DrawString("Direct Color Map", this.Font, Brushes.Black, 50, 190);   
 			
 			// Bilinear interpolation:
 			x0 = x0 + 200;
@@ -100,7 +104,7 @@ namespace MTExample1_9
 					Interp(g, pta, cdata, 50);
 				}
 			}
-			//g.DrawString("Interpolated Color Map", this.Font, Brushes.Black, 240, 190);   
+			g.DrawString("Interpolated Color Map", this.Font, Brushes.Black, 240, 190);   
 		}
 		
 		private void Interp(Graphics g, PointF[] pta, float[] cData, int npoints)

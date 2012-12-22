@@ -41,6 +41,8 @@ namespace Example1_9
 		
 #endregion
 
+		Font Font = new Font("Helvetica",12);
+
 		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
 		{
 			Graphics g = new Graphics();
@@ -103,7 +105,7 @@ namespace Example1_9
 					aBrush.Dispose();
 				}
 			}
-			//g.DrawString("Direct Color Map", this.Font, Brushes.Black, 50, 190);   
+			g.DrawString("Direct Color Map", this.Font, Brushes.Black, 50, 190);   
 			
 			// Bilinear interpolation:
 			x0 = x0 + 200;
@@ -128,7 +130,7 @@ namespace Example1_9
 					Interp(g, pta, cdata, 50);
 				}
 			}
-			//g.DrawString("Interpolated Color Map", this.Font, Brushes.Black, 240, 190);   
+			g.DrawString("Interpolated Color Map", this.Font, Brushes.Black, 240, 190);   
 		}
 		
 		private void Interp(Graphics g, PointF[] pta, float[] cData, int npoints)

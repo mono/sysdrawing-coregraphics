@@ -52,8 +52,8 @@ namespace Example1_8
 			int y = 10;
 			// Create opaque color maps with alpha = 255:
 			ColorMap cm = new ColorMap();
-			//Font aFont = new Font("Arial", 20, FontStyle.Bold);
-			//g.DrawString("OPAQUE COLOR", aFont, Brushes.Black, 10, 60);
+			Font aFont = new Font("Arial", 20, FontStyle.Bold);
+			g.DrawString("OPAQUE COLOR", aFont, Brushes.Black, 10, 60);
 			DrawColorBar(g, 10, y, width, height, cm, "Spring");
 			DrawColorBar(g, 10 + 40, y, width, height, cm, "Summer");
 			DrawColorBar(g, 10 + 2 * 40, y, width, height, cm, "Autumn");
@@ -66,7 +66,7 @@ namespace Example1_8
 			y = y + 150;
 			// Create transparent color maps with alpha = 150:
 			ColorMap cm1 = new ColorMap(64, 150);
-			//g.DrawString("TRANSPARENT COLOR", aFont, Brushes.Black, 10, 210);
+			g.DrawString("TRANSPARENT COLOR", aFont, Brushes.Black, 10, 210);
 			DrawColorBar(g, 10, y, width, height, cm1, "Spring");
 			DrawColorBar(g, 10 + 40, y, width, height, cm1, "Summer");
 			DrawColorBar(g, 10 + 2 * 40, y, width, height, cm1, "Autumn");
