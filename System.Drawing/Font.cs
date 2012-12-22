@@ -3,8 +3,10 @@ using System.Runtime.Serialization;
 
 #if MONOMAC
 using MonoMac.CoreGraphics;
+using MonoMac.CoreText;
 #else
 using MonoTouch.CoreGraphics;
+using MonoTouch.CoreText;
 #endif
 
 namespace System.Drawing
@@ -13,7 +15,7 @@ namespace System.Drawing
 	public sealed class Font : MarshalByRefObject, ISerializable, ICloneable, IDisposable {
 		const byte DefaultCharSet = 1;
 
-		internal CGFont nativeFont;
+		internal CTFont nativeFont;
 		float sizeInPoints = 0;
 		GraphicsUnit unit = GraphicsUnit.Point;
 		float size;
@@ -80,15 +82,29 @@ namespace System.Drawing
 		{
 			if (emSize <= 0)
 				throw new ArgumentException("emSize is less than or equal to 0, evaluates to infinity, or is not a valid number.","emSize");
+
+
 			try {
-				nativeFont = CGFont.CreateWithFontName(familyName);
+				nativeFont = new CTFont(familyName,emSize);
 			}
 			catch
 			{
 				//nativeFont = CGFont.CreateWithFontName("Lucida Grande");
-				nativeFont = CGFont.CreateWithFontName("Helvetica");
-
+				nativeFont = new CTFont("Helvetica",emSize);
 			}
+
+			CTFontSymbolicTraits tMask = CTFontSymbolicTraits.None;
+
+			if ((style & FontStyle.Bold) == FontStyle.Bold)
+				tMask |= CTFontSymbolicTraits.Bold;
+			if ((style & FontStyle.Italic) == FontStyle.Italic)
+				tMask |= CTFontSymbolicTraits.Italic;
+
+			var nativeFont2 = nativeFont.WithSymbolicTraits(emSize,tMask,tMask);
+
+			if (nativeFont2 != null)
+				nativeFont = nativeFont2;
+
 			sizeInPoints = emSize;
 			this.unit = unit;
 			

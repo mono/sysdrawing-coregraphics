@@ -7,6 +7,7 @@ using System.Drawing.Drawing2D;
 using MonoMac.Foundation;
 using MonoMac.AppKit;
 using MonoMac.CoreGraphics;
+using MonoMac.CoreText;
 using System.Drawing;
 
 namespace Example1_4
@@ -54,20 +55,37 @@ namespace Example1_4
 		
 		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
 		{
-
 			// This is here for testing and nothing else
 			// Will take this out after I get things working again
 //			var context = NSGraphicsContext.CurrentContext.GraphicsPort;
 //			RectangleF contextRect = dirtyRect;
-//			
+//
 //			float w, h;
 //			w = contextRect.Size.Width;
 //			h = contextRect.Size.Height;
 //
+//			var ctfont = new CTFont("Helvetica",12);
+//			var traits = ctfont.SymbolicTraits;
+//			var isBold = (traits & CTFontSymbolicTraits.Bold) == CTFontSymbolicTraits.Bold;
+//			var isItalic = (traits & CTFontSymbolicTraits.Italic) == CTFontSymbolicTraits.Italic;
+//
+//			var tMask = CTFontSymbolicTraits.Bold;
+//			tMask |= CTFontSymbolicTraits.Italic;
+//
+//			tMask &= ~CTFontSymbolicTraits.Bold;
+//			//tMask &= ~CTFontSymbolicTraits.Italic;
+//
+//			ctfont = ctfont.WithSymbolicTraits(h/20,tMask,tMask);
+//
+//			traits = ctfont.SymbolicTraits;
+//			isBold = (traits & CTFontSymbolicTraits.Bold) == CTFontSymbolicTraits.Bold;
+//			isItalic = (traits & CTFontSymbolicTraits.Italic) == CTFontSymbolicTraits.Italic;
+//
+//
 //			context.SaveState();
 //			context.SelectFont (
-//				"Helvetica-Bold",
-//				h/20,
+//				ctfont.PostScriptName,
+//				ctfont.Size,
 //				CGTextEncoding.MacRoman);
 //			context.SetCharacterSpacing(10); // 4
 //			context.SetTextDrawingMode(CGTextDrawingMode.FillStroke); // 5
@@ -131,7 +149,7 @@ namespace Example1_4
 			                               (int)ClientRectangle.Width, (int)ClientRectangle.Height);
 			drawingRectangle = new Rectangle(rect.Location, rect.Size);
 			Size sz = new Size(rect.Width, rect.Height);
-			var font = new Font("Arial",20.0f);
+			var font = new Font("Arial",20.0f,FontStyle.Italic | FontStyle.Bold);
 			SizeF stringSize = g.MeasureString(s, font);
 			Point Middle = new Point(sz.Width / 30,
 			                        sz.Height / 2 - (int)stringSize.Height / 2);

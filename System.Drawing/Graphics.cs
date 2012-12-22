@@ -19,9 +19,11 @@ using System.Drawing.Text;
 using MonoMac.CoreGraphics;
 using MonoMac.AppKit;
 using MonoMac.Foundation;
+using MonoMac.CoreText;
 #else
 using MonoTouch.CoreGraphics;
 using MonoTouch.UIKit;
+using MonoTouch.CoreText;
 #endif
 
 namespace System.Drawing {
@@ -1048,7 +1050,7 @@ namespace System.Drawing {
 			//  and restore state to do the measurement.  Something to be looked into.
 			context.TextPosition = rect.Location;
 			var startPos = context.TextPosition;
-			context.SelectFont ( font.nativeFont.FullName,
+			context.SelectFont ( font.nativeFont.PostScriptName,
 			                    font.SizeInPoints,
 			                    CGTextEncoding.MacRoman);
 			context.SetTextDrawingMode(CGTextDrawingMode.Invisible); 
@@ -1381,9 +1383,10 @@ namespace System.Drawing {
 			context.SaveState();
 			var saveMatrix = context.TextMatrix;
 			
-			context.SelectFont ( font.nativeFont.FullName,
+			context.SelectFont ( font.nativeFont.PostScriptName,
 			                    font.SizeInPoints,
 			                    CGTextEncoding.MacRoman);
+
 			context.SetCharacterSpacing(1); // 4
 			context.SetTextDrawingMode(CGTextDrawingMode.Fill); // 5
 			

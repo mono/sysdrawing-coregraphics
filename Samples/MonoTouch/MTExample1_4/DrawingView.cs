@@ -55,7 +55,7 @@ namespace MTExample1_4
 			                               (int)ClientRectangle.Width, (int)ClientRectangle.Height);
 			drawingRectangle = new Rectangle(rect.Location, rect.Size);
 			Size sz = new Size(rect.Width, rect.Height);
-			var font = new Font("Arial",14.0f);
+			var font = new Font("Arialss",14.0f,FontStyle.Bold | FontStyle.Italic);
 			SizeF stringSize = g.MeasureString(s, font);
 			Point Middle = new Point(sz.Width / 30,
 			                        sz.Height / 2 - (int)stringSize.Height / 2);
