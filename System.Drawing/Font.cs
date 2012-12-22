@@ -80,8 +80,15 @@ namespace System.Drawing
 		{
 			if (emSize <= 0)
 				throw new ArgumentException("emSize is less than or equal to 0, evaluates to infinity, or is not a valid number.","emSize");
-			
-			nativeFont = CGFont.CreateWithFontName(familyName);
+			try {
+				nativeFont = CGFont.CreateWithFontName(familyName);
+			}
+			catch
+			{
+				//nativeFont = CGFont.CreateWithFontName("Lucida Grande");
+				nativeFont = CGFont.CreateWithFontName("Helvetica");
+
+			}
 			sizeInPoints = emSize;
 			this.unit = unit;
 			

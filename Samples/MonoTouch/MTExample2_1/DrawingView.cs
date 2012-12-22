@@ -13,7 +13,7 @@ namespace MTExample2_1
 			BackgroundColor = UIColor.White;
 		}
 
-		Font Font = new System.Drawing.Font("Arial",14);
+		Font Font = new System.Drawing.Font("Helvetica",12);
 
 		public override void Draw (RectangleF rect)
 		{
@@ -33,7 +33,7 @@ namespace MTExample2_1
 			Matrix m2 = new Matrix(0, 1, 2, 1, 0, 1);
 			g.DrawString("Original Matrices:", this.Font, Brushes.Black, 10, 10 + 4 * offset);
 			DrawMatrix(m1, g, 10, 10 + 5 * offset);
-			DrawMatrix(m2, g, 10 + 100, 10 + 5 * offset);
+			DrawMatrix(m2, g, 10 + 130, 10 + 5 * offset);
 			m1.Multiply(m2, MatrixOrder.Append);
 			g.DrawString("Resultant Matrix - Append:", this.Font, Brushes.Black, 10, 10 + 6 * offset);
 			DrawMatrix(m1, g, 10, 10 + 7 * offset);
