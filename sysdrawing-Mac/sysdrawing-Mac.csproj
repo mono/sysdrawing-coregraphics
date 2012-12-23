@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>System.Drawing</RootNamespace>
+    <AssemblyName>System.Drawing</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\PointF.cs">
+      <Link>PointF.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\RectangleF.cs">
+      <Link>RectangleF.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\SizeF.cs">
+      <Link>SizeF.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\Point.cs">
+      <Link>Point.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\PointConverter.cs">
+      <Link>PointConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\Rectangle.cs">
+      <Link>Rectangle.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\RectangleConverter.cs">
+      <Link>RectangleConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\Size.cs">
+      <Link>Size.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\SizeConverter.cs">
+      <Link>SizeConverter.cs</Link>
+    </Compile>
+  </ItemGroup>
+</Project>
