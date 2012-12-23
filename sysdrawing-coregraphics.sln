@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example3_2", "Samples\MonoM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example3_3", "Samples\MonoMac\Example3_3\Example3_3.csproj", "{35D8E772-A210-428A-A512-04F5738B670F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrawStringTest", "Samples\MonoMac\DrawStringTest\DrawStringTest.csproj", "{CB55FCEE-F30A-4468-A12C-B61DCFE47468}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples.MonoTouch", "Samples.MonoTouch", "{9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sample", "Samples\MonoTouch\sample\sample.csproj", "{F6AEFFC5-4807-49A3-83C5-661E655CB59A}"
@@ -386,6 +388,20 @@ Global
 		{C675FE3F-497D-4CE7-B441-3C0299B30C10}.Release|iPhone.Build.0 = Release|Any CPU
 		{C675FE3F-497D-4CE7-B441-3C0299B30C10}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{C675FE3F-497D-4CE7-B441-3C0299B30C10}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{CB55FCEE-F30A-4468-A12C-B61DCFE47468}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhoneSimulator
+		{CB55FCEE-F30A-4468-A12C-B61DCFE47468}.Ad-Hoc|iPhone.Build.0 = Debug|iPhoneSimulator
+		{CB55FCEE-F30A-4468-A12C-B61DCFE47468}.AppStore|iPhone.ActiveCfg = AppStore|iPhoneSimulator
+		{CB55FCEE-F30A-4468-A12C-B61DCFE47468}.AppStore|iPhone.Build.0 = AppStore|iPhoneSimulator
+		{CB55FCEE-F30A-4468-A12C-B61DCFE47468}.AppStore|iPhoneSimulator.ActiveCfg = AppStore|iPhoneSimulator
+		{CB55FCEE-F30A-4468-A12C-B61DCFE47468}.AppStore|iPhoneSimulator.Build.0 = AppStore|iPhoneSimulator
+		{CB55FCEE-F30A-4468-A12C-B61DCFE47468}.Debug|iPhone.ActiveCfg = Debug|iPhoneSimulator
+		{CB55FCEE-F30A-4468-A12C-B61DCFE47468}.Debug|iPhone.Build.0 = Debug|iPhoneSimulator
+		{CB55FCEE-F30A-4468-A12C-B61DCFE47468}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{CB55FCEE-F30A-4468-A12C-B61DCFE47468}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{CB55FCEE-F30A-4468-A12C-B61DCFE47468}.Release|iPhone.ActiveCfg = Release|iPhoneSimulator
+		{CB55FCEE-F30A-4468-A12C-B61DCFE47468}.Release|iPhone.Build.0 = Release|iPhoneSimulator
+		{CB55FCEE-F30A-4468-A12C-B61DCFE47468}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{CB55FCEE-F30A-4468-A12C-B61DCFE47468}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{D11D041F-B545-4BBC-B015-7041DC510817}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhoneSimulator
 		{D11D041F-B545-4BBC-B015-7041DC510817}.Ad-Hoc|iPhone.Build.0 = Debug|iPhoneSimulator
 		{D11D041F-B545-4BBC-B015-7041DC510817}.AppStore|iPhone.ActiveCfg = AppStore|iPhoneSimulator
@@ -516,6 +532,7 @@ Global
 		{88859C19-84EF-4F12-913D-59A76EAD0984} = {A28D8EBD-ABB8-46BA-B536-7074058B0C84}
 		{D585440E-D774-40EC-9485-A8CFB58B33F6} = {A28D8EBD-ABB8-46BA-B536-7074058B0C84}
 		{35D8E772-A210-428A-A512-04F5738B670F} = {A28D8EBD-ABB8-46BA-B536-7074058B0C84}
+		{CB55FCEE-F30A-4468-A12C-B61DCFE47468} = {A28D8EBD-ABB8-46BA-B536-7074058B0C84}
 		{F6AEFFC5-4807-49A3-83C5-661E655CB59A} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 		{376D4335-5ED4-4A24-BF16-4DDFFCE61B6D} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
@@ -534,7 +551,7 @@ Global
 		{88D2EB85-3EB2-45FB-9621-0CAD9930312E} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Samples\MonoMac\Example3_3\Example3_3.csproj
+		StartupItem = Samples\MonoMac\DrawStringTest\DrawStringTest.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.inheritsSet = Mono

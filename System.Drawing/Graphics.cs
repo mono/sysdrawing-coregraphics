@@ -1068,7 +1068,8 @@ namespace System.Drawing {
 
 			context.ShowTextAtPoint(rect.X, rect.Y, textg, textg.Length); 
 			var endPos = context.TextPosition;
-			var measure = new SizeF(startPos.X - endPos.X, startPos.Y - endPos.Y);
+
+			var measure = new SizeF(endPos.X - startPos.X, font.nativeFont.CapHeightMetric);
 			
 			return measure;
 		}
@@ -1414,19 +1415,20 @@ namespace System.Drawing {
 			                    font.SizeInPoints,
 			                    CGTextEncoding.MacRoman);
 
-			context.SetCharacterSpacing(1); // 4
+			context.SetCharacterSpacing(1);
 			context.SetTextDrawingMode(CGTextDrawingMode.Fill); // 5
 			
 			// Setup both the stroke and the fill ?
 			brush.Setup(this, true);
 			brush.Setup(this, false);
-			
-			var textMatrix = CGAffineTransform.MakeScale(1f,-1f);
-			
+
+			var textMatrix = font.nativeFont.Matrix;
+
+			textMatrix.Scale(1,-1);
 			context.TextMatrix = textMatrix; //.transform;//CGAffineTransform.MakeIdentity();
-			
-			//textMatrix.transform;     // CGAffineTransform.MakeRotation(45 * (float)Math.PI / 180); // 9
-			context.ShowTextAtPoint(layoutRectangle.X, layoutRectangle.Y, s, s.Length); 
+
+			context.ShowTextAtPoint(layoutRectangle.X, 
+			                        layoutRectangle.Y + font.nativeFont.CapHeightMetric, s); 
 			context.TextMatrix = saveMatrix;
 			context.RestoreState();
 			
