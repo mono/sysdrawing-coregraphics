@@ -47,6 +47,7 @@ namespace System.Drawing {
 		float userspaceScaleX = 1, userspaceScaleY = 1;
 		private GraphicsUnit graphicsUnit = GraphicsUnit.Display;
 		private float pageScale = 1;
+		private PointF renderingOrigin = PointF.Empty;
 		
 		public Graphics (CGContext context)
 		{
@@ -529,9 +530,9 @@ namespace System.Drawing {
 //			Console.WriteLine("------------ apply Model View ------");
 //			Console.WriteLine("Model: " + modelMatrix.transform);
 //			Console.WriteLine("View: " + viewMatrix.transform);
-//			Console.WriteLine("ModelView: " + modelView.transform);
+//			Console.WriteLine("ModelView: " + modelView);
 //			Console.WriteLine("------------ end apply Model View ------\n\n");
-			// we apply the matrix passed to the context
+			// we apply the Model View matrix passed to the context
 			context.ConcatCTM (modelView);
 
 		} 
@@ -761,6 +762,18 @@ namespace System.Drawing {
 			}
 		}
 
+		void setupView() 
+		{
+			initializeMatrix(ref viewMatrix, isFlipped);
+			userspaceScaleX = GraphicsUnitConvertX(1) * pageScale;
+			userspaceScaleY = GraphicsUnitConvertY(1) * pageScale;
+			viewMatrix.Scale(userspaceScaleX, userspaceScaleY);
+			viewMatrix.Translate(renderingOrigin.X * userspaceScaleX, 
+			                     -renderingOrigin.Y * userspaceScaleY);
+			applyModelView();
+			
+		}
+
 		public GraphicsUnit PageUnit { 
 			get {
 				return graphicsUnit;
@@ -768,11 +781,7 @@ namespace System.Drawing {
 			set {
 				graphicsUnit = value;
 
-				initializeMatrix(ref viewMatrix, isFlipped);
-				userspaceScaleX = GraphicsUnitConvertX(1);
-				userspaceScaleY = GraphicsUnitConvertY(1);
-				viewMatrix.Scale(userspaceScaleX * pageScale, userspaceScaleY * pageScale, MatrixOrder.Append);
-				applyModelView();
+				setupView();
 			} 
 		}
 
@@ -782,11 +791,7 @@ namespace System.Drawing {
 			set {
 				// TODO: put some validation in here maybe?  Need to 
 				pageScale = value;
-				initializeMatrix(ref viewMatrix, isFlipped);
-				userspaceScaleX = GraphicsUnitConvertX(1);
-				userspaceScaleY = GraphicsUnitConvertY(1);
-				viewMatrix.Scale(userspaceScaleX * pageScale, userspaceScaleY * pageScale, MatrixOrder.Append);
-				applyModelView();
+				setupView();			
 			}
 		}
 
@@ -937,10 +942,12 @@ namespace System.Drawing {
 
 		public PointF RenderingOrigin {
 			get {
-				throw new NotImplementedException ();
+				return renderingOrigin;
 			}
 			set {
-				throw new NotImplementedException ();
+
+				renderingOrigin = value;
+				setupView();
 			}
 		}
 		
@@ -1099,11 +1106,31 @@ namespace System.Drawing {
 		
 		public void Restore (GraphicsState gstate)
 		{
+			LastPen = gstate.lastPen;
+			modelMatrix = gstate.model;
+			viewMatrix = gstate.view;
+			renderingOrigin = gstate.renderingOrigin;
+			graphicsUnit = gstate.pageUnit;
+			pageScale = gstate.pageScale;
+			// I do not know if we should use the contexts save/restore state or our own
+			// we will do that save state for now
+			context.RestoreState();
 		}
 		
 		public GraphicsState Save ()
 		{
-			throw new NotImplementedException ();
+			var currentState = new GraphicsState();
+			currentState.lastPen = LastPen;
+			currentState.model = modelMatrix;
+			currentState.view = viewMatrix;
+			currentState.renderingOrigin = renderingOrigin;
+			currentState.pageUnit = graphicsUnit;
+			currentState.pageScale = pageScale;
+
+			// I do not know if we should use the contexts save/restore state or our own
+			// we will do that save state for now
+			context.SaveState();
+			return currentState;
 		}
 		
 		public void DrawClosedCurve (Pen pen, PointF [] points)

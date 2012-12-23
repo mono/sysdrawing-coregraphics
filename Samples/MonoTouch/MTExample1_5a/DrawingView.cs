@@ -26,6 +26,8 @@ namespace MTExample1_5a
 			
 			g.PageUnit = GraphicsUnit.Inch;
 			g.PageScale = 2;
+			g.RenderingOrigin = new PointF(0.5f,0.0f);
+
 			// Draw a rectangle:
 			g.DrawRectangle(aPen, .20f, .20f, 1.00f, .50f);
 			// Draw a filled rectangle:
