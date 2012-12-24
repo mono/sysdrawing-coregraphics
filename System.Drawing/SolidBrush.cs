@@ -56,9 +56,10 @@ namespace System.Drawing {
 		{
 			bool sourceCopy = graphics.CompositingMode == CompositingMode.SourceCopy;
 			if (fill){
-				graphics.context.SetFillColor (color.R / 255f, color.G/255f, color.B/255f, sourceCopy ? 1f : color.A/255f);
+				graphics.context.SetFillColor(color.R / 255f, color.G/255f, color.B/255f, sourceCopy ? 1f : color.A/255f );
+				
 			} else {
-				graphics.context.SetStrokeColor (color.R / 255f, color.G/255f, color.B/255f, sourceCopy ? 1f : color.A/255f);
+				graphics.context.SetStrokeColor(color.R / 255f, color.G/255f, color.B/255f, sourceCopy ? 1f : color.A/255f );
 			}
 		}
 	}
