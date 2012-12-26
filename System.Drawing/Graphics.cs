@@ -23,6 +23,7 @@ using MonoMac.CoreText;
 #else
 using MonoTouch.CoreGraphics;
 using MonoTouch.UIKit;
+using MonoTouch.Foundation;
 using MonoTouch.CoreText;
 #endif
 
@@ -39,6 +40,9 @@ namespace System.Drawing {
 		// Need to keep a transform around, since it is not possible to
 		// set the transform on the context, merely to concatenate.
 		CGAffineTransform transform;
+
+		// Text Layout
+		internal Color lastBrushColor;
 
 		// User Space variables
 		internal Matrix modelMatrix;
@@ -1027,6 +1031,106 @@ namespace System.Drawing {
 			throw new NotImplementedException ();
 		}
 
+		NSString FontAttributedName = (NSString)"NSFont";
+		NSString ForegroundColorAttributedName = (NSString)"NSColor";
+		NSString UnderlineStyleAttributeName = (NSString)"NSUnderline";
+		NSString ParagraphStyleAttributeName = (NSString)"NSParagraphStyle";
+		//NSAttributedString.ParagraphStyleAttributeName
+		NSString StrikethroughStyleAttributeName = (NSString)"NSStrikethrough";
+
+		public NSMutableAttributedString buildAttributedString(string text, Font font, 
+		                                                Color? fontColor=null) 
+		{
+
+
+			// Create a new attributed string from text
+			NSMutableAttributedString atts = 
+				new NSMutableAttributedString(text);
+
+			var attRange = new NSRange(0, atts.Length);
+			var attsDic = new NSMutableDictionary();
+			
+			// Font attribute
+			NSObject fontObject = new NSObject(font.nativeFont.Handle);
+			attsDic.Add(FontAttributedName, fontObject);
+			// -- end font 
+
+			if (fontColor.HasValue) {
+
+				// Font color
+				var fc = fontColor.Value;
+#if MONOMAC
+				NSColor color = NSColor.FromDeviceRgba(fc.R / 255f, 
+				                                           fc.G / 255f,
+				                                           fc.B / 255f,
+				                                           fc.A / 255f);
+				NSObject colorObject = new NSObject(color.Handle);
+				attsDic.Add(ForegroundColorAttributedName, colorObject);
+#else
+				UIColor color = UIColor.FromRGBA(fc.R / 255f, 
+				                                 fc.G / 255f,
+				                                 fc.B / 255f,
+				                                 fc.A / 255f);
+				NSObject colorObject = new NSObject(color.Handle);
+				attsDic.Add(ForegroundColorAttributedName, colorObject);
+#endif
+				// -- end font Color
+			}
+
+			if (font.Underline) {
+				// Underline
+#if MONOMAC
+				int single = (int)MonoMac.AppKit.NSUnderlineStyle.Single;
+				int solid = (int)MonoMac.AppKit.NSUnderlinePattern.Solid;
+				var attss = single | solid;
+				var underlineObject = NSNumber.FromInt32(attss);
+				//var under = NSAttributedString.UnderlineStyleAttributeName.ToString();
+#else
+				var underlineObject = NSNumber.FromInt32 (1);
+#endif
+				attsDic.Add(UnderlineStyleAttributeName, underlineObject);
+				// --- end underline
+			}
+
+
+			if (font.Strikeout) {
+				// StrikeThrough
+//				NSColor bcolor = NSColor.Blue;
+//				NSObject bcolorObject = new NSObject(bcolor.Handle);
+//				attsDic.Add(NSAttributedString.StrikethroughColorAttributeName, bcolorObject);
+#if MONOMAC
+				int stsingle = (int)MonoMac.AppKit.NSUnderlineStyle.Single;
+				int stsolid = (int)MonoMac.AppKit.NSUnderlinePattern.Solid;
+				var stattss = stsingle | stsolid;
+				var stunderlineObject = NSNumber.FromInt32(stattss);
+#else
+				var stunderlineObject = NSNumber.FromInt32 (1);
+#endif
+
+				attsDic.Add(StrikethroughStyleAttributeName, stunderlineObject);
+				// --- end underline
+			}
+			
+
+			// Text alignment
+			var alignment = CTTextAlignment.Left;
+			var alignmentSettings = new CTParagraphStyleSettings();
+			alignmentSettings.Alignment = alignment;
+			var paragraphStyle = new CTParagraphStyle(alignmentSettings);
+			NSObject psObject = new NSObject(paragraphStyle.Handle);
+
+			// end text alignment
+			
+			attsDic.Add(ParagraphStyleAttributeName, psObject);
+			
+			atts.SetAttributes(attsDic, attRange);
+
+			return atts;
+
+		}
+
+
+
 		public SizeF MeasureString (string text, Font font)
 		{
 			return MeasureString (text, font, SizeF.Empty);
@@ -1055,22 +1159,35 @@ namespace System.Drawing {
 			// 
 			// * Note * Not sure if we should save off the graphic state, set context transform to identity
 			//  and restore state to do the measurement.  Something to be looked into.
-			context.TextPosition = rect.Location;
-			var startPos = context.TextPosition;
-			context.SelectFont ( font.nativeFont.PostScriptName,
-			                    font.SizeInPoints,
-			                    CGTextEncoding.MacRoman);
-			context.SetTextDrawingMode(CGTextDrawingMode.Invisible); 
-			
-			context.SetCharacterSpacing(1); 
-			var textMatrix = CGAffineTransform.MakeScale(1f,-1f);
-			context.TextMatrix = textMatrix;
+//			context.TextPosition = rect.Location;
+//			var startPos = context.TextPosition;
+//			context.SelectFont ( font.nativeFont.PostScriptName,
+//			                    font.SizeInPoints,
+//			                    CGTextEncoding.MacRoman);
+//			context.SetTextDrawingMode(CGTextDrawingMode.Invisible); 
+//			
+//			context.SetCharacterSpacing(1); 
+//			var textMatrix = CGAffineTransform.MakeScale(1f,-1f);
+//			context.TextMatrix = textMatrix;
+//
+//			context.ShowTextAtPoint(rect.X, rect.Y, textg, textg.Length); 
+//			var endPos = context.TextPosition;
+//
+//			var measure = new SizeF(endPos.X - startPos.X, font.nativeFont.CapHeightMetric);
 
-			context.ShowTextAtPoint(rect.X, rect.Y, textg, textg.Length); 
-			var endPos = context.TextPosition;
+			var atts = buildAttributedString(textg, font);
 
-			var measure = new SizeF(endPos.X - startPos.X, font.nativeFont.CapHeightMetric);
-			
+			// for now just a line not sure if this is going to work
+			CTLine line = new CTLine(atts);
+			var lineBounds = line.GetImageBounds(context);
+			// Create and initialize some values from the bounds.
+			float ascent;
+			float descent;
+			float leading;
+			double lineWidth = line.GetTypographicBounds(out ascent, out descent, out leading);
+
+			var measure = new SizeF((float)lineWidth, ascent + descent);
+
 			return measure;
 		}
 
@@ -1407,31 +1524,121 @@ namespace System.Drawing {
 				throw new ArgumentNullException ("brush");
 			if (s == null || s.Length == 0)
 				return;
-			
+
+			// TODO: Take into consideration units
+
+			// Not sure we need the Save and Restore around this yet.
 			context.SaveState();
+
+			// TextMatrix is not part of the Graphics State and Restore 
 			var saveMatrix = context.TextMatrix;
-			
-			context.SelectFont ( font.nativeFont.PostScriptName,
-			                    font.SizeInPoints,
-			                    CGTextEncoding.MacRoman);
+			bool layoutAvailable = true;
 
-			context.SetCharacterSpacing(1);
-			context.SetTextDrawingMode(CGTextDrawingMode.Fill); // 5
-			
+//			context.SelectFont ( font.nativeFont.PostScriptName,
+//			                    font.SizeInPoints,
+//			                    CGTextEncoding.MacRoman);
+//
+//			context.SetCharacterSpacing(1);
+//			context.SetTextDrawingMode(CGTextDrawingMode.Fill); // 5
+//			
+//			// Setup both the stroke and the fill ?
+//			brush.Setup(this, true);
+//			brush.Setup(this, false);
+//
+//			var textMatrix = font.nativeFont.Matrix;
+//
+//			textMatrix.Scale(1,-1);
+//			context.TextMatrix = textMatrix;
+//
+//			context.ShowTextAtPoint(layoutRectangle.X, 
+//			                        layoutRectangle.Y + font.nativeFont.CapHeightMetric, s); 
+//
+//
 			// Setup both the stroke and the fill ?
-			brush.Setup(this, true);
-			brush.Setup(this, false);
+			brush.Setup(this, true); // Fill
+			//brush.Setup(this, false); // Stroke
 
-			var textMatrix = font.nativeFont.Matrix;
+			// I think we only Fill the text with no Stroke surrounding
+			context.SetTextDrawingMode(CGTextDrawingMode.Fill);
 
-			textMatrix.Scale(1,-1);
-			context.TextMatrix = textMatrix; //.transform;//CGAffineTransform.MakeIdentity();
+			var attributedString = buildAttributedString(s, font, lastBrushColor);
 
-			context.ShowTextAtPoint(layoutRectangle.X, 
-			                        layoutRectangle.Y + font.nativeFont.CapHeightMetric, s); 
+			// Work out the geometry
+			RectangleF insetBounds = layoutRectangle;
+			if (insetBounds.Size == SizeF.Empty)
+			{
+				insetBounds.Width = boundingBox.Width;
+				insetBounds.Height = boundingBox.Height;
+				layoutAvailable = false;
+			}
+
+			PointF textPosition = new PointF(insetBounds.X,
+			                                 insetBounds.Y);
+
+			float boundsWidth = insetBounds.Width;
+			
+			// Calculate the lines
+			int start = 0;
+			int length = attributedString.Length;
+			
+			var typesetter = new CTTypesetter(attributedString);
+
+			while (start < length && textPosition.Y < insetBounds.Bottom)
+			{
+
+				// Now we ask the typesetter to break off a line for us.
+				// This also will take into account line feeds embedded in the text.
+				//  Example: "This is text \n with a line feed embedded inside it"
+				int count = typesetter.SuggestLineBreak(start, boundsWidth);
+				var line = typesetter.GetLine(new NSRange(start, count));
+
+				// Calculate the string format if need be
+				var penFlushness = 0.0f;
+				if (layoutAvailable && format != null) 
+				{
+					if (format.Alignment == StringAlignment.Far)
+						penFlushness = (float)line.GetPenOffsetForFlush(1.0f, boundsWidth);
+					else if (format.Alignment == StringAlignment.Center)
+						penFlushness = (float)line.GetPenOffsetForFlush(0.5f, boundsWidth);
+
+				
+				}
+				// Create and initialize some values from the bounds.
+				float ascent;
+				float descent;
+				float leading;
+				double lineWidth = line.GetTypographicBounds(out ascent, out descent, out leading);
+
+				// initialize our Text Matrix or we could get trash in here
+				var textMatrix = CGAffineTransform.MakeIdentity();
+				// flip us over or things just do not look good
+				textMatrix.Scale(1,-1);
+				context.TextMatrix = textMatrix;
+
+				// move us to our graphics baseline
+				var textViewPos = textPosition;
+				textViewPos.Y += ascent - 1;
+
+				// take into account our justification
+				textViewPos.X += penFlushness;
+
+				// setup our text position
+				context.TextPosition = textViewPos;
+				// and draw the line
+				line.Draw(context);
+
+				// Move the index beyond the line break.
+				start += count;
+				textPosition.Y += (float)Math.Ceiling(ascent + descent + leading + 1); // +1 matches best to CTFramesetter's behavior  
+				line.Dispose();
+				
+			}
+
+
+
 			context.TextMatrix = saveMatrix;
 			context.RestoreState();
-			
+
 		}	
 		
 		public void Flush ()
