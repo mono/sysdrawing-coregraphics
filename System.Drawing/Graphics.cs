@@ -1230,6 +1230,7 @@ namespace System.Drawing {
 			renderingOrigin = gstate.renderingOrigin;
 			graphicsUnit = gstate.pageUnit;
 			pageScale = gstate.pageScale;
+			//applyModelView();
 			// I do not know if we should use the contexts save/restore state or our own
 			// we will do that save state for now
 			context.RestoreState();
@@ -1239,8 +1240,10 @@ namespace System.Drawing {
 		{
 			var currentState = new GraphicsState();
 			currentState.lastPen = LastPen;
-			currentState.model = modelMatrix;
-			currentState.view = viewMatrix;
+			// Make sure we clone the Matrices or we will still modify
+			// them after the save as they are the same objects.  Woops!!
+			currentState.model = modelMatrix.Clone();
+			currentState.view = viewMatrix.Clone();
 			currentState.renderingOrigin = renderingOrigin;
 			currentState.pageUnit = graphicsUnit;
 			currentState.pageScale = pageScale;
