@@ -1038,7 +1038,7 @@ namespace System.Drawing {
 		//NSAttributedString.ParagraphStyleAttributeName
 		NSString StrikethroughStyleAttributeName = (NSString)"NSStrikethrough";
 
-		public NSMutableAttributedString buildAttributedString(string text, Font font, 
+		private NSMutableAttributedString buildAttributedString(string text, Font font, 
 		                                                Color? fontColor=null) 
 		{
 
@@ -1258,7 +1258,7 @@ namespace System.Drawing {
 			if (points == null)
 				throw new ArgumentNullException ("points");
 			
-			throw new NotImplementedException ();
+			DrawClosedCurve (pen, points, 0.5f, FillMode.Winding);
 		}
 		
 		public void DrawClosedCurve (Pen pen, Point [] points)
@@ -1268,7 +1268,7 @@ namespace System.Drawing {
 			if (points == null)
 				throw new ArgumentNullException ("points");
 			
-			throw new NotImplementedException ();
+			DrawClosedCurve (pen, ConvertPoints (points), 0.5f, FillMode.Winding);
 		}
  			
 		// according to MSDN fillmode "is required but ignored" which makes _some_ sense since the unmanaged 
@@ -1279,8 +1279,8 @@ namespace System.Drawing {
 				throw new ArgumentNullException ("pen");
 			if (points == null)
 				throw new ArgumentNullException ("points");
-			
-			throw new NotImplementedException ();
+
+			DrawClosedCurve (pen, ConvertPoints (points), tension, fillmode);
 		}
 
 		// according to MSDN fillmode "is required but ignored" which makes _some_ sense since the unmanaged 
@@ -1291,8 +1291,17 @@ namespace System.Drawing {
 				throw new ArgumentNullException ("pen");
 			if (points == null)
 				throw new ArgumentNullException ("points");
-			
-			throw new NotImplementedException ();
+
+			int count = points.Length;
+			if (count == 2)
+				DrawPolygon (pen, points);
+			else {
+				int segments = (count > 3) ? (count-1) : (count-2);
+
+				var tangents = GraphicsPath.OpenCurveTangents (GraphicsPath.CURVE_MIN_TERMS, points, count, tension);
+				MakeCurve (points, tangents, 0, segments, CurveType.Close);
+				StrokePen (pen);
+			}
 		}
 		
 		public void FillClosedCurve (Brush brush, PointF [] points)
@@ -1302,7 +1311,7 @@ namespace System.Drawing {
 			if (points == null)
 				throw new ArgumentNullException ("points");
 			
-			throw new NotImplementedException ();
+			FillClosedCurve(brush,points,FillMode.Alternate);
 		}
 		
 		public void FillClosedCurve (Brush brush, Point [] points)
@@ -1312,7 +1321,7 @@ namespace System.Drawing {
 			if (points == null)
 				throw new ArgumentNullException ("points");
 			
-			throw new NotImplementedException ();
+			FillClosedCurve(brush,ConvertPoints(points),FillMode.Alternate);
 		}
  			
 		// according to MSDN fillmode "is required but ignored" which makes _some_ sense since the unmanaged 
@@ -1324,19 +1333,29 @@ namespace System.Drawing {
 			if (points == null)
 				throw new ArgumentNullException ("points");
 			
-			throw new NotImplementedException ();
+			FillClosedCurve(brush,points,FillMode.Alternate);
 		}
 
 		// according to MSDN fillmode "is required but ignored" which makes _some_ sense since the unmanaged 
 		// GDI+ call doesn't support it (issue spotted using Gendarme's AvoidUnusedParametersRule)
 		public void FillClosedCurve (Brush brush, PointF [] points, FillMode fillmode, float tension = 0.5f)
 		{
+
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
 			if (points == null)
 				throw new ArgumentNullException ("points");
 			
-			throw new NotImplementedException ();
+			int count = points.Length;
+			if (count == 2)
+				FillPolygon(brush, points, FillMode.Alternate);
+			else {
+				int segments = (count > 3) ? (count-1) : (count-2);
+				
+				var tangents = GraphicsPath.OpenCurveTangents (GraphicsPath.CURVE_MIN_TERMS, points, count, tension);
+				MakeCurve (points, tangents, 0, segments, CurveType.Close);
+				FillBrush(brush);
+			}
 		}
 #if MONOTOUCH	
 		public void DrawIcon (Icon icon, Rectangle targetRect)
