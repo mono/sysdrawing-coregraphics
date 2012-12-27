@@ -1617,7 +1617,7 @@ namespace System.Drawing {
 
 				// move us to our graphics baseline
 				var textViewPos = textPosition;
-				textViewPos.Y += ascent - 1;
+				textViewPos.Y += (float)Math.Floor(ascent - 1);
 
 				// take into account our justification
 				textViewPos.X += penFlushness;

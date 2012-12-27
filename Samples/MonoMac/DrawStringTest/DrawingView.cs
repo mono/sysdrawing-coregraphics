@@ -99,7 +99,7 @@ namespace DrawStringTest
 			rect.Height = (int)size.Height;
 			rect.Width = (int)size.Width*20;
 
-			int nextLine = (int)(size.Height * 1.2f);
+			int nextLine = (int)(size.Height * 1.2);
 
 			g.DrawRectangle(Pens.Red, rect);
 			g.DrawString("Test2 without line feed", this.Font, Brushes.Blue, point);
