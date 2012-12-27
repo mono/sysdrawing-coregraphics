@@ -99,18 +99,18 @@ namespace System.Drawing {
 
 			ResetTransform();
 
-			PageUnit = GraphicsUnit.Display;
+			PageUnit = GraphicsUnit.Pixel;
 			PageScale = 1;
 		}
 
 		internal float GraphicsUnitConvertX (float x)
 		{
-			return ConversionHelpers.GraphicsUnitConversion(PageUnit, GraphicsUnit.Display, DpiX, x);
+			return ConversionHelpers.GraphicsUnitConversion(PageUnit, GraphicsUnit.Pixel, DpiX, x);
 		}
 
 		internal float GraphicsUnitConvertY (float y)
 		{
-			return ConversionHelpers.GraphicsUnitConversion(PageUnit, GraphicsUnit.Display, DpiY, y);
+			return ConversionHelpers.GraphicsUnitConversion(PageUnit, GraphicsUnit.Pixel, DpiY, y);
 		}
 
 		~Graphics ()
@@ -969,7 +969,7 @@ namespace System.Drawing {
 				// We should probably read the NSScreen attributes and get the resolution
 				//    but there are problems getting the value from NSValue to a Rectangle
 				// We will set this to a fixed value for now
-				return 72.0f;
+				return 96.0f;
 			}
 		}
 
@@ -978,7 +978,7 @@ namespace System.Drawing {
 				// We should probably read the NSScreen attributes and get the resolution
 				//    but there are problems getting the value from NSValue to a Rectangle
 				// We will set this to a fixed value for now
-				return 72.0f;
+				return 96.0f;
 			}
 		}
 		public CompositingQuality CompositingQuality {
