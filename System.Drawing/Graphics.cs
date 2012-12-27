@@ -1611,22 +1611,37 @@ namespace System.Drawing {
 				int count = typesetter.SuggestLineBreak(start, boundsWidth);
 				var line = typesetter.GetLine(new NSRange(start, count));
 
-				// Calculate the string format if need be
-				var penFlushness = 0.0f;
-				if (layoutAvailable && format != null) 
-				{
-					if (format.Alignment == StringAlignment.Far)
-						penFlushness = (float)line.GetPenOffsetForFlush(1.0f, boundsWidth);
-					else if (format.Alignment == StringAlignment.Center)
-						penFlushness = (float)line.GetPenOffsetForFlush(0.5f, boundsWidth);
-
-				
-				}
 				// Create and initialize some values from the bounds.
 				float ascent;
 				float descent;
 				float leading;
 				double lineWidth = line.GetTypographicBounds(out ascent, out descent, out leading);
+
+				// Calculate the string format if need be
+				var penFlushness = 0.0f;
+				if (format != null) 
+				{
+					if (layoutAvailable) 
+					{
+						if (format.Alignment == StringAlignment.Far)
+							penFlushness = (float)line.GetPenOffsetForFlush(1.0f, boundsWidth);
+						else if (format.Alignment == StringAlignment.Center)
+							penFlushness = (float)line.GetPenOffsetForFlush(0.5f, boundsWidth);
+					}
+					else 
+					{
+						// We were only passed in a point so we need to format based
+						// on the point.
+						if (format.Alignment == StringAlignment.Far)
+							penFlushness -= (float)lineWidth;
+						else if (format.Alignment == StringAlignment.Center)
+							penFlushness -= (float)lineWidth / 2.0f;
+
+
+					}
+
+				
+				}
 
 				// initialize our Text Matrix or we could get trash in here
 				var textMatrix = CGAffineTransform.MakeIdentity();
