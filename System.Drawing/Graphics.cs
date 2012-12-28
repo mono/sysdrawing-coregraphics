@@ -1454,7 +1454,7 @@ namespace System.Drawing {
 			if (points.Length < 2)
 				throw new ArgumentException ("Needs at least two points");
 			MoveTo (points [0]);
-			for (int i = 0; i < points.Length; i++)
+			for (int i = 0; i < points.Length - 0; i++)
 				LineTo (points [i]);
 		}
 		
@@ -1468,6 +1468,7 @@ namespace System.Drawing {
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
 			PolygonSetup (points);
+			context.ClosePath ();
 			StrokePen (pen);
 		}	
 
