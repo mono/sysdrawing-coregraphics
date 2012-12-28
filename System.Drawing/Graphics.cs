@@ -507,19 +507,27 @@ namespace System.Drawing {
 
 		private void initializeMatrix(ref Matrix matrix, bool isFlipped) 
 		{
-			if (!isFlipped) 
-			{
+//			if (!isFlipped) 
+//			{
+////				matrix.Reset();
+////				matrix.Translate(0, boundingBox.Height, MatrixOrder.Append);
+////				matrix.Scale(1,-1, MatrixOrder.Append);
+//				matrix = new Matrix(
+//					1, 0, 0, -1, 0, boundingBox.Height);
+//				
+//			}
+//			else {
 //				matrix.Reset();
-//				matrix.Translate(0, boundingBox.Height, MatrixOrder.Append);
-//				matrix.Scale(1,-1, MatrixOrder.Append);
-				matrix = new Matrix(
-					1, 0, 0, -1, 0, boundingBox.Height);
-				
-			}
-			else {
-				matrix.Reset();
-			}
-			//matrix.Reset();
+//			}
+
+			// It looks like we really do not need to determin if it is flipped or not.
+			// So far this following is working no matter which coordinate system is being used
+			// on both Mac and iOS.  
+			// I will leave the previous commented out code there just in case.  When first implementing 
+			// DrawString the flipped coordinates were causing problems.  Now after implementing with 
+			// CoreText it seems to all be working.  Fingers Crossed.
+			matrix = new Matrix(
+				1, 0, 0, -1, 0, boundingBox.Height);
 		}
 
 		private void applyModelView() {
