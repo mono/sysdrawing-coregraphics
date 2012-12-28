@@ -149,7 +149,7 @@ namespace Example1_4
 			                               (int)ClientRectangle.Width, (int)ClientRectangle.Height);
 			drawingRectangle = new Rectangle(rect.Location, rect.Size);
 			Size sz = new Size(rect.Width, rect.Height);
-			var font = new Font("Arial",20.0f,FontStyle.Italic | FontStyle.Bold);
+			var font = new Font("Arial",20.0f,FontStyle.Italic | FontStyle.Bold | FontStyle.Underline);
 			SizeF stringSize = g.MeasureString(s, font);
 			Point Middle = new Point(sz.Width / 30,
 			                        sz.Height / 2 - (int)stringSize.Height / 2);

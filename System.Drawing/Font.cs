@@ -19,6 +19,8 @@ namespace System.Drawing
 		float sizeInPoints = 0;
 		GraphicsUnit unit = GraphicsUnit.Point;
 		float size;
+		bool underLine = false;
+		bool strikeThrough = false;
 
 		public Font (FontFamily family, float emSize,  GraphicsUnit unit)
 			: this (family, emSize, FontStyle.Regular, unit, DefaultCharSet, false)
@@ -89,7 +91,7 @@ namespace System.Drawing
 			}
 			catch
 			{
-				//nativeFont = CGFont.CreateWithFontName("Lucida Grande");
+				//nativeFont = new CTFont("Lucida Grande",emSize);
 				nativeFont = new CTFont("Helvetica",emSize);
 			}
 
@@ -99,6 +101,8 @@ namespace System.Drawing
 				tMask |= CTFontSymbolicTraits.Bold;
 			if ((style & FontStyle.Italic) == FontStyle.Italic)
 				tMask |= CTFontSymbolicTraits.Italic;
+			strikeThrough = (style & FontStyle.Strikeout) == FontStyle.Strikeout;
+			underLine = (style & FontStyle.Underline) == FontStyle.Underline;
 
 			var nativeFont2 = nativeFont.WithSymbolicTraits(emSize,tMask,tMask);
 
@@ -167,6 +171,60 @@ namespace System.Drawing
 				return size; 
 			}
 			
+		}
+
+		public bool Bold 
+		{ 
+			get { return (nativeFont.SymbolicTraits & ~CTFontSymbolicTraits.Bold) == CTFontSymbolicTraits.Bold; }
+		}
+
+		public bool Italic
+		{ 
+			get { return (nativeFont.SymbolicTraits & ~CTFontSymbolicTraits.Italic) == CTFontSymbolicTraits.Italic; }
+		}
+
+		public bool Underline
+		{ 
+			get { return underLine; }
+		}
+
+		public bool Strikeout
+		{ 
+			get { return strikeThrough; }
+		}
+
+		/**
+		 * 
+		 * Returns: The line spacing, in pixels, of this font.
+		 * 
+		 * The line spacing of a Font is the vertical distance between the base lines of 
+		 * two consecutive lines of text. Thus, the line spacing includes the blank space 
+		 * between lines along with the height of the character itself.
+		 * 
+		 * If the Unit property of the font is set to anything other than GraphicsUnit.Pixel, 
+		 * the height (in pixels) is calculated using the vertical resolution of the 
+		 * screen display. For example, suppose the font unit is inches and the font size 
+		 * is 0.3. Also suppose that for the corresponding font family, the em-height 
+		 * is 2048 and the line spacing is 2355. For a screen display that has a vertical 
+		 * resolution of 96 dots per inch, you can calculate the height as follows:
+		 * 
+		 * 2355*(0.3/2048)*96 = 33.11719
+		 * 
+		 **/
+		public float GetHeight() 
+		{
+
+
+			// Documentation for Accessing Font Metrics
+			// http://developer.apple.com/library/ios/#documentation/StringsTextFonts/Conceptual/CoreText_Programming/Operations/Operations.html
+			float lineHeight = 0;
+			lineHeight += nativeFont.AscentMetric;
+			lineHeight += nativeFont.DescentMetric;
+			lineHeight += nativeFont.LeadingMetric;
+
+
+			// Still have not figured this out yet!!!!
+			return lineHeight;
 		}
 	}
 }
