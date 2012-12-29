@@ -16,8 +16,6 @@ namespace Example4_1
 	{
 		public event PaintEventHandler Paint;
 
-		CGAffineTransform textMatrix;
-
 		#region Constructors
 		
 		// Called when created from unmanaged code
@@ -37,8 +35,6 @@ namespace Example4_1
 		void Initialize ()
 		{
 			this.AutoresizingMask = NSViewResizingMask.HeightSizable | NSViewResizingMask.WidthSizable;
-			textMatrix = new CGAffineTransform(
-				1, 0, 0, -1, 0, 0);
 		}
 
 		public PlotPanel (RectangleF rect) : base (rect)
@@ -86,11 +82,13 @@ namespace Example4_1
 		
 		public int Left 
 		{
-			get { return (int)Frame.Left; }
+			get { 
+
+				return (int)Frame.Left; 
+			}
 			
 			set {
 				var location = new PointF(value, Frame.Y);
-				//location = textMatrix.TransformPoint(location);
 				Frame = new RectangleF(location, Frame.Size);
 			}
 			
@@ -113,7 +111,6 @@ namespace Example4_1
 			get { return (int)Frame.Top; }
 			set { 
 				var location = new PointF(Frame.X, value);
-				//location = textMatrix.TransformPoint(location);
 				Frame = new RectangleF(location, Frame.Size);
 				
 			}
@@ -149,7 +146,6 @@ namespace Example4_1
 				var frame = Frame;
 				frame.Height = value;
 				Frame = frame;
-				this.NeedsDisplay = true;
 			}
 		}
 #endregion
@@ -161,11 +157,23 @@ namespace Example4_1
 				Graphics g = new Graphics();
 				g.Clear(backColor);
 
+				// Ok this throws one off for a bit until you realize what is happening.
+				// The current graphics context for this subview will be clipped afterwards for drawing
+				// so we will need to offset that.  The CurrentContext for this subview 
+				// of our main view will have the X and Y coordinates offset by the top left corner
+				// thus throwing our drawing off.  So we will set the transform here to be offset as well.
+				// Not sure if this should go into the main Graphics object or not.  
+				//  Should this be taken care of automatically????????
+				//Console.WriteLine(g.ClipBounds + " - " + dirtyRect + " - " + Bounds);
+				var clipBounds = g.ClipBounds;
+				g.TranslateTransform(clipBounds.X,clipBounds.Y);
+				dirtyRect = clipBounds;
+
 				Rectangle clip = new Rectangle((int)dirtyRect.X,
 				                               (int)dirtyRect.Y,
 				                               (int)dirtyRect.Width,
 				                               (int)dirtyRect.Height);
-				
+
 				var args = new PaintEventArgs(g, clip);
 				
 				Paint(this, args);
@@ -173,6 +181,9 @@ namespace Example4_1
 			
 		}
 
+
+		// We make sure we are flipped here so our Frame object calculations are set up
+		// correctly when this sub view is resized and repositioned.
 		public override bool IsFlipped {
 			get {
 				//return base.IsFlipped;

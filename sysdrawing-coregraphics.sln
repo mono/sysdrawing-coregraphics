@@ -721,7 +721,7 @@ Global
 		{053FD246-10CB-43B5-9A9B-E8F07A24364A} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Samples\MonoMac\Example3_6\Example3_6.csproj
+		StartupItem = Samples\MonoMac\Example4_1\Example4_1.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.inheritsSet = Mono
