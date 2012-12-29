@@ -2,13 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 
 using MonoMac.Foundation;
 using MonoMac.AppKit;
 using MonoMac.CoreGraphics;
 using MonoMac.CoreText;
-using System.Drawing;
 
 namespace DrawStringTest
 {
@@ -75,7 +75,7 @@ namespace DrawStringTest
 		{
 			get {
 				if (font == null)
-					font = new Font("Helvetica",20);
+					font = new Font("Lucida Grande",20, FontStyle.Italic | FontStyle.Bold | FontStyle.Underline);
 				return font;
 			}
 			set 
@@ -90,16 +90,42 @@ namespace DrawStringTest
 
 			var g = new Graphics();
 
-			g.Clear(backColor);
-
+			//g.Clear(backColor);
 			PointF point = new PointF(50,50);
 			var rect = new Rectangle(50,50,20,20);
-
+			//g.RotateTransform(-20);
+			//g.TranslateTransform(5,5);
 			var size = g.MeasureString("A", this.Font);
 			rect.Height = (int)size.Height;
 			rect.Width = (int)size.Width*20;
+
+			int nextLine = (int)(size.Height * 1.2);
+
 			g.DrawRectangle(Pens.Red, rect);
-			g.DrawString("Test2", this.Font, Brushes.Black, point);
+			g.DrawString("Test2 without line feed", this.Font, Brushes.Blue, point);
+
+			StringFormat format = new StringFormat();
+			format.Alignment = StringAlignment.Center;
+
+			rect.Y += nextLine;
+			rect.Height = (int)size.Height;
+			rect.Width = (int)size.Width*20;
+			g.DrawRectangle(Pens.Red, rect);
+			g.DrawString("Test2 Centered", this.Font, Brushes.Blue, rect, format);
+
+			format.Alignment = StringAlignment.Far;
+			rect.Y += nextLine;
+			rect.Height = (int)size.Height;
+			rect.Width = (int)size.Width*20;
+			g.DrawRectangle(Pens.Red, rect);
+			g.DrawString("Test2 Far", this.Font, Brushes.Blue, rect, format);
+
+			format.Alignment = StringAlignment.Far;
+			rect.Y += nextLine;
+			rect.Height = (int)size.Height;
+			rect.Width = (int)size.Width*3;
+			g.DrawRectangle(Pens.Red, rect);
+			g.DrawString("Test2 Far", this.Font, Brushes.Blue, rect, format);
 
 			g.Dispose();
 		}
@@ -111,6 +137,8 @@ namespace DrawStringTest
 		//			}
 		//		}
 	}
+
+
 }
 
 public interface Form

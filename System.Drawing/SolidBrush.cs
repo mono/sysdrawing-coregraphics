@@ -61,6 +61,9 @@ namespace System.Drawing {
 			} else {
 				graphics.context.SetStrokeColor(color.R / 255f, color.G/255f, color.B/255f, sourceCopy ? 1f : color.A/255f );
 			}
+
+			// I am setting this to be used for Text coloring in DrawString
+			graphics.lastBrushColor = color;
 		}
 	}
 }

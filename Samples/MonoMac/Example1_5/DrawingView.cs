@@ -66,6 +66,32 @@ namespace Example1_5
 			// Draw filled pie pieces
 			g.FillPie(aBrush, new Rectangle(170, 160, 100, 100), -90, 90);
 			g.FillPie(Brushes.Green, new Rectangle(170, 160, 100, 100), -90, -90);
+			
+
+			// Create pens.
+			Pen redPen   = new Pen(Color.Red, 3);
+			Pen greenPen = new Pen(Color.Green, 3);
+			greenPen.DashStyle = DashStyle.DashDotDot;
+			SolidBrush transparentBrush = new SolidBrush(Color.FromArgb(150, Color.Wheat));
+
+			// define point array to draw a curve:
+			Point point1 = new Point(300, 250);
+			Point point2 = new Point(350, 125);
+			Point point3 = new Point(400, 110);
+			Point point4 = new Point(450, 210);
+			Point point5 = new Point(500, 300);
+			Point[] curvePoints ={ point1, point2, point3, point4, point5};
+
+			// Draw lines between original points to screen.
+			g.DrawLines(redPen, curvePoints);
+
+			// Fill Curve
+			g.FillClosedCurve(transparentBrush, curvePoints);
+
+			// Draw closed curve to screen.
+			g.DrawClosedCurve(greenPen, curvePoints);
+
+
 
 			g.Dispose();
 		}

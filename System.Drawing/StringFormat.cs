@@ -37,6 +37,7 @@ namespace System.Drawing {
 
 		public StringFormat ()
 		{
+			Alignment = StringAlignment.Near;
 		}
 		
 		~StringFormat ()
