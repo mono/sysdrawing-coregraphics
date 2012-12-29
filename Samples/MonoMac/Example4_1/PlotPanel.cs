@@ -157,18 +157,6 @@ namespace Example4_1
 				Graphics g = new Graphics();
 				g.Clear(backColor);
 
-				// Ok this throws one off for a bit until you realize what is happening.
-				// The current graphics context for this subview will be clipped afterwards for drawing
-				// so we will need to offset that.  The CurrentContext for this subview 
-				// of our main view will have the X and Y coordinates offset by the top left corner
-				// thus throwing our drawing off.  So we will set the transform here to be offset as well.
-				// Not sure if this should go into the main Graphics object or not.  
-				//  Should this be taken care of automatically????????
-				//Console.WriteLine(g.ClipBounds + " - " + dirtyRect + " - " + Bounds);
-				var clipBounds = g.ClipBounds;
-				g.TranslateTransform(clipBounds.X,clipBounds.Y);
-				dirtyRect = clipBounds;
-
 				Rectangle clip = new Rectangle((int)dirtyRect.X,
 				                               (int)dirtyRect.Y,
 				                               (int)dirtyRect.Width,

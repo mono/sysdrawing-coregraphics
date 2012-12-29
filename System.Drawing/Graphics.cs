@@ -52,6 +52,7 @@ namespace System.Drawing {
 		private GraphicsUnit graphicsUnit = GraphicsUnit.Display;
 		private float pageScale = 1;
 		private PointF renderingOrigin = PointF.Empty;
+		private RectangleF subviewClipOffset = RectangleF.Empty;
 		
 		public Graphics (CGContext context)
 		{
@@ -86,6 +87,7 @@ namespace System.Drawing {
 			isFlipped = gc.IsFlipped;
 
 			InitializeContext(gc.GraphicsPort);
+
 		}
 #endif
 		private void InitializeContext(CGContext context) 
@@ -98,6 +100,13 @@ namespace System.Drawing {
 			viewMatrix = new Matrix();
 
 			ResetTransform();
+
+			// We are going to try this here and it may cause problems down the road.
+			// This seems to only happen with Mac and not iOS
+			// What is happening is that sub views are offset by their relative location
+			// within the window.  That means our drawing locations are also offset by this 
+			// value as well.  So what we need to do is translate our view by this offset as well.
+			subviewClipOffset = context.GetClipBoundingBox();
 
 			PageUnit = GraphicsUnit.Pixel;
 			PageScale = 1;
@@ -777,6 +786,10 @@ namespace System.Drawing {
 		void setupView() 
 		{
 			initializeMatrix(ref viewMatrix, isFlipped);
+			// * NOTE * Here we offset our drawing by the subview Clipping region of the Window
+			// this is so that we start at offset 0,0 for all of our graphic operations
+			viewMatrix.Translate(subviewClipOffset.Location.X, subviewClipOffset.Y);
+
 			userspaceScaleX = GraphicsUnitConvertX(1) * pageScale;
 			userspaceScaleY = GraphicsUnitConvertY(1) * pageScale;
 			viewMatrix.Scale(userspaceScaleX, userspaceScaleY);
