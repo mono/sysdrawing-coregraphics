@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using MonoTouch.UIKit;
 
-namespace MTExample4_7
+namespace MTExample4_8
 {
 	public class PlotPanel : UIView {
 
