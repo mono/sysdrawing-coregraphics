@@ -125,14 +125,10 @@ namespace Example4_1
 		public Rectangle ClientRectangle 
 		{
 			get {
-//				return new Rectangle((int)Bounds.X,
-//				                     (int)Bounds.Y,
-//				                     (int)Bounds.Width,
-//				                     (int)Bounds.Height);
-				return new Rectangle((int)Frame.X,
-				                     (int)Frame.Y,
-				                     (int)Frame.Width,
-				                     (int)Frame.Height);
+				return new Rectangle((int)Bounds.X,
+				                     (int)Bounds.Y,
+				                     (int)Bounds.Width,
+				                     (int)Bounds.Height);
 			}
 		}
 
@@ -184,12 +180,15 @@ namespace Example4_1
 			g.Dispose();
 		}
 
-				public override bool IsFlipped {
-					get {
-						//return base.IsFlipped;
-						return true;
-					}
-				}
+		// Here we make sure we are flipped so our subview PlotPanel size and location
+		// are calculated correctly.  If not the positions are calculated on the 0,0 in 
+		// the lower left corner instead of upper left.
+		public override bool IsFlipped {
+			get {
+				//return base.IsFlipped;
+				return true;
+			}
+		}
 
 	}
 }
