@@ -112,7 +112,11 @@ namespace MTExample4_8
 		public Rectangle SetPolarArea ()
 		{
 			Offset = form1.PlotPanel.Width / 10;
-			int height = form1.PlotPanel.Height - 2 * Offset;
+			int height = 0;
+			if (form1.PlotPanel.Height < form1.PlotPanel.Width)
+				height = form1.PlotPanel.Height - 2 * Offset;
+			else
+				height = form1.PlotPanel.Height - 7 * Offset;
 			int width = height;
 			Rectangle rect = new Rectangle (Offset, Offset, width, height);
 			return rect;

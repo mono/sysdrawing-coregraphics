@@ -111,6 +111,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTExample4_7", "Samples\Mon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTExample4_8", "Samples\MonoTouch\MTExample4_8\MTExample4_8.csproj", "{F2F20E66-1340-40AA-A21D-87280A536BE7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example4_9", "..\..\..\..\..\..\..\Volumes\Public\Learning\Practicle C# Graphics and Charts\Examples\Example4_9\Example4_9\Example4_9.csproj", "{8DBEF5B0-6A1C-45D5-A9EF-7E37287C754B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -546,6 +548,20 @@ Global
 		{88D2EB85-3EB2-45FB-9621-0CAD9930312E}.Release|iPhone.Build.0 = Release|iPhone
 		{88D2EB85-3EB2-45FB-9621-0CAD9930312E}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{88D2EB85-3EB2-45FB-9621-0CAD9930312E}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{8DBEF5B0-6A1C-45D5-A9EF-7E37287C754B}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{8DBEF5B0-6A1C-45D5-A9EF-7E37287C754B}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
+		{8DBEF5B0-6A1C-45D5-A9EF-7E37287C754B}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
+		{8DBEF5B0-6A1C-45D5-A9EF-7E37287C754B}.AppStore|iPhone.Build.0 = Debug|Any CPU
+		{8DBEF5B0-6A1C-45D5-A9EF-7E37287C754B}.AppStore|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{8DBEF5B0-6A1C-45D5-A9EF-7E37287C754B}.AppStore|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{8DBEF5B0-6A1C-45D5-A9EF-7E37287C754B}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{8DBEF5B0-6A1C-45D5-A9EF-7E37287C754B}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{8DBEF5B0-6A1C-45D5-A9EF-7E37287C754B}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{8DBEF5B0-6A1C-45D5-A9EF-7E37287C754B}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{8DBEF5B0-6A1C-45D5-A9EF-7E37287C754B}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{8DBEF5B0-6A1C-45D5-A9EF-7E37287C754B}.Release|iPhone.Build.0 = Release|Any CPU
+		{8DBEF5B0-6A1C-45D5-A9EF-7E37287C754B}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{8DBEF5B0-6A1C-45D5-A9EF-7E37287C754B}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{98D3A81F-CB18-499A-B92F-74981E6B6EA5}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
 		{98D3A81F-CB18-499A-B92F-74981E6B6EA5}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
 		{98D3A81F-CB18-499A-B92F-74981E6B6EA5}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
