@@ -16,8 +16,6 @@ namespace Example4_1
 	{
 		public event PaintEventHandler Paint;
 
-		CGAffineTransform textMatrix;
-
 		#region Constructors
 		
 		// Called when created from unmanaged code
@@ -37,8 +35,6 @@ namespace Example4_1
 		void Initialize ()
 		{
 			this.AutoresizingMask = NSViewResizingMask.HeightSizable | NSViewResizingMask.WidthSizable;
-			textMatrix = new CGAffineTransform(
-				1, 0, 0, -1, 0, 0);
 		}
 
 		public PlotPanel (RectangleF rect) : base (rect)
@@ -86,11 +82,13 @@ namespace Example4_1
 		
 		public int Left 
 		{
-			get { return (int)Frame.Left; }
+			get { 
+
+				return (int)Frame.Left; 
+			}
 			
 			set {
 				var location = new PointF(value, Frame.Y);
-				//location = textMatrix.TransformPoint(location);
 				Frame = new RectangleF(location, Frame.Size);
 			}
 			
@@ -113,7 +111,6 @@ namespace Example4_1
 			get { return (int)Frame.Top; }
 			set { 
 				var location = new PointF(Frame.X, value);
-				//location = textMatrix.TransformPoint(location);
 				Frame = new RectangleF(location, Frame.Size);
 				
 			}
@@ -149,7 +146,6 @@ namespace Example4_1
 				var frame = Frame;
 				frame.Height = value;
 				Frame = frame;
-				this.NeedsDisplay = true;
 			}
 		}
 #endregion
@@ -165,7 +161,7 @@ namespace Example4_1
 				                               (int)dirtyRect.Y,
 				                               (int)dirtyRect.Width,
 				                               (int)dirtyRect.Height);
-				
+
 				var args = new PaintEventArgs(g, clip);
 				
 				Paint(this, args);
@@ -173,6 +169,9 @@ namespace Example4_1
 			
 		}
 
+
+		// We make sure we are flipped here so our Frame object calculations are set up
+		// correctly when this sub view is resized and repositioned.
 		public override bool IsFlipped {
 			get {
 				//return base.IsFlipped;

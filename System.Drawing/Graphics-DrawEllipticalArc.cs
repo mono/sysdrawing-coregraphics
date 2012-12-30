@@ -635,8 +635,14 @@ namespace System.Drawing
 				float current = startAngle + drawn;
 				float additional;
 				
-				if (enough)
+				if (enough) 
+				{
+					if (isPieSlice) 
+					{
+						graphics.ClosePath();
+					}
 					return;
+				}
 				
 				additional = endAngle - current; /* otherwise, add the remainder */
 				if (additional > 90)
@@ -654,12 +660,15 @@ namespace System.Drawing
 				make_arc(graphics, (i == 0),	/* only move to the starting pt in the 1st iteration */
 				         x, y, width, height,	/* bounding rectangle */
 				         current, current + additional, antialiasing, isPieSlice);
+
 				drawn += additional;
 
-				if (isPieSlice) {
-					graphics.ClosePath();
-				}
 			}
+
+			if (isPieSlice) {
+				graphics.ClosePath();
+			}
+
 		}
 
 	}

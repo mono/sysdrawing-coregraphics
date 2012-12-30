@@ -40,6 +40,7 @@ namespace System.Drawing {
 		// Need to keep a transform around, since it is not possible to
 		// set the transform on the context, merely to concatenate.
 		CGAffineTransform transform;
+		internal SmoothingMode smoothingMode;
 
 		// Text Layout
 		internal Color lastBrushColor;
@@ -52,6 +53,7 @@ namespace System.Drawing {
 		private GraphicsUnit graphicsUnit = GraphicsUnit.Display;
 		private float pageScale = 1;
 		private PointF renderingOrigin = PointF.Empty;
+		private RectangleF subviewClipOffset = RectangleF.Empty;
 		
 		public Graphics (CGContext context)
 		{
@@ -86,6 +88,7 @@ namespace System.Drawing {
 			isFlipped = gc.IsFlipped;
 
 			InitializeContext(gc.GraphicsPort);
+
 		}
 #endif
 		private void InitializeContext(CGContext context) 
@@ -99,8 +102,18 @@ namespace System.Drawing {
 
 			ResetTransform();
 
+			// We are going to try this here and it may cause problems down the road.
+			// This seems to only happen with Mac and not iOS
+			// What is happening is that sub views are offset by their relative location
+			// within the window.  That means our drawing locations are also offset by this 
+			// value as well.  So what we need to do is translate our view by this offset as well.
+			subviewClipOffset = context.GetClipBoundingBox();
+
 			PageUnit = GraphicsUnit.Pixel;
 			PageScale = 1;
+
+			// Set anti-aliasing
+			SmoothingMode = SmoothingMode.Default;
 		}
 
 		internal float GraphicsUnitConvertX (float x)
@@ -777,6 +790,10 @@ namespace System.Drawing {
 		void setupView() 
 		{
 			initializeMatrix(ref viewMatrix, isFlipped);
+			// * NOTE * Here we offset our drawing by the subview Clipping region of the Window
+			// this is so that we start at offset 0,0 for all of our graphic operations
+			viewMatrix.Translate(subviewClipOffset.Location.X, subviewClipOffset.Y);
+
 			userspaceScaleX = GraphicsUnitConvertX(1) * pageScale;
 			userspaceScaleY = GraphicsUnitConvertY(1) * pageScale;
 			viewMatrix.Scale(userspaceScaleX, userspaceScaleY);
@@ -896,7 +913,34 @@ namespace System.Drawing {
 			throw new NotImplementedException ();
 		}
 		
-		public SmoothingMode SmoothingMode { get; set; }
+
+		// CGContext Anti-Alias:
+		// A Boolean value that specifies whether anti-aliasing should be turned on. 
+		// Anti-aliasing is turned on by default when a window or bitmap context is created. 
+		// It is turned off for other types of contexts.
+
+		// Default, None, and HighSpeed are equivalent and specify rendering without smoothing applied.
+		// AntiAlias and HighQuality are equivalent and specify rendering with smoothing applied.
+		public SmoothingMode SmoothingMode { 
+			get { return smoothingMode; } 
+			set 
+			{
+				// Quartz performs antialiasing for a graphics context if both the allowsAntialiasing parameter 
+				// and the graphics state parameter shouldAntialias are true.
+				switch (value) 
+				{
+				case SmoothingMode.AntiAlias:
+				case SmoothingMode.HighQuality:
+					context.SetAllowsAntialiasing(true);  // This parameter is not part of the graphics state.
+					context.SetShouldAntialias(true);
+					break;
+				default:
+					context.SetAllowsAntialiasing(false); // This parameter is not part of the graphics state.
+					context.SetShouldAntialias(false);
+					break;
+				}
+			}
+		}
 		
 		public bool IsClipEmpty {
 			get {
@@ -1238,6 +1282,7 @@ namespace System.Drawing {
 			renderingOrigin = gstate.renderingOrigin;
 			graphicsUnit = gstate.pageUnit;
 			pageScale = gstate.pageScale;
+			SmoothingMode = gstate.smoothingMode;
 			//applyModelView();
 			// I do not know if we should use the contexts save/restore state or our own
 			// we will do that save state for now
@@ -1255,6 +1300,7 @@ namespace System.Drawing {
 			currentState.renderingOrigin = renderingOrigin;
 			currentState.pageUnit = graphicsUnit;
 			currentState.pageScale = pageScale;
+			currentState.smoothingMode = smoothingMode;
 
 			// I do not know if we should use the contexts save/restore state or our own
 			// we will do that save state for now

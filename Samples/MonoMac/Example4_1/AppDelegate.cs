@@ -18,7 +18,10 @@ namespace Example4_1
 		{
 			mainWindowController = new MainWindowController ();
 			mainWindowController.Window.MakeKeyAndOrderFront (this);
-			mainWindowController.Window.ContentView.AddSubview(new ChartCanvas(mainWindowController.Window.ContentView.Bounds));
+			RectangleF bounds = mainWindowController.Window.ContentView.Bounds;
+			bounds.Inflate(-50,-50);
+			//mainWindowController.Window.ContentView.AddSubview(new ChartCanvas(mainWindowController.Window.ContentView.Bounds));
+			mainWindowController.Window.ContentView.AddSubview(new ChartCanvas(bounds));
 		}
 		
 		public override bool ApplicationShouldTerminateAfterLastWindowClosed (NSApplication sender)
