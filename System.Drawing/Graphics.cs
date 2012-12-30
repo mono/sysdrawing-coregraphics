@@ -40,6 +40,7 @@ namespace System.Drawing {
 		// Need to keep a transform around, since it is not possible to
 		// set the transform on the context, merely to concatenate.
 		CGAffineTransform transform;
+		internal SmoothingMode smoothingMode;
 
 		// Text Layout
 		internal Color lastBrushColor;
@@ -110,6 +111,9 @@ namespace System.Drawing {
 
 			PageUnit = GraphicsUnit.Pixel;
 			PageScale = 1;
+
+			// Set anti-aliasing
+			SmoothingMode = SmoothingMode.Default;
 		}
 
 		internal float GraphicsUnitConvertX (float x)
@@ -909,7 +913,34 @@ namespace System.Drawing {
 			throw new NotImplementedException ();
 		}
 		
-		public SmoothingMode SmoothingMode { get; set; }
+
+		// CGContext Anti-Alias:
+		// A Boolean value that specifies whether anti-aliasing should be turned on. 
+		// Anti-aliasing is turned on by default when a window or bitmap context is created. 
+		// It is turned off for other types of contexts.
+
+		// Default, None, and HighSpeed are equivalent and specify rendering without smoothing applied.
+		// AntiAlias and HighQuality are equivalent and specify rendering with smoothing applied.
+		public SmoothingMode SmoothingMode { 
+			get { return smoothingMode; } 
+			set 
+			{
+				// Quartz performs antialiasing for a graphics context if both the allowsAntialiasing parameter 
+				// and the graphics state parameter shouldAntialias are true.
+				switch (value) 
+				{
+				case SmoothingMode.AntiAlias:
+				case SmoothingMode.HighQuality:
+					context.SetAllowsAntialiasing(true);  // This parameter is not part of the graphics state.
+					context.SetShouldAntialias(true);
+					break;
+				default:
+					context.SetAllowsAntialiasing(false); // This parameter is not part of the graphics state.
+					context.SetShouldAntialias(false);
+					break;
+				}
+			}
+		}
 		
 		public bool IsClipEmpty {
 			get {
@@ -1251,6 +1282,7 @@ namespace System.Drawing {
 			renderingOrigin = gstate.renderingOrigin;
 			graphicsUnit = gstate.pageUnit;
 			pageScale = gstate.pageScale;
+			SmoothingMode = gstate.smoothingMode;
 			//applyModelView();
 			// I do not know if we should use the contexts save/restore state or our own
 			// we will do that save state for now
@@ -1268,6 +1300,7 @@ namespace System.Drawing {
 			currentState.renderingOrigin = renderingOrigin;
 			currentState.pageUnit = graphicsUnit;
 			currentState.pageScale = pageScale;
+			currentState.smoothingMode = smoothingMode;
 
 			// I do not know if we should use the contexts save/restore state or our own
 			// we will do that save state for now
