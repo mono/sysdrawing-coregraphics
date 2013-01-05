@@ -9,6 +9,7 @@ namespace System.Drawing.Drawing2D
 		// These are just off the top of my head for right now as am sure there are
 		// many more
 		internal Pen lastPen { get; set; }
+		internal Brush lastBrush { get; set; }
 		internal Matrix model { get; set; }
 		internal Matrix view { get; set; }
 		internal PointF renderingOrigin { get; set; }

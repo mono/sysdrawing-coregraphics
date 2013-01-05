@@ -65,7 +65,10 @@ namespace Example1_5a
 			// Draw ellipse:
 			g.DrawEllipse(aPen, new RectangleF(.20f, 1.60f, 1.00f, .50f));
 			// Draw filled ellipse:
-			g.FillEllipse(aBrush, new RectangleF(1.70f, .20f, 1.00f, .50f));
+			HatchBrush hBrush = new HatchBrush(HatchStyle.Horizontal, Color.Blue, Color.LightCoral);
+			g.FillEllipse(hBrush, new RectangleF(1.70f, .20f, 1.00f, .50f));
+			
+			//g.FillEllipse(aBrush, new RectangleF(1.70f, .20f, 1.00f, .50f));
 			// Draw arc:
 			g.DrawArc(aPen, new RectangleF(1.70f, .90f, 1.00f, .50f), -90, 180);
 
