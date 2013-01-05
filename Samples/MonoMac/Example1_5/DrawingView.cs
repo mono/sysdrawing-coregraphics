@@ -46,7 +46,7 @@ namespace Example1_5
 			Graphics g = new Graphics();
 
 			g.Clear(Color.White);
-
+			g.SmoothingMode = SmoothingMode.AntiAlias;
 			// Create a pen object:
 			Pen aPen = new Pen(Color.Blue, 2);
 			// Create a brush object with a transparent red color:
@@ -59,7 +59,9 @@ namespace Example1_5
 			// Draw ellipse:
 			g.DrawEllipse(aPen, new Rectangle(20, 160, 100, 50));
 			// Draw filled ellipse:
-			g.FillEllipse(aBrush, new Rectangle(170, 20, 100, 50));
+			HatchBrush hBrush = new HatchBrush(HatchStyle.Divot, Color.Blue, Color.LightCoral);
+			g.FillEllipse(hBrush, new Rectangle(170, 20, 100, 50));
+			//g.FillEllipse(aBrush, new Rectangle(170, 20, 100, 50));
 			// Draw arc:
 			g.DrawArc(aPen, new Rectangle(170, 90, 100, 50), -90, 180);
 
@@ -86,7 +88,9 @@ namespace Example1_5
 			g.DrawLines(redPen, curvePoints);
 
 			// Fill Curve
-			g.FillClosedCurve(transparentBrush, curvePoints);
+			HatchBrush hatchme = new HatchBrush(HatchStyle.Vertical, Color.Blue, Color.FromArgb(150, Color.Wheat));
+			g.FillClosedCurve(hBrush, curvePoints);
+			//g.FillClosedCurve(transparentBrush, curvePoints);
 
 			// Draw closed curve to screen.
 			g.DrawClosedCurve(greenPen, curvePoints);
@@ -96,12 +100,12 @@ namespace Example1_5
 			g.Dispose();
 		}
 		
-		//		public override bool IsFlipped {
-		//			get {
-		//				//return base.IsFlipped;
-		//				return false;
-		//			}
-		//		}
+				public override bool IsFlipped {
+					get {
+						//return base.IsFlipped;
+						return false;
+					}
+				}
 
 	}
 }

@@ -54,6 +54,9 @@ namespace System.Drawing {
 
 		internal override void Setup (Graphics graphics, bool fill)
 		{
+			if (graphics.LastBrush == this)
+				return;
+
 			bool sourceCopy = graphics.CompositingMode == CompositingMode.SourceCopy;
 			if (fill){
 				graphics.context.SetFillColor(color.R / 255f, color.G/255f, color.B/255f, sourceCopy ? 1f : color.A/255f );
@@ -61,6 +64,8 @@ namespace System.Drawing {
 			} else {
 				graphics.context.SetStrokeColor(color.R / 255f, color.G/255f, color.B/255f, sourceCopy ? 1f : color.A/255f );
 			}
+
+			graphics.LastBrush = this;
 
 			// I am setting this to be used for Text coloring in DrawString
 			graphics.lastBrushColor = color;

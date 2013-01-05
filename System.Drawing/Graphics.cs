@@ -32,6 +32,7 @@ namespace System.Drawing {
 	public sealed partial class Graphics : MarshalByRefObject, IDisposable {
 		internal CGContext context;
 		internal Pen LastPen;
+		internal Brush LastBrush;
 		internal SizeF contextUserSpace;
 		internal RectangleF boundingBox, clipRegion;
 		internal GraphicsUnit quartzUnit = GraphicsUnit.Point;
@@ -1277,6 +1278,7 @@ namespace System.Drawing {
 		public void Restore (GraphicsState gstate)
 		{
 			LastPen = gstate.lastPen;
+			LastBrush = gstate.lastBrush;
 			modelMatrix = gstate.model;
 			viewMatrix = gstate.view;
 			renderingOrigin = gstate.renderingOrigin;
@@ -1293,6 +1295,7 @@ namespace System.Drawing {
 		{
 			var currentState = new GraphicsState();
 			currentState.lastPen = LastPen;
+			currentState.lastBrush = LastBrush;
 			// Make sure we clone the Matrices or we will still modify
 			// them after the save as they are the same objects.  Woops!!
 			currentState.model = modelMatrix.Clone();
