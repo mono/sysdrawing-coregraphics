@@ -18,12 +18,12 @@ namespace MTExample1_5
 			Graphics g = new Graphics();
 			
 			//g.Clear(Color.White);
-			
+			g.SmoothingMode = SmoothingMode.AntiAlias;
 			// Create a pen object:
 			Pen aPen = new Pen(Color.Blue, 2);
 			// Create a brush object with a transparent red color:
 			SolidBrush aBrush = new SolidBrush(Color.Red);
-			HatchBrush hBrush = new HatchBrush(HatchStyle.Divot, Color.Blue, Color.LightCoral);
+			HatchBrush hBrush = new HatchBrush(HatchStyle.Shingle, Color.Blue, Color.LightCoral);
 			HatchBrush hBrush2 = new HatchBrush(HatchStyle.Cross, Color.Blue, Color.LightCoral);
 			HatchBrush hBrush3 = new HatchBrush(HatchStyle.BackwardDiagonal, Color.Blue, Color.LightCoral);
 			HatchBrush hBrush4 = new HatchBrush(HatchStyle.Sphere, Color.Blue, Color.LightCoral);
