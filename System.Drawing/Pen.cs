@@ -42,6 +42,7 @@ namespace System.Drawing
 			var sb = brush as SolidBrush;
 			if (sb != null)
 				color = sb.Color;
+			this.width = width;
 		}
 
 		public Pen (Color color, float width)
