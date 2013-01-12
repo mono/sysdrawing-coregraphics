@@ -33,6 +33,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.IO;
 using System.Drawing.Imaging;
 using System.Runtime.Serialization;
@@ -49,6 +50,7 @@ using MonoTouch.CoreGraphics;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using MonoTouch.ImageIO;
+using MonoTouch.MobileCoreServices;
 #endif
 
 namespace System.Drawing {
@@ -58,6 +60,9 @@ namespace System.Drawing {
 		// if null, we created the bitmap in memory, otherwise, the backing file.
 
 		internal IntPtr bitmapBlock;
+
+		// we will default this to one for now until we get some tests for other image types
+		int imageCount = 1;
 
 		public Bitmap (string filename)
 		{
@@ -277,53 +282,59 @@ namespace System.Drawing {
 			if (NativeCGImage == null)
 				throw new ObjectDisposedException ("cgimage");
 
-#if MONOMAC
-			using (var uiimage = new NSImage (NativeCGImage, new SizeF(NativeCGImage.Width, NativeCGImage.Height))){
-				NSError error;
-				//  get an NSBitmapImageRep of the CGImage
-				NSBitmapImageRep rep = new NSBitmapImageRep (NativeCGImage);
+			// With MonoTouch we can use UTType from CoreMobileServices but since
+			// MonoMac does not have that yet (or at least can not find it) I will 
+			// use the string version of those for now.  I did not want to add another
+			// #if #else in here.
 
-				if (format == ImageFormat.Jpeg){
-					using (var data = rep.RepresentationUsingTypeProperties (NSBitmapImageFileType.Jpeg, new NSDictionary ())){
-						if (data.Save (path, NSDataWritingOptions.Atomic, out error))
-							return;
-						
-						throw new IOException ("Saving the file " + path + " " + error);
-					}
-				} else if (format == ImageFormat.Png){
-					using (var data = rep.RepresentationUsingTypeProperties (NSBitmapImageFileType.Png, new NSDictionary ())){
-						if (data.Save (path, NSDataWritingOptions.Atomic, out error))
-							return;
-						
-						throw new IOException ("Saving the file " + path + " " + error);
-					}
-				} else
-					throw new ArgumentException ("Unsupported format, only Jpeg and Png are supported", "format");
-			}
-#else
-			using (var uiimage = new UIImage (NativeCGImage)){
 
-				NSError error;
-				
-				if (format == ImageFormat.Jpeg){
-					using (var data = uiimage.AsJPEG ()){
-						if (data.Save (path, NSDataWritingOptions.Atomic, out error))
-							return;
-						
-						throw new IOException ("Saving the file " + path + " " + error);
-					}
-				} else if (format == ImageFormat.Png){
-					using (var data = uiimage.AsPNG ()){
-						if (data.Save (path, NSDataWritingOptions.Atomic, out error))
-							return;
-						
-						throw new IOException ("Saving the file " + path + " " + error);
-					}
-				} else
-					throw new ArgumentException ("Unsupported format, only Jpeg and Png are supported", "format");
-			}
-#endif
-			
+			// for now we will just default this to png
+			var typeIdentifier = "public.png";
+
+			// Get the correct type identifier
+			if (format == ImageFormat.Bmp)
+				typeIdentifier = "com.microsoft.bmp";
+//			else if (format == ImageFormat.Emf)
+//				typeIdentifier = "image/emf";
+//			else if (format == ImageFormat.Exif)
+//				typeIdentifier = "image/exif";
+			else if (format == ImageFormat.Gif)
+				typeIdentifier = "com.compuserve.gif";
+			else if (format == ImageFormat.Icon)
+				typeIdentifier = "com.microsoft.ico";
+			else if (format == ImageFormat.Jpeg)
+				typeIdentifier = "public.jpeg";
+			else if (format == ImageFormat.Png)
+				typeIdentifier = "public.png";
+			else if (format == ImageFormat.Tiff)
+				typeIdentifier = "public.tiff";
+			else if (format == ImageFormat.Wmf)
+				typeIdentifier = "com.adobe.pdf";
+
+			// Not sure what this is yet
+			else if (format == ImageFormat.MemoryBmp)
+				throw new NotImplementedException("ImageFormat.MemoryBmp not supported");
+
+			// Obtain a URL file path to be passed
+			NSUrl url = NSUrl.FromFilename(path);
+
+			// * NOTE * we only support one image for right now.
+
+			// Create an image destination that saves into the path that is passed in
+			CGImageDestination dest = CGImageDestination.FromUrl (url, typeIdentifier, imageCount, null); 
+
+			// Add an image to the destination
+			dest.AddImage(NativeCGImage, null);
+
+			// Finish the export
+			bool success = dest.Close ();
+//                        if (success == false)
+//                                Console.WriteLine("did not work");
+//                        else
+//                                Console.WriteLine("did work: " + path);
+			dest.Dispose();
+			dest = null;
+
 		}
 
 
@@ -339,6 +350,8 @@ namespace System.Drawing {
 				switch (path.Substring (p + 1)){
 				case "png": break;
 				case "jpg": format = ImageFormat.Jpeg; break;
+				case "tiff": format = ImageFormat.Tiff; break;
+				case "bmp": format = ImageFormat.Bmp; break;
 				}
 			}
 			Save (path, format);

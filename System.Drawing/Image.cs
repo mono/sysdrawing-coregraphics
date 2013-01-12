@@ -189,7 +189,7 @@ namespace System.Drawing {
 		}
 
 		[TypeConverterAttribute(typeof(StringConverter))]
-		[BindableAttribute(true)]
+		//[BindableAttribute(true)]
 		public Object Tag { 
 			get { 
 				return tag;
@@ -198,5 +198,6 @@ namespace System.Drawing {
 			set{
 				tag = value.ToString();
 			}
+		}
 	}
 }

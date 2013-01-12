@@ -65,6 +65,12 @@ namespace BitmapTests
 
 			g.DrawImage(bitmap, new Point(50,50));
 
+			// To test Save uncomment the following lines
+//			var destopDirectory = Environment.GetFolderPath (Environment.SpecialFolder.DesktopDirectory);
+//			var finalPath = System.IO.Path.Combine (destopDirectory, "cocoa-monowithcircle.jpg");
+//
+//			bitmap.Save(finalPath);
+
 			using (SolidBrush brush = new SolidBrush(BACKCOLOR))
 			{
 				Image pic = GetCircleImage(); //get circle image

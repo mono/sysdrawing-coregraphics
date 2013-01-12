@@ -25,11 +25,10 @@ namespace MTBitmapTests
 			
 			var mainBundle = NSBundle.MainBundle;
 			var filePath = mainBundle.PathForResource("CocoaMono","png");
-			
+
 			var bitmap = Image.FromFile(filePath);
 			
 			//g.DrawImage(bitmap, new Point(50,50));
-			
 			var ig = Graphics.FromImage(bitmap);
 			//ig.Clear(Color.Red);
 			var pen = new Pen(Brushes.Yellow,20);
@@ -38,7 +37,14 @@ namespace MTBitmapTests
 			ig.DrawEllipse(pen, new RectangleF(recp, rec));
 			
 			g.DrawImage(bitmap, new Point(50,50));
+
+			// To test Save uncomment the following lines
+//			var destopDirectory = Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
+//			var finalPath = System.IO.Path.Combine (destopDirectory, "cocoa-mono-withcircle.jpg");
+//
+//			bitmap.Save(finalPath);
 			
+
 			using (SolidBrush brush = new SolidBrush(BACKCOLOR))
 			{
 				Image pic = GetCircleImage(); //get circle image
