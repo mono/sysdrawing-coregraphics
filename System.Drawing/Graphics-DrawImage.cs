@@ -1,6 +1,19 @@
 using System;
 using System.Drawing.Imaging;
 
+
+#if MONOMAC
+using MonoMac.CoreGraphics;
+using MonoMac.Foundation;
+using MonoMac.AppKit;
+using MonoMac.ImageIO;
+#else
+using MonoTouch.CoreGraphics;
+using MonoTouch.UIKit;
+using MonoTouch.Foundation;
+using MonoTouch.ImageIO;
+#endif
+
 namespace System.Drawing
 {
 	public partial class Graphics {
@@ -9,8 +22,16 @@ namespace System.Drawing
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
-			
-			throw new NotImplementedException ();
+
+			// we are getting an error somewhere and not sure where
+			// I think the image bitmapBlock is being corrupted somewhere
+			try {
+				context.DrawImage(rect, image.NativeCGImage);
+			}
+			catch (Exception exc)
+			{
+				Console.WriteLine(exc.Message);
+			}
 		}
 
 		public void DrawImage (Image image, PointF point)
@@ -18,7 +39,7 @@ namespace System.Drawing
 			if (image == null)
 				throw new ArgumentNullException ("image");
 
-			throw new NotImplementedException ();
+			DrawImage(image, point.X, point.Y);
 		}
 
 		public void DrawImage (Image image, Point [] destPoints)
@@ -60,7 +81,7 @@ namespace System.Drawing
 
 		public void DrawImage (Image image, int x, int y)
 		{
-			DrawImage (image, new Point (x, y));
+			DrawImage (image, x, y, image.Width, image.Height);
 		}
 
 		public void DrawImage (Image image, float x, float y)
@@ -170,9 +191,11 @@ namespace System.Drawing
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
-			throw new NotImplementedException ();
+
+			//throw new NotImplementedException ();
 			//Status status = GDIPlus.GdipDrawImageRectI (nativeObject, image.nativeObject, x, y, width, height);
 			//GDIPlus.CheckStatus (status);
+			DrawImage(image, new RectangleF(x,y,width, height));
 		}
 
 		public void DrawImage (Image image, float x, float y, RectangleF srcRect, GraphicsUnit srcUnit)

@@ -43,10 +43,12 @@ using System.ComponentModel;
 using MonoMac.CoreGraphics;
 using MonoMac.Foundation;
 using MonoMac.AppKit;
+using MonoMac.ImageIO;
 #else
 using MonoTouch.CoreGraphics;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
+using MonoTouch.ImageIO;
 #endif
 
 namespace System.Drawing {
@@ -54,29 +56,15 @@ namespace System.Drawing {
 	[Serializable]
 	public sealed class Bitmap : Image {
 		// if null, we created the bitmap in memory, otherwise, the backing file.
-#if MONOMAC
-		NSImage uiimage;
-#else
-		UIImage uiimage;
-#endif
-		internal CGImage NativeCGImage;
+
 		internal IntPtr bitmapBlock;
-		
+
 		public Bitmap (string filename)
 		{
-			//
-			// This is a quick hack: we should use ImageIO to load the data into
-			// memory, so we always have the bitmapBlock availabe
-			//
-			//uiimage.AsCGImage()
-
-#if MONOMAC
-			var image = new NSImage(filename);
-			NativeCGImage = image.AsCGImage(RectangleF.Empty, null, null);
-#else
-			var uiimage = UIImage.FromFileUncached (filename);
-			NativeCGImage = uiimage.CGImage;
-#endif
+			// Use Image IO
+			CGDataProvider prov = new CGDataProvider(filename);
+			var cg = CGImageSource.FromDataProvider(prov).CreateImage(0, null);
+			InitWithCGImage(cg);
 		}
 		
 		public Bitmap (Stream stream, bool useIcm)
@@ -106,7 +94,11 @@ namespace System.Drawing {
 			CGBitmapFlags bitmapInfo;
 			bool premultiplied = false;
 			int bitsPerPixel = 0;
-			
+
+			// Don't forget to set the Image width and height for size.
+			imageSize.Width = width;
+			imageSize.Height = height;
+
 			switch (format){
 			case PixelFormat.Format32bppPArgb:
 				premultiplied = true;
@@ -132,10 +124,124 @@ namespace System.Drawing {
 			}
 			bytesPerRow = width * bitsPerPixel/bitsPerComponent;
 			int size = bytesPerRow * height;
+
 			bitmapBlock = Marshal.AllocHGlobal (size);
+			var bitmap = new CGBitmapContext (bitmapBlock, 
+			                              width, height, 
+			                              bitsPerComponent, 
+			                              bytesPerRow,
+			                              colorSpace,
+			                              CGImageAlphaInfo.PremultipliedLast);
+			// This works for now but we need to look into initializing the memory area itself
+			// TODO: Look at what we should do if the image does not have alpha channel
+			bitmap.ClearRect (new RectangleF (0,0,width,height));
 
 			var provider = new CGDataProvider (bitmapBlock, size, true);
 			NativeCGImage = new CGImage (width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace, bitmapInfo, provider, null, false, CGColorRenderingIntent.Default);
+
+		}
+
+		private void InitWithCGImage (CGImage image)
+		{
+			int	width, height;
+			CGBitmapContext bitmap = null;
+			bool hasAlpha;
+			CGImageAlphaInfo info;
+
+			int bitsPerComponent, bytesPerRow;
+			CGBitmapFlags bitmapInfo;
+			bool premultiplied = false;
+			int bitsPerPixel = 0;
+
+			
+			if (image == null) {
+				throw new ArgumentException (" image is invalid! " );
+			}
+			
+			info = image.AlphaInfo;
+			hasAlpha = ((info == CGImageAlphaInfo.PremultipliedLast) || (info == CGImageAlphaInfo.PremultipliedFirst) || (info == CGImageAlphaInfo.Last) || (info == CGImageAlphaInfo.First) ? true : false);
+			
+			imageSize.Width = image.Width;
+			imageSize.Height = image.Height;
+
+			width = image.Width;
+			height = image.Height;
+
+			bitmapInfo = image.BitmapInfo;
+			bitsPerComponent = image.BitsPerComponent;
+			bitsPerPixel = image.BitsPerPixel;
+			bytesPerRow = width * bitsPerPixel/bitsPerComponent;
+			int size = bytesPerRow * height;
+
+			bitmapBlock = Marshal.AllocHGlobal (size);
+			bitmap = new CGBitmapContext (bitmapBlock, 
+			                              image.Width, image.Width, 
+			                              bitsPerComponent, 
+			                              bytesPerRow,
+			                              image.ColorSpace,
+			                              CGImageAlphaInfo.PremultipliedLast);
+			//CGImageAlphaInfo.PremultipliedLast);
+
+			bitmap.ClearRect (new RectangleF (0,0,width,height));
+
+			// We need to flip the Y axis to go from right handed to lefted handed coordinate system
+			var transform = new CGAffineTransform(1, 0, 0, -1, 0, image.Height);
+			bitmap.ConcatCTM(transform);
+			bitmap.DrawImage(new RectangleF (0, 0, image.Width, image.Height), image);
+
+			var provider = new CGDataProvider (bitmapBlock, size, true);
+			NativeCGImage = new CGImage (width, height, bitsPerComponent, 
+			                             bitsPerPixel, bytesPerRow, image.ColorSpace,
+			                             CGImageAlphaInfo.PremultipliedLast,
+			                             //bitmapInfo, 
+			                             provider, null, false, CGColorRenderingIntent.Default);
+
+			bitmap.Dispose ();
+		}
+
+		/*
+		  * perform an in-place swap from Quadrant 1 to Quadrant III format
+		  * (upside-down PostScript/GL to right side up QD/CG raster format)
+		  * We do this in-place, which requires more copying, but will touch
+		  * only half the pages.  (Display grabs are BIG!)
+		  *
+		  * Pixel reformatting may optionally be done here if needed.
+		  * 
+		  * NOTE: Not used right now
+		*/
+		private void flipImageYAxis ()
+		{
+			
+//			long top, bottom;
+//			byte[] buffer;
+//			long topP;
+//			long bottomP;
+//			long rowBytes;
+//			
+//			top = 0;
+//			bottom = mHeight - 1;
+//			rowBytes = mByteWidth;
+//			buffer = new byte[rowBytes];
+//			
+//			while (top < bottom) {
+//				topP = top * rowBytes;
+//				bottomP = bottom * rowBytes;
+//				
+//				/*
+//				 * Save and swap scanlines.
+//				 *
+//				 * This code does a simple in-place exchange with a temp buffer.
+//				 * If you need to reformat the pixels, replace the first two Array.Copy
+//				 * calls with your own custom pixel reformatter.
+//				 */
+//				Array.Copy (mData, topP, buffer, 0, rowBytes);
+//				Array.Copy (mData, bottomP, mData, topP, rowBytes);
+//				Array.Copy (buffer, 0, mData, bottomP, rowBytes);
+//				
+//				++top;
+//				--bottom;
+//				
+//			}
 		}
 
 		protected override void Dispose (bool disposing)
@@ -145,7 +251,9 @@ namespace System.Drawing {
 					NativeCGImage.Dispose ();
 					NativeCGImage = null;
 				}
+				//Marshal.FreeHGlobal (bitmapBlock);
 				bitmapBlock = IntPtr.Zero;
+				Console.WriteLine("Bitmap Dispose");
 			}
 			base.Dispose (disposing);
 		}

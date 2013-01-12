@@ -41,12 +41,41 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
 
+#if MONOMAC
+using MonoMac.CoreGraphics;
+using MonoMac.Foundation;
+using MonoMac.AppKit;
+#else
+using MonoTouch.CoreGraphics;
+using MonoTouch.UIKit;
+using MonoTouch.Foundation;
+#endif
+
 namespace System.Drawing {
 	
 	[Serializable]
 	[TypeConverter (typeof (ImageConverter))]
 	public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISerializable {
-		
+
+		// This is obtained from a Bitmap
+		// Right now that is all we support
+		internal CGImage NativeCGImage;
+
+		// This is obtained from a PDF file.  Not supported right now.
+		internal CGPDFDocument nativeMetafile;
+
+		// From microsoft documentation an image can also be described by a metafile which in
+		// Quartz2D is a PDF file.  Quartz2D for Mac OSX Developers provides more information
+		// on that but for right now only Bitmap will be supported.
+		internal enum ImageClass 
+		{
+			Bitmap,		// Concrete Pixel based class of this abstract class
+			PDFDocument	// Concrete PDF representation based class of this abstract class
+		}
+
+		internal ImageClass Implementaion { get; set; }
+
+
 		~Image ()
 		{
 			Dispose (false);
@@ -72,6 +101,7 @@ namespace System.Drawing {
 		
 		public ImageFormat RawFormat {
 			get {
+
 				// TODO
 				return new ImageFormat (new Guid ());			
 			}
@@ -89,7 +119,14 @@ namespace System.Drawing {
 			}
 		}
 
-		
+		protected Size imageSize = Size.Empty;
+		public Size Size 
+		{ 
+			get { 
+				return imageSize;
+			}
+		}
+
 		public object Clone ()
 		{
 			// TODO
@@ -100,6 +137,7 @@ namespace System.Drawing {
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
+			Console.WriteLine("Image Dispose");
 		}
 
 		protected virtual void Dispose (bool disposing)
@@ -132,7 +170,7 @@ namespace System.Drawing {
 
 		public static Bitmap FromFile (string filename)
 		{
-			throw new NotImplementedException ();
+			return new Bitmap(filename);
 		}
 		
 		void ISerializable.GetObjectData (SerializationInfo si, StreamingContext context)
