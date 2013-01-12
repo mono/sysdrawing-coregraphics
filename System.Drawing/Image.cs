@@ -63,6 +63,8 @@ namespace System.Drawing {
 
 		// This is obtained from a PDF file.  Not supported right now.
 		internal CGPDFDocument nativeMetafile;
+		string tag = string.Empty;
+
 
 		// From microsoft documentation an image can also be described by a metafile which in
 		// Quartz2D is a PDF file.  Quartz2D for Mac OSX Developers provides more information
@@ -185,5 +187,16 @@ namespace System.Drawing {
 				si.AddValue ("Data", ms.ToArray ());
 			}
 		}
+
+		[TypeConverterAttribute(typeof(StringConverter))]
+		[BindableAttribute(true)]
+		public Object Tag { 
+			get { 
+				return tag;
+			}
+				
+			set{
+				tag = value.ToString();
+			}
 	}
 }
