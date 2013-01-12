@@ -21,6 +21,8 @@ namespace MTBitmapTests
 		{
 			Graphics g = new Graphics();
 			
+			g.Clear(Color.Wheat);
+			
 			var mainBundle = NSBundle.MainBundle;
 			var filePath = mainBundle.PathForResource("CocoaMono","png");
 			
@@ -30,7 +32,10 @@ namespace MTBitmapTests
 			
 			var ig = Graphics.FromImage(bitmap);
 			//ig.Clear(Color.Red);
-			ig.DrawEllipse(Pens.AliceBlue, new RectangleF(5,5,50,50));
+			var pen = new Pen(Brushes.Yellow,20);
+			var rec = new SizeF(200,200);
+			var recp = new PointF(bitmap.Width - rec.Width - pen.Width / 2, bitmap.Height - rec.Height - pen.Width / 2);
+			ig.DrawEllipse(pen, new RectangleF(recp, rec));
 			
 			g.DrawImage(bitmap, new Point(50,50));
 			

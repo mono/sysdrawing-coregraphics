@@ -58,9 +58,9 @@ namespace BitmapTests
 
 			var ig = Graphics.FromImage(bitmap);
 			//ig.Clear(Color.Red);
-			var pen = new Pen(Brushes.Yellow,100);
+			var pen = new Pen(Brushes.Yellow,20);
 			var rec = new SizeF(200,200);
-			var recp = new PointF(bitmap.Width - rec.Width, bitmap.Height - rec.Height);
+			var recp = new PointF(bitmap.Width - rec.Width - pen.Width / 2, bitmap.Height - rec.Height - pen.Width / 2);
 			ig.DrawEllipse(pen, new RectangleF(recp, rec));
 
 			g.DrawImage(bitmap, new Point(50,50));
