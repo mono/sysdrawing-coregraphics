@@ -844,7 +844,7 @@ namespace System.Drawing {
 			if (b.bitmapBlock == IntPtr.Zero){
 				throw new Exception ("Missing functionality: currently we can not create graphics contexts from bitmaps loaded from disk, need to do some extra work");
 			}
-			
+
 			// Creates a context using the parameters that were used initially for the bitmap, 
 			// reusing the memory address space on it as well.
 			var bitmapContext = new CGBitmapContext (b.bitmapBlock, 
@@ -853,7 +853,8 @@ namespace System.Drawing {
 			                                         cgimage.BitsPerComponent, 
 			                                         cgimage.BytesPerRow, 
 			                                         cgimage.ColorSpace, 
-			                                         cgimage.BitmapInfo); 
+			                                         cgimage.AlphaInfo); 
+
 			return new Graphics (bitmapContext);
 		}
 		

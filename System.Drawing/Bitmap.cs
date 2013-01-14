@@ -12,6 +12,7 @@
 //	Jordi Mas i Hernandez (jmas@softcatala.org)
 //	Ravindra (rkumar@novell.com)
 //	Sebastien Pouliot  <sebastien@xamarin.com>
+//	Kenneth J. Pouncey  <kjpou@pt.lu>
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -151,58 +152,151 @@ namespace System.Drawing {
 			int	width, height;
 			CGBitmapContext bitmap = null;
 			bool hasAlpha;
-			CGImageAlphaInfo info;
-
+			CGImageAlphaInfo alphaInfo;
+			CGColorSpace colorSpace;
 			int bitsPerComponent, bytesPerRow;
 			CGBitmapFlags bitmapInfo;
 			bool premultiplied = false;
 			int bitsPerPixel = 0;
-
 			
 			if (image == null) {
 				throw new ArgumentException (" image is invalid! " );
 			}
-			
-			info = image.AlphaInfo;
-			hasAlpha = ((info == CGImageAlphaInfo.PremultipliedLast) || (info == CGImageAlphaInfo.PremultipliedFirst) || (info == CGImageAlphaInfo.Last) || (info == CGImageAlphaInfo.First) ? true : false);
+
+			alphaInfo = image.AlphaInfo;
+			hasAlpha = ((alphaInfo == CGImageAlphaInfo.PremultipliedLast) || (alphaInfo == CGImageAlphaInfo.PremultipliedFirst) || (alphaInfo == CGImageAlphaInfo.Last) || (alphaInfo == CGImageAlphaInfo.First) ? true : false);
 			
 			imageSize.Width = image.Width;
 			imageSize.Height = image.Height;
-
+			
 			width = image.Width;
 			height = image.Height;
 
+			// Not sure yet if we need to keep the original image information
+			// before we change it internally.  TODO look at what windows does
+			// and follow that.
 			bitmapInfo = image.BitmapInfo;
 			bitsPerComponent = image.BitsPerComponent;
 			bitsPerPixel = image.BitsPerPixel;
 			bytesPerRow = width * bitsPerPixel/bitsPerComponent;
 			int size = bytesPerRow * height;
+			
+			colorSpace = image.ColorSpace;
+
+			// Right now internally we represent the images all the same
+			// I left the call here just in case we find that this is not
+			// possible.  Read the comments for non alpha images.
+			if(colorSpace != null) {
+				if( hasAlpha ) {
+					premultiplied = true;
+					colorSpace = CGColorSpace.CreateDeviceRGB ();
+					bitsPerComponent = 8;
+					bitsPerPixel = 32;
+					bitmapInfo = CGBitmapFlags.PremultipliedLast;
+				}
+				else
+				{
+					// even for images without alpha we will internally 
+					// represent them as RGB with alpha.  There were problems
+					// if we do not do it this way and creating a bitmap context.
+					// The images were not drawing correctly and tearing.  Also
+					// creating a Graphics to draw on was a nightmare.  This
+					// should probably be looked into or maybe it is ok and we
+					// can continue representing internally with this representation
+					premultiplied = true;
+					colorSpace = CGColorSpace.CreateDeviceRGB ();
+					bitsPerComponent = 8;
+					bitsPerPixel = 32;
+					bitmapInfo = CGBitmapFlags.PremultipliedLast;
+				}
+			} else {
+				premultiplied = true;
+				colorSpace = CGColorSpace.CreateDeviceRGB ();
+				bitsPerComponent = 8;
+				bitsPerPixel = 32;
+				bitmapInfo = CGBitmapFlags.PremultipliedLast;
+			}
+
+			bytesPerRow = width * bitsPerPixel/bitsPerComponent;
+			size = bytesPerRow * height;
 
 			bitmapBlock = Marshal.AllocHGlobal (size);
 			bitmap = new CGBitmapContext (bitmapBlock, 
 			                              image.Width, image.Width, 
 			                              bitsPerComponent, 
 			                              bytesPerRow,
-			                              image.ColorSpace,
-			                              CGImageAlphaInfo.PremultipliedLast);
-			//CGImageAlphaInfo.PremultipliedLast);
+			                              colorSpace,
+			                              bitmapInfo);
 
 			bitmap.ClearRect (new RectangleF (0,0,width,height));
 
 			// We need to flip the Y axis to go from right handed to lefted handed coordinate system
 			var transform = new CGAffineTransform(1, 0, 0, -1, 0, image.Height);
 			bitmap.ConcatCTM(transform);
+
 			bitmap.DrawImage(new RectangleF (0, 0, image.Width, image.Height), image);
 
 			var provider = new CGDataProvider (bitmapBlock, size, true);
 			NativeCGImage = new CGImage (width, height, bitsPerComponent, 
-			                             bitsPerPixel, bytesPerRow, image.ColorSpace,
-			                             CGImageAlphaInfo.PremultipliedLast,
-			                             //bitmapInfo, 
+			                             bitsPerPixel, bytesPerRow, 
+			                             colorSpace,
+			                             bitmapInfo,
 			                             provider, null, false, CGColorRenderingIntent.Default);
 
-			bitmap.Dispose ();
+			colorSpace.Dispose();
+			bitmap.Dispose();
 		}
+
+		/*
+		  * perform an in-place swap from Quadrant 1 to Quadrant III format
+		  * (upside-down PostScript/GL to right side up QD/CG raster format)
+		  * We do this in-place, which requires more copying, but will touch
+		  * only half the pages.  (Display grabs are BIG!)
+		  *
+		  * Pixel reformatting may optionally be done here if needed.
+		*/
+		private void flipImageYAxis (IntPtr source, IntPtr dest, int stride, int height, int size)
+		{
+			
+			long top, bottom;
+			byte[] buffer;
+			long topP;
+			long bottomP;
+			long rowBytes;
+			
+			top = 0;
+			bottom = height - 1;
+			rowBytes = stride;
+			
+			var mData = new byte[size];
+			Marshal.Copy(source, mData, 0, size);
+			
+			buffer = new byte[rowBytes];
+			
+			while (top < bottom) {
+				topP = top * rowBytes;
+				bottomP = bottom * rowBytes;
+				
+				/*
+				 * Save and swap scanlines.
+				 *
+				 * This code does a simple in-place exchange with a temp buffer.
+				 * If you need to reformat the pixels, replace the first two Array.Copy
+				 * calls with your own custom pixel reformatter.
+				 */
+				Array.Copy (mData, topP, buffer, 0, rowBytes);
+				Array.Copy (mData, bottomP, mData, topP, rowBytes);
+				Array.Copy (buffer, 0, mData, bottomP, rowBytes);
+				
+				++top;
+				--bottom;
+				
+			}
+			
+			Marshal.Copy(mData, 0, dest, size);
+			
+		}
+
 
 		/*
 		  * perform an in-place swap from Quadrant 1 to Quadrant III format
@@ -214,39 +308,46 @@ namespace System.Drawing {
 		  * 
 		  * NOTE: Not used right now
 		*/
-		private void flipImageYAxis ()
+		private void flipImageYAxis (int width, int height, int size)
 		{
 			
-//			long top, bottom;
-//			byte[] buffer;
-//			long topP;
-//			long bottomP;
-//			long rowBytes;
-//			
-//			top = 0;
-//			bottom = mHeight - 1;
-//			rowBytes = mByteWidth;
-//			buffer = new byte[rowBytes];
-//			
-//			while (top < bottom) {
-//				topP = top * rowBytes;
-//				bottomP = bottom * rowBytes;
-//				
-//				/*
-//				 * Save and swap scanlines.
-//				 *
-//				 * This code does a simple in-place exchange with a temp buffer.
-//				 * If you need to reformat the pixels, replace the first two Array.Copy
-//				 * calls with your own custom pixel reformatter.
-//				 */
-//				Array.Copy (mData, topP, buffer, 0, rowBytes);
-//				Array.Copy (mData, bottomP, mData, topP, rowBytes);
-//				Array.Copy (buffer, 0, mData, bottomP, rowBytes);
-//				
-//				++top;
-//				--bottom;
-//				
-//			}
+			long top, bottom;
+			byte[] buffer;
+			long topP;
+			long bottomP;
+			long rowBytes;
+			
+			top = 0;
+			bottom = height - 1;
+			rowBytes = width;
+
+			var mData = new byte[size];
+			Marshal.Copy(bitmapBlock, mData, 0, size);
+
+			buffer = new byte[rowBytes];
+			
+			while (top < bottom) {
+				topP = top * rowBytes;
+				bottomP = bottom * rowBytes;
+				
+				/*
+				 * Save and swap scanlines.
+				 *
+				 * This code does a simple in-place exchange with a temp buffer.
+				 * If you need to reformat the pixels, replace the first two Array.Copy
+				 * calls with your own custom pixel reformatter.
+				 */
+				Array.Copy (mData, topP, buffer, 0, rowBytes);
+				Array.Copy (mData, bottomP, mData, topP, rowBytes);
+				Array.Copy (buffer, 0, mData, bottomP, rowBytes);
+				
+				++top;
+				--bottom;
+				
+			}
+
+			Marshal.Copy(mData, 0, bitmapBlock, size);
+
 		}
 
 		protected override void Dispose (bool disposing)

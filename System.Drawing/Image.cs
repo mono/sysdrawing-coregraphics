@@ -167,7 +167,9 @@ namespace System.Drawing {
 		
 		public void Save (string filename)
 		{
-			throw new NotImplementedException ();
+			var b = this as Bitmap;
+			if (b != null)
+				b.Save(filename);
 		}
 
 		public static Bitmap FromFile (string filename)

@@ -25,10 +25,13 @@ namespace MTBitmapTests
 			
 			var mainBundle = NSBundle.MainBundle;
 			var filePath = mainBundle.PathForResource("CocoaMono","png");
-
+			
 			var bitmap = Image.FromFile(filePath);
 			
-			//g.DrawImage(bitmap, new Point(50,50));
+			filePath = mainBundle.PathForResource("tiger-Q300","png");
+			
+			var tiger = Image.FromFile(filePath);
+			
 			var ig = Graphics.FromImage(bitmap);
 			//ig.Clear(Color.Red);
 			var pen = new Pen(Brushes.Yellow,20);
@@ -37,6 +40,7 @@ namespace MTBitmapTests
 			ig.DrawEllipse(pen, new RectangleF(recp, rec));
 			
 			g.DrawImage(bitmap, new Point(50,50));
+			g.DrawImage(tiger, new Point(200,200));
 
 			// To test Save uncomment the following lines
 //			var destopDirectory = Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
