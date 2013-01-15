@@ -250,6 +250,9 @@
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\HatchStyle.cs">
       <Link>External\HatchStyle.cs</Link>
     </Compile>
+    <Compile Include="..\System.Drawing\TextureBrush.cs">
+      <Link>System.Drawing\TextureBrush.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

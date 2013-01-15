@@ -67,6 +67,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example5_6", "Samples\MonoM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitmapTests", "Samples\MonoMac\BitmapTests\BitmapTests.csproj", "{3CF93BDF-561C-42FF-B227-93CB39DE94BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextureBrushTest", "Samples\MonoMac\TextureBrushTest\TextureBrushTest.csproj", "{8334DB3C-C6D8-4AF0-A70C-12405D50E18C}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples.MonoTouch", "Samples.MonoTouch", "{9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sample", "Samples\MonoTouch\sample\sample.csproj", "{F6AEFFC5-4807-49A3-83C5-661E655CB59A}"
@@ -576,6 +578,20 @@ Global
 		{8211DE31-0271-43AA-9CE0-938766ECB1BE}.Release|iPhone.Build.0 = Release|iPhoneSimulator
 		{8211DE31-0271-43AA-9CE0-938766ECB1BE}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{8211DE31-0271-43AA-9CE0-938766ECB1BE}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{8334DB3C-C6D8-4AF0-A70C-12405D50E18C}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhoneSimulator
+		{8334DB3C-C6D8-4AF0-A70C-12405D50E18C}.Ad-Hoc|iPhone.Build.0 = Debug|iPhoneSimulator
+		{8334DB3C-C6D8-4AF0-A70C-12405D50E18C}.AppStore|iPhone.ActiveCfg = AppStore|iPhoneSimulator
+		{8334DB3C-C6D8-4AF0-A70C-12405D50E18C}.AppStore|iPhone.Build.0 = AppStore|iPhoneSimulator
+		{8334DB3C-C6D8-4AF0-A70C-12405D50E18C}.AppStore|iPhoneSimulator.ActiveCfg = AppStore|iPhoneSimulator
+		{8334DB3C-C6D8-4AF0-A70C-12405D50E18C}.AppStore|iPhoneSimulator.Build.0 = AppStore|iPhoneSimulator
+		{8334DB3C-C6D8-4AF0-A70C-12405D50E18C}.Debug|iPhone.ActiveCfg = Debug|iPhoneSimulator
+		{8334DB3C-C6D8-4AF0-A70C-12405D50E18C}.Debug|iPhone.Build.0 = Debug|iPhoneSimulator
+		{8334DB3C-C6D8-4AF0-A70C-12405D50E18C}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{8334DB3C-C6D8-4AF0-A70C-12405D50E18C}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{8334DB3C-C6D8-4AF0-A70C-12405D50E18C}.Release|iPhone.ActiveCfg = Release|iPhoneSimulator
+		{8334DB3C-C6D8-4AF0-A70C-12405D50E18C}.Release|iPhone.Build.0 = Release|iPhoneSimulator
+		{8334DB3C-C6D8-4AF0-A70C-12405D50E18C}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{8334DB3C-C6D8-4AF0-A70C-12405D50E18C}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{838D1548-3D2C-41AD-B2AA-BCC10A01A51D}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
 		{838D1548-3D2C-41AD-B2AA-BCC10A01A51D}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
 		{838D1548-3D2C-41AD-B2AA-BCC10A01A51D}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
@@ -962,6 +978,7 @@ Global
 		{CF7B74C7-37B8-4B44-9C46-BBBBE57C0DE4} = {A28D8EBD-ABB8-46BA-B536-7074058B0C84}
 		{9DDE1DE7-008B-4473-B393-6F79F4EAD34D} = {A28D8EBD-ABB8-46BA-B536-7074058B0C84}
 		{3CF93BDF-561C-42FF-B227-93CB39DE94BF} = {A28D8EBD-ABB8-46BA-B536-7074058B0C84}
+		{8334DB3C-C6D8-4AF0-A70C-12405D50E18C} = {A28D8EBD-ABB8-46BA-B536-7074058B0C84}
 		{F6AEFFC5-4807-49A3-83C5-661E655CB59A} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 		{376D4335-5ED4-4A24-BF16-4DDFFCE61B6D} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
