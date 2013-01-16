@@ -92,7 +92,15 @@ namespace System.Drawing {
 				graphics.DrawImage (original, 0, 0, width, height);
 			}
 		}
-		
+
+		public Bitmap (Image original, Size newSize) : 
+			this (newSize.Width, newSize.Height, PixelFormat.Format32bppArgb)
+		{
+			using (Graphics graphics = Graphics.FromImage (this)) {
+				graphics.DrawImage (original, 0, 0, newSize.Width, newSize.Height);
+			}
+		}
+
 		public Bitmap (int width, int height, PixelFormat format)
 		{
 			int bitsPerComponent, bytesPerRow;
