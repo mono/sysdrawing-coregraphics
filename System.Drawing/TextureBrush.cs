@@ -283,7 +283,9 @@ namespace System.Drawing
 				                                         textureOffset.X, 
 				                                         textureHeight + textureOffset.Y);
 #endif
-			
+
+			patternTransform = CGAffineTransform.Multiply(patternTransform, textureTransform.transform);
+
 			// DrawPattern callback which will be set depending on hatch style
 			CGPattern.DrawPattern drawPattern;
 			
@@ -295,7 +297,7 @@ namespace System.Drawing
 			                            textureWidth,
 			                            textureHeight,
 			                            //textureHeight,
-			                            CGPatternTiling.ConstantSpacing,
+			                            CGPatternTiling.NoDistortion,
 			                            true, drawPattern);
 			//we dont need to set any color, as the pattern cell itself has chosen its own color
 			graphics.context.SetFillPattern(pattern, new float[] { 1 });
