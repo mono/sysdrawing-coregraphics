@@ -256,7 +256,9 @@ namespace System.Drawing
 				textureHeight *= 2;
 			}
 
-			var textureOffset = new PointF(20,-20);
+			// this is here for testing only
+			var textureOffset = new PointF(0,-0);
+
 			//choose the pattern to be filled based on the currentPattern selected
 			var patternSpace = CGColorSpace.CreatePattern(null);
 			graphics.context.SetFillColorSpace(patternSpace);
@@ -269,16 +271,18 @@ namespace System.Drawing
 			var patternTransform = CGAffineTransform.MakeIdentity();
 			
 			// We need to take into account the orientation of the graphics object
-//#if MONOMAC
+#if MONOMAC
 			if (!graphics.isFlipped)
 				patternTransform = new CGAffineTransform(1, 0, 0, -1, 
 				                                         textureOffset.X, 
 				                                         textureHeight + textureOffset.Y);
-//#endif
-//#if MONOTOUCH
-//			if (!graphics.isFlipped)
-//				patternTransform = new CGAffineTransform(1, 0, 0, -1, 0, hatch_height);
-//#endif
+#endif
+#if MONOTOUCH
+			if (graphics.isFlipped)
+				patternTransform = new CGAffineTransform(1, 0, 0, -1, 
+				                                         textureOffset.X, 
+				                                         textureHeight + textureOffset.Y);
+#endif
 			
 			// DrawPattern callback which will be set depending on hatch style
 			CGPattern.DrawPattern drawPattern;

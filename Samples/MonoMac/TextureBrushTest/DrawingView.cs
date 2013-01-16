@@ -63,7 +63,7 @@ namespace TextureBrushTest
 			Pen blackPen = new Pen(Color.Black);
 			var rect = new RectangleF(20,100,200,200);
 
-			textureBrush.WrapMode = WrapMode.TileFlipXY;
+			//textureBrush.WrapMode = WrapMode.TileFlipXY;
 
 			g.FillRectangle(textureBrush, rect);
 			g.DrawRectangle(blackPen, rect);
