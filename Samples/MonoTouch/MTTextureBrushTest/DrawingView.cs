@@ -35,11 +35,23 @@ namespace MTTextureBrushTest
 			Pen blackPen = new Pen(Color.Black);
 			var rect2 = new RectangleF(20,100,200,200);
 			
-			textureBrush.WrapMode = WrapMode.TileFlipXY;
+			//textureBrush.WrapMode = WrapMode.TileFlipXY;
 			
 			g.FillRectangle(textureBrush, rect2);
 			g.DrawRectangle(blackPen, rect2);
 			
+			var cocoaMonoTexture = new Bitmap(bitmap, texture.Size);
+			
+			g.DrawImage(cocoaMonoTexture, new Point(300,20));
+			
+			var textureBrush2 = new TextureBrush(cocoaMonoTexture);
+			Pen bluePen = new Pen(Color.Blue);
+			var rectt = new RectangleF(300,100,200,200);
+			
+			textureBrush2.WrapMode = WrapMode.TileFlipXY;
+			
+			g.FillRectangle(textureBrush2, rectt);
+			g.DrawRectangle(bluePen, rectt);
 			
 			g.Dispose();
 		}
