@@ -52,7 +52,18 @@ namespace MTTextureBrushTest
 			
 			g.FillRectangle(textureBrush2, rectt);
 			g.DrawRectangle(bluePen, rectt);
-			
+
+			// Scale the large image down to 75 x 75 before tiling
+			TextureBrush tBrush = new TextureBrush(bitmap);
+			tBrush.Transform = new Matrix(
+				75.0f / bitmap.Width,
+				0.0f,
+				0.0f,
+				75.0f / bitmap.Height,
+				0.0f,
+				0.0f);
+			g.FillEllipse(tBrush, new Rectangle(300, 320, 150, 250));
+
 			g.Dispose();
 		}
 		

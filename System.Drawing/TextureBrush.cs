@@ -98,11 +98,14 @@ namespace System.Drawing
 			{
 				throw new ArgumentNullException("matrix");
 			}
-
+			textureTransform.Multiply(matrix, order);
+			changed = true;
 		}
 		
 		public void ResetTransform()
 		{
+			textureTransform.Reset();
+			changed = true;
 		}
 		
 		public void RotateTransform(float angle)
@@ -112,6 +115,8 @@ namespace System.Drawing
 		
 		public void RotateTransform(float angle, MatrixOrder order)
 		{
+			textureTransform.Rotate(angle, order);
+			changed = true;
 		}
 		
 		public void ScaleTransform(float sx, float sy)
@@ -121,6 +126,8 @@ namespace System.Drawing
 		
 		public void ScaleTransform(float sx, float sy, MatrixOrder order)
 		{
+			textureTransform.Scale(sx, sy, order);
+			changed = true;
 		}
 		
 		public void TranslateTransform(float dx, float dy)
@@ -130,6 +137,8 @@ namespace System.Drawing
 		
 		public void TranslateTransform(float dx, float dy, MatrixOrder order)
 		{
+			textureTransform.Translate(dx, dy, order);
+			changed = true;
 		}
 		
 		// Properties
@@ -154,6 +163,7 @@ namespace System.Drawing
 					throw new ArgumentNullException("value");
 				}
 				textureTransform = value.Clone();
+				changed = true;
 			}
 		}
 		
