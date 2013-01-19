@@ -56,13 +56,14 @@ namespace System.Drawing {
 		private PointF renderingOrigin = PointF.Empty;
 		private RectangleF subviewClipOffset = RectangleF.Empty;
 		
-		public Graphics (CGContext context)
+		public Graphics (CGContext context, bool flipped = true)
 		{
 			if (context == null)
 				throw new ArgumentNullException ("context");
-
+			isFlipped = flipped;
 			InitializeContext(context);
 		}
+
 #if MONOTOUCH
 		public Graphics() {
 
@@ -521,18 +522,18 @@ namespace System.Drawing {
 
 		private void initializeMatrix(ref Matrix matrix, bool isFlipped) 
 		{
-//			if (!isFlipped) 
-//			{
-////				matrix.Reset();
-////				matrix.Translate(0, boundingBox.Height, MatrixOrder.Append);
-////				matrix.Scale(1,-1, MatrixOrder.Append);
-//				matrix = new Matrix(
-//					1, 0, 0, -1, 0, boundingBox.Height);
-//				
-//			}
-//			else {
+			if (!isFlipped) 
+			{
 //				matrix.Reset();
-//			}
+//				matrix.Translate(0, boundingBox.Height, MatrixOrder.Append);
+//				matrix.Scale(1,-1, MatrixOrder.Append);
+				matrix = new Matrix(
+					1, 0, 0, -1, 0, boundingBox.Height);
+				
+			}
+			else {
+				matrix.Reset();
+			}
 
 			// It looks like we really do not need to determin if it is flipped or not.
 			// So far this following is working no matter which coordinate system is being used
@@ -540,8 +541,8 @@ namespace System.Drawing {
 			// I will leave the previous commented out code there just in case.  When first implementing 
 			// DrawString the flipped coordinates were causing problems.  Now after implementing with 
 			// CoreText it seems to all be working.  Fingers Crossed.
-			matrix = new Matrix(
-				1, 0, 0, -1, 0, boundingBox.Height);
+//			matrix = new Matrix(
+//				1, 0, 0, -1, 0, boundingBox.Height);
 		}
 
 		private void applyModelView() {
@@ -843,10 +844,18 @@ namespace System.Drawing {
 			if (b.bitmapBlock == IntPtr.Zero){
 				throw new Exception ("Missing functionality: currently we can not create graphics contexts from bitmaps loaded from disk, need to do some extra work");
 			}
-			
+
 			// Creates a context using the parameters that were used initially for the bitmap, 
 			// reusing the memory address space on it as well.
-			return new Graphics (new CGBitmapContext (b.bitmapBlock, cgimage.Width, cgimage.Height, cgimage.BitsPerComponent, cgimage.BytesPerRow, cgimage.ColorSpace, cgimage.BitmapInfo));
+			var bitmapContext = new CGBitmapContext (b.bitmapBlock, 
+			                                         cgimage.Width, 
+			                                         cgimage.Height, 
+			                                         cgimage.BitsPerComponent, 
+			                                         cgimage.BytesPerRow, 
+			                                         cgimage.ColorSpace, 
+			                                         cgimage.AlphaInfo); 
+
+			return new Graphics (bitmapContext);
 		}
 		
 		public void SetClip (RectangleF rect)

@@ -12,6 +12,7 @@
 //	Jordi Mas i Hernandez (jmas@softcatala.org)
 //	Ravindra (rkumar@novell.com)
 //	Sebastien Pouliot  <sebastien@xamarin.com>
+//	Kenneth J. Pouncey  <kjpou@pt.lu>
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,6 +34,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.IO;
 using System.Drawing.Imaging;
 using System.Runtime.Serialization;
@@ -43,10 +45,13 @@ using System.ComponentModel;
 using MonoMac.CoreGraphics;
 using MonoMac.Foundation;
 using MonoMac.AppKit;
+using MonoMac.ImageIO;
 #else
 using MonoTouch.CoreGraphics;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
+using MonoTouch.ImageIO;
+using MonoTouch.MobileCoreServices;
 #endif
 
 namespace System.Drawing {
@@ -54,29 +59,18 @@ namespace System.Drawing {
 	[Serializable]
 	public sealed class Bitmap : Image {
 		// if null, we created the bitmap in memory, otherwise, the backing file.
-#if MONOMAC
-		NSImage uiimage;
-#else
-		UIImage uiimage;
-#endif
-		internal CGImage NativeCGImage;
+
 		internal IntPtr bitmapBlock;
-		
+
+		// we will default this to one for now until we get some tests for other image types
+		int imageCount = 1;
+
 		public Bitmap (string filename)
 		{
-			//
-			// This is a quick hack: we should use ImageIO to load the data into
-			// memory, so we always have the bitmapBlock availabe
-			//
-			//uiimage.AsCGImage()
-
-#if MONOMAC
-			var image = new NSImage(filename);
-			NativeCGImage = image.AsCGImage(RectangleF.Empty, null, null);
-#else
-			var uiimage = UIImage.FromFileUncached (filename);
-			NativeCGImage = uiimage.CGImage;
-#endif
+			// Use Image IO
+			CGDataProvider prov = new CGDataProvider(filename);
+			var cg = CGImageSource.FromDataProvider(prov).CreateImage(0, null);
+			InitWithCGImage(cg);
 		}
 		
 		public Bitmap (Stream stream, bool useIcm)
@@ -98,7 +92,15 @@ namespace System.Drawing {
 				graphics.DrawImage (original, 0, 0, width, height);
 			}
 		}
-		
+
+		public Bitmap (Image original, Size newSize) : 
+			this (newSize.Width, newSize.Height, PixelFormat.Format32bppArgb)
+		{
+			using (Graphics graphics = Graphics.FromImage (this)) {
+				graphics.DrawImage (original, 0, 0, newSize.Width, newSize.Height);
+			}
+		}
+
 		public Bitmap (int width, int height, PixelFormat format)
 		{
 			int bitsPerComponent, bytesPerRow;
@@ -106,7 +108,11 @@ namespace System.Drawing {
 			CGBitmapFlags bitmapInfo;
 			bool premultiplied = false;
 			int bitsPerPixel = 0;
-			
+
+			// Don't forget to set the Image width and height for size.
+			imageSize.Width = width;
+			imageSize.Height = height;
+
 			switch (format){
 			case PixelFormat.Format32bppPArgb:
 				premultiplied = true;
@@ -132,10 +138,224 @@ namespace System.Drawing {
 			}
 			bytesPerRow = width * bitsPerPixel/bitsPerComponent;
 			int size = bytesPerRow * height;
+
 			bitmapBlock = Marshal.AllocHGlobal (size);
+			var bitmap = new CGBitmapContext (bitmapBlock, 
+			                              width, height, 
+			                              bitsPerComponent, 
+			                              bytesPerRow,
+			                              colorSpace,
+			                              CGImageAlphaInfo.PremultipliedLast);
+			// This works for now but we need to look into initializing the memory area itself
+			// TODO: Look at what we should do if the image does not have alpha channel
+			bitmap.ClearRect (new RectangleF (0,0,width,height));
 
 			var provider = new CGDataProvider (bitmapBlock, size, true);
 			NativeCGImage = new CGImage (width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace, bitmapInfo, provider, null, false, CGColorRenderingIntent.Default);
+
+		}
+
+		private void InitWithCGImage (CGImage image)
+		{
+			int	width, height;
+			CGBitmapContext bitmap = null;
+			bool hasAlpha;
+			CGImageAlphaInfo alphaInfo;
+			CGColorSpace colorSpace;
+			int bitsPerComponent, bytesPerRow;
+			CGBitmapFlags bitmapInfo;
+			bool premultiplied = false;
+			int bitsPerPixel = 0;
+			
+			if (image == null) {
+				throw new ArgumentException (" image is invalid! " );
+			}
+
+			alphaInfo = image.AlphaInfo;
+			hasAlpha = ((alphaInfo == CGImageAlphaInfo.PremultipliedLast) || (alphaInfo == CGImageAlphaInfo.PremultipliedFirst) || (alphaInfo == CGImageAlphaInfo.Last) || (alphaInfo == CGImageAlphaInfo.First) ? true : false);
+			
+			imageSize.Width = image.Width;
+			imageSize.Height = image.Height;
+			
+			width = image.Width;
+			height = image.Height;
+
+			// Not sure yet if we need to keep the original image information
+			// before we change it internally.  TODO look at what windows does
+			// and follow that.
+			bitmapInfo = image.BitmapInfo;
+			bitsPerComponent = image.BitsPerComponent;
+			bitsPerPixel = image.BitsPerPixel;
+			bytesPerRow = width * bitsPerPixel/bitsPerComponent;
+			int size = bytesPerRow * height;
+			
+			colorSpace = image.ColorSpace;
+
+			// Right now internally we represent the images all the same
+			// I left the call here just in case we find that this is not
+			// possible.  Read the comments for non alpha images.
+			if(colorSpace != null) {
+				if( hasAlpha ) {
+					premultiplied = true;
+					colorSpace = CGColorSpace.CreateDeviceRGB ();
+					bitsPerComponent = 8;
+					bitsPerPixel = 32;
+					bitmapInfo = CGBitmapFlags.PremultipliedLast;
+				}
+				else
+				{
+					// even for images without alpha we will internally 
+					// represent them as RGB with alpha.  There were problems
+					// if we do not do it this way and creating a bitmap context.
+					// The images were not drawing correctly and tearing.  Also
+					// creating a Graphics to draw on was a nightmare.  This
+					// should probably be looked into or maybe it is ok and we
+					// can continue representing internally with this representation
+					premultiplied = true;
+					colorSpace = CGColorSpace.CreateDeviceRGB ();
+					bitsPerComponent = 8;
+					bitsPerPixel = 32;
+					bitmapInfo = CGBitmapFlags.PremultipliedLast;
+				}
+			} else {
+				premultiplied = true;
+				colorSpace = CGColorSpace.CreateDeviceRGB ();
+				bitsPerComponent = 8;
+				bitsPerPixel = 32;
+				bitmapInfo = CGBitmapFlags.PremultipliedLast;
+			}
+
+			bytesPerRow = width * bitsPerPixel/bitsPerComponent;
+			size = bytesPerRow * height;
+
+			bitmapBlock = Marshal.AllocHGlobal (size);
+			bitmap = new CGBitmapContext (bitmapBlock, 
+			                              image.Width, image.Width, 
+			                              bitsPerComponent, 
+			                              bytesPerRow,
+			                              colorSpace,
+			                              bitmapInfo);
+
+			bitmap.ClearRect (new RectangleF (0,0,width,height));
+
+			// We need to flip the Y axis to go from right handed to lefted handed coordinate system
+			var transform = new CGAffineTransform(1, 0, 0, -1, 0, image.Height);
+			bitmap.ConcatCTM(transform);
+
+			bitmap.DrawImage(new RectangleF (0, 0, image.Width, image.Height), image);
+
+			var provider = new CGDataProvider (bitmapBlock, size, true);
+			NativeCGImage = new CGImage (width, height, bitsPerComponent, 
+			                             bitsPerPixel, bytesPerRow, 
+			                             colorSpace,
+			                             bitmapInfo,
+			                             provider, null, false, CGColorRenderingIntent.Default);
+
+			colorSpace.Dispose();
+			bitmap.Dispose();
+		}
+
+		/*
+		  * perform an in-place swap from Quadrant 1 to Quadrant III format
+		  * (upside-down PostScript/GL to right side up QD/CG raster format)
+		  * We do this in-place, which requires more copying, but will touch
+		  * only half the pages.  (Display grabs are BIG!)
+		  *
+		  * Pixel reformatting may optionally be done here if needed.
+		*/
+		private void flipImageYAxis (IntPtr source, IntPtr dest, int stride, int height, int size)
+		{
+			
+			long top, bottom;
+			byte[] buffer;
+			long topP;
+			long bottomP;
+			long rowBytes;
+			
+			top = 0;
+			bottom = height - 1;
+			rowBytes = stride;
+			
+			var mData = new byte[size];
+			Marshal.Copy(source, mData, 0, size);
+			
+			buffer = new byte[rowBytes];
+			
+			while (top < bottom) {
+				topP = top * rowBytes;
+				bottomP = bottom * rowBytes;
+				
+				/*
+				 * Save and swap scanlines.
+				 *
+				 * This code does a simple in-place exchange with a temp buffer.
+				 * If you need to reformat the pixels, replace the first two Array.Copy
+				 * calls with your own custom pixel reformatter.
+				 */
+				Array.Copy (mData, topP, buffer, 0, rowBytes);
+				Array.Copy (mData, bottomP, mData, topP, rowBytes);
+				Array.Copy (buffer, 0, mData, bottomP, rowBytes);
+				
+				++top;
+				--bottom;
+				
+			}
+			
+			Marshal.Copy(mData, 0, dest, size);
+			
+		}
+
+
+		/*
+		  * perform an in-place swap from Quadrant 1 to Quadrant III format
+		  * (upside-down PostScript/GL to right side up QD/CG raster format)
+		  * We do this in-place, which requires more copying, but will touch
+		  * only half the pages.  (Display grabs are BIG!)
+		  *
+		  * Pixel reformatting may optionally be done here if needed.
+		  * 
+		  * NOTE: Not used right now
+		*/
+		private void flipImageYAxis (int width, int height, int size)
+		{
+			
+			long top, bottom;
+			byte[] buffer;
+			long topP;
+			long bottomP;
+			long rowBytes;
+			
+			top = 0;
+			bottom = height - 1;
+			rowBytes = width;
+
+			var mData = new byte[size];
+			Marshal.Copy(bitmapBlock, mData, 0, size);
+
+			buffer = new byte[rowBytes];
+			
+			while (top < bottom) {
+				topP = top * rowBytes;
+				bottomP = bottom * rowBytes;
+				
+				/*
+				 * Save and swap scanlines.
+				 *
+				 * This code does a simple in-place exchange with a temp buffer.
+				 * If you need to reformat the pixels, replace the first two Array.Copy
+				 * calls with your own custom pixel reformatter.
+				 */
+				Array.Copy (mData, topP, buffer, 0, rowBytes);
+				Array.Copy (mData, bottomP, mData, topP, rowBytes);
+				Array.Copy (buffer, 0, mData, bottomP, rowBytes);
+				
+				++top;
+				--bottom;
+				
+			}
+
+			Marshal.Copy(mData, 0, bitmapBlock, size);
+
 		}
 
 		protected override void Dispose (bool disposing)
@@ -145,7 +365,9 @@ namespace System.Drawing {
 					NativeCGImage.Dispose ();
 					NativeCGImage = null;
 				}
+				//Marshal.FreeHGlobal (bitmapBlock);
 				bitmapBlock = IntPtr.Zero;
+				Console.WriteLine("Bitmap Dispose");
 			}
 			base.Dispose (disposing);
 		}
@@ -169,53 +391,59 @@ namespace System.Drawing {
 			if (NativeCGImage == null)
 				throw new ObjectDisposedException ("cgimage");
 
-#if MONOMAC
-			using (var uiimage = new NSImage (NativeCGImage, new SizeF(NativeCGImage.Width, NativeCGImage.Height))){
-				NSError error;
-				//  get an NSBitmapImageRep of the CGImage
-				NSBitmapImageRep rep = new NSBitmapImageRep (NativeCGImage);
+			// With MonoTouch we can use UTType from CoreMobileServices but since
+			// MonoMac does not have that yet (or at least can not find it) I will 
+			// use the string version of those for now.  I did not want to add another
+			// #if #else in here.
 
-				if (format == ImageFormat.Jpeg){
-					using (var data = rep.RepresentationUsingTypeProperties (NSBitmapImageFileType.Jpeg, new NSDictionary ())){
-						if (data.Save (path, NSDataWritingOptions.Atomic, out error))
-							return;
-						
-						throw new IOException ("Saving the file " + path + " " + error);
-					}
-				} else if (format == ImageFormat.Png){
-					using (var data = rep.RepresentationUsingTypeProperties (NSBitmapImageFileType.Png, new NSDictionary ())){
-						if (data.Save (path, NSDataWritingOptions.Atomic, out error))
-							return;
-						
-						throw new IOException ("Saving the file " + path + " " + error);
-					}
-				} else
-					throw new ArgumentException ("Unsupported format, only Jpeg and Png are supported", "format");
-			}
-#else
-			using (var uiimage = new UIImage (NativeCGImage)){
 
-				NSError error;
-				
-				if (format == ImageFormat.Jpeg){
-					using (var data = uiimage.AsJPEG ()){
-						if (data.Save (path, NSDataWritingOptions.Atomic, out error))
-							return;
-						
-						throw new IOException ("Saving the file " + path + " " + error);
-					}
-				} else if (format == ImageFormat.Png){
-					using (var data = uiimage.AsPNG ()){
-						if (data.Save (path, NSDataWritingOptions.Atomic, out error))
-							return;
-						
-						throw new IOException ("Saving the file " + path + " " + error);
-					}
-				} else
-					throw new ArgumentException ("Unsupported format, only Jpeg and Png are supported", "format");
-			}
-#endif
-			
+			// for now we will just default this to png
+			var typeIdentifier = "public.png";
+
+			// Get the correct type identifier
+			if (format == ImageFormat.Bmp)
+				typeIdentifier = "com.microsoft.bmp";
+//			else if (format == ImageFormat.Emf)
+//				typeIdentifier = "image/emf";
+//			else if (format == ImageFormat.Exif)
+//				typeIdentifier = "image/exif";
+			else if (format == ImageFormat.Gif)
+				typeIdentifier = "com.compuserve.gif";
+			else if (format == ImageFormat.Icon)
+				typeIdentifier = "com.microsoft.ico";
+			else if (format == ImageFormat.Jpeg)
+				typeIdentifier = "public.jpeg";
+			else if (format == ImageFormat.Png)
+				typeIdentifier = "public.png";
+			else if (format == ImageFormat.Tiff)
+				typeIdentifier = "public.tiff";
+			else if (format == ImageFormat.Wmf)
+				typeIdentifier = "com.adobe.pdf";
+
+			// Not sure what this is yet
+			else if (format == ImageFormat.MemoryBmp)
+				throw new NotImplementedException("ImageFormat.MemoryBmp not supported");
+
+			// Obtain a URL file path to be passed
+			NSUrl url = NSUrl.FromFilename(path);
+
+			// * NOTE * we only support one image for right now.
+
+			// Create an image destination that saves into the path that is passed in
+			CGImageDestination dest = CGImageDestination.FromUrl (url, typeIdentifier, imageCount, null); 
+
+			// Add an image to the destination
+			dest.AddImage(NativeCGImage, null);
+
+			// Finish the export
+			bool success = dest.Close ();
+//                        if (success == false)
+//                                Console.WriteLine("did not work");
+//                        else
+//                                Console.WriteLine("did work: " + path);
+			dest.Dispose();
+			dest = null;
+
 		}
 
 
@@ -231,6 +459,8 @@ namespace System.Drawing {
 				switch (path.Substring (p + 1)){
 				case "png": break;
 				case "jpg": format = ImageFormat.Jpeg; break;
+				case "tiff": format = ImageFormat.Tiff; break;
+				case "bmp": format = ImageFormat.Bmp; break;
 				}
 			}
 			Save (path, format);

@@ -205,6 +205,7 @@
       <Link>External\HatchStyle.cs</Link>
     </Compile>
     <Compile Include="System.Drawing.Drawing2D\HatchBrush.cs" />
+    <Compile Include="System.Drawing\TextureBrush.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />
