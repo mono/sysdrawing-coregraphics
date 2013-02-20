@@ -87,7 +87,7 @@ namespace System.Drawing {
 
 			nativeObject = gc;
 			
-			isFlipped = gc.IsFlipped;
+			//isFlipped = gc.IsFlipped;
 
 			InitializeContext(gc.GraphicsPort);
 
@@ -176,8 +176,15 @@ namespace System.Drawing {
 
 		void Stroke (Pen pen)
 		{
+			// First we call the Pen with a fill of false so the brush can setup the stroke 
+			// For LinearGradientBrush this will setup a TransparentLayer so the gradient can
+			// be filled at the end.  See comments.
 			pen.Setup (this, false);
-			context.StrokePath ();
+			context.DrawPath(CGPathDrawingMode.Stroke);
+			// Next we call the Pen with a fill of true so the brush can draw the Gradient. 
+			// For LinearGradientBrush this will draw the Gradient and end the TransparentLayer.
+			// See comments.
+			pen.Setup (this, true);
 		}
 
 		void StrokePen (Pen pen)
@@ -475,9 +482,9 @@ namespace System.Drawing {
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			pen.Setup (this, false);
-			context.StrokeEllipseInRect (rect);
 
+			context.AddEllipseInRect(rect);
+			StrokePen(pen);
 		}
 
 		public void DrawEllipse (Pen pen, int x1, int y1, int x2, int y2)
@@ -497,7 +504,8 @@ namespace System.Drawing {
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			context.StrokeEllipseInRect (new RectangleF (x, y, width, height));
+
+			DrawEllipse (pen, new RectangleF (x, y, width, height));
 
 		}
 
@@ -505,9 +513,9 @@ namespace System.Drawing {
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
-			brush.Setup (this, true);
-			context.FillEllipseInRect (rect);
 
+			context.AddEllipseInRect(rect);
+			FillBrush(brush);
 		}
 
 		public void FillEllipse (Brush brush, int x1, int y1, int x2, int y2)
@@ -1643,9 +1651,11 @@ namespace System.Drawing {
 //			                        layoutRectangle.Y + font.nativeFont.CapHeightMetric, s); 
 //
 //
-			// Setup both the stroke and the fill ?
-			brush.Setup(this, true); // Fill
-			//brush.Setup(this, false); // Stroke
+			// First we call the brush with a fill of false so the brush can setup the stroke color
+			// that the text will be using.
+			// For LinearGradientBrush this will setup a TransparentLayer so the gradient can
+			// be filled at the end.  See comments.
+			brush.Setup(this, false); // Stroke
 
 			// I think we only Fill the text with no Stroke surrounding
 			context.SetTextDrawingMode(CGTextDrawingMode.Fill);
@@ -1738,10 +1748,15 @@ namespace System.Drawing {
 				
 			}
 
-
+			// Now we call the brush with a fill of true so the brush can do the fill if need be 
+			// For LinearGradientBrush this will draw the Gradient and end the TransparentLayer.
+			// See comments.
+			brush.Setup(this, true); // Fill
 
 			context.TextMatrix = saveMatrix;
 			context.RestoreState();
+
+
 
 		}	
 		

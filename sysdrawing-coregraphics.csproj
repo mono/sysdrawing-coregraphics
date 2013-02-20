@@ -206,6 +206,11 @@
     </Compile>
     <Compile Include="System.Drawing.Drawing2D\HatchBrush.cs" />
     <Compile Include="System.Drawing\TextureBrush.cs" />
+    <Compile Include="System.Drawing.Drawing2D\LinearGradientBrush.cs" />
+    <Compile Include="Utilities\GeomUtilities.cs" />
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\LinearGradientMode.cs">
+      <Link>External\LinearGradientMode.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />
