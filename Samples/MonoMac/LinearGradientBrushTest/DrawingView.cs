@@ -179,7 +179,7 @@ namespace LinearGradientBrushTest
 		}
 
 		int currentView = 0;
-		int totalViews = 12;
+		int totalViews = 17;
 
 		public override void KeyDown (NSEvent theEvent)
 		{
@@ -232,6 +232,21 @@ namespace LinearGradientBrushTest
 				break;
 			case 11:
 				PaintView11 (g);
+				break;
+			case 12:
+				PaintView12 (g);
+				break;
+			case 13:
+				PaintView13 (g);
+				break;
+			case 14:
+				PaintView14 (g);
+				break;
+			case 15:
+				PaintView15 (g);
+				break;
+			case 16:
+				PaintView16 (g);
 				break;
 			};
 
@@ -652,9 +667,133 @@ namespace LinearGradientBrushTest
 			
 			g.DrawString("Look at this text!  It is Gradiented!!", myFont, myBrush, 10, 250);
 		}
+
+		void PaintView12 (Graphics g)
+		{
+			// Create a rectangle
+			Rectangle rect = new Rectangle(0, 0, 40, 20);
+			// Create a linear gradient brush
+			LinearGradientBrush rgBrush =
+				new LinearGradientBrush(
+					rect, Color.Black, Color.Blue,
+					0.0f, true);
+			// Fill rectangle
+			g.FillRectangle(rgBrush,
+			                new Rectangle(10, 10, 300, 100));
+			// Set sigma bell shape
+			rgBrush.SetSigmaBellShape(0.5f, 1.0f);
+			// Fill rectangle again
+			g.FillRectangle(rgBrush,
+			                new Rectangle(10, 120, 300, 100));
+			// Set blend triangular shape
+			rgBrush.SetBlendTriangularShape(0.5f, 1.0f);
+			// Fill rectangle again
+			g.FillRectangle(rgBrush,
+			                new Rectangle(10, 240, 300, 100));
+		}
+
+		void PaintView13 (Graphics g)
+		{
+			// Create a rectangle
+			Rectangle rect = new Rectangle(0, 0, 40, 20);
+			// Create a linear gradient brush
+			LinearGradientBrush rgBrush =
+				new LinearGradientBrush(
+					rect, Color.Black, Color.Blue,
+					0.0f, true);
+			// Fill rectangle
+			g.FillRectangle(rgBrush,
+			                new Rectangle(10, 10, 300, 100));
+			// Set sigma bell shape
+			rgBrush.SetSigmaBellShape(0.8f, 1.0f);
+			// Fill rectangle again
+			g.FillRectangle(rgBrush,
+			                new Rectangle(10, 120, 300, 100));
+			// Set blend triangular shape
+			rgBrush.SetBlendTriangularShape(0.2f, 1.0f);
+			// Fill rectangle again
+			g.FillRectangle(rgBrush,
+			                new Rectangle(10, 240, 300, 100));
+		}
+
+		void PaintView14 (Graphics g)
+		{
+			// Create a LinearGradientBrush object
+			LinearGradientBrush brBrush =
+				new LinearGradientBrush(
+					new Point(0, 0), new Point(50, 20),
+					Color.Blue, Color.Red);
+			Rectangle rect =
+				new Rectangle(20, 20, 200, 100);
+			// Create color and points arrays
+			Color[] clrArray =
+			{
+				Color.Red, Color.Blue, Color.Green,
+				Color.Pink, Color.Yellow,
+				Color.DarkTurquoise
+			};
+			float[] posArray =
+			{
+				0.0f, 0.2f, 0.4f,
+				0.6f, 0.8f, 1.0f
+			};
+			// Create a ColorBlend object and
+			// set its Colors and Positions properties
+			ColorBlend colorBlend = new ColorBlend();
+			colorBlend.Colors = clrArray;
+			colorBlend.Positions = posArray;
+			// Set InterpolationColors property
+			brBrush.InterpolationColors = colorBlend;
+			// Draw shapes
+			g.FillRectangle(brBrush, rect);
+			rect.Y = 150;
+			rect.Width = 100;
+			rect.Height = 100;
+			g.FillEllipse(brBrush, rect);
+		}
+
+		void PaintView15 (Graphics g)
+		{
+			// Create a linear gradient brush
+			LinearGradientBrush brBrush =
+				new LinearGradientBrush(
+					new Point(0, 0), new Point(50, 20),
+					Color.Blue, Color.Red);
+			// Create a Blend object
+			Blend blend = new Blend();
+			float[] factArray = {0.0f, 0.3f, 0.5f, 1.0f};
+			float[] posArray = {0.0f, 0.2f, 0.6f, 1.0f};
+			// Set Blend's Factors and Positions properties
+			blend.Factors = factArray;
+			blend.Positions = posArray;
+			// Set Blend property of the brush
+			brBrush.Blend = blend;
+			// Fill a rectangle and an ellipse
+			g.FillRectangle(brBrush, 10, 20, 200, 100);
+			g.FillEllipse(brBrush, 10, 150, 120, 120);
+		}
+
+		void PaintView16 (Graphics g)
+		{
+			// Create a rectangle
+			Rectangle rect =
+				new Rectangle(20, 20, 100, 50);
+			// Create a linear gradient brush
+			LinearGradientBrush rgBrush =
+				new LinearGradientBrush(
+					rect, Color.Red, Color.Green,
+					0.0f, true);
+			// Fill rectangle
+			g.FillRectangle(rgBrush, rect);
+			rect.Y = 90;
+			// Set gamma correction of the brush
+			rgBrush.GammaCorrection = true;
+			// Fill rectangle
+			g.FillRectangle(rgBrush, rect);
+		}
 	}
-
-
+	
+	
 }
 
 public delegate void PaintEventHandler(object sender, PaintEventArgs e);
