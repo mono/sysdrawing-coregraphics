@@ -42,6 +42,8 @@ namespace System.Drawing
 			var sb = brush as SolidBrush;
 			if (sb != null)
 				color = sb.Color;
+			else
+				color = Color.Black;
 			this.width = width;
 		}
 
@@ -176,29 +178,32 @@ namespace System.Drawing
 
 		internal void Setup (Graphics graphics, bool fill)
 		{
+
+			CGContext context = graphics.context;
+
 			brush.Setup (graphics, fill);
 			// TODO: apply matrix
-			
+
 			if (graphics.LastPen == this && !changed)
 				return;
 
+
 			//  A Width of 0 will result in the Pen drawing as if the Width were 1.
 			width = width == 0 ? 1 : width;
-
 			//width = graphics.GraphicsUnitConvertFloat (width);
 
-			graphics.context.SetLineWidth (width);
+			context.SetLineWidth (width);
 
 			switch (startCap) 
 			{
 			case LineCap.Flat:
-				graphics.context.SetLineCap(CGLineCap.Butt);
+				context.SetLineCap(CGLineCap.Butt);
 				break;
 			case LineCap.Square:
-				graphics.context.SetLineCap(CGLineCap.Square);
+				context.SetLineCap(CGLineCap.Square);
 				break;
 			case LineCap.Round:
-				graphics.context.SetLineCap(CGLineCap.Round);
+				context.SetLineCap(CGLineCap.Round);
 				break;
 //			case LineCap.Triangle:
 //			case LineCap.NoAnchor:
@@ -209,29 +214,27 @@ namespace System.Drawing
 //			case LineCap.AnchorMask:
 //			case LineCap.Custom:
 			default:
-				graphics.context.SetLineCap(CGLineCap.Butt);
+				context.SetLineCap(CGLineCap.Butt);
 				break;
 
 			}
 
-
-
 			switch (dashStyle) 
 			{
 			case DashStyle.Dash:
-				graphics.context.SetLineDash(dashOffset,setupMorseCode(Dash));
+				context.SetLineDash(dashOffset,setupMorseCode(Dash));
 				break;
 			case DashStyle.Dot:
-				graphics.context.SetLineDash(dashOffset,setupMorseCode(Dot));
+				context.SetLineDash(dashOffset,setupMorseCode(Dot));
 				break;
 			case DashStyle.DashDot:
-				graphics.context.SetLineDash(dashOffset,setupMorseCode(DashDot));
+				context.SetLineDash(dashOffset,setupMorseCode(DashDot));
 				break;
 			case DashStyle.DashDotDot:
-				graphics.context.SetLineDash(dashOffset,setupMorseCode(DashDotDot));
+				context.SetLineDash(dashOffset,setupMorseCode(DashDotDot));
 				break;
 			default:
-				graphics.context.SetLineDash(0, new float[0]);
+				context.SetLineDash(0, new float[0]);
 				break;
 			}
 			// miter limit

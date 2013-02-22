@@ -50,12 +50,12 @@ namespace Example3_4
 			cs.YLimMax = 1.5f;
 			cs.XTick = 1f;
 			cs.YTick = 0.5f;
-			cs.TickFont = new Font("Arial", 15, FontStyle.Regular);
+			cs.TickFont = new Font("Arial", 10, FontStyle.Regular);
 			cs.XLabel = "X Axis";
 			cs.YLabel = "Y Axis";
-			cs.LabelFont = new Font("Arial", 15, FontStyle.Regular | FontStyle.Underline);
+			cs.LabelFont = new Font("Arial", 10, FontStyle.Regular | FontStyle.Underline);
 			cs.Title = "Sine & Cosine Plot";
-			cs.TitleFont = new Font("Arial", 17, FontStyle.Regular);
+			cs.TitleFont = new Font("Arial", 12, FontStyle.Regular);
 			lg = new Legend();
 			lg.IsLegendVisible = true;
 
