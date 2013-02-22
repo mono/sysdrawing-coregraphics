@@ -35,7 +35,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
     <Reference Include="MonoMac">
-      <HintPath>..\..\..\..\..\..\Kenneth Pouncey%27s Public Folder\Share\MonoMacSource\gitsrc\monomac\src\MonoMac.dll</HintPath>
+      <HintPath>..\..\monomac\src\MonoMac.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -252,6 +252,15 @@
     </Compile>
     <Compile Include="..\System.Drawing\TextureBrush.cs">
       <Link>System.Drawing\TextureBrush.cs</Link>
+    </Compile>
+    <Compile Include="..\System.Drawing.Drawing2D\LinearGradientBrush.cs">
+      <Link>System.Drawing.Drawing2D\LinearGradientBrush.cs</Link>
+    </Compile>
+    <Compile Include="..\Utilities\GeomUtilities.cs">
+      <Link>Utilities\GeomUtilities.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\LinearGradientMode.cs">
+      <Link>External\LinearGradientMode.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

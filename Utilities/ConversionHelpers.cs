@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 #if MONOMAC
 using MonoMac.CoreGraphics;
@@ -27,7 +28,22 @@ namespace System.Drawing
 		{
 			return degrees * F_PI / 180f;
 		}
-
+		
+		internal static float ToAngle (this LinearGradientMode mode) 
+		{
+			switch (mode) {
+			case LinearGradientMode.Vertical:
+				return 90.0f;
+			case LinearGradientMode.ForwardDiagonal:
+				return 45.0f;
+			case LinearGradientMode.BackwardDiagonal:
+				return 135.0f;
+			case LinearGradientMode.Horizontal:
+			default:
+				return 0;
+			}		
+		}
+		
 		internal static float GraphicsUnitConversion (GraphicsUnit from, GraphicsUnit to, float dpi, float nSrc)
 		{	
 			float inchs = 0;
@@ -94,6 +110,26 @@ namespace System.Drawing
 			default:
 				return nSrc;
 			}
+		}
+		
+		internal static float[] ElementsRGBA (this Color color)
+		{
+			float[] elements = new float[4];
+			elements[0] = color.R;
+			elements[1] = color.G;
+			elements[2] = color.B;
+			elements[3] = color.A;
+			return elements;
+		}
+		
+		internal static float[] ElementsCGRGBA(this Color color)
+		{
+			float[] elements = new float[4];
+			elements[0] = color.R / 255f;
+			elements[1] = color.G / 255f;
+			elements[2] = color.B / 255f;
+			elements[3] = color.A / 255f;
+			return elements;
 		}
 	}
 }

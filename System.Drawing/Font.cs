@@ -22,6 +22,8 @@ namespace System.Drawing
 		bool underLine = false;
 		bool strikeThrough = false;
 
+		static float dpiScale = 96f / 72f;
+
 		public Font (FontFamily family, float emSize,  GraphicsUnit unit)
 			: this (family, emSize, FontStyle.Regular, unit, DefaultCharSet, false)
 		{
@@ -86,13 +88,16 @@ namespace System.Drawing
 				throw new ArgumentException("emSize is less than or equal to 0, evaluates to infinity, or is not a valid number.","emSize");
 
 
+			// convert to 96 Dpi to be consistent with Windows
+			var dpiSize = emSize * dpiScale;
+
 			try {
-				nativeFont = new CTFont(familyName,emSize);
+				nativeFont = new CTFont(familyName,dpiSize);
 			}
 			catch
 			{
 				//nativeFont = new CTFont("Lucida Grande",emSize);
-				nativeFont = new CTFont("Helvetica",emSize);
+				nativeFont = new CTFont("Helvetica",dpiSize);
 			}
 
 			CTFontSymbolicTraits tMask = CTFontSymbolicTraits.None;
@@ -104,7 +109,7 @@ namespace System.Drawing
 			strikeThrough = (style & FontStyle.Strikeout) == FontStyle.Strikeout;
 			underLine = (style & FontStyle.Underline) == FontStyle.Underline;
 
-			var nativeFont2 = nativeFont.WithSymbolicTraits(emSize,tMask,tMask);
+			var nativeFont2 = nativeFont.WithSymbolicTraits(dpiSize,tMask,tMask);
 
 			if (nativeFont2 != null)
 				nativeFont = nativeFont2;
