@@ -251,7 +251,7 @@ namespace LinearGradientBrushTest
 			};
 
 			g.ResetTransform();
-			Font viewFont = new Font("Helvetica", 24, FontStyle.Bold);
+			Font viewFont = new Font("Helvetica", 18, FontStyle.Bold);
 			Brush sBrush = Brushes.Black;
 			PointF anyKeyPoint = PointF.Empty;
 			var anyKey = "Press any key to continue.";
@@ -379,7 +379,7 @@ namespace LinearGradientBrushTest
 				                                   Color.Blue, temp);
 				
 				theBrush.LinearColors = new Color[] {Color.Red, Color.Blue};
-					g.DrawString(temp.ToString(), new Font("Times New Roman", 15),
+					g.DrawString(temp.ToString(), new Font("Times New Roman", 11),
 				             new SolidBrush(Color.Black), 0, yOffSet);
 
 				g.FillRectangle(theBrush, 120, yOffSet, 200, 50);
@@ -634,7 +634,7 @@ namespace LinearGradientBrushTest
 			// Draw a second ellipse to the screen using 
 			// the transformed brush.
 			g.FillEllipse(myLGBrush, 20, 150, 380, 50);
-			Font myFont = new Font("Helvetica", 24, FontStyle.Bold);
+			Font myFont = new Font("Helvetica", 18, FontStyle.Bold);
 
 			g.DrawString("Now is the time for all good men", myFont, myLGBrush, 20,125);
 		}
@@ -643,8 +643,7 @@ namespace LinearGradientBrushTest
 		{
 
 			// The emsize is calculated here until it can be fixed.
-			float emsize = 96f / 72f;
-			emsize *= 24;
+			float emsize = 24;
 			var myRect = new RectangleF(10, 10, 200, 200);
 			LinearGradientBrush myBrush = new LinearGradientBrush(myRect, Color.Black, Color.Black, 0 , false);
 			ColorBlend cb = new ColorBlend();

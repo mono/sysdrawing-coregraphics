@@ -41,12 +41,11 @@ namespace Example1_9
 		
 #endregion
 
-		Font Font = new Font("Helvetica",12);
+		Font Font = new Font("Helvetica",8);
 
 		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
 		{
 			Graphics g = new Graphics();
-
 			//g.Clear(Color.White);
 
 			DrawObjects(g);
