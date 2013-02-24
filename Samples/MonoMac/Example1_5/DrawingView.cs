@@ -102,7 +102,7 @@ namespace Example1_5
 //		public override bool IsFlipped {
 //			get {
 //				//return base.IsFlipped;
-//				return false;
+//				return true;
 //			}
 //		}
 

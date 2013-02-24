@@ -790,6 +790,16 @@ namespace LinearGradientBrushTest
 			// Fill rectangle
 			g.FillRectangle(rgBrush, rect);
 		}
+
+		// Here we make sure we are flipped so our subview PlotPanel size and location
+		// are calculated correctly.  If not the positions are calculated on the 0,0 in 
+		// the lower left corner instead of upper left.
+		public override bool IsFlipped {
+			get {
+				//return base.IsFlipped;
+				return true;
+			}
+		}
 	}
 	
 	
