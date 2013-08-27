@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sysdrawing-coregraphics-Mac", "sysdrawing-coregraphics-Mac\sysdrawing-coregraphics-Mac.csproj", "{C675FE3F-497D-4CE7-B441-3C0299B30C10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sysdrawing-Mac", "sysdrawing-Mac\sysdrawing-Mac.csproj", "{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples.MonoMac", "Samples.MonoMac", "{A28D8EBD-ABB8-46BA-B536-7074058B0C84}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example1_2", "Samples\MonoMac\Example1_2\Example1_2.csproj", "{F44C9F8D-979F-442C-B1BB-02B01FFBD2DB}"
@@ -270,16 +268,6 @@ Global
 		{15A4C3D1-419B-4F0D-9894-93A92693BE20}.Release|iPhone.Build.0 = Release|iPhone
 		{15A4C3D1-419B-4F0D-9894-93A92693BE20}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{15A4C3D1-419B-4F0D-9894-93A92693BE20}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
-		{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}.AppStore|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}.AppStore|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}.Debug|iPhone.Build.0 = Debug|Any CPU
-		{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}.Release|iPhone.Build.0 = Release|Any CPU
-		{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{23B098F3-5BD5-4091-B61D-3EA06E511F0F}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhoneSimulator
 		{23B098F3-5BD5-4091-B61D-3EA06E511F0F}.Ad-Hoc|iPhone.Build.0 = Debug|iPhoneSimulator
 		{23B098F3-5BD5-4091-B61D-3EA06E511F0F}.AppStore|iPhone.ActiveCfg = AppStore|iPhoneSimulator

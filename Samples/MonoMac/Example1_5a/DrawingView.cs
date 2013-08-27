@@ -79,12 +79,12 @@ namespace Example1_5a
 			g.Dispose();
 		}
 		
-		//		public override bool IsFlipped {
-		//			get {
-		//				//return base.IsFlipped;
-		//				return false;
-		//			}
-		//		}
+				public override bool IsFlipped {
+					get {
+						//return base.IsFlipped;
+						return true;
+					}
+				}
 
 	}
 }

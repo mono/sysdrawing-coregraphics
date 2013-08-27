@@ -64,10 +64,10 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data" />
     <Reference Include="MonoMac">
       <HintPath>..\..\..\..\monomac\src\MonoMac.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainWindow.cs" />
@@ -102,10 +102,6 @@
     <ProjectReference Include="..\..\..\sysdrawing-coregraphics-Mac\sysdrawing-coregraphics-Mac.csproj">
       <Project>{C675FE3F-497D-4CE7-B441-3C0299B30C10}</Project>
       <Name>sysdrawing-coregraphics-Mac</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\sysdrawing-Mac\sysdrawing-Mac.csproj">
-      <Project>{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}</Project>
-      <Name>sysdrawing-Mac</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

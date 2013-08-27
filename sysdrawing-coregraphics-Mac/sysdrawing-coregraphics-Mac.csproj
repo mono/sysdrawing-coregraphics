@@ -237,7 +237,6 @@
     <Compile Include="..\System.Drawing\Graphics-DrawEllipticalArc.cs">
       <Link>System.Drawing\Graphics-DrawEllipticalArc.cs</Link>
     </Compile>
-    <Compile Include="System.Drawing\Icon.cs" />
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\IconConverter.cs">
       <Link>System.Drawing\IconConverter.cs</Link>
     </Compile>
@@ -262,6 +261,9 @@
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\LinearGradientMode.cs">
       <Link>External\LinearGradientMode.cs</Link>
     </Compile>
+    <Compile Include="..\System.Drawing\Icon.cs">
+      <Link>System.Drawing\Icon.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -274,12 +276,6 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <ItemGroup>
-    <ProjectReference Include="..\sysdrawing-Mac\sysdrawing-Mac.csproj">
-      <Project>{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}</Project>
-      <Name>sysdrawing-Mac</Name>
-    </ProjectReference>
-  </ItemGroup>
   <ItemGroup>
     <Folder Include="System.Drawing.Drawing2D\" />
     <Folder Include="System.Drawing.Imaging\" />
