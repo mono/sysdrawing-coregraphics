@@ -275,12 +275,6 @@
     </MonoDevelop>
   </ProjectExtensions>
   <ItemGroup>
-    <ProjectReference Include="..\sysdrawing-Mac\sysdrawing-Mac.csproj">
-      <Project>{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}</Project>
-      <Name>sysdrawing-Mac</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="System.Drawing.Drawing2D\" />
     <Folder Include="System.Drawing.Imaging\" />
     <Folder Include="System.Drawing.Printing\" />
