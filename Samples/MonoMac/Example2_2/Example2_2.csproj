@@ -95,9 +95,5 @@
       <Project>{C675FE3F-497D-4CE7-B441-3C0299B30C10}</Project>
       <Name>sysdrawing-coregraphics-Mac</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\sysdrawing-Mac\sysdrawing-Mac.csproj">
-      <Project>{1CCE0C4B-2263-4403-BB8D-C6F625C783C0}</Project>
-      <Name>sysdrawing-Mac</Name>
-    </ProjectReference>
   </ItemGroup>
 </Project>

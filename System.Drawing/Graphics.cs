@@ -87,7 +87,7 @@ namespace System.Drawing {
 
 			nativeObject = gc;
 			
-			//isFlipped = gc.IsFlipped;
+			isFlipped = gc.IsFlipped;
 
 			InitializeContext(gc.GraphicsPort);
 
@@ -116,6 +116,31 @@ namespace System.Drawing {
 
 			// Set anti-aliasing
 			SmoothingMode = SmoothingMode.Default;
+		}
+
+		private void initializeMatrix(ref Matrix matrix, bool isFlipped) 
+		{
+//			if (!isFlipped) 
+//			{
+//				//				matrix.Reset();
+//				//				matrix.Translate(0, boundingBox.Height, MatrixOrder.Append);
+//				//				matrix.Scale(1,-1, MatrixOrder.Append);
+//				matrix = new Matrix(
+//					1, 0, 0, -1, 0, boundingBox.Height);
+//				
+//			}
+//			else {
+//				matrix.Reset();
+//			}
+			
+			// It looks like we really do not need to determin if it is flipped or not.
+			// So far this following is working no matter which coordinate system is being used
+			// on both Mac and iOS.  
+			// I will leave the previous commented out code there just in case.  When first implementing 
+			// DrawString the flipped coordinates were causing problems.  Now after implementing with 
+			// CoreText it seems to all be working.  Fingers Crossed.
+			matrix = new Matrix(
+				1, 0, 0, -1, 0, boundingBox.Height);
 		}
 
 		internal float GraphicsUnitConvertX (float x)
@@ -528,31 +553,6 @@ namespace System.Drawing {
 			FillEllipse (brush, new RectangleF (x1, y1, x2, y2));
 		}
 
-		private void initializeMatrix(ref Matrix matrix, bool isFlipped) 
-		{
-			if (!isFlipped) 
-			{
-//				matrix.Reset();
-//				matrix.Translate(0, boundingBox.Height, MatrixOrder.Append);
-//				matrix.Scale(1,-1, MatrixOrder.Append);
-				matrix = new Matrix(
-					1, 0, 0, -1, 0, boundingBox.Height);
-				
-			}
-			else {
-				matrix.Reset();
-			}
-
-			// It looks like we really do not need to determin if it is flipped or not.
-			// So far this following is working no matter which coordinate system is being used
-			// on both Mac and iOS.  
-			// I will leave the previous commented out code there just in case.  When first implementing 
-			// DrawString the flipped coordinates were causing problems.  Now after implementing with 
-			// CoreText it seems to all be working.  Fingers Crossed.
-//			matrix = new Matrix(
-//				1, 0, 0, -1, 0, boundingBox.Height);
-		}
-
 		private void applyModelView() {
 			
 			// Since there is no context.SetCTM, only ConcatCTM
@@ -802,13 +802,13 @@ namespace System.Drawing {
 			initializeMatrix(ref viewMatrix, isFlipped);
 			// * NOTE * Here we offset our drawing by the subview Clipping region of the Window
 			// this is so that we start at offset 0,0 for all of our graphic operations
-			viewMatrix.Translate(subviewClipOffset.Location.X, subviewClipOffset.Y);
+			viewMatrix.Translate(subviewClipOffset.Location.X, subviewClipOffset.Y, MatrixOrder.Append);
 
 			userspaceScaleX = GraphicsUnitConvertX(1) * pageScale;
 			userspaceScaleY = GraphicsUnitConvertY(1) * pageScale;
 			viewMatrix.Scale(userspaceScaleX, userspaceScaleY);
 			viewMatrix.Translate(renderingOrigin.X * userspaceScaleX, 
-			                     -renderingOrigin.Y * userspaceScaleY);
+			                     -renderingOrigin.Y * userspaceScaleY,MatrixOrder.Append);
 			applyModelView();
 			
 		}
