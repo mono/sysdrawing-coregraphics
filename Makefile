@@ -1,5 +1,6 @@
 MONOTOUCH_PREFIX=/Developer/MonoTouch
 SMCS=$(MONOTOUCH_PREFIX)/usr/bin/smcs
+MONOTOUCH=$(MONOTOUCH_PREFIX)/usr/lib/mono/2.1
 MONO_SYSD=../mono/mcs/class/System.Drawing
 
 MONO_SOURCES = \
@@ -7,7 +8,6 @@ MONO_SOURCES = \
 	$(MONO_SYSD)/System.Drawing/FontStyle.cs			\
 	$(MONO_SYSD)/System.Drawing/CharacterRange.cs			\
 	$(MONO_SYSD)/System.Drawing/GraphicsUnit.cs			\
-	$(MONO_SYSD)/System.Drawing/Icon.cs				\
 	$(MONO_SYSD)/System.Drawing/IconConverter.cs			\
 	$(MONO_SYSD)/System.Drawing/ImageConverter.cs			\
 	$(MONO_SYSD)/System.Drawing/ImageFormatConverter.cs		\
@@ -42,13 +42,23 @@ MONO_SOURCES = \
 	$(MONO_SYSD)/System.Drawing.Imaging/PixelFormat.cs		\
 	$(MONO_SYSD)/System.Drawing.Printing/PrintPageEventHandler.cs	\
 
+SHARED_EXTERNAL_SOURCES = \
+	$(MONO_SYSD)/System.Drawing.Drawing2D/LineCap.cs		\
+	$(MONO_SYSD)/System.Drawing.Drawing2D/DashStyle.cs		\
+	$(MONO_SYSD)/System.Drawing.Drawing2D/DashCap.cs		\
+	$(MONO_SYSD)/System.Drawing.Drawing2D/LinearGradientMode.cs		\
+
+
 MONOMAC_EXTRA_SOURCES = \
+
+MONOMAC_EXTRA_SOURCES-BACKUP = \
 	$(MONO_SYSD)/System.Drawing/Point.cs		\
 	$(MONO_SYSD)/System.Drawing/PointF.cs		\
 	$(MONO_SYSD)/System.Drawing/Rectangle.cs	\
 	$(MONO_SYSD)/System.Drawing/RectangleF.cs	\
 	$(MONO_SYSD)/System.Drawing/Size.cs		\
 	$(MONO_SYSD)/System.Drawing/SizeF.cs
+
 
 SOURCES =	\
 	./System.Drawing/Bitmap.cs			\
@@ -74,6 +84,10 @@ SOURCES =	\
 	./System.Drawing.Printing/PrinterSettings.cs	\
 	./System.Drawing.Printing/PrintPageEventArgs.cs	\
 	./System.Drawing.Imaging/ImageAttributes.cs	\
+	./System.Drawing/Graphics-DrawEllipticalArc.cs	\
+	./Utilities/ConversionHelpers.cs	\
+	./System.Drawing/Icon.cs				\
+
 
 all: monotouch
 
@@ -81,14 +95,14 @@ monotouch: monotouch/System.Drawing.dll
 
 monotouch/System.Drawing.dll: $(SOURCES) $(MONO_SOURCES) Makefile
 	mkdir -p monotouch
-	$(SMCS) -define:MONOTOUCH -target:library -out:monotouch/System.Drawing.dll -debug $(SOURCES) $(MONO_SOURCES) -r:monotouch.dll 
+	$(SMCS) -define:MONOTOUCH -target:library -out:monotouch/System.Drawing.dll -debug $(SOURCES) $(MONO_SOURCES) $(SHARED_EXTERNAL_SOURCES) -r:$(MONOTOUCH)/monotouch.dll 
 
 monomac: monomac/System.Drawing.dll
 
 # circular dependency problem. MonoMac.dll depends on System.Drawing.dll which would now depend on MonoMac.dll
 monomac/System.Drawing.dll: $(SOURCES) $(MONO_SOURCES) $(MONO_EXTRA_SOURCES) Makefile
 	mkdir -p monomac
-	mcs -target:library -out:monomac/System.Drawing.dll -define:MONOMAC -debug $(SOURCES) $(MONO_SOURCES) $(MONOMAC_EXTRA_SOURCES) -r:../monomac/src/MonoMac.dll
+	mcs -target:library -out:monomac/System.Drawing.dll -define:MONOMAC -debug $(SOURCES) $(MONO_SOURCES) $(MONOMAC_EXTRA_SOURCES) $(SHARED_EXTERNAL_SOURCES) -r:../monomac/src/MonoMac.dll
 
 clean:
 	rm monotouch/*.dll*
