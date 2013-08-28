@@ -38,6 +38,7 @@ namespace System.Drawing {
 		internal GraphicsUnit quartzUnit = GraphicsUnit.Point;
 		internal object nativeObject;
 		internal bool isFlipped;
+		internal InterpolationMode interpolationMode = InterpolationMode.Default;
 		// Need to keep a transform around, since it is not possible to
 		// set the transform on the context, merely to concatenate.
 		CGAffineTransform transform;
@@ -55,7 +56,7 @@ namespace System.Drawing {
 		private float pageScale = 1;
 		private PointF renderingOrigin = PointF.Empty;
 		private RectangleF subviewClipOffset = RectangleF.Empty;
-		
+
 		public Graphics (CGContext context, bool flipped = true)
 		{
 			if (context == null)
@@ -1020,12 +1021,16 @@ namespace System.Drawing {
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the interpolation mode.  The interpolation mode determines how intermediate values between two endpoints are calculated.
+		/// </summary>
+		/// <value>The interpolation mode.</value>
 		public InterpolationMode InterpolationMode {
 			get {
-				throw new NotImplementedException ();
+				return interpolationMode;
 			}
 			set {
-				throw new NotImplementedException ();
+				interpolationMode = value;
 			}
 		}
 
