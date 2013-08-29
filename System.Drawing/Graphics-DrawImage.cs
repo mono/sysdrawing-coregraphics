@@ -18,6 +18,12 @@ namespace System.Drawing
 {
 	public partial class Graphics {
 		public delegate bool DrawImageAbort (IntPtr callbackData);
+
+		/// <summary>
+		/// Draws the specified Image at the specified location and with the specified size.
+		/// </summary>
+		/// <param name="image">Image.</param>
+		/// <param name="rect">Rect.</param>
 		public void DrawImage (Image image, RectangleF rect)
 		{
 			if (image == null)
@@ -34,6 +40,11 @@ namespace System.Drawing
 			}
 		}
 
+		/// <summary>
+		/// Draws the specified Image, using its original physical size, at the specified location.
+		/// </summary>
+		/// <param name="image">Image.</param>
+		/// <param name="point">Point.</param>
 		public void DrawImage (Image image, PointF point)
 		{
 			if (image == null)
@@ -42,18 +53,57 @@ namespace System.Drawing
 			DrawImage(image, point.X, point.Y);
 		}
 
+		/// <summary>
+		/// Draws the specified Image at the specified location and with the specified shape and size.
+		/// 
+		/// The destPoints parameter specifies three points of a parallelogram. The three Point structures 
+		/// represent the upper-left, upper-right, and lower-left corners of the parallelogram. The fourth 
+		/// point is extrapolated from the first three to form a parallelogram.  
+		/// 
+		/// The image represented by the image parameter is scaled and sheared to fit the shape of the 
+		/// parallelogram specified by the destPoints parameters.
+		/// </summary>
+		/// <param name="image">Image.</param>
+		/// <param name="destPoints">Destination points.</param>
 		public void DrawImage (Image image, Point [] destPoints)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
 			if (destPoints == null)
 				throw new ArgumentNullException ("destPoints");
-			
-			//Status status = GDIPlus.GdipDrawImagePointsI (nativeObject, image.NativeObject, destPoints, destPoints.Length);
-			//GDIPlus.CheckStatus (status);
-			throw new NotImplementedException ();
+
+			if (destPoints.Length < 3)
+				throw new ArgumentException ("Destination points must be an array with a length of 3 or 4. " +
+					"A length of 3 defines a parallelogram with the upper-left, upper-right, " +
+					"and lower-left corners. A length of 4 defines a quadrilateral with the " +
+					"fourth element of the array specifying the lower-right coordinate.");
+
+			// Windows throws a Not Implemented error if the points are more than 3
+			if (destPoints.Length > 3)
+				throw new NotImplementedException ();
+
+			context.SaveState ();
+
+
+			var rect = new RectangleF (0,0, destPoints [1].X - destPoints [0].X, destPoints [2].Y - destPoints [0].Y);
+
+			// We need to give this some perspective so we will manipulate the transform matrix
+			// associated to the context
+			var affine = GeomUtilities.CreateGeometricTransform (rect, destPoints);
+			context.ConcatCTM (affine);
+
+			context.DrawImage(rect, image.NativeCGImage);
+
+			context.RestoreState ();
+
 		}
 
+		/// <summary>
+		/// Draws the specified Image, using its original physical size, at the specified location.
+		/// 
+		/// </summary>
+		/// <param name="image">Image.</param>
+		/// <param name="point">Point.</param>
 		public void DrawImage (Image image, Point point)
 		{
 			if (image == null)
@@ -61,6 +111,13 @@ namespace System.Drawing
 			DrawImage (image, point.X, point.Y);
 		}
 
+		/// <summary>
+		/// Draws the specified Image at the specified location and with the specified size.
+		/// 
+		/// The image represented by the image object is scaled to the dimensions of the rect rectangle.
+		/// </summary>
+		/// <param name="image">Image.</param>
+		/// <param name="rect">Rect.</param>
 		public void DrawImage (Image image, Rectangle rect)
 		{
 			if (image == null)
@@ -68,15 +125,48 @@ namespace System.Drawing
 			DrawImage (image, rect.X, rect.Y, rect.Width, rect.Height);
 		}
 
+		/// <summary>
+		/// Draws the specified Image at the specified location and with the specified shape and size.
+		/// 
+		/// The destPoints parameter specifies three points of a parallelogram. The three PointF structures 
+		/// represent the upper-left, upper-right, and lower-left corners of the parallelogram. The fourth point 
+		/// is extrapolated from the first three to form a parallelogram.
+		/// 
+		/// The image represented by the image object is scaled and sheared to fit the shape of the parallelogram 
+		/// specified by the destPoints parameter.
+		/// </summary>
+		/// <param name="image">Image.</param>
+		/// <param name="destPoints">Destination points.</param>
 		public void DrawImage (Image image, PointF [] destPoints)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
 			if (destPoints == null)
 				throw new ArgumentNullException ("destPoints");
-			throw new NotImplementedException ();
-			//Status status = GDIPlus.GdipDrawImagePoints (nativeObject, image.NativeObject, destPoints, destPoints.Length);
-			//GDIPlus.CheckStatus (status);
+			if (destPoints.Length < 3)
+				throw new ArgumentException ("Destination points must be an array with a length of 3 or 4. " +
+				                             "A length of 3 defines a parallelogram with the upper-left, upper-right, " +
+				                             "and lower-left corners. A length of 4 defines a quadrilateral with the " +
+				                             "fourth element of the array specifying the lower-right coordinate.");
+
+			// Windows throws a Not Implemented error if the points are more than 3
+			if (destPoints.Length > 3)
+				throw new NotImplementedException ();
+
+			context.SaveState ();
+
+
+			var rect = new RectangleF (0,0, destPoints [1].X - destPoints [0].X, destPoints [2].Y - destPoints [0].Y);
+
+			// We need to give this some perspective so we will manipulate the transform matrix
+			// associated to the context
+			var affine = GeomUtilities.CreateGeometricTransform (rect, destPoints);
+			context.ConcatCTM (affine);
+
+			context.DrawImage(rect, image.NativeCGImage);
+
+			context.RestoreState ();
+
 		}
 
 		public void DrawImage (Image image, int x, int y)
@@ -120,12 +210,16 @@ namespace System.Drawing
 			if (destPoints == null)
 				throw new ArgumentNullException ("destPoints");
 			
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
 			//Status status = GDIPlus.GdipDrawImagePointsRectI (nativeObject, image.NativeObject,
 			//	destPoints, destPoints.Length , srcRect.X, srcRect.Y, 
 			//	srcRect.Width, srcRect.Height, srcUnit, IntPtr.Zero, 
 			//	null, IntPtr.Zero);
 			//GDIPlus.CheckStatus (status);
+
+			context.DrawImage (srcRect, image.NativeCGImage);
+
+
 		}
 
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit)
@@ -135,12 +229,13 @@ namespace System.Drawing
 			if (destPoints == null)
 				throw new ArgumentNullException ("destPoints");
 			
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
 			//Status status = GDIPlus.GdipDrawImagePointsRect (nativeObject, image.NativeObject,
 			//	destPoints, destPoints.Length , srcRect.X, srcRect.Y, 
 			//	srcRect.Width, srcRect.Height, srcUnit, IntPtr.Zero, 
 			//	null, IntPtr.Zero);
 			//GDIPlus.CheckStatus (status);
+			context.DrawImage (srcRect, image.NativeCGImage);
 		}
 
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, 

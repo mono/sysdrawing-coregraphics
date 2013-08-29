@@ -123,4 +123,8 @@
       <Name>sysdrawing-coregraphics</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="bitmap25.png" />
+    <BundleResource Include="bitmap50.png" />
+  </ItemGroup>
 </Project>

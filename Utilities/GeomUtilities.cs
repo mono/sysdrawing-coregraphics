@@ -367,6 +367,63 @@ namespace System.Drawing
 			return sign * y;
 		}
 
+		/// <summary>
+		/// This method initializes the new CGAffineTransform such that it represents the geometric transform that maps the rectangle 
+		/// specified by the rect parameter to the parallelogram defined by the three points in the plgpts parameter. 
+		/// 
+		/// The upper-left corner of the rectangle is mapped to the first point in the plgpts array, the upper-right corner 
+		/// is mapped to the second point, and the lower-left corner is mapped to the third point. The lower-right point of 
+		/// the parallelogram is implied by the first three.
+		/// </summary>
+		/// <returns>The affine transform.</returns>
+		/// <param name="rect">Rectangle.</param>
+		/// <param name="points">Points.</param>
+		internal static CGAffineTransform CreateGeometricTransform(RectangleF rect, PointF[] points)
+		{
+			var p0 = points [0];
+			var p1 = points [1];
+			var p2 = points [2];
+
+			var width = rect.Width;
+			var height = rect.Height;
+
+			float m11 = (p1.X - p0.X) / width;
+			float m12 = (p1.Y - p0.Y) / width;
+			float m21 = (p2.X - p0.X) / height;
+			float m22 = (p2.Y - p0.Y) / height;
+
+			return new CGAffineTransform (m11, m12, m21, m22, p0.X, p0.Y);
+
+		}
+
+		/// <summary>
+		/// This method initializes the new CGAffineTransform such that it represents the geometric transform that maps the rectangle 
+		/// specified by the rect parameter to the parallelogram defined by the three points in the plgpts parameter. 
+		/// 
+		/// The upper-left corner of the rectangle is mapped to the first point in the plgpts array, the upper-right corner 
+		/// is mapped to the second point, and the lower-left corner is mapped to the third point. The lower-right point of 
+		/// the parallelogram is implied by the first three.
+		/// </summary>
+		/// <returns>The affine transform.</returns>
+		/// <param name="rect">Rectangle.</param>
+		/// <param name="points">Points.</param>
+		internal static CGAffineTransform CreateGeometricTransform(RectangleF rect, Point[] points)
+		{
+			var p0 = points [0];
+			var p1 = points [1];
+			var p2 = points [2];
+
+			var width = rect.Width;
+			var height = rect.Height;
+
+			float m11 = (p1.X - p0.X) / width;
+			float m12 = (p1.Y - p0.Y) / width;
+			float m21 = (p2.X - p0.X) / height;
+			float m22 = (p2.Y - p0.Y) / height;
+
+			return new CGAffineTransform (m11, m12, m21, m22, p0.X, p0.Y);
+
+		}
 	}
 }
 
