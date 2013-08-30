@@ -404,7 +404,7 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="rect">Rect.</param>
 		/// <param name="pixelFormat">Pixel format.</param>
-		public object Clone (Rectangle rect, PixelFormat pixelFormat)
+		public Bitmap Clone (Rectangle rect, PixelFormat pixelFormat)
 		{
 			if (rect.Width == 0 || rect.Height == 0)
 				throw new ArgumentException ("Width or Height of rect is 0.");
