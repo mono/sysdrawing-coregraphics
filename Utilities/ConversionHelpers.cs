@@ -111,7 +111,17 @@ namespace System.Drawing
 				return nSrc;
 			}
 		}
-		
+
+		internal static void GraphicsUnitConversion (GraphicsUnit from, GraphicsUnit to, float dpi, ref RectangleF srcRect)
+		{
+			srcRect.X = GraphicsUnitConversion (from, to, dpi, srcRect.X);
+			srcRect.Y = GraphicsUnitConversion (from, to, dpi, srcRect.Y);
+			srcRect.Width = GraphicsUnitConversion (from, to, dpi, srcRect.Width);
+			srcRect.Height = GraphicsUnitConversion (from, to, dpi, srcRect.Height);
+
+		}
+
+
 		internal static float[] ElementsRGBA (this Color color)
 		{
 			float[] elements = new float[4];
@@ -131,6 +141,7 @@ namespace System.Drawing
 			elements[3] = color.A / 255f;
 			return elements;
 		}
+
 	}
 }
 
