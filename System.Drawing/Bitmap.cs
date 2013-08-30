@@ -399,6 +399,27 @@ namespace System.Drawing {
 
 		}
 
+		/// <summary>
+		/// Creates a copy of the section of this Bitmap defined by Rectangle structure and with a specified PixelFormat enumeration.
+		/// </summary>
+		/// <param name="rect">Rect.</param>
+		/// <param name="pixelFormat">Pixel format.</param>
+		public object Clone (Rectangle rect, PixelFormat pixelFormat)
+		{
+			if (rect.Width == 0 || rect.Height == 0)
+				throw new ArgumentException ("Width or Height of rect is 0.");
+
+			var width = rect.Width;
+			var height = rect.Height;
+
+			var tmpImg = new Bitmap (width, height, pixelFormat);
+			using (Graphics g = Graphics.FromImage (tmpImg)) {
+				g.DrawImage (this, new Rectangle(0,0, width, height), rect, GraphicsUnit.Pixel );
+			}
+			return tmpImg;
+		}
+
+
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing){
