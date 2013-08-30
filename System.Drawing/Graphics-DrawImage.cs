@@ -218,23 +218,25 @@ namespace System.Drawing
 			var srcRect1 = srcRect;
 
 			if (srcUnit != graphicsUnit) {
-				var height = ConversionHelpers.GraphicsUnitConversion (graphicsUnit, srcUnit, DpiX, image.Height);
+				var height = ConversionHelpers.GraphicsUnitConversion (graphicsUnit, srcUnit, image.VerticalResolution, image.Height);
 				// WithImageInRect works from 0,0 in Lower Left corner
 				// So we need to convert that for an offset of the Upper Left 
 				srcRect1.Y = (height - srcRect1.Height) - srcRect1.Y;
-				ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, DpiX, ref srcRect1);
+				ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.HorizontalResolution, image.VerticalResolution,  ref srcRect1);
 			} 
 			else 
 			{
 				// WithImageInRect works from 0,0 in Lower Left corner
 				// So we need to convert that for an offset of the Upper Left 
-				srcRect1.Y = (image.Height - srcRect1.Height) - srcRect1.Y;
+				//srcRect1.Y = (image.Height - srcRect1.Height) - srcRect1.Y;
 			}
 
 			var subImage = image.NativeCGImage.WithImageInRect (srcRect1);
 			context.DrawImage (destRect, subImage);
 
 		}
+
+
 
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit)
 		{
@@ -306,13 +308,29 @@ namespace System.Drawing
 			//GDIPlus.CheckStatus (status);
 		}
 
+		/// <summary>
+		/// Draws a portion of an image at a specified location.
+		/// </summary>
+		/// <param name="image">Image.</param>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
+		/// <param name="srcRect">Source rect.</param>
+		/// <param name="srcUnit">Source unit.</param>
 		public void DrawImage (Image image, int x, int y, Rectangle srcRect, GraphicsUnit srcUnit)
 		{			
 			if (image == null)
 				throw new ArgumentNullException ("image");
-			throw new NotImplementedException ();
-			//Status status = GDIPlus.GdipDrawImagePointRectI(nativeObject, image.NativeObject, x, y, srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, srcUnit);
-			//GDIPlus.CheckStatus (status);
+
+			float width = srcRect.Width;
+			float height = srcRect.Height;
+
+			if (srcUnit != graphicsUnit) 
+			{
+				width = ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.VerticalResolution, width);
+				height = ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.HorizontalResolution, height);
+			}
+
+			DrawImage (image, new RectangleF (x, y, width, height), srcRect, srcUnit);
 		}
 		
 		public void DrawImage (Image image, int x, int y, int width, int height)
@@ -326,13 +344,27 @@ namespace System.Drawing
 			DrawImage(image, new RectangleF(x,y,width, height));
 		}
 
+		/// <summary>
+		/// Draws a portion of an image at a specified location.
+		/// </summary>
+		/// <param name="image">Image.</param>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
+		/// <param name="srcRect">Source rect.</param>
+		/// <param name="srcUnit">Source unit.</param>
 		public void DrawImage (Image image, float x, float y, RectangleF srcRect, GraphicsUnit srcUnit)
 		{			
 			if (image == null)
 				throw new ArgumentNullException ("image");
-			throw new NotImplementedException ();
-			//Status status = GDIPlus.GdipDrawImagePointRect (nativeObject, image.nativeObject, x, y, srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, srcUnit);
-			//GDIPlus.CheckStatus (status);
+
+			var srcRect1 = srcRect;
+
+			if (srcUnit != graphicsUnit) 
+			{
+				ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.VerticalResolution, image.HorizontalResolution, ref srcRect1);
+			}
+
+			DrawImage (image, new RectangleF (x, y, srcRect1.Width, srcRect1.Height), srcRect1, graphicsUnit);		
 		}
 
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)

@@ -112,12 +112,12 @@ namespace System.Drawing
 			}
 		}
 
-		internal static void GraphicsUnitConversion (GraphicsUnit from, GraphicsUnit to, float dpi, ref RectangleF srcRect)
+		internal static void GraphicsUnitConversion (GraphicsUnit from, GraphicsUnit to, float dpiX, float dpiY, ref RectangleF srcRect)
 		{
-			srcRect.X = GraphicsUnitConversion (from, to, dpi, srcRect.X);
-			srcRect.Y = GraphicsUnitConversion (from, to, dpi, srcRect.Y);
-			srcRect.Width = GraphicsUnitConversion (from, to, dpi, srcRect.Width);
-			srcRect.Height = GraphicsUnitConversion (from, to, dpi, srcRect.Height);
+			srcRect.X = GraphicsUnitConversion (from, to, dpiX, srcRect.X);
+			srcRect.Y = GraphicsUnitConversion (from, to, dpiY, srcRect.Y);
+			srcRect.Width = GraphicsUnitConversion (from, to, dpiX, srcRect.Width);
+			srcRect.Height = GraphicsUnitConversion (from, to, dpiY, srcRect.Height);
 
 		}
 
