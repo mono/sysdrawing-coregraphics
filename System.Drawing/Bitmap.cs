@@ -72,7 +72,7 @@ namespace System.Drawing {
 			var cg = CGImageSource.FromDataProvider(prov).CreateImage(0, null);
 			InitWithCGImage(cg);
 		}
-		
+
 		public Bitmap (Stream stream, bool useIcm)
 		{
 			// false: stream is owned by user code
@@ -84,7 +84,17 @@ namespace System.Drawing {
 			this (width, height, PixelFormat.Format32bppArgb)
 		{
 		}
-		
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="System.Drawing.Bitmap"/> class from the specified existing image..
+		/// </summary>
+		/// <param name="image">Image.</param>
+		public Bitmap (Image image) :
+			this (image, image.Width, image.Height)
+		{
+
+		}
+
 		public Bitmap (Image original, int width, int height) : 
 			this (width, height, PixelFormat.Format32bppArgb)
 		{
@@ -109,12 +119,15 @@ namespace System.Drawing {
 			bool premultiplied = false;
 			int bitsPerPixel = 0;
 
+			pixelFormat = format;
+
 			// Don't forget to set the Image width and height for size.
 			imageSize.Width = width;
 			imageSize.Height = height;
 
 			switch (format){
 			case PixelFormat.Format32bppPArgb:
+			case PixelFormat.DontCare:
 				premultiplied = true;
 				colorSpace = CGColorSpace.CreateDeviceRGB ();
 				bitsPerComponent = 8;

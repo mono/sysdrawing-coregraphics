@@ -169,38 +169,78 @@ namespace System.Drawing
 
 		}
 
+		/// <summary>
+		/// Draws the specified image, using its original physical size, at the location specified by a coordinate pair.
+		/// </summary>
+		/// <param name="image">Image.</param>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
 		public void DrawImage (Image image, int x, int y)
 		{
 			DrawImage (image, x, y, image.Width, image.Height);
 		}
 
+		/// <summary>
+		/// Draws the specified image, using its original physical size, at the location specified by a coordinate pair.
+		/// </summary>
+		/// <param name="image">Image.</param>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
 		public void DrawImage (Image image, float x, float y)
 		{
 			DrawImage (image, new PointF (x, y));
 		}
 
+		/// <summary>
+		/// Draws the specified portion of the specified Image at the specified location and with the specified size.
+		/// 
+		/// The srcRect parameter specifies a rectangular portion of the image object to draw. This portion is scaled 
+		/// to fit inside the rectangle specified by the destRect parameter.
+		/// </summary>
+		/// <param name="image">Image.</param>
+		/// <param name="destRect">Destination rect.</param>
+		/// <param name="srcRect">Source rect.</param>
+		/// <param name="srcUnit">Source unit.</param>
 		public void DrawImage (Image image, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
-			throw new NotImplementedException ();
-			//Status status = GDIPlus.GdipDrawImageRectRectI (nativeObject, image.NativeObject,
-			//	destRect.X, destRect.Y, destRect.Width, destRect.Height,
-			//	srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height,
-			//	srcUnit, IntPtr.Zero, null, IntPtr.Zero);
-			//GDIPlus.CheckStatus (status);
+
+			DrawImage (image, (RectangleF)destRect, (RectangleF)srcRect, srcUnit);
+
 		}
 		
 		public void DrawImage (Image image, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit)
 		{			
 			if (image == null)
 				throw new ArgumentNullException ("image");
-			throw new NotImplementedException ();
-			//Status status = GDIPlus.GdipDrawImageRectRect (nativeObject, image.NativeObject,
-			//	destRect.X, destRect.Y, destRect.Width, destRect.Height,
-			//	srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height,
-			//	srcUnit, IntPtr.Zero, null, IntPtr.Zero);
-			//GDIPlus.CheckStatus (status);
+
+			var srcRect1 = srcRect;
+
+			if (srcUnit != graphicsUnit) {
+				var height = ConversionHelpers.GraphicsUnitConversion (graphicsUnit, srcUnit, DpiX, image.Height);
+				// WithImageInRect works from 0,0 in Lower Left corner
+				// So we need to convert that for an offset of the Upper Left 
+				srcRect1.Y = (height - srcRect1.Height) - srcRect1.Y;
+				ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, DpiX, ref srcRect1);
+			} 
+			else 
+			{
+				// WithImageInRect works from 0,0 in Lower Left corner
+				// So we need to convert that for an offset of the Upper Left 
+				srcRect1.Y = (image.Height - srcRect1.Height) - srcRect1.Y;
+			}
+
+			var subImage = image.NativeCGImage.WithImageInRect (srcRect1);
+			context.DrawImage (destRect, subImage);
+
+//			using (Image tmpImg = new Bitmap (width, height)) {
+//				using (Graphics g = FromImage (tmpImg)) {
+//					g.DrawImage (image, 0, 0, image.Width, image.Height);
+//					DrawImage (tmpImg, x, y, width, height);
+//				}
+//			}
+
 		}
 
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit)

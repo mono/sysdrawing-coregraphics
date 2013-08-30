@@ -65,6 +65,7 @@ namespace System.Drawing {
 		internal CGPDFDocument nativeMetafile;
 		string tag = string.Empty;
 
+		protected PixelFormat pixelFormat;
 
 		// From microsoft documentation an image can also be described by a metafile which in
 		// Quartz2D is a PDF file.  Quartz2D for Mac OSX Developers provides more information
@@ -96,8 +97,12 @@ namespace System.Drawing {
 		
 		public PixelFormat PixelFormat {
 			get {			
-				// TODO
-				return PixelFormat.Alpha;
+				return pixelFormat;
+			}
+
+			protected set 
+			{
+				pixelFormat = value;
 			}
 		}
 		
@@ -137,6 +142,28 @@ namespace System.Drawing {
 			var bitmap = new Bitmap (this);
 			return bitmap;
 		}
+
+		/// <summary>
+		/// Creates a copy of the section of this Bitmap defined by Rectangle structure and with a specified PixelFormat enumeration.
+		/// </summary>
+		/// <param name="rect">Rect.</param>
+		/// <param name="pixelFormat">Pixel format.</param>
+		public object Clone (Rectangle rect, PixelFormat pixelFormat)
+		{
+			if (rect.Width == 0 || rect.Height == 0)
+				throw new ArgumentException ("Width or Height of rect is 0.");
+
+			var width = rect.Width;
+			var height = rect.Height;
+
+			var tmpImg = new Bitmap (width, height, pixelFormat);
+			using (Graphics g = Graphics.FromImage (tmpImg)) {
+				g.DrawImage (this, new Rectangle(0,0, width, height), rect, GraphicsUnit.Pixel );
+				//DrawImage (tmpImg, x, y, width, height);
+			}
+			return tmpImg;
+		}
+
 
 		public void Dispose ()
 		{
