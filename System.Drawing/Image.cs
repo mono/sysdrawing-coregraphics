@@ -129,10 +129,13 @@ namespace System.Drawing {
 			}
 		}
 
+		/// <summary>
+		/// Creates an exact copy of this Image.
+		/// </summary>
 		public object Clone ()
 		{
-			// TODO
-			return null;
+			var bitmap = new Bitmap (this);
+			return bitmap;
 		}
 
 		public void Dispose ()
