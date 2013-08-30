@@ -234,13 +234,6 @@ namespace System.Drawing
 			var subImage = image.NativeCGImage.WithImageInRect (srcRect1);
 			context.DrawImage (destRect, subImage);
 
-//			using (Image tmpImg = new Bitmap (width, height)) {
-//				using (Graphics g = FromImage (tmpImg)) {
-//					g.DrawImage (image, 0, 0, image.Width, image.Height);
-//					DrawImage (tmpImg, x, y, width, height);
-//				}
-//			}
-
 		}
 
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit)

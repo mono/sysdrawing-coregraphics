@@ -159,7 +159,6 @@ namespace System.Drawing {
 			var tmpImg = new Bitmap (width, height, pixelFormat);
 			using (Graphics g = Graphics.FromImage (tmpImg)) {
 				g.DrawImage (this, new Rectangle(0,0, width, height), rect, GraphicsUnit.Pixel );
-				//DrawImage (tmpImg, x, y, width, height);
 			}
 			return tmpImg;
 		}
