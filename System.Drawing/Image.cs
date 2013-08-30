@@ -121,9 +121,29 @@ namespace System.Drawing {
 			get {
 				var b = this as Bitmap;
 				return b == null ? 0 : b.NativeCGImage.Width;
-				
-				return 0;
 			}
+		}
+
+		protected float dpiWidth = 0;
+		protected float dpiHeight = 0;
+
+		/// <summary>
+		/// Gets the horizontal resolution, in pixels per inch, of this Image.
+		/// </summary>
+		/// <value>The horizontal resolution.</value>
+		public float HorizontalResolution 
+		{ 
+			get { return dpiWidth; }
+
+		}
+
+		/// <summary>
+		/// Gets the vertical resolution, in pixels per inch, of this Image.
+		/// </summary>
+		/// <value>The vertical resolution.</value>
+		public float VerticalResolution 
+		{ 
+			get { return dpiHeight; }
 		}
 
 		protected Size imageSize = Size.Empty;
@@ -133,6 +153,17 @@ namespace System.Drawing {
 				return imageSize;
 			}
 		}
+
+		protected SizeF physicalSize = SizeF.Empty;
+		/// <summary>
+		/// Gets the width and height of this image.
+		/// </summary>
+		/// <value>A SizeF structure that represents the width and height of this Image.</value>
+		public SizeF PhysicalSize
+		{
+			get { return physicalSize; }
+		}
+
 
 		/// <summary>
 		/// Creates an exact copy of this Image.

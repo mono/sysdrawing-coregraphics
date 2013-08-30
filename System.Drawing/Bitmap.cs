@@ -69,8 +69,31 @@ namespace System.Drawing {
 		{
 			// Use Image IO
 			CGDataProvider prov = new CGDataProvider(filename);
+
+
+			// Right now we support only the first Image
+			var imageSource = CGImageSource.FromDataProvider (prov);
+
+			var imgCount = imageSource.ImageCount;
+			var properties = imageSource.GetProperties (0, null);
+
 			var cg = CGImageSource.FromDataProvider(prov).CreateImage(0, null);
+
+			// This needs to be incorporated in frame information later
+			// as well as during the clone methods.
+			dpiWidth =  properties.DPIWidth != null ? (float)properties.DPIWidth : 96;
+			dpiHeight = properties.DPIWidth != null ? (float)properties.DPIHeight : 96;
+
+			physicalSize.Width = (float)properties.PixelWidth;
+			physicalSize.Height = (float)properties.PixelHeight;
+
+			var dpiResolution = physicalSize;
+			dpiResolution.Width *= 72f / dpiWidth;
+			dpiResolution.Height *= 72f / dpiHeight;
+
 			InitWithCGImage(cg);
+
+
 		}
 
 		public Bitmap (Stream stream, bool useIcm)
@@ -179,7 +202,12 @@ namespace System.Drawing {
 			CGBitmapFlags bitmapInfo;
 			bool premultiplied = false;
 			int bitsPerPixel = 0;
-			
+
+
+//			xdpi = pixelsWide * 72 / size.width;
+//			ydpi = pixelsHigh * 72 / size.height;
+
+
 			if (image == null) {
 				throw new ArgumentException (" image is invalid! " );
 			}
