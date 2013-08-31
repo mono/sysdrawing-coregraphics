@@ -38,7 +38,7 @@ namespace System.Drawing {
 		internal GraphicsUnit quartzUnit = GraphicsUnit.Point;
 		internal object nativeObject;
 		internal bool isFlipped;
-		internal InterpolationMode interpolationMode = InterpolationMode.Default;
+		internal InterpolationMode interpolationMode;
 		// Need to keep a transform around, since it is not possible to
 		// set the transform on the context, merely to concatenate.
 		CGAffineTransform transform;
@@ -1042,6 +1042,29 @@ namespace System.Drawing {
 			}
 			set {
 				interpolationMode = value;
+				switch (value) 
+				{
+				case InterpolationMode.Low:
+					context.InterpolationQuality = CGInterpolationQuality.Low;
+					break;
+				case InterpolationMode.High:
+				case InterpolationMode.HighQualityBicubic:
+				case InterpolationMode.HighQualityBilinear:
+					context.InterpolationQuality = CGInterpolationQuality.High;
+					break;
+				case InterpolationMode.NearestNeighbor:
+				case InterpolationMode.Bicubic:
+				case InterpolationMode.Bilinear:
+					context.InterpolationQuality = CGInterpolationQuality.Medium;
+					break;
+				case InterpolationMode.Invalid:
+					context.InterpolationQuality = CGInterpolationQuality.None;
+					break;
+				default:
+					context.InterpolationQuality = CGInterpolationQuality.Default;
+					break;
+				}
+
 			}
 		}
 
