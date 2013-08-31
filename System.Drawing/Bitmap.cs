@@ -87,6 +87,15 @@ namespace System.Drawing {
 			physicalDimension.Width = (float)properties.PixelWidth;
 			physicalDimension.Height = (float)properties.PixelHeight;
 
+
+			// The physical size may be off on certain implementations.  For instance the dpiWidth and dpiHeight 
+			// are read using integers in core graphics but in windows it is a float.
+			// For example:
+			// coregraphics dpiWidth = 24 as integer
+			// windows dpiWidth = 24.999935 as float
+			// this gives a few pixels difference when calculating the physical size.
+			// 256 * 96 / 24 = 1024
+			// 256 * 96 / 24.999935 = 983.04
 			physicalSize = new SizeF (physicalDimension.Width, physicalDimension.Height);
 			physicalSize.Width *= ConversionHelpers.MS_DPI / dpiWidth;
 			physicalSize.Height *= ConversionHelpers.MS_DPI / dpiHeight;
