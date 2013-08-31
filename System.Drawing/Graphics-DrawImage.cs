@@ -100,7 +100,6 @@ namespace System.Drawing
 
 		/// <summary>
 		/// Draws the specified Image, using its original physical size, at the specified location.
-		/// 
 		/// </summary>
 		/// <param name="image">Image.</param>
 		/// <param name="point">Point.</param>
@@ -177,7 +176,7 @@ namespace System.Drawing
 		/// <param name="y">The y coordinate.</param>
 		public void DrawImage (Image image, int x, int y)
 		{
-			DrawImage (image, x, y, image.Width, image.Height);
+			DrawImage (image, new RectangleF(x,y,image.physicalSize.Width,image.physicalSize.Height));
 		}
 
 		/// <summary>
@@ -188,7 +187,7 @@ namespace System.Drawing
 		/// <param name="y">The y coordinate.</param>
 		public void DrawImage (Image image, float x, float y)
 		{
-			DrawImage (image, new PointF (x, y));
+			DrawImage(image, new RectangleF(x,y,image.physicalSize.Width,image.physicalSize.Height));
 		}
 
 		/// <summary>
@@ -263,13 +262,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("image");
 			if (destPoints == null)
 				throw new ArgumentNullException ("destPoints");
-			
-			//throw new NotImplementedException ();
-			//Status status = GDIPlus.GdipDrawImagePointsRect (nativeObject, image.NativeObject,
-			//	destPoints, destPoints.Length , srcRect.X, srcRect.Y, 
-			//	srcRect.Width, srcRect.Height, srcUnit, IntPtr.Zero, 
-			//	null, IntPtr.Zero);
-			//GDIPlus.CheckStatus (status);
+
 			context.DrawImage (srcRect, image.NativeCGImage);
 		}
 
@@ -323,14 +316,16 @@ namespace System.Drawing
 
 			float width = srcRect.Width;
 			float height = srcRect.Height;
+//
+//			if (srcUnit != graphicsUnit) 
+//			{
+//				width = ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.VerticalResolution, width);
+//				height = ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.HorizontalResolution, height);
+//			}
 
-			if (srcUnit != graphicsUnit) 
-			{
-				width = ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.VerticalResolution, width);
-				height = ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.HorizontalResolution, height);
-			}
 
-			DrawImage (image, new RectangleF (x, y, width, height), srcRect, srcUnit);
+
+			DrawImage (image, new RectangleF (x, y, image.Width, image.Height), srcRect, srcUnit);
 		}
 		
 		public void DrawImage (Image image, int x, int y, int width, int height)

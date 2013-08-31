@@ -12,6 +12,10 @@ namespace System.Drawing
 {
 	internal static class ConversionHelpers
 	{
+
+		// Microsoft seems to use 96 extensively
+		internal const float MS_DPI = 96;
+
 		internal static float F_PI = (float)Math.PI;
 		
 		internal static CGColor ToCGColor (this Color color)
@@ -120,7 +124,6 @@ namespace System.Drawing
 			srcRect.Height = GraphicsUnitConversion (from, to, dpiY, srcRect.Height);
 
 		}
-
 
 		internal static float[] ElementsRGBA (this Color color)
 		{

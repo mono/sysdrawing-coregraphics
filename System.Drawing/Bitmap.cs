@@ -81,15 +81,15 @@ namespace System.Drawing {
 
 			// This needs to be incorporated in frame information later
 			// as well as during the clone methods.
-			dpiWidth =  properties.DPIWidth != null ? (float)properties.DPIWidth : 96;
-			dpiHeight = properties.DPIWidth != null ? (float)properties.DPIHeight : 96;
+			dpiWidth =  properties.DPIWidth != null ? (float)properties.DPIWidth : ConversionHelpers.MS_DPI;
+			dpiHeight = properties.DPIWidth != null ? (float)properties.DPIHeight : ConversionHelpers.MS_DPI;
 
-			physicalSize.Width = (float)properties.PixelWidth;
-			physicalSize.Height = (float)properties.PixelHeight;
+			physicalDimension.Width = (float)properties.PixelWidth;
+			physicalDimension.Height = (float)properties.PixelHeight;
 
-			var dpiResolution = physicalSize;
-			dpiResolution.Width *= 72f / dpiWidth;
-			dpiResolution.Height *= 72f / dpiHeight;
+			physicalSize = new SizeF (physicalDimension.Width, physicalDimension.Height);
+			physicalSize.Width *= ConversionHelpers.MS_DPI / dpiWidth;
+			physicalSize.Height *= ConversionHelpers.MS_DPI / dpiHeight;
 
 			InitWithCGImage(cg);
 

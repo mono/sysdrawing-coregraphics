@@ -66,6 +66,7 @@ namespace System.Drawing {
 		string tag = string.Empty;
 
 		protected PixelFormat pixelFormat;
+		internal SizeF physicalSize;
 
 		// From microsoft documentation an image can also be described by a metafile which in
 		// Quartz2D is a PDF file.  Quartz2D for Mac OSX Developers provides more information
@@ -91,7 +92,6 @@ namespace System.Drawing {
 			get {
 				var b = this as Bitmap;
 				return b == null ? 0 : b.NativeCGImage.Height;
-				return 0;
 			}
 		}
 		
@@ -154,16 +154,15 @@ namespace System.Drawing {
 			}
 		}
 
-		protected SizeF physicalSize = SizeF.Empty;
+		protected SizeF physicalDimension = SizeF.Empty;
 		/// <summary>
 		/// Gets the width and height of this image.
 		/// </summary>
 		/// <value>A SizeF structure that represents the width and height of this Image.</value>
-		public SizeF PhysicalSize
+		public SizeF PhysicalDimension
 		{
-			get { return physicalSize; }
+			get { return physicalDimension; }
 		}
-
 
 		/// <summary>
 		/// Creates an exact copy of this Image.
