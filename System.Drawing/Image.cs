@@ -189,8 +189,7 @@ namespace System.Drawing {
 		{
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
-			throw new NotImplementedException ();
-			return null;
+			return new Bitmap(stream, false);
 		}
 
 		public void Save (Stream stream, ImageFormat format)

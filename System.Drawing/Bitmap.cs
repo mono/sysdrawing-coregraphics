@@ -91,6 +91,17 @@ namespace System.Drawing {
 			// false: stream is owned by user code
 			//nativeObject = InitFromStream (stream);
 			// TODO
+			// Use Image IO
+			byte[] buffer;
+			using(var memoryStream = new MemoryStream())
+			{
+				stream.CopyTo(memoryStream);
+				buffer = memoryStream.ToArray();
+			}
+
+			dataProvider = new CGDataProvider(buffer, 0, buffer.Length);
+
+			InitializeImageFrame (0);
 		}
 
 		public Bitmap (int width, int height) : 
@@ -324,7 +335,7 @@ namespace System.Drawing {
 					colorSpace = CGColorSpace.CreateDeviceRGB ();
 					bitsPerComponent = 8;
 					bitsPerPixel = 32;
-					bitmapInfo = CGBitmapFlags.PremultipliedLast;
+					bitmapInfo = CGBitmapFlags.NoneSkipLast;
 				}
 			} else {
 				premultiplied = true;
@@ -358,7 +369,7 @@ namespace System.Drawing {
 			                             bitsPerPixel, bytesPerRow, 
 			                             colorSpace,
 			                             bitmapInfo,
-			                             provider, null, false, CGColorRenderingIntent.Default);
+			                             provider, null, true, image.RenderingIntent);
 
 			colorSpace.Dispose();
 			bitmap.Dispose();
