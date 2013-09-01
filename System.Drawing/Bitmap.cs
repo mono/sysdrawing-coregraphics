@@ -159,6 +159,11 @@ namespace System.Drawing {
 				bitsPerPixel = 32;
 				bitmapInfo = CGBitmapFlags.None;
 				break;
+			case PixelFormat.Format24bppRgb:
+				colorSpace = CGColorSpace.CreateDeviceRGB ();
+				bitsPerComponent = 8;
+				bitsPerPixel = 24;
+				bitmapInfo = CGBitmapFlags.NoneSkipLast;
 			default:
 				throw new Exception ("Format not supported: " + format);
 			}
@@ -187,8 +192,7 @@ namespace System.Drawing {
 			SetImageInformation (frame);
 			var cg = CGImageSource.FromDataProvider(dataProvider).CreateImage(frame, null);
 
-			InitWithCGImage(cg);
-
+			InitWithCGImage (cg);
 		}
 
 		private void SetImageInformation(int frame)
@@ -226,17 +230,37 @@ namespace System.Drawing {
 			physicalSize.Height *= ConversionHelpers.MS_DPI / dpiHeight;
 
 			// Set the raw image format
-			// I need to obtain a couple more samples
-			if (properties.Png != null)
+			// We will use the UTI from the image source
+			switch (imageSource.TypeIdentifier) 
+			{
+			case "public.png":
 				rawFormat = ImageFormat.Png;
-			if (properties.Tiff != null)
-				rawFormat = ImageFormat.Tiff;
-			if (properties.Jfif != null)
+				break;
+			case "com.microsoft.bmp":
+				rawFormat = ImageFormat.Bmp;
+				break;
+			case "com.compuserve.gif":
+				rawFormat = ImageFormat.Gif;
+				break;
+			case "public.jpeg":
 				rawFormat = ImageFormat.Jpeg;
-			if (properties.Exif != null)
-				rawFormat = ImageFormat.Exif;
+				break;
+			case "public.tiff":
+				rawFormat = ImageFormat.Tiff;
+				break;
+			case "com.microsoft.ico":
+				rawFormat = ImageFormat.Icon;
+				break;
+			case "com.adobe.pdf":
+				rawFormat = ImageFormat.Wmf;
+				break;
+			default:
+				rawFormat = ImageFormat.Png;
+				break;
+			}
 
 			// Obtain the image PixelFormat
+
 
 		}
 
@@ -251,11 +275,6 @@ namespace System.Drawing {
 			CGBitmapFlags bitmapInfo;
 			bool premultiplied = false;
 			int bitsPerPixel = 0;
-
-
-//			xdpi = pixelsWide * 72 / size.width;
-//			ydpi = pixelsHigh * 72 / size.height;
-
 
 			if (image == null) {
 				throw new ArgumentException (" image is invalid! " );
