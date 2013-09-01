@@ -168,12 +168,12 @@ namespace System.Drawing {
 				colorSpace = CGColorSpace.CreateDeviceRGB ();
 				bitsPerComponent = 8;
 				bitsPerPixel = 32;
-				bitmapInfo = CGBitmapFlags.None;
+				bitmapInfo = CGBitmapFlags.NoneSkipLast;
 				break;
 			case PixelFormat.Format24bppRgb:
 				colorSpace = CGColorSpace.CreateDeviceRGB ();
 				bitsPerComponent = 8;
-				bitsPerPixel = 24;
+				bitsPerPixel = 32;
 				bitmapInfo = CGBitmapFlags.NoneSkipLast;
 			default:
 				throw new Exception ("Format not supported: " + format);
@@ -342,7 +342,7 @@ namespace System.Drawing {
 				colorSpace = CGColorSpace.CreateDeviceRGB ();
 				bitsPerComponent = 8;
 				bitsPerPixel = 32;
-				bitmapInfo = CGBitmapFlags.PremultipliedLast;
+				bitmapInfo = CGBitmapFlags.NoneSkipLast;
 			}
 
 			bytesPerRow = width * bitsPerPixel/bitsPerComponent;
@@ -350,7 +350,7 @@ namespace System.Drawing {
 
 			bitmapBlock = Marshal.AllocHGlobal (size);
 			bitmap = new CGBitmapContext (bitmapBlock, 
-			                              image.Width, image.Width, 
+			                              width, height, 
 			                              bitsPerComponent, 
 			                              bytesPerRow,
 			                              colorSpace,
