@@ -63,44 +63,25 @@ namespace System.Drawing {
 		internal IntPtr bitmapBlock;
 
 		// we will default this to one for now until we get some tests for other image types
-		int imageCount = 1;
+		internal int frameCount = 1;
+
+		internal PixelFormat pixelFormat;
+		internal float dpiWidth = 0;
+		internal float dpiHeight = 0;
+		internal Size imageSize = Size.Empty;
+		internal SizeF physicalDimension = SizeF.Empty;
+		internal ImageFormat rawFormat;
+
+		private CGDataProvider dataProvider;
+
+
 
 		public Bitmap (string filename)
 		{
 			// Use Image IO
-			CGDataProvider prov = new CGDataProvider(filename);
+			dataProvider = new CGDataProvider(filename);
 
-
-			// Right now we support only the first Image
-			var imageSource = CGImageSource.FromDataProvider (prov);
-
-			var imgCount = imageSource.ImageCount;
-			var properties = imageSource.GetProperties (0, null);
-
-			var cg = CGImageSource.FromDataProvider(prov).CreateImage(0, null);
-
-			// This needs to be incorporated in frame information later
-			// as well as during the clone methods.
-			dpiWidth =  properties.DPIWidth != null ? (float)properties.DPIWidth : ConversionHelpers.MS_DPI;
-			dpiHeight = properties.DPIWidth != null ? (float)properties.DPIHeight : ConversionHelpers.MS_DPI;
-
-			physicalDimension.Width = (float)properties.PixelWidth;
-			physicalDimension.Height = (float)properties.PixelHeight;
-
-
-			// The physical size may be off on certain implementations.  For instance the dpiWidth and dpiHeight 
-			// are read using integers in core graphics but in windows it is a float.
-			// For example:
-			// coregraphics dpiWidth = 24 as integer
-			// windows dpiWidth = 24.999935 as float
-			// this gives a few pixels difference when calculating the physical size.
-			// 256 * 96 / 24 = 1024
-			// 256 * 96 / 24.999935 = 983.04
-			physicalSize = new SizeF (physicalDimension.Width, physicalDimension.Height);
-			physicalSize.Width *= ConversionHelpers.MS_DPI / dpiWidth;
-			physicalSize.Height *= ConversionHelpers.MS_DPI / dpiHeight;
-
-			InitWithCGImage(cg);
+			InitializeImageFrame (0);
 
 
 		}
@@ -197,6 +178,65 @@ namespace System.Drawing {
 
 			var provider = new CGDataProvider (bitmapBlock, size, true);
 			NativeCGImage = new CGImage (width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace, bitmapInfo, provider, null, false, CGColorRenderingIntent.Default);
+
+		}
+
+		private void InitializeImageFrame(int frame)
+		{
+
+			SetImageInformation (frame);
+			var cg = CGImageSource.FromDataProvider(dataProvider).CreateImage(frame, null);
+
+			InitWithCGImage(cg);
+
+		}
+
+		private void SetImageInformation(int frame)
+		{
+			var imageSource = CGImageSource.FromDataProvider (dataProvider);
+
+			frameCount = imageSource.ImageCount;
+
+			var properties = imageSource.GetProperties (frame, null);
+
+			// This needs to be incorporated in frame information later
+			// as well as during the clone methods.
+			dpiWidth =  properties.DPIWidth != null ? (float)properties.DPIWidth : ConversionHelpers.MS_DPI;
+			dpiHeight = properties.DPIWidth != null ? (float)properties.DPIHeight : ConversionHelpers.MS_DPI;
+
+			physicalDimension.Width = (float)properties.PixelWidth;
+			physicalDimension.Height = (float)properties.PixelHeight;
+
+
+			// The physical size may be off on certain implementations.  For instance the dpiWidth and dpiHeight 
+			// are read using integers in core graphics but in windows it is a float.
+			// For example:
+			// coregraphics dpiWidth = 24 as integer
+			// windows dpiWidth = 24.999935 as float
+			// this gives a few pixels difference when calculating the physical size.
+			// 256 * 96 / 24 = 1024
+			// 256 * 96 / 24.999935 = 983.04
+			//
+			// https://bugzilla.xamarin.com/show_bug.cgi?id=14365
+			// PR: https://github.com/mono/maccore/pull/57
+			//
+
+			physicalSize = new SizeF (physicalDimension.Width, physicalDimension.Height);
+			physicalSize.Width *= ConversionHelpers.MS_DPI / dpiWidth;
+			physicalSize.Height *= ConversionHelpers.MS_DPI / dpiHeight;
+
+			// Set the raw image format
+			// I need to obtain a couple more samples
+			if (properties.Png != null)
+				rawFormat = ImageFormat.Png;
+			if (properties.Tiff != null)
+				rawFormat = ImageFormat.Tiff;
+			if (properties.Jfif != null)
+				rawFormat = ImageFormat.Jpeg;
+			if (properties.Exif != null)
+				rawFormat = ImageFormat.Exif;
+
+			// Obtain the image PixelFormat
 
 		}
 
@@ -422,6 +462,7 @@ namespace System.Drawing {
 			var height = rect.Height;
 
 			var tmpImg = new Bitmap (width, height, pixelFormat);
+
 			using (Graphics g = Graphics.FromImage (tmpImg)) {
 				g.DrawImage (this, new Rectangle(0,0, width, height), rect, GraphicsUnit.Pixel );
 			}
@@ -501,7 +542,7 @@ namespace System.Drawing {
 			// * NOTE * we only support one image for right now.
 
 			// Create an image destination that saves into the path that is passed in
-			CGImageDestination dest = CGImageDestination.FromUrl (url, typeIdentifier, imageCount, null); 
+			CGImageDestination dest = CGImageDestination.FromUrl (url, typeIdentifier, frameCount, null); 
 
 			// Add an image to the destination
 			dest.AddImage(NativeCGImage, null);

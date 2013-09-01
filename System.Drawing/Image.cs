@@ -64,8 +64,6 @@ namespace System.Drawing {
 		// This is obtained from a PDF file.  Not supported right now.
 		internal CGPDFDocument nativeMetafile;
 		string tag = string.Empty;
-
-		protected PixelFormat pixelFormat;
 		internal SizeF physicalSize;
 
 		// From microsoft documentation an image can also be described by a metafile which in
@@ -96,21 +94,17 @@ namespace System.Drawing {
 		}
 		
 		public PixelFormat PixelFormat {
-			get {			
-				return pixelFormat;
-			}
-
-			protected set 
-			{
-				pixelFormat = value;
+			get {		
+				var b = this as Bitmap;
+				return b == null ? 0 : b.pixelFormat;
 			}
 		}
 		
 		public ImageFormat RawFormat {
 			get {
 
-				// TODO
-				return new ImageFormat (new Guid ());			
+				var b = this as Bitmap;
+				return b == null ? new ImageFormat(new Guid()) : b.rawFormat;		
 			}
 		}
 		
@@ -124,16 +118,16 @@ namespace System.Drawing {
 			}
 		}
 
-		protected float dpiWidth = 0;
-		protected float dpiHeight = 0;
-
 		/// <summary>
 		/// Gets the horizontal resolution, in pixels per inch, of this Image.
 		/// </summary>
 		/// <value>The horizontal resolution.</value>
 		public float HorizontalResolution 
 		{ 
-			get { return dpiWidth; }
+			get { 
+				var b = this as Bitmap;
+				return b == null ? 0 : b.dpiWidth;			
+			}
 
 		}
 
@@ -143,25 +137,31 @@ namespace System.Drawing {
 		/// <value>The vertical resolution.</value>
 		public float VerticalResolution 
 		{ 
-			get { return dpiHeight; }
-		}
-
-		protected Size imageSize = Size.Empty;
-		public Size Size 
-		{ 
-			get { 
-				return imageSize;
+			get { 				
+				var b = this as Bitmap;
+				return b == null ? 0 : b.dpiHeight;	 
 			}
 		}
 
-		protected SizeF physicalDimension = SizeF.Empty;
+		public Size Size 
+		{ 
+			get { 
+				var b = this as Bitmap;
+				return b == null ? Size.Empty : b.imageSize;	 
+			}
+		}
+
+
 		/// <summary>
 		/// Gets the width and height of this image.
 		/// </summary>
 		/// <value>A SizeF structure that represents the width and height of this Image.</value>
 		public SizeF PhysicalDimension
 		{
-			get { return physicalDimension; }
+			get { 
+				var b = this as Bitmap;
+				return b == null ? SizeF.Empty : b.physicalDimension;	 			
+			}
 		}
 
 		/// <summary>
