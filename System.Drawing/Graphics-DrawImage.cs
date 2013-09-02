@@ -19,6 +19,36 @@ namespace System.Drawing
 	public partial class Graphics {
 		public delegate bool DrawImageAbort (IntPtr callbackData);
 
+
+		private void DrawImage(RectangleF rect, CGImage image, CGAffineTransform transform)
+		{
+			var trans = transform;
+			// Do our translation on the image transform
+			trans.Translate (rect.X, rect.Height - image.Height + rect.Y);
+
+			// The translation is already taken care of in the transform
+			rect.Y = 0;
+			rect.X = 0;
+
+			// Apply our transform to the context
+			context.ConcatCTM (trans);
+
+			// we are getting an error somewhere and not sure where
+			// I think the image bitmapBlock is being corrupted somewhere
+			try {
+				context.DrawImage(rect, image);
+			}
+			catch (Exception exc)
+			{
+				Console.WriteLine(exc.Message);
+			}
+
+			// Now we revert our image transform from the context 
+			var revert = CGAffineTransform.CGAffineTransformInvert (trans);
+			context.ConcatCTM (revert);
+		}
+
+
 		/// <summary>
 		/// Draws the specified Image at the specified location and with the specified size.
 		/// </summary>
@@ -29,15 +59,8 @@ namespace System.Drawing
 			if (image == null)
 				throw new ArgumentNullException ("image");
 
-			// we are getting an error somewhere and not sure where
-			// I think the image bitmapBlock is being corrupted somewhere
-			try {
-				context.DrawImage(rect, image.NativeCGImage);
-			}
-			catch (Exception exc)
-			{
-				Console.WriteLine(exc.Message);
-			}
+				DrawImage (rect, image.NativeCGImage, image.imageTransform);
+
 		}
 
 		/// <summary>
@@ -82,19 +105,15 @@ namespace System.Drawing
 			if (destPoints.Length > 3)
 				throw new NotImplementedException ();
 
-			context.SaveState ();
-
-
 			var rect = new RectangleF (0,0, destPoints [1].X - destPoints [0].X, destPoints [2].Y - destPoints [0].Y);
 
 			// We need to give this some perspective so we will manipulate the transform matrix
 			// associated to the context
-			var affine = GeomUtilities.CreateGeometricTransform (rect, destPoints);
-			context.ConcatCTM (affine);
+			//var perspective = GeomUtilities.CreateGeometricTransform (rect, destPoints);
+			var perspective = image.imageTransform;
+			perspective.Multiply (GeomUtilities.CreateGeometricTransform (rect, destPoints));
 
-			context.DrawImage(rect, image.NativeCGImage);
-
-			context.RestoreState ();
+			DrawImage(rect, image.NativeCGImage, perspective);
 
 		}
 
@@ -121,7 +140,7 @@ namespace System.Drawing
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
-			DrawImage (image, rect.X, rect.Y, rect.Width, rect.Height);
+			DrawImage (image, (RectangleF)rect);
 		}
 
 		/// <summary>
@@ -314,28 +333,22 @@ namespace System.Drawing
 			if (image == null)
 				throw new ArgumentNullException ("image");
 
-			float width = srcRect.Width;
-			float height = srcRect.Height;
-//
-//			if (srcUnit != graphicsUnit) 
-//			{
-//				width = ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.VerticalResolution, width);
-//				height = ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.HorizontalResolution, height);
-//			}
-
-
-
-			DrawImage (image, new RectangleF (x, y, image.Width, image.Height), srcRect, srcUnit);
+			DrawImage (image, new RectangleF (x, y, image.physicalSize.Width, image.physicalSize.Height), srcRect, srcUnit);
 		}
-		
+
+		/// <summary>
+		/// Draws the specified Image at the specified location and with the specified size.
+		/// </summary>
+		/// <param name="image">Image.</param>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
+		/// <param name="width">Width.</param>
+		/// <param name="height">Height.</param>
 		public void DrawImage (Image image, int x, int y, int width, int height)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
 
-			//throw new NotImplementedException ();
-			//Status status = GDIPlus.GdipDrawImageRectI (nativeObject, image.nativeObject, x, y, width, height);
-			//GDIPlus.CheckStatus (status);
 			DrawImage(image, new RectangleF(x,y,width, height));
 		}
 

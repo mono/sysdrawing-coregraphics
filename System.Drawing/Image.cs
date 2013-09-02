@@ -66,6 +66,8 @@ namespace System.Drawing {
 		string tag = string.Empty;
 		internal SizeF physicalSize;
 
+		internal CGAffineTransform imageTransform;
+
 		// From microsoft documentation an image can also be described by a metafile which in
 		// Quartz2D is a PDF file.  Quartz2D for Mac OSX Developers provides more information
 		// on that but for right now only Bitmap will be supported.
@@ -238,5 +240,55 @@ namespace System.Drawing {
 				tag = value.ToString();
 			}
 		}
+
+		public void RotateFlip(RotateFlipType rotateFlipType)
+		{
+			var b = this as Bitmap;
+			if (b == null)
+				return;
+
+			CGAffineTransform rotateFlip;
+
+
+			switch (rotateFlipType) 
+			{
+			case RotateFlipType.RotateNoneFlipNone:
+			//case RotateFlipType.Rotate180FlipXY:
+				rotateFlip = GeomUtilities.CreateRotateFlipTransform (b.Width, b.Height, 0, false, false);
+				break;
+			case RotateFlipType.Rotate90FlipNone:
+			//case RotateFlipType.Rotate270FlipXY:
+				rotateFlip = GeomUtilities.CreateRotateFlipTransform (b.Width, b.Height, 90, false, false);
+				break;
+			case RotateFlipType.Rotate180FlipNone:
+			//case RotateFlipType.RotateNoneFlipXY:
+				rotateFlip = GeomUtilities.CreateRotateFlipTransform (b.Width, b.Height, 0, true, true);
+				break;
+			case RotateFlipType.Rotate270FlipNone:
+			//case RotateFlipType.Rotate90FlipXY:
+				rotateFlip = GeomUtilities.CreateRotateFlipTransform (b.Width, b.Height, 270, false, false);
+				break;
+			case RotateFlipType.RotateNoneFlipX:
+			//case RotateFlipType.Rotate180FlipY:
+				rotateFlip = GeomUtilities.CreateRotateFlipTransform (b.Width, b.Height, 0, true, false);
+				break;
+			case RotateFlipType.Rotate90FlipX:
+			//case RotateFlipType.Rotate270FlipY:
+				rotateFlip = GeomUtilities.CreateRotateFlipTransform (b.Width, b.Height, 90, true, false);
+				break;
+			case RotateFlipType.Rotate180FlipX:
+			//case RotateFlipType.RotateNoneFlipY:
+				rotateFlip = GeomUtilities.CreateRotateFlipTransform (b.Width, b.Height, 0, false, true);
+				break;
+			case RotateFlipType.Rotate270FlipX:
+			//case RotateFlipType.Rotate90FlipY:
+				rotateFlip = GeomUtilities.CreateRotateFlipTransform (b.Width, b.Height, 270, true, false);
+				break;
+			}
+
+			imageTransform.Multiply (rotateFlip);
+
+		}
+
 	}
 }

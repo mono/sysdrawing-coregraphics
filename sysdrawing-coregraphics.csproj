@@ -213,6 +213,12 @@
       <Link>External\LinearGradientMode.cs</Link>
     </Compile>
     <Compile Include="System.Drawing\Icon.cs" />
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\FrameDimension.cs">
+      <Link>System.Drawing.Imaging\FrameDimension.cs</Link>
+    </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing\RotateFlipType.cs">
+      <Link>External\RotateFlipType.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />

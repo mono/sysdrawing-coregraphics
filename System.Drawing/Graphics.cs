@@ -868,29 +868,31 @@ namespace System.Drawing {
 				throw new Exception ("Can not create Graphics contexts from " + image.GetType () + " Images, only Bitmaps are supported");
 			var cgimage = b.NativeCGImage;
 			
-			if (b.bitmapBlock == IntPtr.Zero){
-				throw new Exception ("Missing functionality: currently we can not create graphics contexts from bitmaps loaded from disk, need to do some extra work");
-			}
+//			if (b.bitmapBlock == IntPtr.Zero){
+//				throw new Exception ("Missing functionality: currently we can not create graphics contexts from bitmaps loaded from disk, need to do some extra work");
+//			}
 
 			// Creates a context using the parameters that were used initially for the bitmap, 
 			// reusing the memory address space on it as well.
-			var bitmapContext = new CGBitmapContext (b.bitmapBlock, 
-			                                         cgimage.Width, 
-			                                         cgimage.Height, 
-			                                         cgimage.BitsPerComponent, 
-			                                         cgimage.BytesPerRow, 
-			                                         cgimage.ColorSpace, 
-			                                         cgimage.AlphaInfo); 
+//			var bitmapContext = new CGBitmapContext (b.bitmapBlock, 
+//			                                         cgimage.Width, 
+//			                                         cgimage.Height, 
+//			                                         cgimage.BitsPerComponent, 
+//			                                         cgimage.BytesPerRow, 
+//			                                         cgimage.ColorSpace, 
+//			                                         cgimage.AlphaInfo); 
+//
+//			bitmapContext.ClearRect (new RectangleF (0,0,image.Width,image.Height));
+//
+//			// We need to flip the Y axis to go from right handed to lefted handed coordinate system
+//			var transform = new CGAffineTransform(1, 0, 0, -1, 0, image.Height);
+//			bitmapContext.ConcatCTM(transform);
+//
+//			bitmapContext.DrawImage(new RectangleF (0, 0, image.Width, image.Height), cgimage);
 
-			bitmapContext.ClearRect (new RectangleF (0,0,image.Width,image.Height));
+			var bitmapContext = b.GetRenderableContext ();
 
-			// We need to flip the Y axis to go from right handed to lefted handed coordinate system
-			var transform = new CGAffineTransform(1, 0, 0, -1, 0, image.Height);
-			bitmapContext.ConcatCTM(transform);
-
-			bitmapContext.DrawImage(new RectangleF (0, 0, image.Width, image.Height), cgimage);
-
-			return new Graphics (bitmapContext, true);
+			return new Graphics (bitmapContext, false);
 		}
 		
 		public void SetClip (RectangleF rect)

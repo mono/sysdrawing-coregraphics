@@ -424,6 +424,40 @@ namespace System.Drawing
 			return new CGAffineTransform (m11, m12, m21, m22, p0.X, p0.Y);
 
 		}
+
+		/// <summary>
+		/// Creates the rotate flip transform given the input parameters
+		/// </summary>
+		/// <returns>The rotate flip transform.</returns>
+		/// <param name="width">Width.</param>
+		/// <param name="height">Height.</param>
+		/// <param name="angle">Angle.</param>
+		/// <param name="flipX">If set to <c>true</c> flip x.</param>
+		/// <param name="flipY">If set to <c>true</c> flip y.</param>
+		internal static CGAffineTransform CreateRotateFlipTransform (float width, float height, float angle, bool flipX, bool flipY)
+		{
+			float rotateX    =  (float)Math.Abs ( Math.Cos ( angle.ToRadians() ) );  
+			float rotateY    =  (float)Math.Abs ( Math.Sin ( angle.ToRadians() ) );  
+
+			float deltaWidth    =  width * rotateX + height  * rotateY;  
+			float deltaHeight    =  width * rotateY + height  * rotateX;  
+
+			CGAffineTransform rotateFlipTransform = CGAffineTransform.MakeTranslation(flipX?-deltaWidth:0.0f,flipY?-deltaHeight:0.0f); 
+			rotateFlipTransform.Multiply(CGAffineTransform.MakeScale(flipX?-1.0f:1.0f,flipY?-1.0f: 1.0f));  
+
+			if (0.0f != angle)  
+			{  
+				var rot	=  CGAffineTransform.MakeTranslation(-deltaHeight*0.5f,-deltaWidth*0.5f);  
+				rot.Rotate(angle.ToRadians());  
+				rot.Translate(deltaWidth*0.5f,deltaHeight*0.5f);  
+
+				rotateFlipTransform = CGAffineTransform.Multiply (rot, rotateFlipTransform);
+			}  
+
+			return rotateFlipTransform;
+		}
+
+
 	}
 }
 

@@ -264,6 +264,12 @@
     <Compile Include="..\System.Drawing\Icon.cs">
       <Link>System.Drawing\Icon.cs</Link>
     </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\FrameDimension.cs">
+      <Link>System.Drawing.Imaging\FrameDimension.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\RotateFlipType.cs">
+      <Link>External\RotateFlipType.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

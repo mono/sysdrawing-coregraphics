@@ -83,7 +83,6 @@ namespace System.Drawing {
 
 			InitializeImageFrame (0);
 
-
 		}
 
 		public Bitmap (Stream stream, bool useIcm)
@@ -137,6 +136,8 @@ namespace System.Drawing {
 
 		public Bitmap (int width, int height, PixelFormat format)
 		{
+			imageTransform = new CGAffineTransform(1, 0, 0, -1, 0, height);
+
 			int bitsPerComponent, bytesPerRow;
 			CGColorSpace colorSpace;
 			CGBitmapFlags bitmapInfo;
@@ -199,11 +200,13 @@ namespace System.Drawing {
 
 		private void InitializeImageFrame(int frame)
 		{
+			imageTransform = CGAffineTransform.MakeIdentity();
 
 			SetImageInformation (frame);
 			var cg = CGImageSource.FromDataProvider(dataProvider).CreateImage(frame, null);
-
-			InitWithCGImage (cg);
+			imageTransform = new CGAffineTransform(1, 0, 0, -1, 0, cg.Height);
+			//InitWithCGImage (cg);
+			NativeCGImage = cg;
 		}
 
 		private void SetImageInformation(int frame)
@@ -375,6 +378,109 @@ namespace System.Drawing {
 			bitmap.Dispose();
 		}
 
+		internal CGBitmapContext GetRenderableContext()
+		{
+
+			int	width, height;
+			CGBitmapContext bitmap = null;
+			bool hasAlpha;
+			CGImageAlphaInfo alphaInfo;
+			CGColorSpace colorSpace;
+			int bitsPerComponent, bytesPerRow;
+			CGBitmapFlags bitmapInfo;
+			bool premultiplied = false;
+			int bitsPerPixel = 0;
+
+			var image = this.NativeCGImage;
+
+			if (image == null) {
+				throw new ArgumentException (" image is invalid! " );
+			}
+
+			alphaInfo = image.AlphaInfo;
+			hasAlpha = ((alphaInfo == CGImageAlphaInfo.PremultipliedLast) || (alphaInfo == CGImageAlphaInfo.PremultipliedFirst) || (alphaInfo == CGImageAlphaInfo.Last) || (alphaInfo == CGImageAlphaInfo.First) ? true : false);
+
+			imageSize.Width = image.Width;
+			imageSize.Height = image.Height;
+
+			width = image.Width;
+			height = image.Height;
+
+			// Not sure yet if we need to keep the original image information
+			// before we change it internally.  TODO look at what windows does
+			// and follow that.
+			bitmapInfo = image.BitmapInfo;
+			bitsPerComponent = image.BitsPerComponent;
+			bitsPerPixel = image.BitsPerPixel;
+			bytesPerRow = width * bitsPerPixel/bitsPerComponent;
+			int size = bytesPerRow * height;
+
+			colorSpace = image.ColorSpace;
+
+			// Right now internally we represent the images all the same
+			// I left the call here just in case we find that this is not
+			// possible.  Read the comments for non alpha images.
+			if(colorSpace != null) {
+				if( hasAlpha ) {
+					premultiplied = true;
+					colorSpace = CGColorSpace.CreateDeviceRGB ();
+					bitsPerComponent = 8;
+					bitsPerPixel = 32;
+					bitmapInfo = CGBitmapFlags.PremultipliedLast;
+				}
+				else
+				{
+					// even for images without alpha we will internally 
+					// represent them as RGB with alpha.  There were problems
+					// if we do not do it this way and creating a bitmap context.
+					// The images were not drawing correctly and tearing.  Also
+					// creating a Graphics to draw on was a nightmare.  This
+					// should probably be looked into or maybe it is ok and we
+					// can continue representing internally with this representation
+					premultiplied = true;
+					colorSpace = CGColorSpace.CreateDeviceRGB ();
+					bitsPerComponent = 8;
+					bitsPerPixel = 32;
+					bitmapInfo = CGBitmapFlags.NoneSkipLast;
+				}
+			} else {
+				premultiplied = true;
+				colorSpace = CGColorSpace.CreateDeviceRGB ();
+				bitsPerComponent = 8;
+				bitsPerPixel = 32;
+				bitmapInfo = CGBitmapFlags.NoneSkipLast;
+			}
+
+			bytesPerRow = width * bitsPerPixel/bitsPerComponent;
+			size = bytesPerRow * height;
+
+			bitmapBlock = Marshal.AllocHGlobal (size);
+			bitmap = new CGBitmapContext (bitmapBlock, 
+			                              width, height, 
+			                              bitsPerComponent, 
+			                              bytesPerRow,
+			                              colorSpace,
+			                              bitmapInfo);
+
+			bitmap.ClearRect (new RectangleF (0,0,width,height));
+
+			// We need to flip the Y axis to go from right handed to lefted handed coordinate system
+//			var transform = new CGAffineTransform(1, 0, 0, -1, 0, image.Height);
+//			bitmap.ConcatCTM(transform);
+
+			bitmap.DrawImage(new RectangleF (0, 0, image.Width, image.Height), image);
+
+			var provider = new CGDataProvider (bitmapBlock, size, true);
+			NativeCGImage = new CGImage (width, height, bitsPerComponent, 
+			                             bitsPerPixel, bytesPerRow, 
+			                             colorSpace,
+			                             bitmapInfo,
+			                             provider, null, true, image.RenderingIntent);
+
+			//colorSpace.Dispose();
+			//bitmap.Dispose();
+			return bitmap;
+		}
 		/*
 		  * perform an in-place swap from Quadrant 1 to Quadrant III format
 		  * (upside-down PostScript/GL to right side up QD/CG raster format)
