@@ -460,106 +460,187 @@ namespace System.Drawing {
 		internal CGBitmapContext GetRenderableContext()
 		{
 
-			int	width, height;
-			CGBitmapContext bitmap = null;
-			bool hasAlpha;
-			CGImageAlphaInfo alphaInfo;
-			CGColorSpace colorSpace;
+			var format = GetBestSupportedFormat (pixelFormat);
+			var bitmapContext = CreateCompatibleBitmapContext (NativeCGImage.Width, NativeCGImage.Height, format);
+
+			bitmapContext.DrawImage (new RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
+
+			int size = bitmapContext.BytesPerRow * bitmapContext.Height;
+			var provider = new CGDataProvider (bitmapContext.Data, size, true);
+
+			NativeCGImage = new CGImage (bitmapContext.Width, bitmapContext.Height, bitmapContext.BitsPerComponent, 
+			                             bitmapContext.BitsPerPixel, bitmapContext.BytesPerRow, 
+			                             bitmapContext.ColorSpace,
+			                             bitmapContext.AlphaInfo,
+			                             provider, null, true, CGColorRenderingIntent.Default);
+			return bitmapContext;
+		}
+
+		internal void RotateFlip (RotateFlipType rotateFlipType)
+		{
+
+			CGAffineTransform rotateFlip;
+
+			int width, height;
+			width = NativeCGImage.Width;
+			height = NativeCGImage.Height;
+
+			switch (rotateFlipType) 
+			{
+				//			case RotateFlipType.RotateNoneFlipNone:
+				//			//case RotateFlipType.Rotate180FlipXY:
+				//				rotateFlip = GeomUtilities.CreateRotateFlipTransform (b.Width, b.Height, 0, false, false);
+				//				break;
+				case RotateFlipType.Rotate90FlipNone:
+				//case RotateFlipType.Rotate270FlipXY:
+				rotateFlip = GeomUtilities.CreateRotateFlipTransform (ref width, ref height, 90, false, false);
+				break;
+				case RotateFlipType.Rotate180FlipNone:
+				//case RotateFlipType.RotateNoneFlipXY:
+				rotateFlip = GeomUtilities.CreateRotateFlipTransform (ref width, ref height, 0, true, true);
+				break;
+				case RotateFlipType.Rotate270FlipNone:
+				//case RotateFlipType.Rotate90FlipXY:
+				rotateFlip = GeomUtilities.CreateRotateFlipTransform (ref width, ref height, 270, false, false);
+				break;
+				case RotateFlipType.RotateNoneFlipX:
+				//case RotateFlipType.Rotate180FlipY:
+				rotateFlip = GeomUtilities.CreateRotateFlipTransform (ref width, ref height, 0, true, false);
+				break;
+				case RotateFlipType.Rotate90FlipX:
+				//case RotateFlipType.Rotate270FlipY:
+				rotateFlip = GeomUtilities.CreateRotateFlipTransform (ref width, ref height, 90, true, false);
+				break;
+				case RotateFlipType.Rotate180FlipX:
+				//case RotateFlipType.RotateNoneFlipY:
+				rotateFlip = GeomUtilities.CreateRotateFlipTransform (ref width, ref height, 0, false, true);
+				break;
+				case RotateFlipType.Rotate270FlipX:
+				//case RotateFlipType.Rotate90FlipY:
+				rotateFlip = GeomUtilities.CreateRotateFlipTransform (ref width, ref height, 270, true, false);
+				break;
+			}
+
+			var format = GetBestSupportedFormat (pixelFormat);
+			var bitmapContext = CreateCompatibleBitmapContext (width, height, format);
+
+			bitmapContext.ConcatCTM (rotateFlip);
+
+			bitmapContext.DrawImage (new RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
+
+			int size = bitmapContext.BytesPerRow * bitmapContext.Height;
+			var provider = new CGDataProvider (bitmapContext.Data, size, true);
+
+			// If the width or height is not the seme we need to switch the dpiHeight and dpiWidth
+			// We should be able to get around this with set resolution later.
+			if (NativeCGImage.Width != width || NativeCGImage.Height != height)
+			{
+				var temp = dpiWidth;
+				dpiHeight = dpiWidth;
+				dpiWidth = temp;
+			}
+
+			NativeCGImage = new CGImage (bitmapContext.Width, bitmapContext.Height, bitmapContext.BitsPerComponent, 
+			                             bitmapContext.BitsPerPixel, bitmapContext.BytesPerRow, 
+			                             bitmapContext.ColorSpace,
+			                             bitmapContext.AlphaInfo,
+			                             provider, null, true, CGColorRenderingIntent.Default);
+
+
+			physicalDimension.Width = (float)width;
+			physicalDimension.Height = (float)height;
+
+			physicalSize = new SizeF (physicalDimension.Width, physicalDimension.Height);
+			physicalSize.Width *= ConversionHelpers.MS_DPI / dpiWidth;
+			physicalSize.Height *= ConversionHelpers.MS_DPI / dpiHeight;
+
+			// In windows the RawFormat is changed to MemoryBmp to show that the image has changed.
+			rawFormat = ImageFormat.MemoryBmp;
+
+			// Set our transform for this image for the new height
+			imageTransform = new CGAffineTransform(1, 0, 0, -1, 0, height);
+
+		}
+
+		private PixelFormat GetBestSupportedFormat (PixelFormat pixelFormat)
+		{
+			switch (pixelFormat) 
+			{
+			case PixelFormat.Format32bppArgb:
+				return PixelFormat.Format32bppArgb;
+			case PixelFormat.Format32bppPArgb:
+				return PixelFormat.Format32bppPArgb;
+			case PixelFormat.Format32bppRgb:
+				return PixelFormat.Format32bppRgb;
+			case PixelFormat.Format24bppRgb:
+				return PixelFormat.Format24bppRgb;
+			default:
+				return PixelFormat.Format32bppArgb;
+			}
+
+		}
+
+		private CGBitmapContext CreateCompatibleBitmapContext(int width, int height, PixelFormat pixelFormat)
+		{
 			int bitsPerComponent, bytesPerRow;
-			CGBitmapFlags bitmapInfo;
+			CGColorSpace colorSpace;
+			CGImageAlphaInfo alphaInfo;
 			bool premultiplied = false;
 			int bitsPerPixel = 0;
 
-			var image = this.NativeCGImage;
-
-			if (image == null) {
-				throw new ArgumentException (" image is invalid! " );
-			}
-
-			alphaInfo = image.AlphaInfo;
-			hasAlpha = ((alphaInfo == CGImageAlphaInfo.PremultipliedLast) || (alphaInfo == CGImageAlphaInfo.PremultipliedFirst) || (alphaInfo == CGImageAlphaInfo.Last) || (alphaInfo == CGImageAlphaInfo.First) ? true : false);
-
-			imageSize.Width = image.Width;
-			imageSize.Height = image.Height;
-
-			width = image.Width;
-			height = image.Height;
-
-			// Not sure yet if we need to keep the original image information
-			// before we change it internally.  TODO look at what windows does
-			// and follow that.
-			bitmapInfo = image.BitmapInfo;
-			bitsPerComponent = image.BitsPerComponent;
-			bitsPerPixel = image.BitsPerPixel;
-			bytesPerRow = width * bitsPerPixel/bitsPerComponent;
-			int size = bytesPerRow * height;
-
-			colorSpace = image.ColorSpace;
-
-			// Right now internally we represent the images all the same
-			// I left the call here just in case we find that this is not
-			// possible.  Read the comments for non alpha images.
-			if(colorSpace != null) {
-				if( hasAlpha ) {
-					premultiplied = true;
-					colorSpace = CGColorSpace.CreateDeviceRGB ();
-					bitsPerComponent = 8;
-					bitsPerPixel = 32;
-					bitmapInfo = CGBitmapFlags.PremultipliedLast;
-				}
-				else
-				{
-					// even for images without alpha we will internally 
-					// represent them as RGB with alpha.  There were problems
-					// if we do not do it this way and creating a bitmap context.
-					// The images were not drawing correctly and tearing.  Also
-					// creating a Graphics to draw on was a nightmare.  This
-					// should probably be looked into or maybe it is ok and we
-					// can continue representing internally with this representation
-					premultiplied = true;
-					colorSpace = CGColorSpace.CreateDeviceRGB ();
-					bitsPerComponent = 8;
-					bitsPerPixel = 32;
-					bitmapInfo = CGBitmapFlags.NoneSkipLast;
-				}
-			} else {
+			// CoreGraphics only supports a few options so we have to make do with what we have
+			// https://developer.apple.com/library/mac/qa/qa1037/_index.html
+			switch (pixelFormat)
+			{
+			case PixelFormat.Format32bppPArgb:
+			case PixelFormat.DontCare:
 				premultiplied = true;
 				colorSpace = CGColorSpace.CreateDeviceRGB ();
 				bitsPerComponent = 8;
 				bitsPerPixel = 32;
-				bitmapInfo = CGBitmapFlags.NoneSkipLast;
+				alphaInfo = CGImageAlphaInfo.PremultipliedLast;
+				break;
+			case PixelFormat.Format32bppArgb:
+				colorSpace = CGColorSpace.CreateDeviceRGB ();
+				bitsPerComponent = 8;
+				bitsPerPixel = 32;
+				alphaInfo = CGImageAlphaInfo.PremultipliedLast;
+				break;
+			case PixelFormat.Format32bppRgb:
+				colorSpace = CGColorSpace.CreateDeviceRGB ();
+				bitsPerComponent = 8;
+				bitsPerPixel = 32;
+				alphaInfo = CGImageAlphaInfo.PremultipliedLast;
+				break;
+			case PixelFormat.Format24bppRgb:
+				colorSpace = CGColorSpace.CreateDeviceRGB ();
+				bitsPerComponent = 8;
+				bitsPerPixel = 32;
+				alphaInfo = CGImageAlphaInfo.PremultipliedLast;
+				break;
+			default:
+				throw new Exception ("Format not supported: " + pixelFormat);
 			}
 
 			bytesPerRow = width * bitsPerPixel/bitsPerComponent;
-			size = bytesPerRow * height;
+			int size = bytesPerRow * height;
 
-			bitmapBlock = Marshal.AllocHGlobal (size);
-			bitmap = new CGBitmapContext (bitmapBlock, 
-			                              width, height, 
-			                              bitsPerComponent, 
-			                              bytesPerRow,
-			                              colorSpace,
-			                              bitmapInfo);
+			var bitmapBlock = Marshal.AllocHGlobal (size);
+			var bitmap = new CGBitmapContext (bitmapBlock, 
+			                                  width, height, 
+			                                  bitsPerComponent, 
+			                                  bytesPerRow,
+			                                  colorSpace,
+			                                  alphaInfo);
 
 			bitmap.ClearRect (new RectangleF (0,0,width,height));
 
-			// We need to flip the Y axis to go from right handed to lefted handed coordinate system
-//			var transform = new CGAffineTransform(1, 0, 0, -1, 0, image.Height);
-//			bitmap.ConcatCTM(transform);
+			colorSpace.Dispose ();
 
-			bitmap.DrawImage(new RectangleF (0, 0, image.Width, image.Height), image);
-
-			var provider = new CGDataProvider (bitmapBlock, size, true);
-			NativeCGImage = new CGImage (width, height, bitsPerComponent, 
-			                             bitsPerPixel, bytesPerRow, 
-			                             colorSpace,
-			                             bitmapInfo,
-			                             provider, null, true, image.RenderingIntent);
-
-			//colorSpace.Dispose();
-			//bitmap.Dispose();
 			return bitmap;
+
 		}
+
 		/*
 		  * perform an in-place swap from Quadrant 1 to Quadrant III format
 		  * (upside-down PostScript/GL to right side up QD/CG raster format)

@@ -434,7 +434,7 @@ namespace System.Drawing
 		/// <param name="angle">Angle.</param>
 		/// <param name="flipX">If set to <c>true</c> flip x.</param>
 		/// <param name="flipY">If set to <c>true</c> flip y.</param>
-		internal static CGAffineTransform CreateRotateFlipTransform (float width, float height, float angle, bool flipX, bool flipY)
+		internal static CGAffineTransform CreateRotateFlipTransform (ref int width, ref int height, float angle, bool flipX, bool flipY)
 		{
 			float rotateX    =  (float)Math.Abs ( Math.Cos ( angle.ToRadians() ) );  
 			float rotateY    =  (float)Math.Abs ( Math.Sin ( angle.ToRadians() ) );  
@@ -453,6 +453,9 @@ namespace System.Drawing
 
 				rotateFlipTransform = CGAffineTransform.Multiply (rot, rotateFlipTransform);
 			}  
+
+			width = (int)deltaWidth;
+			height = (int)deltaHeight;
 
 			return rotateFlipTransform;
 		}
