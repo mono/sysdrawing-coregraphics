@@ -241,6 +241,33 @@ namespace System.Drawing {
 			}
 		}
 
+		/// <summary>
+		/// Gets the bounds of the image in the GraphicUnit variable passed.
+		/// 
+		/// This does not convert the bound into the GraphicsUnit passed but
+		/// will tell you what the bounds are based on the unit that is provided
+		/// on its return in the referenced pageUnit variable.
+		/// </summary>
+		/// <returns>The bounds.</returns>
+		/// <param name="pageUnit">Page unit.</param>
+		public RectangleF GetBounds(ref GraphicsUnit pageUnit)
+		{
+
+			var b = this as Bitmap;
+			if (b == null)
+				return;
+
+			// Right now we only have bitmaps of images so we will default
+			// this to Pixel
+			pageUnit = GraphicsUnit.Pixel;
+			return b.physicalDimension;
+
+		}
+
+		/// <summary>
+		/// Rotates and or flips the image base on the RotateFlipTyp value passed.
+		/// </summary>
+		/// <param name="rotateFlipType">Rotate flip type.</param>
 		public void RotateFlip(RotateFlipType rotateFlipType)
 		{
 			var b = this as Bitmap;
