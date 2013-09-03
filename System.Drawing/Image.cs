@@ -279,10 +279,10 @@ namespace System.Drawing {
 
 			switch (rotateFlipType) 
 			{
-			case RotateFlipType.RotateNoneFlipNone:
-			//case RotateFlipType.Rotate180FlipXY:
-				rotateFlip = GeomUtilities.CreateRotateFlipTransform (b.Width, b.Height, 0, false, false);
-				break;
+//			case RotateFlipType.RotateNoneFlipNone:
+//			//case RotateFlipType.Rotate180FlipXY:
+//				rotateFlip = GeomUtilities.CreateRotateFlipTransform (b.Width, b.Height, 0, false, false);
+//				break;
 			case RotateFlipType.Rotate90FlipNone:
 			//case RotateFlipType.Rotate270FlipXY:
 				rotateFlip = GeomUtilities.CreateRotateFlipTransform (b.Width, b.Height, 90, false, false);
