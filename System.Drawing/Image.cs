@@ -255,12 +255,12 @@ namespace System.Drawing {
 
 			var b = this as Bitmap;
 			if (b == null)
-				return;
+				return RectangleF.Empty;
 
 			// Right now we only have bitmaps of images so we will default
 			// this to Pixel
 			pageUnit = GraphicsUnit.Pixel;
-			return b.physicalDimension;
+			return new RectangleF(new PointF(0,0),b.physicalDimension);
 
 		}
 
