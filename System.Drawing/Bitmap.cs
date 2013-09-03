@@ -207,7 +207,89 @@ namespace System.Drawing {
 			imageTransform = new CGAffineTransform(1, 0, 0, -1, 0, cg.Height);
 			//InitWithCGImage (cg);
 			NativeCGImage = cg;
+
+			GuessPixelFormat ();
 		}
+
+		private void GuessPixelFormat()
+		{
+			bool hasAlpha;
+			CGColorSpace colorSpace;
+			int bitsPerComponent;
+			bool premultiplied = false;
+			int bitsPerPixel = 0;
+			CGImageAlphaInfo alphaInfo;
+
+			var image = NativeCGImage;
+
+			if (image == null) {
+				throw new ArgumentException (" image is invalid! " );
+			}
+
+			alphaInfo = image.AlphaInfo;
+			hasAlpha = ((alphaInfo == CGImageAlphaInfo.PremultipliedLast) || (alphaInfo == CGImageAlphaInfo.PremultipliedFirst) || (alphaInfo == CGImageAlphaInfo.Last) || (alphaInfo == CGImageAlphaInfo.First) ? true : false);
+
+			imageSize.Width = image.Width;
+			imageSize.Height = image.Height;
+
+			// Not sure yet if we need to keep the original image information
+			// before we change it internally.  TODO look at what windows does
+			// and follow that.
+			bitsPerComponent = image.BitsPerComponent;
+			bitsPerPixel = image.BitsPerPixel;
+
+			colorSpace = image.ColorSpace;
+
+			if (colorSpace != null)
+			{
+				if (colorSpace.Model == CGColorSpaceModel.RGB) {
+					if (bitsPerPixel == 32) {
+						if (hasAlpha) {
+							if (alphaInfo == CGImageAlphaInfo.PremultipliedFirst) 
+							{
+								premultiplied = true;
+								pixelFormat = PixelFormat.Format32bppPArgb;
+							}
+
+							if (alphaInfo == CGImageAlphaInfo.First)
+								pixelFormat = PixelFormat.Format32bppArgb;
+
+							if (alphaInfo == CGImageAlphaInfo.Last)
+								pixelFormat = PixelFormat.Format32bppRgb;
+
+							if (alphaInfo == CGImageAlphaInfo.PremultipliedLast) 
+							{
+								premultiplied = true;
+								pixelFormat = PixelFormat.Format32bppRgb;
+							}
+
+
+						} else {
+							pixelFormat = PixelFormat.Format24bppRgb;
+						}
+					} else {
+						// Right now microsoft looks like it is using Format32bppRGB for other
+						// need more test cases to verify
+						pixelFormat = PixelFormat.Format32bppArgb;
+					}
+				} else {
+					// Right now microsoft looks like it is using Format32bppRGB for other
+					// MonoChrome is set to 32bpppArgb
+					// need more test cases to verify
+					pixelFormat = PixelFormat.Format32bppArgb;
+				}
+
+			}
+			else
+			{
+				// need more test cases to verify
+				pixelFormat = PixelFormat.Format32bppArgb;
+
+			}
+
+
+		}
+
 
 		private void SetImageInformation(int frame)
 		{
@@ -219,8 +301,8 @@ namespace System.Drawing {
 
 			// This needs to be incorporated in frame information later
 			// as well as during the clone methods.
-			dpiWidth =  properties.DPIWidth != null ? (float)properties.DPIWidth : ConversionHelpers.MS_DPI;
-			dpiHeight = properties.DPIWidth != null ? (float)properties.DPIHeight : ConversionHelpers.MS_DPI;
+			dpiWidth =  properties.DPIWidthF != null ? (float)properties.DPIWidthF : ConversionHelpers.MS_DPI;
+			dpiHeight = properties.DPIWidthF != null ? (float)properties.DPIHeightF : ConversionHelpers.MS_DPI;
 
 			physicalDimension.Width = (float)properties.PixelWidth;
 			physicalDimension.Height = (float)properties.PixelHeight;
@@ -272,9 +354,6 @@ namespace System.Drawing {
 				rawFormat = ImageFormat.Png;
 				break;
 			}
-
-			// Obtain the image PixelFormat
-
 
 		}
 
