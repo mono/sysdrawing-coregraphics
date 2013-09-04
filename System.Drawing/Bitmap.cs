@@ -301,9 +301,18 @@ namespace System.Drawing {
 
 			// This needs to be incorporated in frame information later
 			// as well as during the clone methods.
+#if MONOTOUCH
+			// https://bugzilla.xamarin.com/show_bug.cgi?id=14365
+			// PR: https://github.com/mono/maccore/pull/57
+			// we need to keep using the obsolete version until the problem is fixed in MT
+			dpiWidth =  properties.DPIWidth != null ? (float)properties.DPIWidth : ConversionHelpers.MS_DPI;
+			dpiHeight = properties.DPIWidth != null ? (float)properties.DPIHeight : ConversionHelpers.MS_DPI;
+
+#else
+
 			dpiWidth =  properties.DPIWidthF != null ? (float)properties.DPIWidthF : ConversionHelpers.MS_DPI;
 			dpiHeight = properties.DPIWidthF != null ? (float)properties.DPIHeightF : ConversionHelpers.MS_DPI;
-
+#endif
 			physicalDimension.Width = (float)properties.PixelWidth;
 			physicalDimension.Height = (float)properties.PixelHeight;
 
@@ -468,11 +477,13 @@ namespace System.Drawing {
 			int size = bitmapContext.BytesPerRow * bitmapContext.Height;
 			var provider = new CGDataProvider (bitmapContext.Data, size, true);
 
+			CGColorSpace colorSpace = CGColorSpace.CreateDeviceRGB();
 			NativeCGImage = new CGImage (bitmapContext.Width, bitmapContext.Height, bitmapContext.BitsPerComponent, 
 			                             bitmapContext.BitsPerPixel, bitmapContext.BytesPerRow, 
-			                             bitmapContext.ColorSpace,
+			                             colorSpace,
 			                             bitmapContext.AlphaInfo,
 			                             provider, null, true, CGColorRenderingIntent.Default);
+			colorSpace.Dispose ();
 			return bitmapContext;
 		}
 
@@ -635,7 +646,7 @@ namespace System.Drawing {
 
 			bitmap.ClearRect (new RectangleF (0,0,width,height));
 
-			colorSpace.Dispose ();
+			//colorSpace.Dispose ();
 
 			return bitmap;
 
