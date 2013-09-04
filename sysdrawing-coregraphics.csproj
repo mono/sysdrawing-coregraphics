@@ -219,6 +219,9 @@
     <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing\RotateFlipType.cs">
       <Link>External\RotateFlipType.cs</Link>
     </Compile>
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\ImageFlags.cs">
+      <Link>External\ImageFlags.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />

@@ -67,6 +67,7 @@ namespace System.Drawing {
 		internal SizeF physicalSize;
 
 		internal CGAffineTransform imageTransform;
+		protected ImageFlags pixelFlags;
 
 		// From microsoft documentation an image can also be described by a metafile which in
 		// Quartz2D is a PDF file.  Quartz2D for Mac OSX Developers provides more information
@@ -153,6 +154,15 @@ namespace System.Drawing {
 			}
 		}
 
+		/// <summary>
+		/// Gets the attribute pixel flags representing the image data.
+		/// </summary>
+		/// <value>The bitwise integer of the ImageFlags combinations.</value>
+		[BrowsableAttribute(false)]
+		public int Flags 
+		{ 
+			get { return (int)pixelFlags; } 
+		}
 
 		/// <summary>
 		/// Gets the width and height of this image.
