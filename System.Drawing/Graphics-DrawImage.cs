@@ -227,7 +227,18 @@ namespace System.Drawing
 			DrawImage (image, (RectangleF)destRect, (RectangleF)srcRect, srcUnit);
 
 		}
-		
+
+		/// <summary>
+		/// Draws the specified portion of the specified Image at the specified location and with the specified size.
+		/// 
+		/// The srcRect parameter specifies a rectangular portion of the image object to draw. This portion is scaled 
+		/// up or down (in the case where source rectangle overruns the bounds of the image) to fit inside the rectangle 
+		/// specified by the destRect parameter.  
+		/// </summary>
+		/// <param name="image">Image.</param>
+		/// <param name="destRect">Destination rect.</param>
+		/// <param name="srcRect">Source rect.</param>
+		/// <param name="srcUnit">Source unit.</param>
 		public void DrawImage (Image image, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit)
 		{			
 			if (image == null)
@@ -235,22 +246,25 @@ namespace System.Drawing
 
 			var srcRect1 = srcRect;
 
+			// If the source units are not the same we need to convert them
 			if (srcUnit != graphicsUnit) {
-				var height = ConversionHelpers.GraphicsUnitConversion (graphicsUnit, srcUnit, image.VerticalResolution, image.Height);
-				// WithImageInRect works from 0,0 in Lower Left corner
-				// So we need to convert that for an offset of the Upper Left 
-				srcRect1.Y = (height - srcRect1.Height) - srcRect1.Y;
 				ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.HorizontalResolution, image.VerticalResolution,  ref srcRect1);
 			} 
-			else 
-			{
-				// WithImageInRect works from 0,0 in Lower Left corner
-				// So we need to convert that for an offset of the Upper Left 
-				//srcRect1.Y = (image.Height - srcRect1.Height) - srcRect1.Y;
-			}
 
+			// Obtain the subImage
 			var subImage = image.NativeCGImage.WithImageInRect (srcRect1);
-			context.DrawImage (destRect, subImage);
+			var transform = image.imageTransform;
+			// Reset our height on the transform to account for subImage
+			transform.y0 = subImage.Height;
+
+			// Make sure we scale the image in case the source rectangle
+			// overruns our subimage width and/or height
+			float scaleX = subImage.Width/srcRect.Width;
+			float scaleY = subImage.Height/srcRect.Height;
+			transform.Scale (scaleX, scaleY);
+
+			// Now draw our image
+			DrawImage (destRect, subImage, transform);
 
 		}
 
