@@ -58,12 +58,14 @@ namespace BitmapTests
 
 			var tiger = Image.FromFile(filePath);
 
-			var ig = Graphics.FromImage(bitmap);
-			//ig.Clear(Color.Red);
-			var pen = new Pen(Brushes.Yellow,20);
-			var rec = new SizeF(200,200);
-			var recp = new PointF(bitmap.Width - rec.Width - pen.Width / 2, bitmap.Height - rec.Height - pen.Width / 2);
-			ig.DrawEllipse(pen, new RectangleF(recp, rec));
+			using (var ig = Graphics.FromImage(bitmap)) 
+			{
+				//ig.Clear(Color.Red);
+				var pen = new Pen (Brushes.Yellow, 20);
+				var rec = new SizeF (200, 200);
+				var recp = new PointF (bitmap.Width - rec.Width - pen.Width / 2, bitmap.Height - rec.Height - pen.Width / 2);
+				ig.DrawEllipse (pen, new RectangleF (recp, rec));
+			}
 
 			g.DrawImage(bitmap, new Point(50,50));
 			g.DrawImage(tiger, new Point(200,200));
