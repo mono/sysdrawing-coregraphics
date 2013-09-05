@@ -105,16 +105,11 @@ namespace System.Drawing
 			if (destPoints.Length > 3)
 				throw new NotImplementedException ();
 
-			var rect = new RectangleF (0,0, destPoints [1].X - destPoints [0].X, destPoints [2].Y - destPoints [0].Y);
+			var destPointsF = new PointF[destPoints.Length];
+			for (int p = 0; p < destPoints.Length; p++)
+				destPointsF [p] = destPoints [p];
 
-			// We need to give this some perspective so we will manipulate the transform matrix
-			// associated to the context
-			//var perspective = GeomUtilities.CreateGeometricTransform (rect, destPoints);
-			var perspective = image.imageTransform;
-			perspective.Multiply (GeomUtilities.CreateGeometricTransform (rect, destPoints));
-
-			DrawImage(rect, image.NativeCGImage, perspective);
-
+			DrawImage (image, destPointsF);
 		}
 
 		/// <summary>
@@ -171,19 +166,23 @@ namespace System.Drawing
 			if (destPoints.Length > 3)
 				throw new NotImplementedException ();
 
-			context.SaveState ();
-
-
+			// create our rectangle.  Offset is 0 because the CreateGeometricTransform bakes our x,y offset in there.
 			var rect = new RectangleF (0,0, destPoints [1].X - destPoints [0].X, destPoints [2].Y - destPoints [0].Y);
 
-			// We need to give this some perspective so we will manipulate the transform matrix
-			// associated to the context
-			var affine = GeomUtilities.CreateGeometricTransform (rect, destPoints);
-			context.ConcatCTM (affine);
+			// We need to flip our Y axis so the image appears right side up
+			var geoTransform = new CGAffineTransform (1, 0, 0, -1, 0, rect.Height);
+			//var geott = GeomUtilities.CreateGeometricTransform (rect, destPoints);
+			geoTransform.Multiply (GeomUtilities.CreateGeometricTransform (rect, destPoints));
 
+			// Apply our transform to the context
+			context.ConcatCTM (geoTransform);
+
+			// now we draw our image.
 			context.DrawImage(rect, image.NativeCGImage);
 
-			context.RestoreState ();
+			// Now we revert our image transform from the context 
+			var revert = CGAffineTransform.CGAffineTransformInvert (geoTransform);
+			context.ConcatCTM (revert);
 
 		}
 
@@ -253,14 +252,19 @@ namespace System.Drawing
 
 			// Obtain the subImage
 			var subImage = image.NativeCGImage.WithImageInRect (srcRect1);
+
+			// If we do not have anything to draw then we exit here
+			if (subImage.Width == 0 || subImage.Height == 0)
+				return;
+
 			var transform = image.imageTransform;
 			// Reset our height on the transform to account for subImage
 			transform.y0 = subImage.Height;
 
 			// Make sure we scale the image in case the source rectangle
-			// overruns our subimage width and/or height
-			float scaleX = subImage.Width/srcRect.Width;
-			float scaleY = subImage.Height/srcRect.Height;
+			// overruns our subimage bouncs width and/or height
+			float scaleX = subImage.Width/srcRect1.Width;
+			float scaleY = subImage.Height/srcRect1.Height;
 			transform.Scale (scaleX, scaleY);
 
 			// Now draw our image
@@ -269,26 +273,49 @@ namespace System.Drawing
 		}
 
 
-
+		/// <summary>
+		/// Draws the specified portion of the specified Image at the specified location and with the specified size.
+		/// 
+		/// The destPoints specifies a parallelogram with the first point specifying the upper left corner, 
+		/// second point specifying the upper right corner and the third point specifying the lower left corner.
+		/// 
+		/// The srcRect parameter specifies a rectangular portion of the image object to draw. This portion is scaled 
+		/// up or down (in the case where source rectangle overruns the bounds of the image) to fit inside the rectangle 
+		/// specified by the destRect parameter.  
+		/// </summary>
+		/// <param name="image">Image.</param>
+		/// <param name="destPoints">Destination points.</param>
+		/// <param name="srcRect">Source rect.</param>
+		/// <param name="srcUnit">Source unit.</param>
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
 			if (destPoints == null)
 				throw new ArgumentNullException ("destPoints");
-			
-			//throw new NotImplementedException ();
-			//Status status = GDIPlus.GdipDrawImagePointsRectI (nativeObject, image.NativeObject,
-			//	destPoints, destPoints.Length , srcRect.X, srcRect.Y, 
-			//	srcRect.Width, srcRect.Height, srcUnit, IntPtr.Zero, 
-			//	null, IntPtr.Zero);
-			//GDIPlus.CheckStatus (status);
 
-			context.DrawImage (srcRect, image.NativeCGImage);
+			PointF[] pointfs = new PointF[destPoints.Length];
+			for (var p = 0; p < pointfs.Length; p++)
+				pointfs [p] = destPoints [p];
 
+			DrawImage (image, pointfs, (RectangleF)srcRect, srcUnit);
 
 		}
 
+		/// <summary>
+		/// Draws the specified portion of the specified Image at the specified location and with the specified size.
+		/// 
+		/// The destPoints specifies a parallelogram with the first point specifying the upper left corner, 
+		/// second point specifying the upper right corner and the third point specifying the lower left corner.
+		/// 
+		/// The srcRect parameter specifies a rectangular portion of the image object to draw. This portion is scaled 
+		/// up or down (in the case where source rectangle overruns the bounds of the image) to fit inside the rectangle 
+		/// specified by the destRect parameter.  
+		/// </summary>
+		/// <param name="image">Image.</param>
+		/// <param name="destPoints">Destination points.</param>
+		/// <param name="srcRect">Source rect.</param>
+		/// <param name="srcUnit">Source unit.</param>
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit)
 		{
 			if (image == null)
@@ -296,7 +323,56 @@ namespace System.Drawing
 			if (destPoints == null)
 				throw new ArgumentNullException ("destPoints");
 
-			context.DrawImage (srcRect, image.NativeCGImage);
+			if (destPoints.Length < 3)
+				throw new ArgumentException ("Destination points must be an array with a length of 3 or 4. " +
+				                             "A length of 3 defines a parallelogram with the upper-left, upper-right, " +
+				                             "and lower-left corners. A length of 4 defines a quadrilateral with the " +
+				                             "fourth element of the array specifying the lower-right coordinate.");
+
+			// Windows throws a Not Implemented error if the points are more than 3
+			if (destPoints.Length > 3)
+				throw new NotImplementedException ();
+
+			var srcRect1 = srcRect;
+
+			// If the source units are not the same we need to convert them
+			if (srcUnit != graphicsUnit) {
+				ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.HorizontalResolution, image.VerticalResolution,  ref srcRect1);
+			} 
+
+			// Obtain the subImage
+			var subImage = image.NativeCGImage.WithImageInRect (srcRect1);
+
+			// If we do not have anything to draw then we exit here
+			if (subImage.Width == 0 || subImage.Height == 0)
+				return;
+
+			// create our rectangle.  Offset is 0 because the CreateGeometricTransform bakes our x,y offset in there.
+			var rect = new RectangleF (0,0, destPoints [1].X - destPoints [0].X, destPoints [2].Y - destPoints [0].Y);
+
+			// We need to flip our Y axis so the image appears right side up
+			var geoTransform = new CGAffineTransform (1, 0, 0, -1, 0, rect.Height);
+
+			// Make sure we scale the image in case the source rectangle
+			// overruns our subimage bounds (width and/or height)
+			float scaleX = subImage.Width/srcRect1.Width;
+			float scaleY = subImage.Height/srcRect1.Height;
+			geoTransform.Scale (scaleX, scaleY);
+
+			//var geott = GeomUtilities.CreateGeometricTransform (rect, destPoints);
+			geoTransform.Multiply (GeomUtilities.CreateGeometricTransform (rect, destPoints));
+
+			// Apply our transform to the context
+			context.ConcatCTM (geoTransform);
+
+			// now we draw our image.
+			context.DrawImage(rect, subImage);
+
+			// Now we revert our image transform from the context 
+			var revert = CGAffineTransform.CGAffineTransformInvert (geoTransform);
+			context.ConcatCTM (revert);
+
+
 		}
 
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, 
