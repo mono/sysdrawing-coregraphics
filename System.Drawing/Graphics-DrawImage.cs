@@ -7,6 +7,7 @@ using MonoMac.CoreGraphics;
 using MonoMac.Foundation;
 using MonoMac.AppKit;
 using MonoMac.ImageIO;
+using MonoMac.CoreImage;
 #else
 using MonoTouch.CoreGraphics;
 using MonoTouch.UIKit;
@@ -567,24 +568,67 @@ namespace System.Drawing
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
-			throw new NotImplementedException ();
-			//Status status = GDIPlus.GdipDrawImageRectRect (nativeObject, image.NativeObject,
-            //                    destRect.X, destRect.Y, destRect.Width, destRect.Height,
-            //           		srcX, srcY, srcWidth, srcHeight, srcUnit,
-			//	imageAttrs != null ? imageAttrs.NativeObject : IntPtr.Zero, null, IntPtr.Zero);
-			//GDIPlus.CheckStatus (status);
+
+			var srcRect1 = new RectangleF(srcX, srcY,srcWidth,srcHeight);
+
+			// If the source units are not the same we need to convert them
+			if (srcUnit != graphicsUnit) {
+				ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.HorizontalResolution, image.VerticalResolution,  ref srcRect1);
+			} 
+
+			// Obtain the subImage
+			var subImage = image.NativeCGImage.WithImageInRect (srcRect1);
+
+			// If we do not have anything to draw then we exit here
+			if (subImage.Width == 0 || subImage.Height == 0)
+				return;
+
+			var transform = image.imageTransform;
+//			// Reset our height on the transform to account for subImage
+			transform.y0 = subImage.Height;
+//
+//			// Make sure we scale the image in case the source rectangle
+//			// overruns our subimage bouncs width and/or height
+			float scaleX = subImage.Width/srcRect1.Width;
+			float scaleY = subImage.Height/srcRect1.Height;
+			transform.Scale (scaleX, scaleY);
+
+			if (imageAttrs.colorMatrix != null) {
+				var ciContext = CIContext.FromContext (context);
+				var ciImage = new CIImage (subImage);
+
+				var ciFilter = CIFilter.FromName ("CIColorMatrix");
+				ciFilter.SetDefaults ();
+
+				ciFilter.SetValueForKey (ciImage, new NSString ("inputImage"));
+
+				var inputRVector = new CIVector (imageAttrs.colorMatrix.Matrix00, imageAttrs.colorMatrix.Matrix01, imageAttrs.colorMatrix.Matrix02, imageAttrs.colorMatrix.Matrix03);
+				var inputGVector = new CIVector (imageAttrs.colorMatrix.Matrix10, imageAttrs.colorMatrix.Matrix11, imageAttrs.colorMatrix.Matrix12, imageAttrs.colorMatrix.Matrix13);
+				var inputBVector = new CIVector (imageAttrs.colorMatrix.Matrix20, imageAttrs.colorMatrix.Matrix21, imageAttrs.colorMatrix.Matrix22, imageAttrs.colorMatrix.Matrix23);
+				var inputAVector = new CIVector (imageAttrs.colorMatrix.Matrix30, imageAttrs.colorMatrix.Matrix31, imageAttrs.colorMatrix.Matrix32, imageAttrs.colorMatrix.Matrix33);
+				var inputBiasVector = new CIVector (imageAttrs.colorMatrix.Matrix40, imageAttrs.colorMatrix.Matrix41, imageAttrs.colorMatrix.Matrix42, imageAttrs.colorMatrix.Matrix43);
+
+				ciFilter.SetValueForKey (inputRVector, new NSString ("inputRVector"));
+				ciFilter.SetValueForKey (inputGVector, new NSString ("inputGVector"));
+				ciFilter.SetValueForKey (inputBVector, new NSString ("inputBVector"));
+				ciFilter.SetValueForKey (inputAVector, new NSString ("inputAVector"));
+				ciFilter.SetValueForKey (inputBiasVector, new NSString ("inputBiasVector"));
+				//ciFilter.SetValueForKey (new NSNumber(0.5f), new NSString ("inputIntensity"));
+				var result = (CIImage)ciFilter.ValueForKey (new NSString ("outputImage"));
+				subImage = ciContext.CreateCGImage (result, result.Extent);
+			}
+
+			// Now draw our image
+			DrawImage (destRect, subImage, transform);
+
 		}
 		
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr)
 		{			
 			if (image == null)
 				throw new ArgumentNullException ("image");
-			throw new NotImplementedException ();
-			//Status status = GDIPlus.GdipDrawImageRectRectI (nativeObject, image.NativeObject, 
-            //                            destRect.X, destRect.Y, destRect.Width, 
-			//		destRect.Height, srcX, srcY, srcWidth, srcHeight,
-			//		srcUnit, imageAttr != null ? imageAttr.NativeObject : IntPtr.Zero, null, IntPtr.Zero);
-			//GDIPlus.CheckStatus (status);
+
+			DrawImage (image, destRect, (float)srcX, (float)srcY, (float)srcWidth, (float)srcHeight, srcUnit, imageAttr);
 		}
 		
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)

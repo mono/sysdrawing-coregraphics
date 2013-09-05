@@ -273,6 +273,15 @@
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\ImageFlags.cs">
       <Link>External\ImageFlags.cs</Link>
     </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\ColorMatrix.cs">
+      <Link>External\ColorMatrix.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\ColorMatrixFlag.cs">
+      <Link>External\ColorMatrixFlag.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\ColorAdjustType.cs">
+      <Link>External\ColorAdjustType.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
