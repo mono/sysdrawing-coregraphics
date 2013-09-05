@@ -196,6 +196,31 @@ namespace System.Drawing {
 			var provider = new CGDataProvider (bitmapBlock, size, true);
 			NativeCGImage = new CGImage (width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace, bitmapInfo, provider, null, false, CGColorRenderingIntent.Default);
 
+			dpiWidth = dpiHeight = ConversionHelpers.MS_DPI;
+			physicalDimension.Width = width;
+			physicalDimension.Height = height;
+
+
+			// The physical size may be off on certain implementations.  For instance the dpiWidth and dpiHeight 
+			// are read using integers in core graphics but in windows it is a float.
+			// For example:
+			// coregraphics dpiWidth = 24 as integer
+			// windows dpiWidth = 24.999935 as float
+			// this gives a few pixels difference when calculating the physical size.
+			// 256 * 96 / 24 = 1024
+			// 256 * 96 / 24.999935 = 983.04
+			//
+			// https://bugzilla.xamarin.com/show_bug.cgi?id=14365
+			// PR: https://github.com/mono/maccore/pull/57
+			//
+
+			physicalSize = new SizeF (physicalDimension.Width, physicalDimension.Height);
+			physicalSize.Width *= ConversionHelpers.MS_DPI / dpiWidth;
+			physicalSize.Height *= ConversionHelpers.MS_DPI / dpiHeight;
+
+			rawFormat = ImageFormat.MemoryBmp;
+			pixelFormat = format;
+
 		}
 
 		private void InitializeImageFrame(int frame)
