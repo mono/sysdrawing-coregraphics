@@ -509,16 +509,26 @@ namespace System.Drawing
 			//GDIPlus.CheckStatus (status);
 		}
 
+		/// <summary>
+		/// Draws the specified portion of the specified Image at the specified location and with the specified size.
+		/// 
+		/// The parameters srcX, srcY, srcWidth and srcHeight define the rectangular source portion of the image object 
+		/// to draw. This portion is scaled up or down (in the case where source rectangle overruns the bounds of the image)
+		/// to fit inside the rectangle specified by the destRect parameter.  
+		/// </summary>
+		/// <param name="image">Image.</param>
+		/// <param name="destRect">Destination rect.</param>
+		/// <param name="srcX">Source x.</param>
+		/// <param name="srcY">Source y.</param>
+		/// <param name="srcWidth">Source width.</param>
+		/// <param name="srcHeight">Source height.</param>
+		/// <param name="srcUnit">Source unit.</param>
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
-			throw new NotImplementedException ();
-			//Status status = GDIPlus.GdipDrawImageRectRect (nativeObject, image.NativeObject,
-            //                    destRect.X, destRect.Y, destRect.Width, destRect.Height,
-            //           		srcX, srcY, srcWidth, srcHeight, srcUnit, IntPtr.Zero, 
-            //           		null, IntPtr.Zero);
-			//GDIPlus.CheckStatus (status); 					
+
+			DrawImage (image, (RectangleF)destRect, new RectangleF (srcX, srcY, srcWidth, srcHeight), srcUnit);
 		}
 		
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
@@ -531,16 +541,26 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Draws the specified portion of the specified Image at the specified location and with the specified size.
+		/// 
+		/// The parameters srcX, srcY, srcWidth and srcHeight define the rectangular source portion of the image object 
+		/// to draw. This portion is scaled up or down (in the case where source rectangle overruns the bounds of the image)
+		/// to fit inside the rectangle specified by the destRect parameter.  
+		/// </summary>
+		/// <param name="image">Image.</param>
+		/// <param name="destRect">Destination rect.</param>
+		/// <param name="srcX">Source x.</param>
+		/// <param name="srcY">Source y.</param>
+		/// <param name="srcWidth">Source width.</param>
+		/// <param name="srcHeight">Source height.</param>
+		/// <param name="srcUnit">Source unit.</param>
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
-			//Status status = GDIPlus.GdipDrawImageRectRectI (nativeObject, image.NativeObject,
-            //                    destRect.X, destRect.Y, destRect.Width, destRect.Height,
-            //           		srcX, srcY, srcWidth, srcHeight, srcUnit, IntPtr.Zero, 
-            //           		null, IntPtr.Zero);
-			//GDIPlus.CheckStatus (status);
-			throw new NotImplementedException ();
+
+			DrawImage (image, destRect, new Rectangle (srcX, srcY, srcWidth, srcHeight), srcUnit);
 		}
 
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs)
