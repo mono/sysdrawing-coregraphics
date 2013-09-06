@@ -13,6 +13,7 @@ using MonoTouch.CoreGraphics;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using MonoTouch.ImageIO;
+using MonoTouch.CoreImage;
 #endif
 
 namespace System.Drawing
@@ -20,6 +21,7 @@ namespace System.Drawing
 	public partial class Graphics {
 		public delegate bool DrawImageAbort (IntPtr callbackData);
 
+		private CIContext ciContext;
 
 		private void DrawImage(RectangleF rect, CGImage image, CGAffineTransform transform)
 		{
@@ -583,41 +585,63 @@ namespace System.Drawing
 			if (subImage.Width == 0 || subImage.Height == 0)
 				return;
 
-			var transform = image.imageTransform;
-//			// Reset our height on the transform to account for subImage
-			transform.y0 = subImage.Height;
-//
-//			// Make sure we scale the image in case the source rectangle
-//			// overruns our subimage bouncs width and/or height
-			float scaleX = subImage.Width/srcRect1.Width;
-			float scaleY = subImage.Height/srcRect1.Height;
-			transform.Scale (scaleX, scaleY);
+//			var transform = image.imageTransform;
+////			// Reset our height on the transform to account for subImage
+//			transform.y0 = subImage.Height;
+////
+////			// Make sure we scale the image in case the source rectangle
+////			// overruns our subimage bouncs width and/or height
+//			float scaleX = subImage.Width/srcRect1.Width;
+//			float scaleY = subImage.Height/srcRect1.Height;
+//			transform.Scale (scaleX, scaleY);
+			bool attributesSet = imageAttrs.isColorMatrixSet || imageAttrs.isGammaSet;
 
-			if (imageAttrs.colorMatrix != null) {
-				var ciContext = CIContext.FromContext (context);
-				var ciImage = new CIImage (subImage);
+			if (attributesSet) {
+				InitializeImagingContext ();
+				CIImage result = subImage;
 
-				var ciFilter = CIFilter.FromName ("CIColorMatrix");
-				ciFilter.SetDefaults ();
+				if (imageAttrs.isColorMatrixSet) {
 
-				ciFilter.SetValueForKey (ciImage, new NSString ("inputImage"));
+					var ciFilter = CIFilter.FromName ("CIColorMatrix");
+					ciFilter.SetDefaults ();
 
-				var inputRVector = new CIVector (imageAttrs.colorMatrix.Matrix00, imageAttrs.colorMatrix.Matrix01, imageAttrs.colorMatrix.Matrix02, imageAttrs.colorMatrix.Matrix03);
-				var inputGVector = new CIVector (imageAttrs.colorMatrix.Matrix10, imageAttrs.colorMatrix.Matrix11, imageAttrs.colorMatrix.Matrix12, imageAttrs.colorMatrix.Matrix13);
-				var inputBVector = new CIVector (imageAttrs.colorMatrix.Matrix20, imageAttrs.colorMatrix.Matrix21, imageAttrs.colorMatrix.Matrix22, imageAttrs.colorMatrix.Matrix23);
-				var inputAVector = new CIVector (imageAttrs.colorMatrix.Matrix30, imageAttrs.colorMatrix.Matrix31, imageAttrs.colorMatrix.Matrix32, imageAttrs.colorMatrix.Matrix33);
-				var inputBiasVector = new CIVector (imageAttrs.colorMatrix.Matrix40, imageAttrs.colorMatrix.Matrix41, imageAttrs.colorMatrix.Matrix42, imageAttrs.colorMatrix.Matrix43);
+					ciFilter.SetValueForKey (result, new NSString ("inputImage"));
 
-				ciFilter.SetValueForKey (inputRVector, new NSString ("inputRVector"));
-				ciFilter.SetValueForKey (inputGVector, new NSString ("inputGVector"));
-				ciFilter.SetValueForKey (inputBVector, new NSString ("inputBVector"));
-				ciFilter.SetValueForKey (inputAVector, new NSString ("inputAVector"));
-				ciFilter.SetValueForKey (inputBiasVector, new NSString ("inputBiasVector"));
-				//ciFilter.SetValueForKey (new NSNumber(0.5f), new NSString ("inputIntensity"));
-				var result = (CIImage)ciFilter.ValueForKey (new NSString ("outputImage"));
+					var inputRVector = new CIVector (imageAttrs.colorMatrix.Matrix00, imageAttrs.colorMatrix.Matrix01, imageAttrs.colorMatrix.Matrix02, imageAttrs.colorMatrix.Matrix03);
+					var inputGVector = new CIVector (imageAttrs.colorMatrix.Matrix10, imageAttrs.colorMatrix.Matrix11, imageAttrs.colorMatrix.Matrix12, imageAttrs.colorMatrix.Matrix13);
+					var inputBVector = new CIVector (imageAttrs.colorMatrix.Matrix20, imageAttrs.colorMatrix.Matrix21, imageAttrs.colorMatrix.Matrix22, imageAttrs.colorMatrix.Matrix23);
+					var inputAVector = new CIVector (imageAttrs.colorMatrix.Matrix30, imageAttrs.colorMatrix.Matrix31, imageAttrs.colorMatrix.Matrix32, imageAttrs.colorMatrix.Matrix33);
+					var inputBiasVector = new CIVector (imageAttrs.colorMatrix.Matrix40, imageAttrs.colorMatrix.Matrix41, imageAttrs.colorMatrix.Matrix42, imageAttrs.colorMatrix.Matrix43);
+
+					ciFilter.SetValueForKey (inputRVector, new NSString ("inputRVector"));
+					ciFilter.SetValueForKey (inputGVector, new NSString ("inputGVector"));
+					ciFilter.SetValueForKey (inputBVector, new NSString ("inputBVector"));
+					ciFilter.SetValueForKey (inputAVector, new NSString ("inputAVector"));
+					ciFilter.SetValueForKey (inputBiasVector, new NSString ("inputBiasVector"));
+					result = (CIImage)ciFilter.ValueForKey (new NSString ("outputImage"));
+				}
+
+				if (imageAttrs.isGammaSet) {
+
+					var ciFilter = CIFilter.FromName ("CIGammaAdjust");
+					ciFilter.SetDefaults ();
+
+					ciFilter.SetValueForKey (result, new NSString ("inputImage"));
+
+					var inputPower = NSNumber.FromFloat (imageAttrs.gamma);
+
+					ciFilter.SetValueForKey (inputPower, new NSString ("inputPower"));
+					result = (CIImage)ciFilter.ValueForKey (new NSString ("outputImage"));
+				}
+
 				subImage = ciContext.CreateCGImage (result, result.Extent);
 			}
 
+			transform = image.imageTransform;
+			transform.y0 = subImage.Height;
+			float scaleX1 = subImage.Width/srcRect1.Width;
+			float scaleY1 = subImage.Height/srcRect1.Height;
+			transform.Scale (scaleX1, scaleY1);
 			// Now draw our image
 			DrawImage (destRect, subImage, transform);
 
@@ -725,6 +749,16 @@ namespace System.Drawing
 			DrawImageUnscaled (image, rect.X, rect.Y, width, height);			
 		}
 
+		private void InitializeImagingContext ()
+		{
+#if MONOTOUCH
+			if (ciContext == null)
+				ciContext = CIContext.FromOptions(null);
+#else
+			if (ciContext == null)
+				ciContext = CIContext.FromContext (context);
+#endif
+		}
 	}
 }
 

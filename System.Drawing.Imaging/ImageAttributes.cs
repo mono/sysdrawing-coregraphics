@@ -10,6 +10,10 @@ namespace System.Drawing.Imaging
 		internal ColorMatrix colorMatrix;
 		internal ColorMatrixFlag colorMatrixFlags;
 		internal ColorAdjustType colorAdjustType;
+		internal float gamma;
+
+		internal bool isColorMatrixSet;
+		internal bool isGammaSet;
 
 		/// <summary>
 		/// Clears the color matrix.
@@ -19,6 +23,24 @@ namespace System.Drawing.Imaging
 			colorMatrix = null;
 			colorMatrixFlags = ColorMatrixFlag.Default;
 			colorAdjustType = ColorAdjustType.Default;
+			isColorMatrixSet = false;
+		}
+
+		/// <summary>
+		/// Clears the gamma.
+		/// </summary>
+		public void ClearGamma()
+		{
+			this.ClearGamma(ColorAdjustType.Default);
+		}
+
+		/// <summary>
+		/// Clears the gamma for the color adjust type.
+		/// </summary>
+		/// <param name="type">Type.</param>
+		public void ClearGamma(ColorAdjustType type)
+		{
+			isGammaSet = false;
 		}
 
 		/// <summary>
@@ -45,8 +67,25 @@ namespace System.Drawing.Imaging
 			colorMatrix = newColorMatrix;
 			colorMatrixFlags = mode;
 			colorAdjustType = type;
-
+			isColorMatrixSet = true;
 		}
+
+		/// <summary>
+		/// Sets the gamma.
+		/// </summary>
+		/// <param name="gamma">Gamma.</param>
+		public void SetGamma(float gamma)
+		{
+			SetGamma (gamma, ColorAdjustType.Default);
+		}
+
+		public void SetGamma(float gamma, ColorAdjustType type)
+		{
+			this.gamma = gamma;
+			colorAdjustType = type;
+			isGammaSet = true;
+		}
+
 		#region ICloneable implementation
 		public object Clone ()
 		{
