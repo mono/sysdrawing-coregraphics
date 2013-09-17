@@ -59,7 +59,6 @@ namespace System.Drawing {
 	[Serializable]
 	public sealed class Bitmap : Image {
 		// if null, we created the bitmap in memory, otherwise, the backing file.
-
 		internal IntPtr bitmapBlock;
 
 		// we will default this to one for now until we get some tests for other image types
@@ -176,6 +175,7 @@ namespace System.Drawing {
 				bitsPerComponent = 8;
 				bitsPerPixel = 32;
 				bitmapInfo = CGBitmapFlags.NoneSkipLast;
+				break;
 			default:
 				throw new Exception ("Format not supported: " + format);
 			}
@@ -188,7 +188,7 @@ namespace System.Drawing {
 			                              bitsPerComponent, 
 			                              bytesPerRow,
 			                              colorSpace,
-			                              CGImageAlphaInfo.PremultipliedLast);
+			                              bitmapInfo);
 			// This works for now but we need to look into initializing the memory area itself
 			// TODO: Look at what we should do if the image does not have alpha channel
 			bitmap.ClearRect (new RectangleF (0,0,width,height));
@@ -826,7 +826,94 @@ namespace System.Drawing {
 		{
 			throw new NotImplementedException ();
 		}
-		
+
+		public void MakeTransparent() 
+		{
+			MakeTransparent (Color.White);
+		}
+
+		public void MakeTransparent(Color transparentColor)
+		{
+
+			MakeSureWeHaveAnAlphaChannel ();
+
+
+			var colorValues = transparentColor.ElementsRGBA ();
+
+			// Lock the bitmap's bits.  
+			Rectangle rect = new Rectangle(0, 0, Width, Height);
+			var bmpData = LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite,
+				             pixelFormat);
+
+			// we pre-multiply here for now.  This should not be here and needs to be moved to
+			// to the correct place
+			var alpha = Color.Transparent.A;
+			var red = (byte)(Color.Transparent.R * alpha);
+			var green = (byte)(Color.Transparent.G * alpha);
+			var blue = (byte)(Color.Transparent.B * alpha);
+
+			var pixelSize = GetPixelFormatComponents (pixelFormat);
+			unsafe 
+			{
+				for (int y=0; y<Height; y++) {
+					byte* row = (byte*)bmpData.Scan0 + (y * bmpData.Stride);
+					for (int x=0; x<bmpData.Stride; x=x+pixelSize) {
+						if (row [x] == colorValues [0] && row [x + 1] == colorValues [1]
+							&& row [x + 2] == colorValues [2] && row [x + 3] == colorValues [3]) 
+						{	
+
+							// we process bgra
+							row [x] = blue;
+							row [x + 1] = green;
+							row [x + 2] = red;
+							row [x + 3] = alpha;
+						}
+					}
+
+				}
+			}
+
+			// Unlock the bits.
+			UnlockBits(bmpData);
+		}
+
+		private void MakeSureWeHaveAnAlphaChannel ()
+		{
+
+			var alphaInfo = NativeCGImage.AlphaInfo;
+			var hasAlpha = ((alphaInfo == CGImageAlphaInfo.PremultipliedLast) 
+			                || (alphaInfo == CGImageAlphaInfo.PremultipliedFirst) 
+			                || (alphaInfo == CGImageAlphaInfo.Last) 
+			                || (alphaInfo == CGImageAlphaInfo.First) ? true : false);
+
+			if (hasAlpha && bitmapBlock != IntPtr.Zero) 
+			{
+				return;
+			}
+
+			PixelFormat format = PixelFormat.Format32bppArgb;
+
+			format = GetBestSupportedFormat (pixelFormat);
+			var bitmapContext = CreateCompatibleBitmapContext (NativeCGImage.Width, NativeCGImage.Height, format);
+
+			bitmapContext.DrawImage (new RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
+
+			int size = bitmapContext.BytesPerRow * bitmapContext.Height;
+			var provider = new CGDataProvider (bitmapContext.Data, size, true);
+			bitmapBlock = bitmapContext.Data;
+			CGColorSpace colorSpace = CGColorSpace.CreateDeviceRGB ();
+			NativeCGImage.Dispose ();
+			NativeCGImage = null;
+			NativeCGImage = new CGImage (bitmapContext.Width, bitmapContext.Height, bitmapContext.BitsPerComponent, 
+			                             bitmapContext.BitsPerPixel, bitmapContext.BytesPerRow, 
+			                             colorSpace,
+			                             bitmapContext.AlphaInfo,
+			                             provider, null, true, CGColorRenderingIntent.Default);
+			colorSpace.Dispose ();
+			bitmapContext.Dispose ();
+		}
+
+
 		public void Save (string path, ImageFormat format)
 		{
 			if (path == null)
@@ -909,15 +996,95 @@ namespace System.Drawing {
 			}
 			Save (path, format);
 		}
-		
-		public BitmapData LockBits (RectangleF rect, ImageLockMode flags, PixelFormat format)
+
+		public BitmapData LockBits (RectangleF rect, ImageLockMode flags, PixelFormat pixelFormat)
 		{
-			throw new NotImplementedException ();			
-		}
+
+			BitmapData bitmapData = new BitmapData ();
+
+			int stride = (int)rect.Width * (NativeCGImage.BitsPerPixel / NativeCGImage.BitsPerComponent);
 		
+			// Declare an array to hold the scan bytes of the bitmap. 
+			int scanLength  = (int)Math.Abs(stride) * Height;
+			byte[] scan0 = new byte[scanLength];
+
+			IntPtr ptr = bitmapBlock;
+			if (ptr == IntPtr.Zero) 
+			{
+				var pData = NativeCGImage.DataProvider;
+				var nData = pData.CopyData ();
+				ptr = nData.Bytes;
+			}
+
+			// Copy the RGB values into the scan array.
+			System.Runtime.InteropServices.Marshal.Copy(ptr, scan0, 0, scanLength);
+
+			// we only support RGBA for now
+			RGBAToBGRA (ref scan0);
+
+			pinnedScanArray = GCHandle.Alloc(scan0, GCHandleType.Pinned);
+			bitmapData.Scan0 = pinnedScanArray.AddrOfPinnedObject();
+
+			// We need to support sub rectangles.
+			if (rect != new RectangleF (new PointF (0, 0), physicalDimension)) 
+			{
+
+			} 
+			else 
+			{
+				bitmapData.Height = (int)rect.Height;
+				bitmapData.Width = (int)rect.Width;
+				bitmapData.PixelFormat = pixelFormat;
+
+				bitmapData.Stride = stride;
+			}
+
+			return bitmapData;
+		}
+
+		GCHandle pinnedScanArray;
+
 		public void UnlockBits (BitmapData data)
 		{
-			throw new NotImplementedException ();
+
+			// Declare our size 
+			var scanLength  = Math.Abs(data.Stride) * Height;
+			// This is fine here for now until we support other formats but right now it is RGBA
+			var pixelSize = GetPixelFormatComponents (pixelFormat);
+			unsafe 
+			{
+				byte* source = (byte*)data.Scan0;
+				byte* dest = (byte*)bitmapBlock;
+				byte temp = 0;
+				for (int sd = 0; sd < scanLength; sd=sd+pixelSize) 
+				{
+					temp = source [sd];  // save off blue
+					dest [sd] = source [sd + 2];  // move red back
+					dest [sd + 1] = source [sd + 1];
+					dest [sd + 2] = temp;
+					dest [sd + 3] = source [sd + 3];
+				}
+			}
+
+			// we need to free our pointer
+			pinnedScanArray.Free();
+
+		}
+
+		// Our internal format is pre-multiplied alpha
+		void RGBAToBGRA(ref byte[] scanLine)
+		{
+			byte temp = 0;
+			byte alpha = 0;
+			for (int x = 0; x < scanLine.Length; x=x+4) 
+			{
+				alpha = scanLine [x + 3];  // Save off alpha 
+				temp = scanLine [x];  // save off red
+				scanLine [x] = scanLine [x + 2];  // move blue to red
+				scanLine [x + 2] = temp;	// move the red to green
+				// Now we do the cha cha cha
+			}
+
 		}
 		
 	}

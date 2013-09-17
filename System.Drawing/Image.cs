@@ -287,5 +287,81 @@ namespace System.Drawing {
 			b.RotateFlip (rotateFlipType);
 		}
 
+		/// <summary>
+		/// Gets the size of the pixel format in number of bits per pixel.
+		/// </summary>
+		/// <returns>The pixel format size.</returns>
+		/// <param name="pixfmt">Pixfmt.</param>
+		public static int GetPixelFormatSize(PixelFormat pixfmt)
+		{
+			switch (pixfmt) {
+			
+			case PixelFormat.Format16bppArgb1555:
+			case PixelFormat.Format16bppGrayScale:
+			case PixelFormat.Format16bppRgb555:
+			case PixelFormat.Format16bppRgb565:
+				return 16;		
+			case PixelFormat.Format24bppRgb:
+				return 24;		
+			case PixelFormat.Format32bppArgb:
+			case PixelFormat.Format32bppPArgb:
+			case PixelFormat.Format32bppRgb:
+				return 32;		
+			case PixelFormat.Format48bppRgb:
+				return 48;		
+			case PixelFormat.Format64bppArgb:
+			case PixelFormat.Format64bppPArgb:
+				return 64;
+
+			case PixelFormat.Format8bppIndexed:
+				return 8;
+
+			case PixelFormat.Format4bppIndexed:
+				return 4;
+
+			case PixelFormat.Format1bppIndexed:
+				return 1;
+
+			default:
+				break;
+			}
+
+			return 0;
+		}
+
+		/// <summary>
+		/// Gets the number of components for the pixel format.
+		/// </summary>
+		/// <returns>The format components.</returns>
+		/// <param name="pixfmt">Pixfmt.</param>
+		internal static int GetPixelFormatComponents(PixelFormat pixfmt)
+		{
+			switch (pixfmt) {
+			
+			case PixelFormat.Format32bppArgb:
+			case PixelFormat.Format32bppPArgb:
+			case PixelFormat.Format64bppArgb:
+			case PixelFormat.Format64bppPArgb:
+			case PixelFormat.Format32bppRgb:	// Specifies that the format is 32 bits per pixel; 8 bits each are used for the red, green, and blue components. The remaining 8 bits are not used.
+				return 4;
+
+			case PixelFormat.Format16bppRgb555:
+			case PixelFormat.Format48bppRgb:
+			case PixelFormat.Format24bppRgb:
+				return 3;
+
+			case PixelFormat.Format16bppGrayScale:
+			case PixelFormat.Format8bppIndexed:
+			case PixelFormat.Format4bppIndexed:
+			case PixelFormat.Format1bppIndexed:
+				return 1;
+
+			default:
+				break;
+			}
+
+			return 0;
+		}
+
 	}
 }
