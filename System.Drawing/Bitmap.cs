@@ -845,12 +845,10 @@ namespace System.Drawing {
 			var bmpData = LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite,
 				             pixelFormat);
 
-			// we pre-multiply here for now.  This should not be here and needs to be moved to
-			// to the correct place
 			var alpha = Color.Transparent.A;
-			var red = (byte)(Color.Transparent.R * alpha);
-			var green = (byte)(Color.Transparent.G * alpha);
-			var blue = (byte)(Color.Transparent.B * alpha);
+			var red = Color.Transparent.R;
+			var green = Color.Transparent.G;
+			var blue = Color.Transparent.B;
 
 			var pixelSize = GetPixelFormatComponents (pixelFormat);
 			unsafe 
@@ -1002,11 +1000,20 @@ namespace System.Drawing {
 
 			BitmapData bitmapData = new BitmapData ();
 
-			int stride = (int)rect.Width * (NativeCGImage.BitsPerPixel / NativeCGImage.BitsPerComponent);
-		
+			// Calculate our strides
+			int srcStride = (int)rect.Width * (NativeCGImage.BitsPerPixel / NativeCGImage.BitsPerComponent);
+			int stride = (int)rect.Width * GetPixelFormatComponents(pixelFormat);
+
+			// Calculate our lengths
+			int srcScanLength  = (int)(Math.Abs(srcStride) * rect.Height);
+			int scanLength = (int)(Math.Abs(stride) * rect.Height);
+
 			// Declare an array to hold the scan bytes of the bitmap. 
-			int scanLength  = (int)Math.Abs(stride) * Height;
 			byte[] scan0 = new byte[scanLength];
+			pinnedScanArray = GCHandle.Alloc(scan0, GCHandleType.Pinned);
+			bitmapData.Scan0 = pinnedScanArray.AddrOfPinnedObject();
+
+			byte[] srcScan0 = new byte[srcScanLength];
 
 			IntPtr ptr = bitmapBlock;
 			if (ptr == IntPtr.Zero) 
@@ -1015,15 +1022,11 @@ namespace System.Drawing {
 				var nData = pData.CopyData ();
 				ptr = nData.Bytes;
 			}
-
 			// Copy the RGB values into the scan array.
-			System.Runtime.InteropServices.Marshal.Copy(ptr, scan0, 0, scanLength);
+			System.Runtime.InteropServices.Marshal.Copy(ptr, srcScan0, 0, scanLength);
 
 			// we only support RGBA for now
-			RGBAToBGRA (ref scan0);
-
-			pinnedScanArray = GCHandle.Alloc(scan0, GCHandleType.Pinned);
-			bitmapData.Scan0 = pinnedScanArray.AddrOfPinnedObject();
+			Convert_P_RGBA_8888_To_BGRA_8888 (ref scan0, srcScan0);
 
 			// We need to support sub rectangles.
 			if (rect != new RectangleF (new PointF (0, 0), physicalDimension)) 
@@ -1051,20 +1054,8 @@ namespace System.Drawing {
 			var scanLength  = Math.Abs(data.Stride) * Height;
 			// This is fine here for now until we support other formats but right now it is RGBA
 			var pixelSize = GetPixelFormatComponents (pixelFormat);
-			unsafe 
-			{
-				byte* source = (byte*)data.Scan0;
-				byte* dest = (byte*)bitmapBlock;
-				byte temp = 0;
-				for (int sd = 0; sd < scanLength; sd=sd+pixelSize) 
-				{
-					temp = source [sd];  // save off blue
-					dest [sd] = source [sd + 2];  // move red back
-					dest [sd + 1] = source [sd + 1];
-					dest [sd + 2] = temp;
-					dest [sd + 3] = source [sd + 3];
-				}
-			}
+
+			Convert_BGRA_8888_To_P_RGBA_8888 (data.Scan0, bitmapBlock, scanLength);
 
 			// we need to free our pointer
 			pinnedScanArray.Free();
@@ -1072,20 +1063,57 @@ namespace System.Drawing {
 		}
 
 		// Our internal format is pre-multiplied alpha
-		void RGBAToBGRA(ref byte[] scanLine)
+		void Convert_P_RGBA_8888_To_BGRA_8888(ref byte[] scanLine, byte[] source)
 		{
 			byte temp = 0;
 			byte alpha = 0;
-			for (int x = 0; x < scanLine.Length; x=x+4) 
+			for (int x = 0; x < source.Length; x=x+4) 
 			{
-				alpha = scanLine [x + 3];  // Save off alpha 
-				temp = scanLine [x];  // save off red
-				scanLine [x] = scanLine [x + 2];  // move blue to red
-				scanLine [x + 2] = temp;	// move the red to green
+				alpha = source [x + 3];  // Save off alpha
+				temp = source [x];  // save off red
+
+				if (alpha < 255) {
+					scanLine [x] = (byte)(source [x + 2] * alpha);  // move blue to red
+					scanLine [x + 1] = (byte)(source [x + 1] * alpha);
+					scanLine [x + 2] = (byte)(temp * alpha);	// move the red to green
+				} else {
+					scanLine [x] = source [x + 2];  // move blue to red
+					scanLine [x + 1] = source [x + 1];
+					scanLine [x + 2] = temp;	// move the red to green
+				}
+
+				scanLine [x + 3] = alpha;
 				// Now we do the cha cha cha
+			}
+		}
+
+		// Our internal format is pre-multiplied alpha
+		void Convert_BGRA_8888_To_P_RGBA_8888(IntPtr source, IntPtr destination, int scanLength)
+		{
+
+			unsafe 
+			{
+				byte* src = (byte*)source;
+				byte* dest = (byte*)destination;
+
+				byte temp = 0;
+				byte pmAlpha = 0;
+				byte alpha = 0;
+
+				for (int sd = 0; sd < scanLength; sd+=4) 
+				{
+					alpha = src [sd + 3];
+					pmAlpha = (byte)(alpha / 255.0);
+					temp = src [sd];  // save off blue
+					dest [sd] = (byte)(src [sd + 2] * pmAlpha);  // move red back
+					dest [sd + 1] = (byte)(src [sd + 1] * pmAlpha);
+					dest [sd + 2] = (byte)(temp * pmAlpha);
+					dest [sd + 3] = alpha;
+				}
 			}
 
 		}
+
 		
 	}
 }
