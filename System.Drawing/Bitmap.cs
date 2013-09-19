@@ -515,7 +515,7 @@ namespace System.Drawing {
 		internal void RotateFlip (RotateFlipType rotateFlipType)
 		{
 
-			CGAffineTransform rotateFlip;
+			CGAffineTransform rotateFlip = CGAffineTransform.MakeIdentity();
 
 			int width, height;
 			width = NativeCGImage.Width;
@@ -850,21 +850,41 @@ namespace System.Drawing {
 			var green = Color.Transparent.G;
 			var blue = Color.Transparent.B;
 
+//			byte alphar = Color.Transparent.A;
+//			byte redr = Color.Transparent.R;
+//			byte greenr = Color.Transparent.G;
+//			byte bluer = Color.Transparent.B;
+		
+			bool match = false;
+
 			var pixelSize = GetPixelFormatComponents (pixelFormat);
 			unsafe 
 			{
 				for (int y=0; y<Height; y++) {
 					byte* row = (byte*)bmpData.Scan0 + (y * bmpData.Stride);
 					for (int x=0; x<bmpData.Stride; x=x+pixelSize) {
+
+//						redr = row [x + 2];;
+//						greenr = row [x + 1];
+//						bluer = row [x];
+//						alphar = row [x + 3];
+
+						match = false;
+
 						if (row [x] == colorValues [0] && row [x + 1] == colorValues [1]
 							&& row [x + 2] == colorValues [2] && row [x + 3] == colorValues [3]) 
-						{	
+							match = true;
 
+
+						if (match) 
+						{
 							// we process bgra
 							row [x] = blue;
 							row [x + 1] = green;
 							row [x + 2] = red;
-							row [x + 3] = alpha;
+
+							if (pixelSize == 4)
+								row [x + 3] = alpha;
 						}
 					}
 
@@ -889,10 +909,14 @@ namespace System.Drawing {
 				return;
 			}
 
-			PixelFormat format = PixelFormat.Format32bppArgb;
+			// set our pixel format
+			pixelFormat = PixelFormat.Format32bppArgb;
+			// and mark the rawformat as from memory
+			rawFormat = ImageFormat.MemoryBmp;
 
-			format = GetBestSupportedFormat (pixelFormat);
-			var bitmapContext = CreateCompatibleBitmapContext (NativeCGImage.Width, NativeCGImage.Height, format);
+			//format = GetBestSupportedFormat (pixelFormat);
+			var bitmapContext = CreateCompatibleBitmapContext (NativeCGImage.Width, NativeCGImage.Height, pixelFormat);
+
 
 			bitmapContext.DrawImage (new RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
 
@@ -1002,7 +1026,9 @@ namespace System.Drawing {
 
 			// Calculate our strides
 			int srcStride = (int)rect.Width * (NativeCGImage.BitsPerPixel / NativeCGImage.BitsPerComponent);
-			int stride = (int)rect.Width * GetPixelFormatComponents(pixelFormat);
+
+			int numOfComponents = GetPixelFormatComponents(pixelFormat);
+			int stride = (int)rect.Width * numOfComponents;
 
 			// Calculate our lengths
 			int srcScanLength  = (int)(Math.Abs(srcStride) * rect.Height);
@@ -1023,10 +1049,13 @@ namespace System.Drawing {
 				ptr = nData.Bytes;
 			}
 			// Copy the RGB values into the scan array.
-			System.Runtime.InteropServices.Marshal.Copy(ptr, srcScan0, 0, scanLength);
+			System.Runtime.InteropServices.Marshal.Copy(ptr, srcScan0, 0, srcScanLength);
 
-			// we only support RGBA for now
-			Convert_P_RGBA_8888_To_BGRA_8888 (ref scan0, srcScan0);
+			if (numOfComponents == 4)
+				Convert_P_RGBA_8888_To_BGRA_8888 (ref scan0, srcScan0);
+			else
+				Convert_P_RGBA_8888_To_BGR_888 (ref scan0, srcScan0);
+
 
 			// We need to support sub rectangles.
 			if (rect != new RectangleF (new PointF (0, 0), physicalDimension)) 
@@ -1050,12 +1079,19 @@ namespace System.Drawing {
 		public void UnlockBits (BitmapData data)
 		{
 
-			// Declare our size 
-			var scanLength  = Math.Abs(data.Stride) * Height;
-			// This is fine here for now until we support other formats but right now it is RGBA
-			var pixelSize = GetPixelFormatComponents (pixelFormat);
+			//int destStride = data.Width * (NativeCGImage.BitsPerPixel / NativeCGImage.BitsPerComponent);
+			int destStride = data.Stride;
 
-			Convert_BGRA_8888_To_P_RGBA_8888 (data.Scan0, bitmapBlock, scanLength);
+			// Declare our size 
+			var scanLength  = destStride * Height;
+
+			// This is fine here for now until we support other formats but right now it is RGBA
+			var pixelSize = GetPixelFormatComponents (data.PixelFormat);
+
+			if (pixelSize == 4)
+				Convert_BGRA_8888_To_P_RGBA_8888 (data.Scan0, bitmapBlock, scanLength);
+			else
+				Convert_BGR_888_To_P_RGBA_8888 (data.Scan0, bitmapBlock, scanLength);
 
 			// we need to free our pointer
 			pinnedScanArray.Free();
@@ -1067,7 +1103,7 @@ namespace System.Drawing {
 		{
 			byte temp = 0;
 			byte alpha = 0;
-			for (int x = 0; x < source.Length; x=x+4) 
+			for (int x = 0; x < source.Length; x+=4) 
 			{
 				alpha = source [x + 3];  // Save off alpha
 				temp = source [x];  // save off red
@@ -1083,6 +1119,31 @@ namespace System.Drawing {
 				}
 
 				scanLine [x + 3] = alpha;
+				// Now we do the cha cha cha
+			}
+		}
+
+		// Our internal format is pre-multiplied alpha
+		void Convert_P_RGBA_8888_To_BGR_888(ref byte[] scanLine, byte[] source)
+		{
+			byte temp = 0;
+			byte alpha = 0;
+			for (int x = 0, y=0; x < source.Length; x+=4, y+=3) 
+			{
+				alpha = source [x + 3];  // Save off alpha
+				temp = source [x];  // save off red
+
+				if (alpha < 255) {
+					scanLine [y] = (byte)(source [x + 2] * alpha);  // move blue to red
+					scanLine [y + 1] = (byte)(source [x + 1] * alpha);
+					scanLine [y + 2] = (byte)(temp * alpha);	// move the red to green
+				} else {
+					scanLine [y] = source [x + 2];  // move blue to red
+					scanLine [y + 1] = source [x + 1];
+					scanLine [y + 2] = temp;	// move the red to green
+				}
+
+				//scanLine [x + 3] = alpha;
 				// Now we do the cha cha cha
 			}
 		}
@@ -1114,6 +1175,32 @@ namespace System.Drawing {
 
 		}
 
-		
+		// Our internal format is pre-multiplied alpha
+		void Convert_BGR_888_To_P_RGBA_8888(IntPtr source, IntPtr destination, int scanLength)
+		{
+
+			unsafe 
+			{
+				byte* src = (byte*)source;
+				byte* dest = (byte*)destination;
+
+				byte temp = 0;
+				byte pmAlpha = 0;
+				byte alpha = 0;
+
+				for (int sourceOffset = 0, destinationOffset = 0; sourceOffset < scanLength; sourceOffset+=3, destinationOffset+=4) 
+				{
+					alpha = 255;
+//					pmAlpha = (byte)(alpha / 255.0);
+					temp = src [sourceOffset];  // save off blue
+					dest [destinationOffset] = (byte)(src [sourceOffset + 2]);  // move red back
+					dest [destinationOffset + 1] = (byte)(src [sourceOffset + 1]);
+					dest [destinationOffset + 2] = (byte)(temp);
+					dest [destinationOffset + 3] = alpha;
+				}
+			}
+
+		}
+
 	}
 }
