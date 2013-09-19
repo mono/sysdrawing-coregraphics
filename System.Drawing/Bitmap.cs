@@ -73,8 +73,6 @@ namespace System.Drawing {
 
 		private CGDataProvider dataProvider;
 
-
-
 		public Bitmap (string filename)
 		{
 			// Use Image IO
@@ -818,6 +816,11 @@ namespace System.Drawing {
 		
 		public Color GetPixel (int x, int y)
 		{
+			if (x < 0 || x > NativeCGImage.Width)
+				throw new InvalidEnumArgumentException ("Parameter must be positive and < Width.");
+			if (y < 0 || y > NativeCGImage.Height)
+				throw new InvalidEnumArgumentException ("Parameter must be positive and < Height.");
+
 			// TODO
 			return Color.White;
 		}
@@ -829,6 +832,12 @@ namespace System.Drawing {
 
 		public void MakeTransparent() 
 		{
+			// Todo: Instead of passing white here we need to read
+			// the Lower-Left pixel of image.  Found this by
+			// placing a color in each corner until MakeTransparent 
+			// did not work.
+			//      bitmap.SetPixel(0, bitmap.Height - 1, Color.Magenta);ß
+
 			MakeTransparent (Color.White);
 		}
 
@@ -998,8 +1007,6 @@ namespace System.Drawing {
 			dest = null;
 
 		}
-
-
 
 		public void Save (string path)
 		{
