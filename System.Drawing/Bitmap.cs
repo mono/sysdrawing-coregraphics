@@ -1060,7 +1060,7 @@ namespace System.Drawing {
 			// We need to support sub rectangles.
 			if (rect != new RectangleF (new PointF (0, 0), physicalDimension)) 
 			{
-
+				throw new NotImplementedException("Sub rectangles of bitmaps not supported yet.");
 			} 
 			else 
 			{
