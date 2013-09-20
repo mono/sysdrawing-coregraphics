@@ -665,7 +665,7 @@ namespace System.Drawing {
 			                                  bitsPerComponent, 
 			                                  bytesPerRow,
 			                                  colorSpace,
-			                                  alphaInfo);
+											  alphaInfo);
 
 			bitmap.ClearRect (new RectangleF (0,0,width,height));
 
@@ -859,10 +859,10 @@ namespace System.Drawing {
 			var green = Color.Transparent.G;
 			var blue = Color.Transparent.B;
 
-//			byte alphar = Color.Transparent.A;
-//			byte redr = Color.Transparent.R;
-//			byte greenr = Color.Transparent.G;
-//			byte bluer = Color.Transparent.B;
+			byte alphar = Color.Transparent.A;
+			byte redr = Color.Transparent.R;
+			byte greenr = Color.Transparent.G;
+			byte bluer = Color.Transparent.B;
 		
 			bool match = false;
 
@@ -873,10 +873,10 @@ namespace System.Drawing {
 					byte* row = (byte*)bmpData.Scan0 + (y * bmpData.Stride);
 					for (int x=0; x<bmpData.Stride; x=x+pixelSize) {
 
-//						redr = row [x + 2];;
-//						greenr = row [x + 1];
-//						bluer = row [x];
-//						alphar = row [x + 3];
+						redr = row [x + 2];;
+						greenr = row [x + 1];
+						bluer = row [x];
+						alphar = row [x + 3];
 
 						match = false;
 
@@ -935,6 +935,7 @@ namespace System.Drawing {
 			CGColorSpace colorSpace = CGColorSpace.CreateDeviceRGB ();
 			NativeCGImage.Dispose ();
 			NativeCGImage = null;
+
 			NativeCGImage = new CGImage (bitmapContext.Width, bitmapContext.Height, bitmapContext.BitsPerComponent, 
 			                             bitmapContext.BitsPerPixel, bitmapContext.BytesPerRow, 
 			                             colorSpace,
@@ -1031,6 +1032,9 @@ namespace System.Drawing {
 
 			BitmapData bitmapData = new BitmapData ();
 
+			if (!ConversionHelpers.sTablesInitialized)
+				ConversionHelpers.CalculateTables ();
+
 			// Calculate our strides
 			int srcStride = (int)rect.Width * (NativeCGImage.BitsPerPixel / NativeCGImage.BitsPerComponent);
 
@@ -1115,15 +1119,14 @@ namespace System.Drawing {
 				alpha = source [x + 3];  // Save off alpha
 				temp = source [x];  // save off red
 
-				if (alpha < 255) {
-					scanLine [x] = (byte)(source [x + 2] * alpha);  // move blue to red
-					scanLine [x + 1] = (byte)(source [x + 1] * alpha);
-					scanLine [x + 2] = (byte)(temp * alpha);	// move the red to green
-				} else {
-					scanLine [x] = source [x + 2];  // move blue to red
-					scanLine [x + 1] = source [x + 1];
-					scanLine [x + 2] = temp;	// move the red to green
-				}
+				scanLine [x] = ConversionHelpers.UnpremultiplyValue(alpha, source [x + 2]);  // move blue to red
+				scanLine [x + 1] = ConversionHelpers.UnpremultiplyValue(alpha, source [x + 1]);
+				scanLine [x + 2] = ConversionHelpers.UnpremultiplyValue(alpha, temp);	// move the red to green
+
+//				var red = source [x];
+//				var green = source [x + 1];
+//				var blue = source [x + 1];
+
 
 				scanLine [x + 3] = alpha;
 				// Now we do the cha cha cha
@@ -1140,17 +1143,9 @@ namespace System.Drawing {
 				alpha = source [x + 3];  // Save off alpha
 				temp = source [x];  // save off red
 
-				if (alpha < 255) {
-					scanLine [y] = (byte)(source [x + 2] * alpha);  // move blue to red
-					scanLine [y + 1] = (byte)(source [x + 1] * alpha);
-					scanLine [y + 2] = (byte)(temp * alpha);	// move the red to green
-				} else {
-					scanLine [y] = source [x + 2];  // move blue to red
-					scanLine [y + 1] = source [x + 1];
-					scanLine [y + 2] = temp;	// move the red to green
-				}
-
-				//scanLine [x + 3] = alpha;
+				scanLine [y] = ConversionHelpers.PremultiplyValue(alpha,source [x + 2]);  // move blue to red
+				scanLine [y + 1] = ConversionHelpers.PremultiplyValue(alpha,source [x + 1]);
+				scanLine [y + 2] = ConversionHelpers.PremultiplyValue(alpha,temp);	// move the red to green
 				// Now we do the cha cha cha
 			}
 		}
@@ -1165,18 +1160,17 @@ namespace System.Drawing {
 				byte* dest = (byte*)destination;
 
 				byte temp = 0;
-				byte pmAlpha = 0;
 				byte alpha = 0;
 
 				for (int sd = 0; sd < scanLength; sd+=4) 
 				{
 					alpha = src [sd + 3];
-					pmAlpha = (byte)(alpha / 255.0);
 					temp = src [sd];  // save off blue
-					dest [sd] = (byte)(src [sd + 2] * pmAlpha);  // move red back
-					dest [sd + 1] = (byte)(src [sd + 1] * pmAlpha);
-					dest [sd + 2] = (byte)(temp * pmAlpha);
+					dest [sd] = ConversionHelpers.PremultiplyValue(alpha, src [sd + 2]);  // move red back
+					dest [sd + 1] = ConversionHelpers.PremultiplyValue(alpha, src [sd + 1]);
+					dest [sd + 2] = ConversionHelpers.PremultiplyValue(alpha, temp);
 					dest [sd + 3] = alpha;
+
 				}
 			}
 
@@ -1192,13 +1186,11 @@ namespace System.Drawing {
 				byte* dest = (byte*)destination;
 
 				byte temp = 0;
-				byte pmAlpha = 0;
 				byte alpha = 0;
 
 				for (int sourceOffset = 0, destinationOffset = 0; sourceOffset < scanLength; sourceOffset+=3, destinationOffset+=4) 
 				{
 					alpha = 255;
-//					pmAlpha = (byte)(alpha / 255.0);
 					temp = src [sourceOffset];  // save off blue
 					dest [destinationOffset] = (byte)(src [sourceOffset + 2]);  // move red back
 					dest [destinationOffset + 1] = (byte)(src [sourceOffset + 1]);
