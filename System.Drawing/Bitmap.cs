@@ -859,11 +859,11 @@ namespace System.Drawing {
 			var green = Color.Transparent.G;
 			var blue = Color.Transparent.B;
 
-			byte alphar = Color.Transparent.A;
-			byte redr = Color.Transparent.R;
-			byte greenr = Color.Transparent.G;
-			byte bluer = Color.Transparent.B;
-		
+//			byte alphar = Color.Transparent.A;
+//			byte redr = Color.Transparent.R;
+//			byte greenr = Color.Transparent.G;
+//			byte bluer = Color.Transparent.B;
+//		
 			bool match = false;
 
 			var pixelSize = GetPixelFormatComponents (pixelFormat);
@@ -873,11 +873,11 @@ namespace System.Drawing {
 					byte* row = (byte*)bmpData.Scan0 + (y * bmpData.Stride);
 					for (int x=0; x<bmpData.Stride; x=x+pixelSize) {
 
-						redr = row [x + 2];;
-						greenr = row [x + 1];
-						bluer = row [x];
-						alphar = row [x + 3];
-
+//						redr = row [x + 2];;
+//						greenr = row [x + 1];
+//						bluer = row [x];
+//						alphar = row [x + 3];
+//
 						match = false;
 
 						if (row [x] == colorValues [0] && row [x + 1] == colorValues [1]

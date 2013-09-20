@@ -8421,18 +8421,6 @@ namespace System.Drawing
 				}
 			}
 
-			Console.WriteLine ("byte[] sPremultiplyTable = {");
-			int whereg = 0;
-			foreach (var b in sPremultiplyTable) {
-
-				Console.Write ("{0}, ", b);
-				if (++whereg == 16) {
-					Console.WriteLine ();
-					whereg = 0;
-				}
-			}
-			Console.WriteLine ("};");
-
 			sTablesInitialized = true;
 		}
 
