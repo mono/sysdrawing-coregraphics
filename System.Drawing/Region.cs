@@ -34,16 +34,21 @@ namespace System.Drawing {
 
 	public sealed class Region : MarshalByRefObject, IDisposable {
 
+		internal object regionObject; 
+
 		public Region ()
 		{
+			regionObject = RectangleF.Empty;
 		}
 		
 		public Region (Rectangle rect)
 		{
+			regionObject = rect;
 		}
 		
 		public Region (RectangleF rect)
 		{
+			regionObject = rect;
 		}
 
 		~Region ()

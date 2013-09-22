@@ -894,22 +894,24 @@ namespace System.Drawing {
 
 		public void SetClip (RectangleF rect, CombineMode combineMode)
 		{
-			//Unlike the current path, the current clipping path is part of the graphics state. 
-			//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
-			//prior state, you must save the graphics state before you clip and restore the graphics 
-			//state after you’ve completed any clipped drawing.
-			context.SaveState ();
-			context.ClipToRect (rect);
+			switch (combineMode)
+			{
+			case CombineMode.Replace:
+				//Unlike the current path, the current clipping path is part of the graphics state. 
+				//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
+				//prior state, you must save the graphics state before you clip and restore the graphics 
+				//state after you’ve completed any clipped drawing.
+				context.SaveState ();
+				context.ClipToRect (rect);
+				break;
+			default:
+				throw new NotImplementedException ("SetClip for CombineMode " + combineMode + " not implemented");
+			}
 		}
 
 		public void SetClip (Rectangle rect, CombineMode combineMode)
 		{
-			//Unlike the current path, the current clipping path is part of the graphics state. 
-			//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
-			//prior state, you must save the graphics state before you clip and restore the graphics 
-			//state after you’ve completed any clipped drawing.
-			context.SaveState ();
-			context.ClipToRect ((RectangleF)rect);
+			SetClip ((RectangleF)rect, combineMode);
 		}
 
 		public void SetClip (GraphicsPath graphicsPath, CombineMode combineMode)
@@ -924,7 +926,13 @@ namespace System.Drawing {
 		
 		public void SetClip (Region region, CombineMode combineMode)
 		{
-			throw new NotImplementedException ();
+			if (region.regionObject is Rectangle) 
+				SetClip ((Rectangle)region.regionObject, combineMode);
+			else 
+				if (region.regionObject is RectangleF)
+			        SetClip ((RectangleF)region.regionObject, combineMode);
+				else
+			         throw new NotImplementedException ();
 		}
 		
 		public GraphicsContainer BeginContainer ()
