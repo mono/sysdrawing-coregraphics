@@ -894,12 +894,22 @@ namespace System.Drawing {
 
 		public void SetClip (RectangleF rect, CombineMode combineMode)
 		{
-			throw new NotImplementedException ();
+			//Unlike the current path, the current clipping path is part of the graphics state. 
+			//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
+			//prior state, you must save the graphics state before you clip and restore the graphics 
+			//state after you’ve completed any clipped drawing.
+			context.SaveState ();
+			context.ClipToRect (rect);
 		}
 
 		public void SetClip (Rectangle rect, CombineMode combineMode)
 		{
-			throw new NotImplementedException ();
+			//Unlike the current path, the current clipping path is part of the graphics state. 
+			//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
+			//prior state, you must save the graphics state before you clip and restore the graphics 
+			//state after you’ve completed any clipped drawing.
+			context.SaveState ();
+			context.ClipToRect ((RectangleF)rect);
 		}
 
 		public void SetClip (GraphicsPath graphicsPath, CombineMode combineMode)
@@ -1111,7 +1121,12 @@ namespace System.Drawing {
 		
 		public void ResetClip ()
 		{
-			throw new NotImplementedException ();
+			//Unlike the current path, the current clipping path is part of the graphics state. 
+			//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
+			//prior state, you must save the graphics state before you clip and restore the graphics 
+			//state after you’ve completed any clipped drawing.
+			context.EOClip ();
+			context.RestoreState ();
 		}
 		
 		public void ExcludeClip (Rectangle rect)
