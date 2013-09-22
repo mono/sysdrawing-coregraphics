@@ -40,6 +40,7 @@ using System.Drawing.Imaging;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Collections.Generic;
 
 #if MONOMAC
 using MonoMac.CoreGraphics;
@@ -675,6 +676,64 @@ namespace System.Drawing {
 
 		}
 
+		private CGBitmapContext CreateCompatibleBitmapContext(int width, int height, PixelFormat pixelFormat, IntPtr pixelData)
+		{
+			int bitsPerComponent, bytesPerRow;
+			CGColorSpace colorSpace;
+			CGImageAlphaInfo alphaInfo;
+			bool premultiplied = false;
+			int bitsPerPixel = 0;
+
+			// CoreGraphics only supports a few options so we have to make do with what we have
+			// https://developer.apple.com/library/mac/qa/qa1037/_index.html
+			switch (pixelFormat)
+			{
+			case PixelFormat.Format32bppPArgb:
+			case PixelFormat.DontCare:
+				premultiplied = true;
+				colorSpace = CGColorSpace.CreateDeviceRGB ();
+				bitsPerComponent = 8;
+				bitsPerPixel = 32;
+				alphaInfo = CGImageAlphaInfo.PremultipliedLast;
+				break;
+			case PixelFormat.Format32bppArgb:
+				colorSpace = CGColorSpace.CreateDeviceRGB ();
+				bitsPerComponent = 8;
+				bitsPerPixel = 32;
+				alphaInfo = CGImageAlphaInfo.PremultipliedLast;
+				break;
+			case PixelFormat.Format32bppRgb:
+				colorSpace = CGColorSpace.CreateDeviceRGB ();
+				bitsPerComponent = 8;
+				bitsPerPixel = 32;
+				alphaInfo = CGImageAlphaInfo.PremultipliedLast;
+				break;
+			case PixelFormat.Format24bppRgb:
+				colorSpace = CGColorSpace.CreateDeviceRGB ();
+				bitsPerComponent = 8;
+				bitsPerPixel = 32;
+				alphaInfo = CGImageAlphaInfo.PremultipliedLast;
+				break;
+			default:
+				throw new Exception ("Format not supported: " + pixelFormat);
+			}
+
+			bytesPerRow = width * bitsPerPixel/bitsPerComponent;
+			int size = bytesPerRow * height;
+
+			var bitmap = new CGBitmapContext (pixelData, 
+			                                  width, height, 
+			                                  bitsPerComponent, 
+			                                  bytesPerRow,
+			                                  colorSpace,
+			                                  alphaInfo);
+
+			colorSpace.Dispose ();
+
+			return bitmap;
+
+		}
+
 		/*
 		  * perform an in-place swap from Quadrant 1 to Quadrant III format
 		  * (upside-down PostScript/GL to right side up QD/CG raster format)
@@ -926,22 +985,19 @@ namespace System.Drawing {
 			//format = GetBestSupportedFormat (pixelFormat);
 			var bitmapContext = CreateCompatibleBitmapContext (NativeCGImage.Width, NativeCGImage.Height, pixelFormat);
 
-
+			// Fill our pixel data with the actual image information
 			bitmapContext.DrawImage (new RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
 
-			int size = bitmapContext.BytesPerRow * bitmapContext.Height;
-			var provider = new CGDataProvider (bitmapContext.Data, size, true);
-			bitmapBlock = bitmapContext.Data;
-			CGColorSpace colorSpace = CGColorSpace.CreateDeviceRGB ();
+			// Dispose of the prevous image that is allocated.
 			NativeCGImage.Dispose ();
-			NativeCGImage = null;
 
-			NativeCGImage = new CGImage (bitmapContext.Width, bitmapContext.Height, bitmapContext.BitsPerComponent, 
-			                             bitmapContext.BitsPerPixel, bitmapContext.BytesPerRow, 
-			                             colorSpace,
-			                             bitmapContext.AlphaInfo,
-			                             provider, null, true, CGColorRenderingIntent.Default);
-			colorSpace.Dispose ();
+			// Get a reference to the pixel data
+			bitmapBlock = bitmapContext.Data;
+
+			// Get the image from the bitmap context.
+			NativeCGImage = bitmapContext.ToImage ();
+
+			// Dispose of the bitmap context as it is no longer needed
 			bitmapContext.Dispose ();
 		}
 
@@ -1067,7 +1123,6 @@ namespace System.Drawing {
 			else
 				Convert_P_RGBA_8888_To_BGR_888 (ref scan0, srcScan0);
 
-
 			// We need to support sub rectangles.
 			if (rect != new RectangleF (new PointF (0, 0), physicalDimension)) 
 			{
@@ -1104,6 +1159,18 @@ namespace System.Drawing {
 			else
 				Convert_BGR_888_To_P_RGBA_8888 (data.Scan0, bitmapBlock, scanLength);
 
+			// Create a bitmap context from the pixel data
+			var bitmapContext = CreateCompatibleBitmapContext (data.Width, data.Height, data.PixelFormat, bitmapBlock);
+
+			// Dispose of the prevous image that is allocated.
+			NativeCGImage.Dispose ();
+
+			// Get the image from the bitmap context.
+			NativeCGImage = bitmapContext.ToImage ();
+
+			// Dispose of the bitmap context as it is no longer needed
+			bitmapContext.Dispose ();
+
 			// we need to free our pointer
 			pinnedScanArray.Free();
 
@@ -1119,10 +1186,15 @@ namespace System.Drawing {
 				alpha = source [x + 3];  // Save off alpha
 				temp = source [x];  // save off red
 
-				scanLine [x] = ConversionHelpers.UnpremultiplyValue(alpha, source [x + 2]);  // move blue to red
-				scanLine [x + 1] = ConversionHelpers.UnpremultiplyValue(alpha, source [x + 1]);
-				scanLine [x + 2] = ConversionHelpers.UnpremultiplyValue(alpha, temp);	// move the red to green
-
+				if (alpha < 255) {
+					scanLine [x] = ConversionHelpers.UnpremultiplyValue (alpha, source [x + 2]);  // move blue to red
+					scanLine [x + 1] = ConversionHelpers.UnpremultiplyValue (alpha, source [x + 1]);
+					scanLine [x + 2] = ConversionHelpers.UnpremultiplyValue (alpha, temp);	// move the red to green
+				} else {
+					scanLine [x] = source [x + 2];  // move blue to red
+					scanLine [x + 1] = source [x + 1];
+					scanLine [x + 2] = temp;  // move the red to green
+				}
 //				var red = source [x];
 //				var green = source [x + 1];
 //				var blue = source [x + 1];
