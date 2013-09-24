@@ -19,7 +19,8 @@ namespace System.Drawing {
 	public partial class SolidBrush : Brush {
 		Color color;
 		bool isModifiable;
-		
+		bool isModified;
+
 		public SolidBrush (Color color)
 		{
 			this.color = color;
@@ -37,7 +38,11 @@ namespace System.Drawing {
 				return color;
 			}
 			set {
-				color = value;
+				if (value != color) 
+				{
+					color = value;
+					isModified = true;
+				}
 			}
 		}
 		
@@ -54,7 +59,7 @@ namespace System.Drawing {
 
 		internal override void Setup (Graphics graphics, bool fill)
 		{
-			if (graphics.LastBrush == this)
+			if (graphics.LastBrush == this && !isModified)
 				return;
 
 			bool sourceCopy = graphics.CompositingMode == CompositingMode.SourceCopy;
@@ -66,6 +71,7 @@ namespace System.Drawing {
 			}
 
 			graphics.LastBrush = this;
+			isModified = false;
 
 			// I am setting this to be used for Text coloring in DrawString
 			graphics.lastBrushColor = color;
