@@ -330,6 +330,32 @@ namespace System.Drawing {
 		}
 
 		/// <summary>
+		/// Determines whether the pixelFormat passed contains alpha information.
+		/// Returns a value that indicates whether the pixel format for this Image contains alpha information.
+		/// </summary>
+		/// <returns><c>true</c> if the pixelFormat contain alpha information; otherwise, <c>false</c>.</returns>
+		/// <param name="pixelFormat">Pixel format.</param>
+		public static bool IsAlphaPixelFormat (PixelFormat pixelFormat)
+		{
+			switch (pixelFormat) 
+			{
+			case PixelFormat.Alpha:
+			case PixelFormat.Format16bppArgb1555:
+			case PixelFormat.Format32bppPArgb:
+			case PixelFormat.Format64bppPArgb:
+			case PixelFormat.Format32bppArgb:
+			case PixelFormat.Format64bppArgb:
+				return true;
+			default:
+				return false;
+			}
+
+		}
+
+
+
+
+		/// <summary>
 		/// Gets the number of components for the pixel format.
 		/// </summary>
 		/// <returns>The format components.</returns>
