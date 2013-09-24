@@ -813,6 +813,15 @@ namespace System.Drawing {
 			}
 			set {
 				compositing_mode = value;
+				switch (compositing_mode) 
+				{
+				case CompositingMode.SourceCopy:
+					context.SetBlendMode (CGBlendMode.Copy);
+					break;
+				case CompositingMode.SourceOver:
+					context.SetBlendMode (CGBlendMode.Overlay);
+					break;
+				}
 			}
 		}
 
