@@ -1016,7 +1016,7 @@ namespace System.Drawing {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				SetClip (value, CombineMode.Replace);
 			}
 		}
 		
