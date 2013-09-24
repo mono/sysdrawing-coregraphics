@@ -1111,12 +1111,17 @@ namespace System.Drawing {
 				return 96.0f;
 			}
 		}
+
+
 		public CompositingQuality CompositingQuality {
+			// There is no support for CompositingQuality in CoreGraphics.
+			// Instead of throwing a NotImplementedException we will just let
+			// things fall through when setting and return Default always.
 			get {
-				throw new NotImplementedException ();
+				return CompositingQuality.Default;
 			}
 			set {
-				throw new NotImplementedException ();
+
 			}
 		}
 		
