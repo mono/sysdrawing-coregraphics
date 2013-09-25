@@ -1149,12 +1149,18 @@ namespace System.Drawing {
 		{
 			if (!clipRegion.IsInfinite) 
 			{
+
 				//Unlike the current path, the current clipping path is part of the graphics state. 
 				//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
 				//prior state, you must save the graphics state before you clip and restore the graphics 
 				//state after you’ve completed any clipped drawing.
 				context.EOClip ();
 				context.RestoreState ();
+
+				// We are clobbering our transform when we do the restore.
+				// there are probably other one as well.
+				applyModelView ();
+
 			}
 		}
 		
