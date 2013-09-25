@@ -1379,6 +1379,7 @@ namespace System.Drawing {
 			graphicsUnit = gstate.pageUnit;
 			pageScale = gstate.pageScale;
 			SmoothingMode = gstate.smoothingMode;
+			clipRegion = gstate.clipRegion;
 			//applyModelView();
 			// I do not know if we should use the contexts save/restore state or our own
 			// we will do that save state for now
@@ -1398,7 +1399,7 @@ namespace System.Drawing {
 			currentState.pageUnit = graphicsUnit;
 			currentState.pageScale = pageScale;
 			currentState.smoothingMode = smoothingMode;
-
+			currentState.clipRegion = clipRegion;
 			// I do not know if we should use the contexts save/restore state or our own
 			// we will do that save state for now
 			context.SaveState();
