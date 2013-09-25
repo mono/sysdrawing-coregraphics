@@ -16,6 +16,7 @@ namespace System.Drawing.Drawing2D
 		internal GraphicsUnit pageUnit {get;set;}
 		internal float pageScale { get; set; }
 		internal SmoothingMode smoothingMode { get; set; }
+		internal Region clipRegion { get; set; }
 
 	}
 
