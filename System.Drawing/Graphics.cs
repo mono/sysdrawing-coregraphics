@@ -34,7 +34,7 @@ namespace System.Drawing {
 		internal Pen LastPen;
 		internal Brush LastBrush;
 		internal SizeF contextUserSpace;
-		internal RectangleF boundingBox, clipRegion;
+		internal RectangleF boundingBox;
 		internal GraphicsUnit quartzUnit = GraphicsUnit.Point;
 		internal object nativeObject;
 		internal bool isFlipped;
@@ -56,6 +56,7 @@ namespace System.Drawing {
 		private float pageScale = 1;
 		private PointF renderingOrigin = PointF.Empty;
 		private RectangleF subviewClipOffset = RectangleF.Empty;
+		private Region clipRegion;
 
 		public Graphics (CGContext context, bool flipped = true)
 		{
@@ -120,6 +121,8 @@ namespace System.Drawing {
 
 			// Set anti-aliasing
 			SmoothingMode = SmoothingMode.Default;
+
+			clipRegion = new Region ();
 		}
 
 		private void initializeMatrix(ref Matrix matrix, bool isFlipped) 
@@ -173,6 +176,7 @@ namespace System.Drawing {
 				if (context != null){
 					context.Dispose ();
 					context = null;
+
 				}
 			}
 		}
@@ -903,19 +907,7 @@ namespace System.Drawing {
 
 		public void SetClip (RectangleF rect, CombineMode combineMode)
 		{
-			switch (combineMode)
-			{
-			case CombineMode.Replace:
-				//Unlike the current path, the current clipping path is part of the graphics state. 
-				//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
-				//prior state, you must save the graphics state before you clip and restore the graphics 
-				//state after you’ve completed any clipped drawing.
-				context.SaveState ();
-				context.ClipToRect (rect);
-				break;
-			default:
-				throw new NotImplementedException ("SetClip for CombineMode " + combineMode + " not implemented");
-			}
+			SetClip (new Region (rect), combineMode);
 		}
 
 		public void SetClip (Rectangle rect, CombineMode combineMode)
@@ -935,13 +927,27 @@ namespace System.Drawing {
 		
 		public void SetClip (Region region, CombineMode combineMode)
 		{
-			if (region.regionObject is Rectangle) 
-				SetClip ((Rectangle)region.regionObject, combineMode);
-			else 
-				if (region.regionObject is RectangleF)
-			        SetClip ((RectangleF)region.regionObject, combineMode);
-				else
-			         throw new NotImplementedException ();
+
+			if (clipRegion.regionObject is RectangleF) {
+				switch (combineMode) 
+				{
+				case CombineMode.Replace:
+					// Set our clip region by cloning the region that is passed for now
+					clipRegion = region.Clone();
+
+					//Unlike the current path, the current clipping path is part of the graphics state. 
+					//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
+					//prior state, you must save the graphics state before you clip and restore the graphics 
+					//state after you’ve completed any clipped drawing.
+					context.SaveState ();
+					context.ClipToRect ((RectangleF)clipRegion.regionObject);
+					break;
+				default:
+					throw new NotImplementedException ("SetClip for CombineMode " + combineMode + " not implemented");
+				}
+			}
+			else
+		         throw new NotImplementedException ();
 		}
 		
 		public GraphicsContainer BeginContainer ()
@@ -995,10 +1001,7 @@ namespace System.Drawing {
 		
 		public bool IsClipEmpty {
 			get {
-				return ClipBounds == RectangleF.Empty;
-			}
-			set {
-				throw new NotImplementedException ();
+				return clipRegion.IsEmpty;
 			}
 		}
 
@@ -1013,7 +1016,7 @@ namespace System.Drawing {
 		
 		public Region Clip {
 			get {
-				throw new NotImplementedException ();
+				return clipRegion;
 			}
 			set {
 				SetClip (value, CombineMode.Replace);
@@ -1022,10 +1025,11 @@ namespace System.Drawing {
 		
 		public RectangleF ClipBounds {
 			get {
-				return context.GetClipBoundingBox();
+				return clipRegion.GetBounds ();
+				//return context.GetClipBoundingBox ();
 			}
 			set {
-				context.ClipToRect(value);
+				SetClip(value);
 			}
 		}
 		
@@ -1127,7 +1131,7 @@ namespace System.Drawing {
 		
 		public bool IsVisibleClipEmpty { 
 			get {
-				throw new NotImplementedException ();
+				return clipRegion == null;
 			}
 		}
 
@@ -1143,12 +1147,15 @@ namespace System.Drawing {
 		
 		public void ResetClip ()
 		{
-			//Unlike the current path, the current clipping path is part of the graphics state. 
-			//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
-			//prior state, you must save the graphics state before you clip and restore the graphics 
-			//state after you’ve completed any clipped drawing.
-			context.EOClip ();
-			context.RestoreState ();
+			if (!clipRegion.IsInfinite) 
+			{
+				//Unlike the current path, the current clipping path is part of the graphics state. 
+				//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
+				//prior state, you must save the graphics state before you clip and restore the graphics 
+				//state after you’ve completed any clipped drawing.
+				context.EOClip ();
+				context.RestoreState ();
+			}
 		}
 		
 		public void ExcludeClip (Rectangle rect)
@@ -1359,7 +1366,7 @@ namespace System.Drawing {
 		public void Clear (Color color)
 		{
 			context.SetFillColorWithColor(new CGColor(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f));
-			context.FillRect(ClipBounds);
+			context.FillRect(context.GetClipBoundingBox());
 		}
 		
 		public void Restore (GraphicsState gstate)

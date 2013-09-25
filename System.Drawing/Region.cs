@@ -34,16 +34,22 @@ namespace System.Drawing {
 
 	public sealed class Region : MarshalByRefObject, IDisposable {
 
+		internal static RectangleF infinite = new RectangleF(4194304, 4194304, 8388608, 8388608);
 		internal object regionObject; 
 
+		// An infinite region would cover the entire device region which is the same as
+		// not having a clipping region. Note that this is not the same as having an
+		// empty region, which when clipping to it has the effect of excluding the entire
+		// device region.
 		public Region ()
 		{
-			regionObject = RectangleF.Empty;
+			// We set the default region to a very large 
+			regionObject = infinite;
 		}
 		
 		public Region (Rectangle rect)
 		{
-			regionObject = rect;
+			regionObject = (RectangleF)rect;
 		}
 		
 		public Region (RectangleF rect)
@@ -68,8 +74,9 @@ namespace System.Drawing {
 		
 		public Region Clone ()
 		{
-			// FIXME
-			return new Region ();
+			// Right now we only support Rectangular regions
+			// we need to fix this when we support other types
+			return new Region ((RectangleF)regionObject);
 		}
 
 		public void Dispose ()
@@ -87,6 +94,46 @@ namespace System.Drawing {
 			if (g == null)
 				throw new ArgumentNullException ();
 			throw new NotImplementedException ();
+		}
+
+//		public bool IsInfinite(Graphics g)
+//		{
+//		}
+		internal RectangleF GetBounds()
+		{
+			RectangleF? rect = null;
+			if (regionObject is RectangleF)
+				return (RectangleF)regionObject;
+
+			return infinite;
+		}
+
+		internal bool IsInfinite 
+		{
+			get 
+			{
+				RectangleF? rect = null;
+				if (regionObject is RectangleF)
+					rect = (RectangleF)regionObject;
+				if (rect == null || rect.Equals (infinite))
+					return true;
+
+				return false;
+			}
+		}
+
+		internal bool IsEmpty
+		{
+			get 
+			{
+				RectangleF? rect = null;
+				if (regionObject is RectangleF)
+					rect = (RectangleF)regionObject;
+				if (rect != null && rect.Equals (RectangleF.Empty))
+					return true;
+
+				return false;
+			}
 		}
 	}
 }
