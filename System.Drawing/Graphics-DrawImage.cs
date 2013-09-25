@@ -197,7 +197,16 @@ namespace System.Drawing
 		/// <param name="y">The y coordinate.</param>
 		public void DrawImage (Image image, int x, int y)
 		{
-			DrawImage (image, new RectangleF(x,y,image.physicalSize.Width,image.physicalSize.Height));
+			var width = image.physicalSize.Width;
+			var height = image.physicalSize.Height;
+
+			if (graphicsUnit != GraphicsUnit.Pixel) 
+			{
+				width = ConversionHelpers.GraphicsUnitConversion (GraphicsUnit.Pixel, graphicsUnit, image.HorizontalResolution, width);
+				height = ConversionHelpers.GraphicsUnitConversion (GraphicsUnit.Pixel, graphicsUnit, image.VerticalResolution, height);
+			}
+
+			DrawImage (image, new RectangleF(x,y,width,height));
 		}
 
 		/// <summary>
@@ -208,7 +217,15 @@ namespace System.Drawing
 		/// <param name="y">The y coordinate.</param>
 		public void DrawImage (Image image, float x, float y)
 		{
-			DrawImage(image, new RectangleF(x,y,image.physicalSize.Width,image.physicalSize.Height));
+			var width = image.physicalSize.Width;
+			var height = image.physicalSize.Height;
+
+			if (graphicsUnit != GraphicsUnit.Pixel) 
+			{
+				width = ConversionHelpers.GraphicsUnitConversion (GraphicsUnit.Pixel, graphicsUnit, image.HorizontalResolution, width);
+				height = ConversionHelpers.GraphicsUnitConversion (GraphicsUnit.Pixel, graphicsUnit, image.VerticalResolution, height);
+			}
+			DrawImage (image, new RectangleF(x,y,width,height));
 		}
 
 		/// <summary>
@@ -430,7 +447,16 @@ namespace System.Drawing
 			if (image == null)
 				throw new ArgumentNullException ("image");
 
-			DrawImage (image, new RectangleF (x, y, image.physicalSize.Width, image.physicalSize.Height), srcRect, srcUnit);
+			var width = image.physicalSize.Width;
+			var height = image.physicalSize.Height;
+
+			if (graphicsUnit != GraphicsUnit.Pixel) 
+			{
+				width = ConversionHelpers.GraphicsUnitConversion (GraphicsUnit.Pixel, graphicsUnit, image.HorizontalResolution, width);
+				height = ConversionHelpers.GraphicsUnitConversion (GraphicsUnit.Pixel, graphicsUnit, image.VerticalResolution, height);
+			}
+
+			DrawImage (image, new RectangleF (x, y, width, height), srcRect, srcUnit);
 		}
 
 		/// <summary>
