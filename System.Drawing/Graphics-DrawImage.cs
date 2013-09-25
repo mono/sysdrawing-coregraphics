@@ -249,7 +249,9 @@ namespace System.Drawing
 			var srcRect1 = srcRect;
 
 			// If the source units are not the same we need to convert them
-			if (srcUnit != graphicsUnit) {
+			// The reason we check for Pixel here is that our graphics already has the Pixel's baked into the model view transform
+			if (srcUnit != graphicsUnit && srcUnit != GraphicsUnit.Pixel) 
+			{
 				ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.HorizontalResolution, image.VerticalResolution,  ref srcRect1);
 			} 
 
@@ -339,7 +341,9 @@ namespace System.Drawing
 			var srcRect1 = srcRect;
 
 			// If the source units are not the same we need to convert them
-			if (srcUnit != graphicsUnit) {
+			// The reason we check for Pixel here is that our graphics already has the Pixel's baked into the model view transform
+			if (srcUnit != graphicsUnit && srcUnit != GraphicsUnit.Pixel) 
+			{
 				ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.HorizontalResolution, image.VerticalResolution,  ref srcRect1);
 			} 
 
@@ -460,7 +464,9 @@ namespace System.Drawing
 
 			var srcRect1 = srcRect;
 
-			if (srcUnit != graphicsUnit) 
+			// If the source units are not the same we need to convert them
+			// The reason we check for Pixel here is that our graphics already has the Pixel's baked into the model view transform
+			if (srcUnit != graphicsUnit && srcUnit != GraphicsUnit.Pixel) 
 			{
 				ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.VerticalResolution, image.HorizontalResolution, ref srcRect1);
 			}
@@ -574,7 +580,9 @@ namespace System.Drawing
 			var srcRect1 = new RectangleF(srcX, srcY,srcWidth,srcHeight);
 
 			// If the source units are not the same we need to convert them
-			if (srcUnit != graphicsUnit) {
+			// The reason we check for Pixel here is that our graphics already has the Pixel's baked into the model view transform
+			if (srcUnit != graphicsUnit && srcUnit != GraphicsUnit.Pixel) 
+			{
 				ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.HorizontalResolution, image.VerticalResolution,  ref srcRect1);
 			} 
 
@@ -634,6 +642,7 @@ namespace System.Drawing
 					result = (CIImage)ciFilter.ValueForKey (new NSString ("outputImage"));
 				}
 
+
 				subImage = ciContext.CreateCGImage (result, result.Extent);
 			}
 
@@ -646,7 +655,7 @@ namespace System.Drawing
 			DrawImage (destRect, subImage, transform);
 
 		}
-		
+
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr)
 		{			
 			if (image == null)
