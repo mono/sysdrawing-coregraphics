@@ -125,6 +125,60 @@ namespace System.Drawing
 
 		}
 
+		internal static void GetGraphicsTransform(Graphics graphics, CoordinateSpace destinationSpace,
+		                                   CoordinateSpace sourceSpace, ref Matrix matrix)
+		{
+			float scale_x = 0;
+			float scale_y = 0;
+
+			matrix.Reset ();
+
+			if (destinationSpace != sourceSpace) 
+			{
+
+				scale_x = ConversionHelpers.GraphicsUnitConversion (graphics.PageUnit, GraphicsUnit.Pixel, graphics.DpiX, 1);
+				scale_y = ConversionHelpers.GraphicsUnitConversion (graphics.PageUnit, GraphicsUnit.Pixel, graphics.DpiY, 1);
+
+				if (graphics.PageUnit != GraphicsUnit.Display) 
+				{
+					scale_x *= graphics.PageScale;
+					scale_y *= graphics.PageScale;
+				}
+
+				// Transform from sourceSpace to CoordinateSpace.Page 
+				switch (sourceSpace) {
+				case CoordinateSpace.World:
+					matrix.Multiply(graphics.modelMatrix, MatrixOrder.Append);
+					break;
+				case CoordinateSpace.Page:
+					break; 
+				case CoordinateSpace.Device:
+					matrix.Scale (1.0f / scale_x, 1.0f / scale_y, MatrixOrder.Append);
+					break;
+				}
+
+				// Transform from CoordinateSpace.Page to destinationSpace 
+				switch (destinationSpace) {
+				case CoordinateSpace.World:
+					var destWorld = graphics.Transform;
+					if (destWorld.IsInvertible) 
+					{
+						destWorld.Invert ();
+						matrix.Multiply (destWorld, MatrixOrder.Append);
+					}
+					break;
+				case CoordinateSpace.Page:
+					break;
+				case CoordinateSpace.Device:
+					matrix.Scale (scale_x, scale_y, MatrixOrder.Append);
+					break;
+				}
+
+			}
+		}
+
+
+
 		internal static float[] ElementsRGBA (this Color color)
 		{
 			float[] elements = new float[4];

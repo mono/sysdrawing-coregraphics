@@ -933,7 +933,7 @@ namespace System.Drawing {
 				{
 				case CombineMode.Replace:
 					// Set our clip region by cloning the region that is passed for now
-					clipRegion = region.Clone();
+					clipRegion = region.Clone ();
 
 					//Unlike the current path, the current clipping path is part of the graphics state. 
 					//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
@@ -1937,7 +1937,9 @@ namespace System.Drawing {
 			if (pts == null)
 				throw new ArgumentNullException ("pts");
 
-			throw new NotImplementedException ();
+			Matrix transform = new Matrix();
+			ConversionHelpers.GetGraphicsTransform (this, destSpace, srcSpace, ref transform);
+			transform.TransformPoints (pts);
 		}
 
 
@@ -1945,8 +1947,12 @@ namespace System.Drawing {
 		{						
 			if (pts == null)
 				throw new ArgumentNullException ("pts");
-          throw new NotImplementedException ();
+
+			Matrix transform = new Matrix();
+			ConversionHelpers.GetGraphicsTransform (this, destSpace, srcSpace, ref transform);
+			transform.TransformPoints (pts);
+
 		}
-		
+
 	}
 }
