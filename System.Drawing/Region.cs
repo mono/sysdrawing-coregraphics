@@ -29,10 +29,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System.Drawing.Drawing2D;
 
-namespace System.Drawing {
+namespace System.Drawing 
+{
 
-	public sealed class Region : MarshalByRefObject, IDisposable {
+	public sealed class Region : MarshalByRefObject, IDisposable 
+	{
 
 		internal static RectangleF infinite = new RectangleF(4194304, 4194304, 8388608, 8388608);
 		internal object regionObject; 
@@ -99,6 +102,20 @@ namespace System.Drawing {
 //		public bool IsInfinite(Graphics g)
 //		{
 //		}
+		public void Transform(Matrix matrix)
+		{
+			if (!IsEmpty && !IsInfinite) 
+			{
+				if (regionObject is RectangleF) 
+				{
+					var rect = (RectangleF)regionObject;
+					//GeomUtilities.TransformRectangle (ref rect, matrix);
+					regionObject = rect.Transform (matrix);
+					//regionObject = rect;
+				}
+			}
+		}
+
 		internal RectangleF GetBounds()
 		{
 			RectangleF? rect = null;

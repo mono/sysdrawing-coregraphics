@@ -461,6 +461,45 @@ namespace System.Drawing
 		}
 
 
+		internal static void TransformRectangle (ref RectangleF rectangle, Matrix matrix)
+		{
+			var transform = matrix.transform;
+			var x = rectangle.X;
+			var y = rectangle.Y;
+
+			rectangle.X = transform.xx * x + transform.xy * y + transform.x0;
+			rectangle.Y = transform.yx * x + transform.yy * y + transform.y0;
+
+			x = rectangle.Width;
+			y = rectangle.Height;
+
+			rectangle.Width = transform.xx * x + transform.xy * y + transform.x0;
+			rectangle.Height = transform.yx * x + transform.yy * y + transform.y0;
+
+		}
+
+
+		/// <summary>
+		/// Transform the specified Rectangle by the matrix that is passed.
+		/// </summary>
+		/// <param name="matrix">Matrix.</param>
+		internal static RectangleF Transform (this RectangleF rectangle, Matrix matrix) 
+		{
+			var transform = matrix.transform;
+			var x = rectangle.X;
+			var y = rectangle.Y;
+
+			rectangle.X = transform.xx * x + transform.xy * y + transform.x0;
+			rectangle.Y = transform.yx * x + transform.yy * y + transform.y0;
+
+			x = rectangle.Width;
+			y = rectangle.Height;
+
+			rectangle.Width = transform.xx * x + transform.xy * y + transform.x0;
+			rectangle.Height = transform.yx * x + transform.yy * y + transform.y0;
+
+			return new RectangleF (rectangle.Location, rectangle.Size);;
+		}
 	}
 }
 
