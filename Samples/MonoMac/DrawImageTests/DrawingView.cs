@@ -273,31 +273,7 @@ namespace DrawImageTests
 
 			g.SetClip( new Rectangle(120, 120, 50, 100) );
 
-			PointF[] p1 = new PointF[]{
-				new PointF(120, 120),
-				new PointF(50, 100)
-			};
-
-			var elements = g.Transform.Elements;
-			Console.WriteLine("PageUnit {0} - Transform {1} {2} {3} {4} {5} {6}", g.PageUnit, elements[0], elements[1], elements[2],
-			                  elements[3],elements[4],elements[5]);
-			for (int x = 0; x < 3; x++)
-			{
-				for (int y = 0; y < 3; y++)
-				{
-					PointF[] p2 = new PointF[] { p1[0], p1[1] };
-
-					g.TransformPoints((CoordinateSpace)y, (CoordinateSpace)x, p2);
-					Console.WriteLine("from {0} to {1} -> pt1 {2} - pt2 {3}", (CoordinateSpace)x, (CoordinateSpace)y, p2[0], p2[1]);
-				}
-
-
-			}
-
 			g.DrawImage(bmp2, p, new Rectangle(100, 100, 100, 100), GraphicsUnit.Pixel);
-
-			g.TransformPoints(CoordinateSpace.Device, CoordinateSpace.World, p1);
-			g.DrawRectangle(new Pen(Color.Green), new RectangleF(p1[0].X, p1[0].Y, p1[1].X, p1[1].Y));
 			title = "DrawImagePageUnitClip";
 		}
 	}

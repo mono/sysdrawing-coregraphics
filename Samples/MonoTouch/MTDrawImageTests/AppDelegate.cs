@@ -27,6 +27,7 @@ namespace MTDrawImageTests
 			window = new UIWindow (UIScreen.MainScreen.Bounds);
 			
 			viewController = new MTDrawImageTestsViewController ();
+			viewController.View.AddSubview (new DrawingView (window.Bounds));
 			window.RootViewController = viewController;
 			window.MakeKeyAndVisible ();
 			

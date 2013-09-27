@@ -135,6 +135,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTTextureBrushTest", "Sampl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTLinearGradientBrushTest", "Samples\MonoTouch\MTLinearGradientBrushTest\MTLinearGradientBrushTest.csproj", "{67375DDB-4C86-4581-966E-48DE06FAD73C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTDrawImageTests", "Samples\MonoTouch\MTDrawImageTests\MTDrawImageTests.csproj", "{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -520,6 +522,20 @@ Global
 		{6AD31F19-B316-4BCB-8341-A47E8D2C80E2}.Release|iPhone.Build.0 = Release|iPhone
 		{6AD31F19-B316-4BCB-8341-A47E8D2C80E2}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{6AD31F19-B316-4BCB-8341-A47E8D2C80E2}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.AppStore|iPhone.Build.0 = AppStore|iPhone
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.AppStore|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.AppStore|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Debug|iPhone.Build.0 = Debug|iPhone
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Release|iPhone.ActiveCfg = Release|iPhone
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Release|iPhone.Build.0 = Release|iPhone
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{6E5F3A60-E77D-4F3E-964E-523D3A94BFCA}.AppStore|iPhoneSimulator.ActiveCfg = AppStore|iPhoneSimulator
 		{6E5F3A60-E77D-4F3E-964E-523D3A94BFCA}.AppStore|iPhoneSimulator.Build.0 = AppStore|iPhoneSimulator
 		{6E5F3A60-E77D-4F3E-964E-523D3A94BFCA}.Debug|iPhone.ActiveCfg = Debug|iPhoneSimulator
@@ -1064,9 +1080,10 @@ Global
 		{D0898A1D-70D3-4795-9ED0-3CDDA45A5D70} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 		{634F6423-7778-4682-8EE8-096F8EE17415} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 		{67375DDB-4C86-4581-966E-48DE06FAD73C} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Samples\MonoMac\DrawImageTests\DrawImageTests.csproj
+		StartupItem = Samples\MonoTouch\MTDrawImageTests\MTDrawImageTests.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.inheritsSet = Mono
