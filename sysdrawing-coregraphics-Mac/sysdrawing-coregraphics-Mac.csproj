@@ -15,7 +15,7 @@
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG; MONOMAC; MAISONABE; STATIC_PREMULTIPLY_TABLES</DefineConstants>
+    <DefineConstants>DEBUG; MONOMAC; MAISONABE; STATIC_PREMULTIPLY_TABLES1</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>

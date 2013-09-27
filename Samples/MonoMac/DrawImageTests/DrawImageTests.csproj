@@ -101,5 +101,7 @@
   <ItemGroup>
     <Content Include="bitmap25.png" />
     <Content Include="bitmap50.png" />
+    <Content Include="grapeeyes.gif" />
+    <Content Include="opice-chuze-framy.gif" />
   </ItemGroup>
 </Project>
