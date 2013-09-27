@@ -102,12 +102,12 @@ namespace System.Drawing {
 		{
 			this.context = context;
 			
-			boundingBox = context.GetClipBoundingBox();
-
 			modelMatrix = new Matrix();
 			viewMatrix = new Matrix();
 
 			ResetTransform();
+
+			boundingBox = context.GetClipBoundingBox();
 
 			// We are going to try this here and it may cause problems down the road.
 			// This seems to only happen with Mac and not iOS
@@ -364,9 +364,24 @@ namespace System.Drawing {
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
 
+#if MONOTOUCH
+			// DrawLine is throwing an assertion error on MonoTouch
+			// Assertion failed: (CGFloatIsValid(x) && CGFloatIsValid(y))
+			// , function void CGPathAddLineToPoint(CGMutablePathRef, const CGAffineTransform *, CGFloat, CGFloat)
+			// What we will do here is not draw the line at all if any of the points are Single.NaN
+			if (!float.IsNaN(pt1.X) && !float.IsNaN(pt1.Y) &&
+			    !float.IsNaN(pt2.X) && !float.IsNaN(pt2.Y)) 
+			{
+				MoveTo (pt1.X, pt1.Y);
+				LineTo (pt2.X, pt2.Y);
+				StrokePen (pen);
+			}
+#else
+
 			MoveTo (pt1.X, pt1.Y);
 			LineTo (pt2.X, pt2.Y);
 			StrokePen (pen);
+#endif
 		}
 
 		public void DrawLine (Pen pen, int x1, int y1, int x2, int y2)
