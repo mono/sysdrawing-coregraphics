@@ -76,15 +76,31 @@ namespace System.Drawing {
 
 		public Bitmap (string filename)
 		{
-			// Use Image IO
-			dataProvider = new CGDataProvider(filename);
+			if (filename == null)
+				throw new ArgumentNullException ("Value can not be null");
 
-			InitializeImageFrame (0);
+			try 
+			{
+				// Use Image IO
+				dataProvider = new CGDataProvider(filename);
+				if (dataProvider == null)
+					throw new FileNotFoundException ("File {0} not found.", filename);
+
+				InitializeImageFrame (0);
+			}
+			catch (Exception exc) 
+			{
+				throw new FileNotFoundException ("File {0} not found.", filename);
+			}
+
 
 		}
 
 		public Bitmap (Stream stream, bool useIcm)
 		{
+			if (stream == null)
+				throw new ArgumentNullException ("Value can not be null");
+
 			// false: stream is owned by user code
 			//nativeObject = InitFromStream (stream);
 			// TODO
