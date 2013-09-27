@@ -57,6 +57,7 @@ namespace System.Drawing {
 		private PointF renderingOrigin = PointF.Empty;
 		private RectangleF subviewClipOffset = RectangleF.Empty;
 		private Region clipRegion;
+		private float screenScale;
 
 		public Graphics (CGContext context, bool flipped = true)
 		{
@@ -71,7 +72,7 @@ namespace System.Drawing {
 
 			var gc = UIGraphics.GetCurrentContext ();
 			nativeObject = gc;
-			
+			screenScale = UIScreen.MainScreen.Scale;
 			InitializeContext(gc);
 		}
 #endif
@@ -101,7 +102,7 @@ namespace System.Drawing {
 		private void InitializeContext(CGContext context) 
 		{
 			this.context = context;
-			
+
 			modelMatrix = new Matrix();
 			viewMatrix = new Matrix();
 
@@ -850,6 +851,9 @@ namespace System.Drawing {
 			// * NOTE * Here we offset our drawing by the subview Clipping region of the Window
 			// this is so that we start at offset 0,0 for all of our graphic operations
 			viewMatrix.Translate(subviewClipOffset.Location.X, subviewClipOffset.Y, MatrixOrder.Append);
+
+			// Take into account retina diplays
+			viewMatrix.Scale(screenScale, screenScale);
 
 			userspaceScaleX = GraphicsUnitConvertX(1) * pageScale;
 			userspaceScaleY = GraphicsUnitConvertY(1) * pageScale;
