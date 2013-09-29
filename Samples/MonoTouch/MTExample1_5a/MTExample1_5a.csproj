@@ -94,7 +94,8 @@
     <Compile Include="DrawingView.cs" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="MTExample1_5aViewController.xib" />
+    <InterfaceDefinition Include="MTExample1_5aViewController_iPad.xib" />
+    <InterfaceDefinition Include="MTExample1_5aViewController_iPhone.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
