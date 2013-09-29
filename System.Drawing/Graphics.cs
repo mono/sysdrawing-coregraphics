@@ -73,7 +73,6 @@ namespace System.Drawing {
 			var gc = UIGraphics.GetCurrentContext ();
 			nativeObject = gc;
 			screenScale = UIScreen.MainScreen.Scale;
-			//screenScale = 1;
 			InitializeContext(gc);
 		}
 #endif
