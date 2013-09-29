@@ -96,7 +96,8 @@
     <Compile Include="PointC.cs" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="MTExample1_9ViewController.xib" />
+    <InterfaceDefinition Include="MTExample1_9ViewController_iPad.xib" />
+    <InterfaceDefinition Include="MTExample1_9ViewController_iPhone.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
