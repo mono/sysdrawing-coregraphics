@@ -73,6 +73,7 @@ namespace System.Drawing {
 			var gc = UIGraphics.GetCurrentContext ();
 			nativeObject = gc;
 			screenScale = UIScreen.MainScreen.Scale;
+			//screenScale = 1;
 			InitializeContext(gc);
 		}
 #endif
@@ -90,7 +91,7 @@ namespace System.Drawing {
 			//			NSValue asdf = (NSValue)attribs["NSDeviceResolution"];
 			//			var size = asdf.SizeFValue;
 			// ----------------------
-
+			screenScale = 1;
 			nativeObject = gc;
 
 			isFlipped = gc.IsFlipped;
