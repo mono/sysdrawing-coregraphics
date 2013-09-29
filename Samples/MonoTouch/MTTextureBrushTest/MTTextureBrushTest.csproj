@@ -94,7 +94,8 @@
     <Compile Include="DrawingView.cs" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="MTTextureBrushTestViewController.xib" />
+    <InterfaceDefinition Include="MTTextureBrushTestViewController_iPad.xib" />
+    <InterfaceDefinition Include="MTTextureBrushTestViewController_iPhone.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

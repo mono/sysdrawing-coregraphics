@@ -15,7 +15,7 @@ namespace MTExample3_2
 		{
 			ContentMode = UIViewContentMode.Redraw;
 			this.AutoresizingMask = UIViewAutoresizing.All;
-			var bgc = Color.White;
+			var bgc = Color.Wheat;
 			BackgroundColor = UIColor.FromRGBA(bgc.R,bgc.G,bgc.B, bgc.A);
 
 			dc = new DataCollection();

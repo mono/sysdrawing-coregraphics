@@ -100,7 +100,8 @@
     <Compile Include="LineStyle.cs" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="MTExample3_4ViewController.xib" />
+    <InterfaceDefinition Include="MTExample3_4ViewController_iPad.xib" />
+    <InterfaceDefinition Include="MTExample3_4ViewController_iPhone.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

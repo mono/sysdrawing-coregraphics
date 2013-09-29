@@ -97,7 +97,8 @@
     <Compile Include="DrawingView.cs" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="MTLinearGradientBrushTestViewController.xib" />
+    <InterfaceDefinition Include="MTLinearGradientBrushTestViewController_iPad.xib" />
+    <InterfaceDefinition Include="MTLinearGradientBrushTestViewController_iPhone.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

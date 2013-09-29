@@ -97,7 +97,8 @@
     <Compile Include="DrawingView.cs" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="MTDrawImageTestsViewController.xib" />
+    <InterfaceDefinition Include="MTDrawImageTestsViewController_iPad.xib" />
+    <InterfaceDefinition Include="MTDrawImageTestsViewController_iPhone.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

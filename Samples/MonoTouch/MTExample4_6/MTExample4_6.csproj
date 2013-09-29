@@ -99,7 +99,8 @@
     <Compile Include="Legend.cs" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="MTExample4_6ViewController.xib" />
+    <InterfaceDefinition Include="MTExample4_6ViewController_iPad.xib" />
+    <InterfaceDefinition Include="MTExample4_6ViewController_iPhone.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -98,7 +98,8 @@
     <Compile Include="PlotPanel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="MTExample5_5ViewController.xib" />
+    <InterfaceDefinition Include="MTExample5_5ViewController_iPad.xib" />
+    <InterfaceDefinition Include="MTExample5_5ViewController_iPhone.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

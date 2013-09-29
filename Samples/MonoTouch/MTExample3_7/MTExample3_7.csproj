@@ -102,7 +102,8 @@
     <Compile Include="SymbolStyle.cs" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="MTExample3_7ViewController.xib" />
+    <InterfaceDefinition Include="MTExample3_7ViewController_iPad.xib" />
+    <InterfaceDefinition Include="MTExample3_7ViewController_iPhone.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -7,7 +7,12 @@ namespace MTDrawImageTests
 {
 	public partial class MTDrawImageTestsViewController : UIViewController
 	{
-		public MTDrawImageTestsViewController () : base ("MTDrawImageTestsViewController", null)
+		static bool UserInterfaceIdiomIsPhone {
+			get { return UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone; }
+		}
+
+		public MTDrawImageTestsViewController ()
+			: base (UserInterfaceIdiomIsPhone ? "MTDrawImageTestsViewController_iPhone" : "MTDrawImageTestsViewController_iPad", null)
 		{
 		}
 
@@ -29,7 +34,11 @@ namespace MTDrawImageTests
 		public override bool ShouldAutorotateToInterfaceOrientation (UIInterfaceOrientation toInterfaceOrientation)
 		{
 			// Return true for supported orientations
-			return (toInterfaceOrientation != UIInterfaceOrientation.PortraitUpsideDown);
+			if (UserInterfaceIdiomIsPhone) {
+				return (toInterfaceOrientation != UIInterfaceOrientation.PortraitUpsideDown);
+			} else {
+				return true;
+			}
 		}
 	}
 }

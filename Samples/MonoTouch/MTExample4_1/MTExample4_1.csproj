@@ -99,7 +99,8 @@
     <Compile Include="ChartCanvas.cs" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="MTExample4_1ViewController.xib" />
+    <InterfaceDefinition Include="MTExample4_1ViewController_iPad.xib" />
+    <InterfaceDefinition Include="MTExample4_1ViewController_iPhone.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

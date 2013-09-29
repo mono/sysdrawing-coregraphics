@@ -7,7 +7,12 @@ namespace MTLinearGradientBrushTest
 {
 	public partial class MTLinearGradientBrushTestViewController : UIViewController
 	{
-		public MTLinearGradientBrushTestViewController () : base ("MTLinearGradientBrushTestViewController", null)
+		static bool UserInterfaceIdiomIsPhone {
+			get { return UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone; }
+		}
+
+		public MTLinearGradientBrushTestViewController ()
+			: base (UserInterfaceIdiomIsPhone ? "MTLinearGradientBrushTestViewController_iPhone" : "MTLinearGradientBrushTestViewController_iPad", null)
 		{
 		}
 
@@ -29,7 +34,11 @@ namespace MTLinearGradientBrushTest
 		public override bool ShouldAutorotateToInterfaceOrientation (UIInterfaceOrientation toInterfaceOrientation)
 		{
 			// Return true for supported orientations
-			return (toInterfaceOrientation != UIInterfaceOrientation.PortraitUpsideDown);
+			if (UserInterfaceIdiomIsPhone) {
+				return (toInterfaceOrientation != UIInterfaceOrientation.PortraitUpsideDown);
+			} else {
+				return true;
+			}
 		}
 	}
 }

@@ -1,6 +1,5 @@
 using System;
 using System.Drawing;
-
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
@@ -8,10 +7,15 @@ namespace MTExample3_1
 {
 	public partial class MTExample3_1ViewController : UIViewController
 	{
-		public MTExample3_1ViewController () : base ("MTExample3_1ViewController", null)
+		static bool UserInterfaceIdiomIsPhone {
+			get { return UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone; }
+		}
+
+		public MTExample3_1ViewController ()
+			: base (UserInterfaceIdiomIsPhone ? "MTExample3_1ViewController_iPhone" : "MTExample3_1ViewController_iPad", null)
 		{
 		}
-		
+
 		public override void DidReceiveMemoryWarning ()
 		{
 			// Releases the view if it doesn't have a superview.
@@ -19,30 +23,22 @@ namespace MTExample3_1
 			
 			// Release any cached data, images, etc that aren't in use.
 		}
-		
+
 		public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
 			
 			// Perform any additional setup after loading the view, typically from a nib.
 		}
-		
-		public override void ViewDidUnload ()
-		{
-			base.ViewDidUnload ();
-			
-			// Clear any references to subviews of the main view in order to
-			// allow the Garbage Collector to collect them sooner.
-			//
-			// e.g. myOutlet.Dispose (); myOutlet = null;
-			
-			ReleaseDesignerOutlets ();
-		}
-		
+
 		public override bool ShouldAutorotateToInterfaceOrientation (UIInterfaceOrientation toInterfaceOrientation)
 		{
 			// Return true for supported orientations
-			return true;
+			if (UserInterfaceIdiomIsPhone) {
+				return (toInterfaceOrientation != UIInterfaceOrientation.PortraitUpsideDown);
+			} else {
+				return true;
+			}
 		}
 	}
 }
