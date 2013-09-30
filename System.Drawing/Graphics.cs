@@ -946,6 +946,9 @@ namespace System.Drawing {
 		
 		public void SetClip (Region region, CombineMode combineMode)
 		{
+			// We need to reset the clip that is active now so that the graphic
+			// states are correct when we set them.
+			ResetClip ();
 
 			if (clipRegion.regionObject is RectangleF) {
 				switch (combineMode) 
