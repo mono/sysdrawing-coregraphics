@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
+using MonoTouch.CoreGraphics;
 
 namespace MTDrawImageTests
 {
@@ -171,7 +172,7 @@ namespace MTDrawImageTests
 		Rectangle dst = new Rectangle(170, 170, 100, 100);
 		RectangleF dstF = new Rectangle(270, 270, 100, 100);
 
-		int currentView = 14;
+		int currentView = 15;
 		int totalViews = 17;
 
 		string title = string.Empty;
@@ -230,7 +231,12 @@ namespace MTDrawImageTests
 			case 14:
 				DrawImageTranslateClip (g);
 				break;
-
+			case 15:
+				FillRegionIntersect (g);
+				break;
+			case 16:
+				DrawImageIntersectClip (g);
+				break;
 			}
 
 			g.PageUnit = GraphicsUnit.Pixel;
@@ -384,6 +390,61 @@ namespace MTDrawImageTests
 			// Fill rectangle to demonstrate translated clip region.
 			g.FillRectangle(new SolidBrush(Color.Black), 0, 0, 500, 300);
 			title = "DrawImageTranslateClip";
+		}
+
+		void FillRegionIntersect(Graphics g)
+		{
+			// Create the first rectangle and draw it to the screen in black.
+			Rectangle regionRect = new Rectangle(20, 20, 100, 100);
+			g.DrawRectangle(Pens.Black, regionRect);
+
+			// create the second rectangle and draw it to the screen in red.
+			RectangleF complementRect = new RectangleF(90, 30, 100, 100);
+			g.DrawRectangle(Pens.Red,
+			                Rectangle.Round(complementRect));
+
+			// Create a region using the first rectangle.
+			Region myRegion = new Region(regionRect);
+
+			// Get the area of intersection for myRegion when combined with 
+
+			// complementRect.
+			myRegion.Intersect(complementRect);
+
+			// Fill the intersection area of myRegion with blue.
+			SolidBrush myBrush = new SolidBrush(Color.Blue);
+			g.FillRegion(myBrush, myRegion);
+
+			title = "FillRegionInterset";
+		}
+
+		void DrawImageIntersectClip(Graphics g)
+		{
+			// Create the first rectangle and draw it to the screen in black.
+			Rectangle regionRect = new Rectangle(20, 20, 100, 100);
+			g.DrawRectangle(Pens.Black, regionRect);
+
+			// create the second rectangle and draw it to the screen in red.
+			RectangleF complementRect = new RectangleF(90, 30, 100, 100);
+			g.DrawRectangle(Pens.Red,
+			                Rectangle.Round(complementRect));
+
+			// Create a region using the first rectangle.
+			Region myRegion = new Region(regionRect);
+
+			// Get the area of intersection for myRegion when combined with 
+			// complementRect.
+			myRegion.Intersect(complementRect);
+
+			var unionRect = complementRect.UnionWith (regionRect);
+			g.DrawRectangle(Pens.Green,
+			                Rectangle.Round(unionRect));
+
+			g.Clip = myRegion;
+
+			g.DrawImage(bmp2, unionRect);
+
+			title = "DrawImageIntersetClip";
 		}
 	}
 }

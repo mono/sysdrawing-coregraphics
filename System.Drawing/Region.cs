@@ -115,6 +115,25 @@ namespace System.Drawing
 //		public bool IsInfinite(Graphics g)
 //		{
 //		}
+
+		public void MakeInfinite() 
+		{
+			if (regionObject is RectangleF) 
+			{
+				regionObject = infinite;
+			}
+
+		}
+
+		public void MakeEmpty() 
+		{
+			if (regionObject is RectangleF) 
+			{
+				regionObject = RectangleF.Empty;
+			}
+
+		}
+
 		public void Transform(Matrix matrix)
 		{
 			if (!IsEmpty && !IsInfinite) 
@@ -139,6 +158,31 @@ namespace System.Drawing
 		{
 			var translateMatrix = new Matrix(CGAffineTransform.MakeTranslation(dx, dy));
 			Transform (translateMatrix);
+		}
+
+		public void Intersect(Rectangle rect)
+		{
+			Intersect ((RectangleF)rect);
+		}
+
+		public void Intersect(RectangleF rect)
+		{
+
+			if (regionObject is RectangleF) 
+			{
+				// if it is infinite then we just replace rectangle.
+				// Regions that are empty will still be empty with an intersection.
+				if (IsInfinite) 
+				{
+					regionObject = rect;
+				}
+				else 
+				{
+					var iRect = (RectangleF)regionObject;
+					iRect.Intersect (rect);
+					regionObject = iRect;
+				}
+			}
 		}
 
 		internal RectangleF GetBounds()

@@ -539,7 +539,11 @@ namespace System.Drawing {
 			if (region == null)
 				throw new ArgumentNullException ("region");
 
-			throw new NotImplementedException ();
+			if (region.IsEmpty)
+				return;
+
+			if (region.regionObject is RectangleF)
+				FillRectangle (brush, (RectangleF)region.regionObject);
 		}
 
 		public void DrawEllipse (Pen pen, RectangleF rect)
