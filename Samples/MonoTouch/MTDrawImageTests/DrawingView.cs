@@ -171,7 +171,7 @@ namespace MTDrawImageTests
 		Rectangle dst = new Rectangle(170, 170, 100, 100);
 		RectangleF dstF = new Rectangle(270, 270, 100, 100);
 
-		int currentView = 0;
+		int currentView = 14;
 		int totalViews = 17;
 
 		string title = string.Empty;
@@ -226,6 +226,9 @@ namespace MTDrawImageTests
 				break;
 				case 13:
 				DrawImagePageUnitClip (g);
+				break;
+			case 14:
+				DrawImageTranslateClip (g);
 				break;
 
 			}
@@ -363,6 +366,24 @@ namespace MTDrawImageTests
 
 			g.DrawImage(bmp2, p, new Rectangle(100, 100, 100, 100), GraphicsUnit.Pixel);
 			title = "DrawImagePageUnitClip";
+		}
+
+		void DrawImageTranslateClip(Graphics g)
+		{
+			// Create rectangle for clipping region.
+			Rectangle clipRect = new Rectangle(0, 0, 100, 100);
+
+			// Set clipping region of graphics to rectangle.
+			g.SetClip(clipRect);
+
+			// Translate clipping region. 
+			int dx = 50;
+			int dy = 50;
+			g.TranslateClip(dx, dy);
+
+			// Fill rectangle to demonstrate translated clip region.
+			g.FillRectangle(new SolidBrush(Color.Black), 0, 0, 500, 300);
+			title = "DrawImageTranslateClip";
 		}
 	}
 }

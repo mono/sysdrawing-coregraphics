@@ -29,6 +29,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+#if MONOMAC
+using MonoMac.CoreGraphics;
+//using MonoMac.AppKit;
+//using MonoMac.Foundation;
+//using MonoMac.CoreText;
+#else
+using MonoTouch.CoreGraphics;
+//using MonoTouch.UIKit;
+//using MonoTouch.Foundation;
+//using MonoTouch.CoreText;
+#endif
+
 using System.Drawing.Drawing2D;
 
 namespace System.Drawing 
@@ -114,6 +127,18 @@ namespace System.Drawing
 					//regionObject = rect;
 				}
 			}
+		}
+
+		public void Translate(int dx,int dy)
+		{
+			Translate ((float)dx, (float)dy);
+
+		}
+
+		public void Translate(float dx, float dy)
+		{
+			var translateMatrix = new Matrix(CGAffineTransform.MakeTranslation(dx, dy));
+			Transform (translateMatrix);
 		}
 
 		internal RectangleF GetBounds()

@@ -1156,12 +1156,13 @@ namespace System.Drawing {
 
 		public void TranslateClip (int dx, int dy)
 		{
-			throw new NotImplementedException ();
+			TranslateClip ((float)dx, (float)dy);
 		}
 		
 		public void TranslateClip (float dx, float dy)
 		{
-			throw new NotImplementedException ();
+			clipRegion.Translate (dx, dy);
+			SetClip (clipRegion, CombineMode.Replace);
 		}
 		
 		public void ResetClip ()
