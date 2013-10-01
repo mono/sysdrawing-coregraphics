@@ -64,6 +64,7 @@ namespace System.Drawing {
 			if (context == null)
 				throw new ArgumentNullException ("context");
 			isFlipped = flipped;
+			screenScale = 1;
 			InitializeContext(context);
 		}
 
