@@ -850,6 +850,13 @@ namespace System.Drawing {
 			}
 		}
 
+		public Color GetNearestColor(Color color)
+		{
+			// this uses a color pallette which we really do not implement
+			// so just return back the color passed for now.
+			return Color.FromArgb (color.ToArgb());
+		}
+
 		void setupView() 
 		{
 			initializeMatrix(ref viewMatrix, isFlipped);
