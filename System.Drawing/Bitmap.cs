@@ -62,6 +62,8 @@ namespace System.Drawing {
 		// if null, we created the bitmap in memory, otherwise, the backing file.
 		internal IntPtr bitmapBlock;
 
+		internal CGBitmapContext cachedContext;
+
 		// we will default this to one for now until we get some tests for other image types
 		internal int frameCount = 1;
 
@@ -509,6 +511,9 @@ namespace System.Drawing {
 		internal CGBitmapContext GetRenderableContext()
 		{
 
+			if (cachedContext != null && cachedContext.Handle != IntPtr.Zero)
+				return cachedContext;
+
 			var format = GetBestSupportedFormat (pixelFormat);
 			var bitmapContext = CreateCompatibleBitmapContext (NativeCGImage.Width, NativeCGImage.Height, format);
 
@@ -524,7 +529,9 @@ namespace System.Drawing {
 			                             bitmapContext.AlphaInfo,
 			                             provider, null, true, CGColorRenderingIntent.Default);
 			colorSpace.Dispose ();
-			return bitmapContext;
+			cachedContext = bitmapContext;
+
+			return cachedContext;
 		}
 
 		internal void RotateFlip (RotateFlipType rotateFlipType)
@@ -891,15 +898,54 @@ namespace System.Drawing {
 		
 		public Color GetPixel (int x, int y)
 		{
-			if (x < 0 || x > NativeCGImage.Width)
+			if (x < 0 || x > NativeCGImage.Width - 1)
 				throw new InvalidEnumArgumentException ("Parameter must be positive and < Width.");
-			if (y < 0 || y > NativeCGImage.Height)
+			if (y < 0 || y > NativeCGImage.Height - 1)
 				throw new InvalidEnumArgumentException ("Parameter must be positive and < Height.");
 
-			// TODO
-			return Color.White;
+			// Need more tests to see if we need this call.
+			MakeSureWeHaveAnAlphaChannel ();
+
+			// We are going to cheat here and instead of reading the bytes of the original image
+			// parsing from there a pixel and converting to a format we will just create 
+			// a 1 x 1 image of the pixel that we want.  I am supposing this should be really
+			// fast.
+			var pixelImage = NativeCGImage.WithImageInRect(new RectangleF(x,y,1,1));
+
+			var pData = pixelImage.DataProvider;
+			var nData = pData.CopyData ();
+
+			// We may have to parse out the bytes with 4 or 3 bytes per pixel later.
+			var pixelColor = Color.FromArgb(nData[3], nData[0], nData[1], nData[2]);
+			pixelImage.Dispose ();
+
+			return pixelColor;
 		}
-		
+
+		public void SetPixel (int x, int y, Color color)
+		{
+			if (x < 0 || x > NativeCGImage.Width - 1)
+				throw new InvalidEnumArgumentException ("Parameter must be positive and < Width.");
+			if (y < 0 || y > NativeCGImage.Height - 1)
+				throw new InvalidEnumArgumentException ("Parameter must be positive and < Height.");
+
+
+			MakeSureWeHaveAnAlphaChannel ();
+
+			// We are going to cheat here by drawing directly to the cached context that is 
+			// associated to the image.  This way we do not have to play with pixels and offsets
+			// to change the data.  If this proves to be non performant then we will change it later.
+			cachedContext.SaveState ();
+			cachedContext.ConcatCTM (cachedContext.GetCTM ().Invert ());
+			cachedContext.ConcatCTM (imageTransform);
+			cachedContext.SetFillColor(color.ToCGColor());
+			cachedContext.FillRect (new RectangleF(x,y, 1,1));
+			cachedContext.FillPath ();
+			cachedContext.RestoreState();
+
+		}
+
+
 		public void SetResolution (float xDpi, float yDpi)
 		{
 			throw new NotImplementedException ();
@@ -913,7 +959,8 @@ namespace System.Drawing {
 			// did not work.
 			//      bitmap.SetPixel(0, bitmap.Height - 1, Color.Magenta);ß
 
-			MakeTransparent (Color.White);
+			MakeTransparent (GetPixel(0, Height-1));
+
 		}
 
 		public void MakeTransparent(Color transparentColor)
@@ -934,11 +981,11 @@ namespace System.Drawing {
 			var green = Color.Transparent.G;
 			var blue = Color.Transparent.B;
 
-//			byte alphar = Color.Transparent.A;
-//			byte redr = Color.Transparent.R;
-//			byte greenr = Color.Transparent.G;
-//			byte bluer = Color.Transparent.B;
-//		
+			byte alphar = Color.Transparent.A;
+			byte redr = Color.Transparent.R;
+			byte greenr = Color.Transparent.G;
+			byte bluer = Color.Transparent.B;
+		
 			bool match = false;
 
 			var pixelSize = GetPixelFormatComponents (pixelFormat);
@@ -948,15 +995,15 @@ namespace System.Drawing {
 					byte* row = (byte*)bmpData.Scan0 + (y * bmpData.Stride);
 					for (int x=0; x<bmpData.Stride; x=x+pixelSize) {
 
-//						redr = row [x + 2];;
-//						greenr = row [x + 1];
-//						bluer = row [x];
-//						alphar = row [x + 3];
-//
+						redr = row [x + 2];;
+						greenr = row [x + 1];
+						bluer = row [x];
+						alphar = row [x + 3];
+
 						match = false;
 
-						if (row [x] == colorValues [0] && row [x + 1] == colorValues [1]
-							&& row [x + 2] == colorValues [2] && row [x + 3] == colorValues [3]) 
+						if (row [x + 2] == colorValues [0] && row [x + 1] == colorValues [1]
+							&& row [x] == colorValues [2] && row [x + 3] == colorValues [3]) 
 							match = true;
 
 
@@ -982,13 +1029,17 @@ namespace System.Drawing {
 		private void MakeSureWeHaveAnAlphaChannel ()
 		{
 
+			// Initialize our prmultiplied tables.
+			if (!ConversionHelpers.sTablesInitialized)
+				ConversionHelpers.CalculateTables ();
+
 			var alphaInfo = NativeCGImage.AlphaInfo;
 			var hasAlpha = ((alphaInfo == CGImageAlphaInfo.PremultipliedLast) 
 			                || (alphaInfo == CGImageAlphaInfo.PremultipliedFirst) 
 			                || (alphaInfo == CGImageAlphaInfo.Last) 
 			                || (alphaInfo == CGImageAlphaInfo.First) ? true : false);
 
-			if (hasAlpha && bitmapBlock != IntPtr.Zero) 
+			if (cachedContext != null && cachedContext.Handle != IntPtr.Zero) 
 			{
 				return;
 			}
@@ -999,22 +1050,29 @@ namespace System.Drawing {
 			rawFormat = ImageFormat.MemoryBmp;
 
 			//format = GetBestSupportedFormat (pixelFormat);
-			var bitmapContext = CreateCompatibleBitmapContext (NativeCGImage.Width, NativeCGImage.Height, pixelFormat);
+			cachedContext = CreateCompatibleBitmapContext (NativeCGImage.Width, NativeCGImage.Height, pixelFormat);
 
 			// Fill our pixel data with the actual image information
-			bitmapContext.DrawImage (new RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
+			cachedContext.DrawImage (new RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
 
 			// Dispose of the prevous image that is allocated.
 			NativeCGImage.Dispose ();
 
 			// Get a reference to the pixel data
-			bitmapBlock = bitmapContext.Data;
+			bitmapBlock = cachedContext.Data;
+			int size = cachedContext.BytesPerRow * cachedContext.Height;
+			var provider = new CGDataProvider (cachedContext.Data, size, true);
 
 			// Get the image from the bitmap context.
-			NativeCGImage = bitmapContext.ToImage ();
+			//NativeCGImage = bitmapContext.ToImage ();
+			CGColorSpace colorSpace = CGColorSpace.CreateDeviceRGB();
+			NativeCGImage = new CGImage (cachedContext.Width, cachedContext.Height, cachedContext.BitsPerComponent, 
+			                             cachedContext.BitsPerPixel, cachedContext.BytesPerRow, 
+			                             colorSpace,
+			                             cachedContext.AlphaInfo,
+			                             provider, null, true, CGColorRenderingIntent.Default);
+			colorSpace.Dispose ();
 
-			// Dispose of the bitmap context as it is no longer needed
-			bitmapContext.Dispose ();
 		}
 
 
@@ -1098,7 +1156,6 @@ namespace System.Drawing {
 			}
 			Save (path, format);
 		}
-
 		public BitmapData LockBits (RectangleF rect, ImageLockMode flags, PixelFormat pixelFormat)
 		{
 
@@ -1156,10 +1213,33 @@ namespace System.Drawing {
 			return bitmapData;
 		}
 
+		[DllImport( "msvcrt.dll", EntryPoint = "memcpy", CallingConvention = CallingConvention.Cdecl, SetLastError = false )]
+		public static extern unsafe void memcpy( byte* dest, byte* src, int count );
+
+		static unsafe void RectangularCopy( byte* dstScanLine, byte* srcScanLine, int dstStride, int srcStride, int width, int height, int sizeOfPixel )
+		{
+			byte* srcRow = srcScanLine;
+			byte* dstRow = dstScanLine;
+			for( int y = 0; y < height; ++y ) {
+				memcpy( dstRow, srcRow, sizeOfPixel * width );
+				srcRow += srcStride;
+				dstRow += dstStride;
+			}
+		}
+
 		GCHandle pinnedScanArray;
+
+		ImageLockMode bitsLockMode = 0;
 
 		public void UnlockBits (BitmapData data)
 		{
+
+			if (bitsLockMode == ImageLockMode.ReadOnly)
+			{
+				pinnedScanArray.Free ();
+				bitsLockMode = 0;
+				return;
+			}
 
 			//int destStride = data.Width * (NativeCGImage.BitsPerPixel / NativeCGImage.BitsPerComponent);
 			int destStride = data.Stride;
@@ -1189,6 +1269,7 @@ namespace System.Drawing {
 
 			// we need to free our pointer
 			pinnedScanArray.Free();
+			bitsLockMode = 0;
 
 		}
 
