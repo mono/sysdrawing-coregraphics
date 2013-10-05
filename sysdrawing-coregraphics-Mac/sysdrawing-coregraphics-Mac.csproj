@@ -282,6 +282,9 @@
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\ColorAdjustType.cs">
       <Link>External\ColorAdjustType.cs</Link>
     </Compile>
+    <Compile Include="..\Utilities\ClipperLib\clipper.cs">
+      <Link>Utilities\ClipperLib\clipper.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -300,5 +303,6 @@
     <Folder Include="System.Drawing.Printing\" />
     <Folder Include="Utilities\" />
     <Folder Include="System.Drawing\" />
+    <Folder Include="Utilities\ClipperLib\" />
   </ItemGroup>
 </Project>

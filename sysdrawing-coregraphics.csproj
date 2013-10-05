@@ -231,12 +231,14 @@
     <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\ColorAdjustType.cs">
       <Link>External\ColorAdjustType.cs</Link>
     </Compile>
+    <Compile Include="Utilities\ClipperLib\clipper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />
     <Folder Include="Utilities\" />
     <Folder Include="System.Drawing.Text\" />
     <Folder Include="System.Drawing.Imaging\" />
+    <Folder Include="Utilities\ClipperLib\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
