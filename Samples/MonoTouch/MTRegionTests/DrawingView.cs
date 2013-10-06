@@ -210,6 +210,30 @@ namespace MTRegionTests
 				case 6:
 				FillRegionXor(g);
 				break;
+			case 7:
+				FillRegionInfiniteIntersect(g);
+				break;
+				case 8:
+				FillRegionInfiniteUnion(g);
+				break;
+				case 9:
+				FillRegionInfiniteExclude(g);
+				break;
+				case 10:
+				FillRegionInfiniteXor(g);
+				break;
+				case 11:
+				FillRegionEmptyIntersect(g);
+				break;
+				case 12:
+				FillRegionEmptyUnion(g);
+				break;
+				case 13:
+				FillRegionEmptyExclude(g);
+				break;
+				case 14:
+				FillRegionEmptyXor(g);
+				break;
 
 			}
 
@@ -447,6 +471,279 @@ namespace MTRegionTests
 
 			title = "FillRegionXor";
 		}
+
+		
+		void FillRegionInfiniteIntersect(Graphics g)
+		{
+
+			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+
+			// Create the first rectangle and draw it to the screen in black.
+			g.DrawRectangle(myPen, regionRect1);
+			g.FillRectangle(myBrush, regionRect1);
+
+			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+
+			// create the second rectangle and draw it to the screen in red.
+			g.DrawRectangle(myPen,
+			                Rectangle.Round(regionRectF2));
+			g.FillRectangle(myBrush, regionRect2);
+
+			// Create a region using the first rectangle.
+			Region myRegion = new Region();
+
+			// Get the area of intersection for myRegion when combined with 
+			// complementRect.
+			myRegion.Intersect(regionRectF2);
+
+			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+
+			g.FillRegion(myBrush, myRegion);
+
+			title = "FillRegionInfiniteIntersect";
+		}
+
+		void FillRegionInfiniteUnion(Graphics g)
+		{
+
+			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+
+			// Create the first rectangle and draw it to the screen in black.
+			g.DrawRectangle(myPen, regionRect1);
+			g.FillRectangle(myBrush, regionRect1);
+
+			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+
+			// create the second rectangle and draw it to the screen in red.
+			g.DrawRectangle(myPen,
+			                Rectangle.Round(regionRectF2));
+			g.FillRectangle(myBrush, regionRect2);
+
+			// Create a region using the first rectangle.
+			Region myRegion = new Region();
+
+			// Get the area of intersection for myRegion when combined with 
+			// complementRect.
+			myRegion.Union(regionRectF2);
+
+			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+
+			g.FillRegion(myBrush, myRegion);
+
+			title = "FillRegionInfiniteUnion";
+		}
+
+
+		void FillRegionInfiniteExclude(Graphics g)
+		{
+
+			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+
+			// Create the first rectangle and draw it to the screen in black.
+			g.DrawRectangle(myPen, regionRect1);
+			g.FillRectangle(myBrush, regionRect1);
+
+			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+
+			// create the second rectangle and draw it to the screen in red.
+			g.DrawRectangle(myPen,
+			                Rectangle.Round(regionRectF2));
+			g.FillRectangle(myBrush, regionRect2);
+
+			// Create a region using the first rectangle.
+			Region myRegion = new Region();
+
+			// Get the area of intersection for myRegion when combined with 
+			// complementRect.
+			myRegion.Exclude(regionRectF2);
+
+			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+
+			g.FillRegion(myBrush, myRegion);
+
+			title = "FillRegionInfiniteExclude";
+		}
+
+		void FillRegionInfiniteXor(Graphics g)
+		{
+
+			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+
+			// Create the first rectangle and draw it to the screen in black.
+			g.DrawRectangle(myPen, regionRect1);
+			g.FillRectangle(myBrush, regionRect1);
+
+			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+
+			// create the second rectangle and draw it to the screen in red.
+			g.DrawRectangle(myPen,
+			                Rectangle.Round(regionRectF2));
+			g.FillRectangle(myBrush, regionRect2);
+
+			// Create a region using the first rectangle.
+			Region myRegion = new Region();
+
+			// Get the area of intersection for myRegion when combined with 
+			// complementRect.
+			myRegion.Xor(regionRectF2);
+
+			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+
+			g.FillRegion(myBrush, myRegion);
+
+			title = "FillRegionInfiniteXor";
+		}
+
+
+		void FillRegionEmptyIntersect(Graphics g)
+		{
+
+			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+
+			// Create the first rectangle and draw it to the screen in black.
+			g.DrawRectangle(myPen, regionRect1);
+			g.FillRectangle(myBrush, regionRect1);
+
+			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+
+			// create the second rectangle and draw it to the screen in red.
+			g.DrawRectangle(myPen,
+			                Rectangle.Round(regionRectF2));
+			g.FillRectangle(myBrush, regionRect2);
+
+			// Create a region using the first rectangle.
+			Region myRegion = new Region();
+			myRegion.MakeEmpty();
+
+			// Get the area of intersection for myRegion when combined with 
+			// complementRect.
+			myRegion.Intersect(regionRectF2);
+
+			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+
+			g.FillRegion(myBrush, myRegion);
+
+			title = "FillRegionEmptyIntersect";
+		}
+
+		void FillRegionEmptyUnion(Graphics g)
+		{
+
+			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+
+			// Create the first rectangle and draw it to the screen in black.
+			g.DrawRectangle(myPen, regionRect1);
+			g.FillRectangle(myBrush, regionRect1);
+
+			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+
+			// create the second rectangle and draw it to the screen in red.
+			g.DrawRectangle(myPen,
+			                Rectangle.Round(regionRectF2));
+			g.FillRectangle(myBrush, regionRect2);
+
+			// Create a region using the first rectangle.
+			Region myRegion = new Region();
+			myRegion.MakeEmpty();
+
+			// Get the area of intersection for myRegion when combined with 
+			// complementRect.
+			myRegion.Union(regionRectF2);
+
+			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+
+			g.FillRegion(myBrush, myRegion);
+
+			title = "FillRegionEmptyUnion";
+		}
+
+
+		void FillRegionEmptyExclude(Graphics g)
+		{
+
+			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+
+			// Create the first rectangle and draw it to the screen in black.
+			g.DrawRectangle(myPen, regionRect1);
+			g.FillRectangle(myBrush, regionRect1);
+
+			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+
+			// create the second rectangle and draw it to the screen in red.
+			g.DrawRectangle(myPen,
+			                Rectangle.Round(regionRectF2));
+			g.FillRectangle(myBrush, regionRect2);
+
+			// Create a region using the first rectangle.
+			Region myRegion = new Region();
+			myRegion.MakeEmpty();
+
+			// Get the area of intersection for myRegion when combined with 
+			// complementRect.
+			myRegion.Exclude(regionRectF2);
+
+			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+
+			g.FillRegion(myBrush, myRegion);
+
+			title = "FillRegionEmptyExclude";
+		}
+
+		void FillRegionEmptyXor(Graphics g)
+		{
+
+			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+
+			// Create the first rectangle and draw it to the screen in black.
+			g.DrawRectangle(myPen, regionRect1);
+			g.FillRectangle(myBrush, regionRect1);
+
+			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+
+			// create the second rectangle and draw it to the screen in red.
+			g.DrawRectangle(myPen,
+			                Rectangle.Round(regionRectF2));
+			g.FillRectangle(myBrush, regionRect2);
+
+			// Create a region using the first rectangle.
+			Region myRegion = new Region();
+			myRegion.MakeEmpty();
+
+			// Get the area of intersection for myRegion when combined with 
+			// complementRect.
+			myRegion.Xor(regionRectF2);
+
+			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+
+			g.FillRegion(myBrush, myRegion);
+
+			title = "FillRegionEmptyXor";
+		}
+
 	}
 
 
