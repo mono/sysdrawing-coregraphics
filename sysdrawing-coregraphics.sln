@@ -71,6 +71,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinearGradientBrushTest", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrawImageTests", "Samples\MonoMac\DrawImageTests\DrawImageTests.csproj", "{1C81B532-1642-45E6-860A-A8F3817734E7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegionTests", "Samples\MonoMac\RegionTests\RegionTests.csproj", "{0B6BAA21-18FD-4F32-8620-30C01FA4F87A}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples.MonoTouch", "Samples.MonoTouch", "{9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sample", "Samples\MonoTouch\sample\sample.csproj", "{F6AEFFC5-4807-49A3-83C5-661E655CB59A}"
@@ -139,6 +141,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTDrawImageTests", "Samples
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTUniversalProject", "Samples\MonoTouch\MTUniversalProject\MTUniversalProject.csproj", "{9F03BED5-0328-43CE-840C-CFC229114515}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTRegionTests", "Samples\MonoTouch\MTRegionTests\MTRegionTests.csproj", "{27C7B295-F41F-4942-97AF-72C25B971C20}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -206,6 +210,20 @@ Global
 		{08EA9647-CF60-47F4-8E94-F3A148A115C5}.Release|iPhone.Build.0 = Release|iPhoneSimulator
 		{08EA9647-CF60-47F4-8E94-F3A148A115C5}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{08EA9647-CF60-47F4-8E94-F3A148A115C5}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{0B6BAA21-18FD-4F32-8620-30C01FA4F87A}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhoneSimulator
+		{0B6BAA21-18FD-4F32-8620-30C01FA4F87A}.Ad-Hoc|iPhone.Build.0 = Debug|iPhoneSimulator
+		{0B6BAA21-18FD-4F32-8620-30C01FA4F87A}.AppStore|iPhone.ActiveCfg = AppStore|iPhoneSimulator
+		{0B6BAA21-18FD-4F32-8620-30C01FA4F87A}.AppStore|iPhone.Build.0 = AppStore|iPhoneSimulator
+		{0B6BAA21-18FD-4F32-8620-30C01FA4F87A}.AppStore|iPhoneSimulator.ActiveCfg = AppStore|iPhoneSimulator
+		{0B6BAA21-18FD-4F32-8620-30C01FA4F87A}.AppStore|iPhoneSimulator.Build.0 = AppStore|iPhoneSimulator
+		{0B6BAA21-18FD-4F32-8620-30C01FA4F87A}.Debug|iPhone.ActiveCfg = Debug|iPhoneSimulator
+		{0B6BAA21-18FD-4F32-8620-30C01FA4F87A}.Debug|iPhone.Build.0 = Debug|iPhoneSimulator
+		{0B6BAA21-18FD-4F32-8620-30C01FA4F87A}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{0B6BAA21-18FD-4F32-8620-30C01FA4F87A}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{0B6BAA21-18FD-4F32-8620-30C01FA4F87A}.Release|iPhone.ActiveCfg = Release|iPhoneSimulator
+		{0B6BAA21-18FD-4F32-8620-30C01FA4F87A}.Release|iPhone.Build.0 = Release|iPhoneSimulator
+		{0B6BAA21-18FD-4F32-8620-30C01FA4F87A}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{0B6BAA21-18FD-4F32-8620-30C01FA4F87A}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{0C18EA56-C528-4C40-8EA6-DFBD0B108257}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
 		{0C18EA56-C528-4C40-8EA6-DFBD0B108257}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
 		{0C18EA56-C528-4C40-8EA6-DFBD0B108257}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
@@ -318,6 +336,20 @@ Global
 		{273126A6-8DFD-46F3-AFFD-FD9A5DB56945}.Release|iPhone.Build.0 = Release|iPhone
 		{273126A6-8DFD-46F3-AFFD-FD9A5DB56945}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{273126A6-8DFD-46F3-AFFD-FD9A5DB56945}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{27C7B295-F41F-4942-97AF-72C25B971C20}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{27C7B295-F41F-4942-97AF-72C25B971C20}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{27C7B295-F41F-4942-97AF-72C25B971C20}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{27C7B295-F41F-4942-97AF-72C25B971C20}.AppStore|iPhone.Build.0 = AppStore|iPhone
+		{27C7B295-F41F-4942-97AF-72C25B971C20}.AppStore|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{27C7B295-F41F-4942-97AF-72C25B971C20}.AppStore|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{27C7B295-F41F-4942-97AF-72C25B971C20}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{27C7B295-F41F-4942-97AF-72C25B971C20}.Debug|iPhone.Build.0 = Debug|iPhone
+		{27C7B295-F41F-4942-97AF-72C25B971C20}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{27C7B295-F41F-4942-97AF-72C25B971C20}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{27C7B295-F41F-4942-97AF-72C25B971C20}.Release|iPhone.ActiveCfg = Release|iPhone
+		{27C7B295-F41F-4942-97AF-72C25B971C20}.Release|iPhone.Build.0 = Release|iPhone
+		{27C7B295-F41F-4942-97AF-72C25B971C20}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{27C7B295-F41F-4942-97AF-72C25B971C20}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{35D8E772-A210-428A-A512-04F5738B670F}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhoneSimulator
 		{35D8E772-A210-428A-A512-04F5738B670F}.Ad-Hoc|iPhone.Build.0 = Debug|iPhoneSimulator
 		{35D8E772-A210-428A-A512-04F5738B670F}.AppStore|iPhone.ActiveCfg = AppStore|iPhoneSimulator
@@ -1065,6 +1097,7 @@ Global
 		{8334DB3C-C6D8-4AF0-A70C-12405D50E18C} = {A28D8EBD-ABB8-46BA-B536-7074058B0C84}
 		{70083C13-6398-43E1-A75A-CC8A3EB9D7FA} = {A28D8EBD-ABB8-46BA-B536-7074058B0C84}
 		{1C81B532-1642-45E6-860A-A8F3817734E7} = {A28D8EBD-ABB8-46BA-B536-7074058B0C84}
+		{0B6BAA21-18FD-4F32-8620-30C01FA4F87A} = {A28D8EBD-ABB8-46BA-B536-7074058B0C84}
 		{F6AEFFC5-4807-49A3-83C5-661E655CB59A} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 		{376D4335-5ED4-4A24-BF16-4DDFFCE61B6D} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 		{E8E64FE2-DF66-4BF2-921B-F9B8DECFB663} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
@@ -1098,9 +1131,10 @@ Global
 		{67375DDB-4C86-4581-966E-48DE06FAD73C} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 		{9F03BED5-0328-43CE-840C-CFC229114515} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
+		{27C7B295-F41F-4942-97AF-72C25B971C20} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Samples\MonoMac\BitmapTests\BitmapTests.csproj
+		StartupItem = Samples\MonoTouch\MTRegionTests\MTRegionTests.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.inheritsSet = Mono
