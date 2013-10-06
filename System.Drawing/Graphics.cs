@@ -80,6 +80,7 @@ namespace System.Drawing {
 
 #if MONOMAC
 		public Graphics() {
+
 			var gc = NSGraphicsContext.CurrentContext;
 
 			if (gc.IsFlipped)
@@ -540,11 +541,17 @@ namespace System.Drawing {
 			if (region == null)
 				throw new ArgumentNullException ("region");
 
-			if (region.IsEmpty)
+			// We will clear the rectangle of our clipping bounds for Infinite or Empty
+			if (region.regionPath == null || region.IsInfinite || region.IsEmpty) 
+			{
+				// This may set the rectangle to Black depending on the context
+				// passed.  On a NSView set WantsLayers and the Layer Background color.
+				context.ClearRect (context.GetClipBoundingBox ());
 				return;
+			}
 
-			if (region.regionObject is RectangleF)
-				FillRectangle (brush, (RectangleF)region.regionObject);
+			context.AddPath (region.regionPath);
+			FillBrush (brush);
 		}
 
 		public void DrawEllipse (Pen pen, RectangleF rect)
@@ -1406,8 +1413,10 @@ namespace System.Drawing {
 		
 		public void Clear (Color color)
 		{
+			context.SaveState ();
 			context.SetFillColorWithColor(new CGColor(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f));
 			context.FillRect(context.GetClipBoundingBox());
+			context.RestoreState ();
 		}
 		
 		public void Restore (GraphicsState gstate)

@@ -65,6 +65,7 @@ namespace System.Drawing
 		//point values. Likewise when Clipper returns a solution in a Polygons object, 
 		//we need to scale down these returned values by the same amount before displaying.
 		private static float scale = 100; //or 1 or 10 or 10000 etc for lesser or greater precision.
+		private Paths solution = new Paths();
 
 		private struct RegionEntry
 		{
@@ -74,20 +75,24 @@ namespace System.Drawing
 			public RegionClipType regionClipType;
 
 			public RegionEntry (RegionType type) :
-				this (type, null, null)
+				this (type, null, null, RegionClipType.None)
 			{   }
 
 			public RegionEntry (RegionType type, object obj) : 
-				this (type, obj, null)
+				this (type, obj, null, RegionClipType.None)
 			{	}
 
-			public RegionEntry (RegionType type, object obj, Path path)
+			public RegionEntry (RegionType type, object obj, Path path) :
+				this (type, obj, path, RegionClipType.None)
+			{ 	}
+
+			public RegionEntry (RegionType type, object obj, Path path, RegionClipType clipType)
 			{
 
 				regionType = type;
 				regionObject = obj;
 				regionPath = path;
-				regionClipType = RegionClipType.None;
+				regionClipType = clipType;
 			}
 		}
 		
@@ -124,16 +129,21 @@ namespace System.Drawing
 
 		}
 		
-		public Region (Rectangle rect)
-		{
-			regionObject = (RectangleF)rect;
-			regionList.Add (new RegionEntry (RegionType.Rectangle, (RectangleF)rect));
-		}
+		public Region (Rectangle rect) : 
+			this ((RectangleF)rect)
+		{ }
 		
 		public Region (RectangleF rect)
 		{
 			regionObject = rect;
 			regionList.Add (new RegionEntry (RegionType.Rectangle, rect, RectangleToPath(rect)));
+			regionPath = new CGPath ();
+			//regionPath.AddRect (rect);
+			regionPath.MoveToPoint (rect.Left, rect.Top);
+			regionPath.AddLineToPoint (rect.Right, rect.Top);
+			regionPath.AddLineToPoint (rect.Right, rect.Bottom);
+			regionPath.AddLineToPoint (rect.Left, rect.Bottom);
+			//regionPath.AddLineToPoint (rect.Left, rect.Top);
 		}
 
 		~Region ()
@@ -245,11 +255,113 @@ namespace System.Drawing
 				}
 				else 
 				{
-					var iRect = (RectangleF)regionObject;
-					iRect.Intersect (rect);
-					regionObject = iRect;
+					regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Intersection));
+					calculateRegionPath (ClipType.ctIntersection);
 				}
 			}
+		}
+
+		public void Union(Rectangle rect)
+		{
+			Union ((RectangleF)rect);
+		}
+
+		public void Union(RectangleF rect)
+		{
+
+			if (regionObject is RectangleF) 
+			{
+				// if it is infinite then we just replace rectangle.
+				// Regions that are empty will still be empty with an intersection.
+				if (IsInfinite) 
+				{
+					regionObject = rect;
+				}
+				else 
+				{
+					regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Union));
+					calculateRegionPath (ClipType.ctUnion);
+				}
+			}
+		}
+
+		public void Xor(Rectangle rect)
+		{
+			Xor ((RectangleF)rect);
+		}
+
+		public void Xor(RectangleF rect)
+		{
+
+			if (regionObject is RectangleF) 
+			{
+				// if it is infinite then we just replace rectangle.
+				// Regions that are empty will still be empty with an intersection.
+				if (IsInfinite) 
+				{
+					regionObject = rect;
+				}
+				else 
+				{
+					regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Xor));
+					calculateRegionPath (ClipType.ctXor);
+				}
+			}
+		}
+
+		public void Exclude(Rectangle rect)
+		{
+			Exclude ((RectangleF)rect);
+		}
+
+		public void Exclude(RectangleF rect)
+		{
+
+			if (regionObject is RectangleF) 
+			{
+				// if it is infinite then we just replace rectangle.
+				// Regions that are empty will still be empty with an intersection.
+				if (IsInfinite) 
+				{
+					regionObject = rect;
+				}
+				else 
+				{
+					regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Difference));
+					calculateRegionPath (ClipType.ctDifference);
+				}
+			}
+		}
+
+		void calculateRegionPath (ClipType clipType)
+		{
+			Clipper c = new Clipper();
+
+			var subjects = new Paths ();
+			subjects.Add (regionList [0].regionPath);
+			var clips = new Paths ();
+			clips.Add (regionList [1].regionPath);
+			c.AddPolygons(subjects, PolyType.ptSubject);
+			c.AddPolygons(clips, PolyType.ptClip);
+			solution.Clear();
+
+			bool succeeded = c.Execute(clipType, solution, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
+
+			if (succeeded) 
+			{
+				regionPath = new CGPath ();
+
+				foreach (var poly in solution)
+				{
+					regionPath.MoveToPoint(IntPointToPointF(poly[0]));
+
+					for (var p =1; p < poly.Count; p++) 
+					{
+						regionPath.AddLineToPoint (IntPointToPointF (poly [p]));
+					}
+				}
+			}
+
 		}
 
 		internal RectangleF GetBounds()
@@ -301,5 +413,11 @@ namespace System.Drawing
 
 			return path;
 		}
+						
+		static PointF IntPointToPointF (IntPoint point)
+		{
+			return new PointF (point.X / scale, point.Y / scale);
+		}
 	}
+
 }
