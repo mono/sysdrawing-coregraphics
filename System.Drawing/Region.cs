@@ -112,7 +112,7 @@ namespace System.Drawing
 		};
 
 
-		internal static RectangleF infinite = new RectangleF(4194304, 4194304, 8388608, 8388608);
+		internal static RectangleF infinite = new RectangleF(-4194304, -4194304, 8388608, 8388608);
 		internal object regionObject; 
 		List<RegionEntry> regionList = new List<RegionEntry>();
 		internal CGPath regionPath;
@@ -125,8 +125,13 @@ namespace System.Drawing
 		{
 			// We set the default region to a very large 
 			regionObject = infinite;
-			regionList.Add (new RegionEntry (RegionType.Infinity) );
+			regionList.Add (new RegionEntry (RegionType.Infinity, infinite, RectangleToPath(infinite)));
 
+			regionPath = new CGPath ();
+			regionPath.MoveToPoint (infinite.Left, infinite.Top);
+			regionPath.AddLineToPoint (infinite.Right, infinite.Top);
+			regionPath.AddLineToPoint (infinite.Right, infinite.Bottom);
+			regionPath.AddLineToPoint (infinite.Left, infinite.Bottom);
 		}
 		
 		public Region (Rectangle rect) : 
@@ -137,13 +142,12 @@ namespace System.Drawing
 		{
 			regionObject = rect;
 			regionList.Add (new RegionEntry (RegionType.Rectangle, rect, RectangleToPath(rect)));
+
 			regionPath = new CGPath ();
-			//regionPath.AddRect (rect);
 			regionPath.MoveToPoint (rect.Left, rect.Top);
 			regionPath.AddLineToPoint (rect.Right, rect.Top);
 			regionPath.AddLineToPoint (rect.Right, rect.Bottom);
 			regionPath.AddLineToPoint (rect.Left, rect.Bottom);
-			//regionPath.AddLineToPoint (rect.Left, rect.Top);
 		}
 
 		~Region ()
@@ -195,7 +199,13 @@ namespace System.Drawing
 			{
 				regionObject = infinite;
 				regionList.Clear ();
-				regionList.Add (new RegionEntry (RegionType.Infinity, null));
+				regionList.Add (new RegionEntry (RegionType.Infinity, infinite, RectangleToPath(infinite)));
+
+				regionPath = new CGPath ();
+				regionPath.MoveToPoint (infinite.Left, infinite.Top);
+				regionPath.AddLineToPoint (infinite.Right, infinite.Top);
+				regionPath.AddLineToPoint (infinite.Right, infinite.Bottom);
+				regionPath.AddLineToPoint (infinite.Left, infinite.Bottom);
 			}
 
 		}
@@ -245,20 +255,8 @@ namespace System.Drawing
 		public void Intersect(RectangleF rect)
 		{
 
-			if (regionObject is RectangleF) 
-			{
-				// if it is infinite then we just replace rectangle.
-				// Regions that are empty will still be empty with an intersection.
-				if (IsInfinite) 
-				{
-					regionObject = rect;
-				}
-				else 
-				{
-					regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Intersection));
-					calculateRegionPath (ClipType.ctIntersection);
-				}
-			}
+			regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Intersection));
+			calculateRegionPath (ClipType.ctIntersection);
 		}
 
 		public void Union(Rectangle rect)
@@ -268,21 +266,8 @@ namespace System.Drawing
 
 		public void Union(RectangleF rect)
 		{
-
-			if (regionObject is RectangleF) 
-			{
-				// if it is infinite then we just replace rectangle.
-				// Regions that are empty will still be empty with an intersection.
-				if (IsInfinite) 
-				{
-					regionObject = rect;
-				}
-				else 
-				{
-					regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Union));
-					calculateRegionPath (ClipType.ctUnion);
-				}
-			}
+			regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Union));
+			calculateRegionPath (ClipType.ctUnion);
 		}
 
 		public void Xor(Rectangle rect)
@@ -292,21 +277,8 @@ namespace System.Drawing
 
 		public void Xor(RectangleF rect)
 		{
-
-			if (regionObject is RectangleF) 
-			{
-				// if it is infinite then we just replace rectangle.
-				// Regions that are empty will still be empty with an intersection.
-				if (IsInfinite) 
-				{
-					regionObject = rect;
-				}
-				else 
-				{
-					regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Xor));
-					calculateRegionPath (ClipType.ctXor);
-				}
-			}
+			regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Xor));
+			calculateRegionPath (ClipType.ctXor);
 		}
 
 		public void Exclude(Rectangle rect)
@@ -316,21 +288,8 @@ namespace System.Drawing
 
 		public void Exclude(RectangleF rect)
 		{
-
-			if (regionObject is RectangleF) 
-			{
-				// if it is infinite then we just replace rectangle.
-				// Regions that are empty will still be empty with an intersection.
-				if (IsInfinite) 
-				{
-					regionObject = rect;
-				}
-				else 
-				{
-					regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Difference));
-					calculateRegionPath (ClipType.ctDifference);
-				}
-			}
+			regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Difference));
+			calculateRegionPath (ClipType.ctDifference);
 		}
 
 		void calculateRegionPath (ClipType clipType)
