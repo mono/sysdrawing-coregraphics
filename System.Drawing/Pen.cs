@@ -52,7 +52,39 @@ namespace System.Drawing
 			brush = new SolidBrush (color);
 			this.width = width;
 		}
-		
+
+		public Brush Brush 
+		{ 
+			get {
+				return brush;
+			}
+			set {
+				brush = (Brush)value.Clone ();
+				var sb = brush as SolidBrush;
+				if (sb != null)
+					color = sb.Color;
+				else
+					color = Color.Black;
+				changed = true;
+			}
+		}
+
+		public Color Color 
+		{ 
+			get {
+				return color;
+			}
+			set {
+				if (value != color) 
+				{
+					color = value;
+					brush = new SolidBrush (color);
+					changed = true;
+				}
+			}
+		}
+
+
 		~Pen ()
 		{
 			Dispose (false);

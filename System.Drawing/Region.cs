@@ -110,6 +110,7 @@ namespace System.Drawing
 		internal static RectangleF infinite = new RectangleF(4194304, 4194304, 8388608, 8388608);
 		internal object regionObject; 
 		List<RegionEntry> regionList = new List<RegionEntry>();
+		internal CGPath regionPath;
 
 		// An infinite region would cover the entire device region which is the same as
 		// not having a clipping region. Note that this is not the same as having an
