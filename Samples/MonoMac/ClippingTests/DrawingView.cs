@@ -73,7 +73,7 @@ namespace ClippingTests
 		RectangleF regionRectF2 = new RectangleF(110, 60, 100, 100);
 
 
-		int currentView = 1;
+		int currentView = 7;
 		int totalViews = 20;
 
 		public Rectangle ClientRectangle 
@@ -117,43 +117,43 @@ namespace ClippingTests
 				ClipRegionEmpty (g);
 				break;
 				case 2:
-				FillRegion1 (g);
+				ClipRegion1 (g);
 				break;
 				case 3:
-				FillRegionIntersect (g);
+				ClipRegionIntersect (g);
 				break;
 				case 4:
-				FillRegionUnion (g);
+				ClipRegionUnion (g);
 				break;
 				case 5:
-				FillRegionExclude (g);
+				ClipRegionExclude (g);
 				break;
 				case 6:
-				FillRegionXor(g);
+				ClipRegionXor(g);
 				break;
 				case 7:
-				FillRegionInfiniteIntersect(g);
+				ClipRegionInfiniteIntersect(g);
 				break;
 				case 8:
-				FillRegionInfiniteUnion(g);
+				ClipRegionInfiniteUnion(g);
 				break;
 				case 9:
-				FillRegionInfiniteExclude(g);
+				ClipRegionInfiniteExclude(g);
 				break;
 				case 10:
-				FillRegionInfiniteXor(g);
+				ClipRegionInfiniteXor(g);
 				break;
 				case 11:
-				FillRegionEmptyIntersect(g);
+				ClipRegionEmptyIntersect(g);
 				break;
 				case 12:
-				FillRegionEmptyUnion(g);
+				ClipRegionEmptyUnion(g);
 				break;
 				case 13:
-				FillRegionEmptyExclude(g);
+				ClipRegionEmptyExclude(g);
 				break;
 				case 14:
-				FillRegionEmptyXor(g);
+				ClipRegionEmptyXor(g);
 				break;
 			}
 
@@ -226,7 +226,7 @@ namespace ClippingTests
 			title = "ClipEmptyRegion";
 		}
 
-		void FillRegion1(Graphics g)
+		void ClipRegion1(Graphics g)
 		{
 
 			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
@@ -246,13 +246,24 @@ namespace ClippingTests
 			// Create a region using the first rectangle.
 			Region myRegion = new Region(regionRect1);
 
-			// Fill the intersection area of myRegion with blue.
-			g.FillRegion(myBrush, myRegion);
+			g.Clip = myRegion;
 
-			title = "FillRegion1";
+			// Greenish
+			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+
+			// Clear intersection area of myRegion with blue.
+			g.Clear(myBrush.Color);
+
+			g.SetClip (regionRect2);
+
+			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+			g.FillRectangle(myBrush, new Rectangle(regionRect2.X + 50,regionRect2.Y + 50,250,300));
+
+			title = "ClipRegion1";
 		}
 
-		void FillRegionIntersect(Graphics g)
+		void ClipRegionIntersect(Graphics g)
 		{
 
 			// Greyish blue
@@ -283,12 +294,14 @@ namespace ClippingTests
 			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
 			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			g.FillRegion(myBrush, myRegion);
+			g.Clip = myRegion;
 
-			title = "FillRegionIntersect";
+			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
+
+			title = "ClipRegionIntersect";
 		}
 
-		void FillRegionUnion(Graphics g)
+		void ClipRegionUnion(Graphics g)
 		{
 
 			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
@@ -316,12 +329,14 @@ namespace ClippingTests
 			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
 			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			g.FillRegion(myBrush, myRegion);
+			g.Clip = myRegion;
 
-			title = "FillRegionUnion";
+			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
+
+			title = "ClipRegionUnion";
 		}
 
-		void FillRegionExclude(Graphics g)
+		void ClipRegionExclude(Graphics g)
 		{
 
 			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
@@ -349,12 +364,15 @@ namespace ClippingTests
 			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
 			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			g.FillRegion(myBrush, myRegion);
+			g.Clip = myRegion;
 
-			title = "FillRegionExclude";
+			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
+
+
+			title = "ClipRegionExclude";
 		}
 
-		void FillRegionXor(Graphics g)
+		void ClipRegionXor(Graphics g)
 		{
 
 			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
@@ -379,15 +397,17 @@ namespace ClippingTests
 			// complementRect.
 			myRegion.Xor(regionRectF2);
 
+			g.Clip = myRegion;
+
 			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
 			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			g.FillRegion(myBrush, myRegion);
+			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
-			title = "FillRegionXor";
+			title = "ClipRegionXor";
 		}
 
-		void FillRegionInfiniteIntersect(Graphics g)
+		void ClipRegionInfiniteIntersect(Graphics g)
 		{
 
 			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
@@ -412,15 +432,17 @@ namespace ClippingTests
 			// complementRect.
 			myRegion.Intersect(regionRectF2);
 
+			g.Clip = myRegion;
+
 			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
 			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			g.FillRegion(myBrush, myRegion);
+			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
-			title = "FillRegionInfiniteIntersect";
+			title = "ClipRegionInfiniteIntersect";
 		}
 
-		void FillRegionInfiniteUnion(Graphics g)
+		void ClipRegionInfiniteUnion(Graphics g)
 		{
 
 			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
@@ -445,16 +467,18 @@ namespace ClippingTests
 			// complementRect.
 			myRegion.Union(regionRectF2);
 
+			g.Clip = myRegion;
+
 			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
 			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			g.FillRegion(myBrush, myRegion);
+			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
-			title = "FillRegionInfiniteUnion";
+			title = "ClipRegionInfiniteUnion";
 		}
 
 
-		void FillRegionInfiniteExclude(Graphics g)
+		void ClipRegionInfiniteExclude(Graphics g)
 		{
 
 			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
@@ -479,15 +503,17 @@ namespace ClippingTests
 			// complementRect.
 			myRegion.Exclude(regionRectF2);
 
+			g.Clip = myRegion;
+
 			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
 			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			g.FillRegion(myBrush, myRegion);
+			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
-			title = "FillRegionInfiniteExclude";
+			title = "ClipRegionInfiniteExclude";
 		}
 
-		void FillRegionInfiniteXor(Graphics g)
+		void ClipRegionInfiniteXor(Graphics g)
 		{
 
 			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
@@ -512,16 +538,18 @@ namespace ClippingTests
 			// complementRect.
 			myRegion.Xor(regionRectF2);
 
+			g.Clip = myRegion;
+
 			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
 			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			g.FillRegion(myBrush, myRegion);
+			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
-			title = "FillRegionInfiniteXor";
+			title = "ClipRegionInfiniteXor";
 		}
 
 
-		void FillRegionEmptyIntersect(Graphics g)
+		void ClipRegionEmptyIntersect(Graphics g)
 		{
 
 			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
@@ -552,10 +580,10 @@ namespace ClippingTests
 
 			g.FillRegion(myBrush, myRegion);
 
-			title = "FillRegionEmptyIntersect";
+			title = "ClipRegionEmptyIntersect";
 		}
 
-		void FillRegionEmptyUnion(Graphics g)
+		void ClipRegionEmptyUnion(Graphics g)
 		{
 
 			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
@@ -581,16 +609,18 @@ namespace ClippingTests
 			// complementRect.
 			myRegion.Union(regionRectF2);
 
+			g.Clip = myRegion;
+
 			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
 			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			g.FillRegion(myBrush, myRegion);
+			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
-			title = "FillRegionEmptyUnion";
+			title = "ClipRegionEmptyUnion";
 		}
 
 
-		void FillRegionEmptyExclude(Graphics g)
+		void ClipRegionEmptyExclude(Graphics g)
 		{
 
 			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
@@ -616,15 +646,17 @@ namespace ClippingTests
 			// complementRect.
 			myRegion.Exclude(regionRectF2);
 
+			g.Clip = myRegion;
+
 			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
 			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			g.FillRegion(myBrush, myRegion);
+			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
-			title = "FillRegionEmptyExclude";
+			title = "ClipRegionEmptyExclude";
 		}
 
-		void FillRegionEmptyXor(Graphics g)
+		void ClipRegionEmptyXor(Graphics g)
 		{
 
 			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
@@ -650,12 +682,14 @@ namespace ClippingTests
 			// complementRect.
 			myRegion.Xor(regionRectF2);
 
+			g.Clip = myRegion;
+
 			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
 			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			g.FillRegion(myBrush, myRegion);
+			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
-			title = "FillRegionEmptyXor";
+			title = "ClipRegionEmptyXor";
 		}
 
 		void DrawRegionTranslateClip(Graphics g)
