@@ -969,26 +969,31 @@ namespace System.Drawing {
 			// states are correct when we set them.
 			ResetClip ();
 
-			if (clipRegion.regionObject is RectangleF) {
-				switch (combineMode) 
-				{
-				case CombineMode.Replace:
-					// Set our clip region by cloning the region that is passed for now
-					clipRegion = region.Clone ();
+			switch (combineMode) 
+			{
+			case CombineMode.Replace:
+				// Set our clip region by cloning the region that is passed for now
+				clipRegion = region.Clone ();
 
-					//Unlike the current path, the current clipping path is part of the graphics state. 
-					//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
-					//prior state, you must save the graphics state before you clip and restore the graphics 
-					//state after you’ve completed any clipped drawing.
-					context.SaveState ();
-					context.ClipToRect ((RectangleF)clipRegion.regionObject);
-					break;
-				default:
-					throw new NotImplementedException ("SetClip for CombineMode " + combineMode + " not implemented");
+				//Unlike the current path, the current clipping path is part of the graphics state. 
+				//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
+				//prior state, you must save the graphics state before you clip and restore the graphics 
+				//state after you’ve completed any clipped drawing.
+				context.SaveState ();
+				if (clipRegion.IsEmpty) {
+					context.ClipToRect (RectangleF.Empty);
+				} 
+				else 
+				{
+					//context.ClipToRect ((RectangleF)clipRegion.regionObject);
+					context.AddPath (clipRegion.regionPath);
+					context.ClosePath ();
+					context.Clip ();
 				}
+				break;
+			default:
+				throw new NotImplementedException ("SetClip for CombineMode " + combineMode + " not implemented");
 			}
-			else
-		         throw new NotImplementedException ();
 		}
 		
 		public GraphicsContainer BeginContainer ()
@@ -1192,6 +1197,7 @@ namespace System.Drawing {
 			if (!clipRegion.IsInfinite) 
 			{
 
+				clipRegion.MakeInfinite ();
 				//Unlike the current path, the current clipping path is part of the graphics state. 
 				//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
 				//prior state, you must save the graphics state before you clip and restore the graphics 

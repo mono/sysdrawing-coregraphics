@@ -61,7 +61,7 @@ namespace System.Drawing
 	{
 		internal static RectangleF infinite = new RectangleF(-4194304, -4194304, 8388608, 8388608);
 		internal object regionObject; 
-		List<RegionEntry> regionList = new List<RegionEntry>();
+		internal List<RegionEntry> regionList = new List<RegionEntry>();
 		internal CGPath regionPath;
 
 		//Here we are scaling all coordinates up by 100 when they're passed to Clipper 
@@ -70,10 +70,10 @@ namespace System.Drawing
 		//we need to scale down these returned values by the same amount before displaying.
 		private static float scale = 100; //or 1 or 10 or 10000 etc for lesser or greater precision.
 
-		private Paths solution = new Paths();
+		internal Paths solution = new Paths();
 
 
-		private struct RegionEntry
+		internal struct RegionEntry
 		{
 			public RegionType regionType;
 			public object regionObject;
@@ -102,14 +102,14 @@ namespace System.Drawing
 			}
 		}
 		
-		private enum RegionType
+		internal enum RegionType
 		{
 			Rectangle = 10000,
 			Infinity = 10001,
 			Empty = 10002,
 		}
 
-		private enum RegionClipType { 
+		internal enum RegionClipType { 
 			Intersection = ClipType.ctIntersection, 
 			Union = ClipType.ctUnion, 
 			Difference = ClipType.ctDifference, 
@@ -173,9 +173,15 @@ namespace System.Drawing
 		
 		public Region Clone ()
 		{
-			// Right now we only support Rectangular regions
-			// we need to fix this when we support other types
-			return new Region ((RectangleF)regionObject);
+
+
+			var region = new Region ();
+			region.solution = this.solution;
+			region.regionPath = this.regionPath;
+			region.regionList = this.regionList;
+			region.regionObject = this.regionObject;
+
+			return region;
 		}
 
 		public void Dispose ()
