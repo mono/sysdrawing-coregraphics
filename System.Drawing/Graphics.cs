@@ -541,8 +541,8 @@ namespace System.Drawing {
 			if (region == null)
 				throw new ArgumentNullException ("region");
 
-			// We will clear the rectangle of our clipping bounds for Infinite or Empty
-			if (region.regionPath == null || region.IsEmpty) 
+			// We will clear the rectangle of our clipping bounds for Empty
+			if (region.regionPath == null) 
 			{
 				// This may set the rectangle to Black depending on the context
 				// passed.  On a NSView set WantsLayers and the Layer Background color.

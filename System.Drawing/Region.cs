@@ -59,13 +59,19 @@ namespace System.Drawing
 
 	public sealed class Region : MarshalByRefObject, IDisposable 
 	{
+		internal static RectangleF infinite = new RectangleF(-4194304, -4194304, 8388608, 8388608);
+		internal object regionObject; 
+		List<RegionEntry> regionList = new List<RegionEntry>();
+		internal CGPath regionPath;
 
 		//Here we are scaling all coordinates up by 100 when they're passed to Clipper 
 		//via Polygon (or Polygons) objects because Clipper no longer accepts floating  
 		//point values. Likewise when Clipper returns a solution in a Polygons object, 
 		//we need to scale down these returned values by the same amount before displaying.
 		private static float scale = 100; //or 1 or 10 or 10000 etc for lesser or greater precision.
+
 		private Paths solution = new Paths();
+
 
 		private struct RegionEntry
 		{
@@ -112,11 +118,6 @@ namespace System.Drawing
 		};
 
 
-		internal static RectangleF infinite = new RectangleF(-4194304, -4194304, 8388608, 8388608);
-		internal object regionObject; 
-		List<RegionEntry> regionList = new List<RegionEntry>();
-		internal CGPath regionPath;
-
 		// An infinite region would cover the entire device region which is the same as
 		// not having a clipping region. Note that this is not the same as having an
 		// empty region, which when clipping to it has the effect of excluding the entire
@@ -125,7 +126,11 @@ namespace System.Drawing
 		{
 			// We set the default region to a very large 
 			regionObject = infinite;
-			regionList.Add (new RegionEntry (RegionType.Infinity, infinite, RectangleToPath(infinite)));
+
+			var path = RectangleToPath (infinite);
+			solution.Add (path);
+
+			regionList.Add (new RegionEntry (RegionType.Infinity, infinite, path));
 
 			regionPath = new CGPath ();
 			regionPath.MoveToPoint (infinite.Left, infinite.Top);
@@ -141,8 +146,9 @@ namespace System.Drawing
 		public Region (RectangleF rect)
 		{
 			regionObject = rect;
-			regionList.Add (new RegionEntry (RegionType.Rectangle, rect, RectangleToPath(rect)));
-
+			var path = RectangleToPath (rect);
+			solution.Add (path);
+			regionList.Add (new RegionEntry (RegionType.Rectangle, rect, path));
 			regionPath = new CGPath ();
 			regionPath.MoveToPoint (rect.Left, rect.Top);
 			regionPath.AddLineToPoint (rect.Right, rect.Top);
@@ -195,30 +201,38 @@ namespace System.Drawing
 
 		public void MakeInfinite() 
 		{
-			if (regionObject is RectangleF) 
-			{
-				regionObject = infinite;
-				regionList.Clear ();
-				regionList.Add (new RegionEntry (RegionType.Infinity, infinite, RectangleToPath(infinite)));
+			regionObject = infinite;
 
-				regionPath = new CGPath ();
-				regionPath.MoveToPoint (infinite.Left, infinite.Top);
-				regionPath.AddLineToPoint (infinite.Right, infinite.Top);
-				regionPath.AddLineToPoint (infinite.Right, infinite.Bottom);
-				regionPath.AddLineToPoint (infinite.Left, infinite.Bottom);
-			}
+			var path = RectangleToPath (infinite);
 
+			// clear out our containers.
+			regionList.Clear ();
+			solution.Clear ();
+
+			solution.Add (path);
+			regionList.Add (new RegionEntry (RegionType.Infinity, infinite, path));
+
+			regionPath = new CGPath ();
+			regionPath.MoveToPoint (infinite.Left, infinite.Top);
+			regionPath.AddLineToPoint (infinite.Right, infinite.Top);
+			regionPath.AddLineToPoint (infinite.Right, infinite.Bottom);
+			regionPath.AddLineToPoint (infinite.Left, infinite.Bottom);
 		}
 
 		public void MakeEmpty() 
 		{
-			if (regionObject is RectangleF) 
-			{
-				regionObject = RectangleF.Empty;
-				regionList.Clear ();
-				regionList.Add (new RegionEntry (RegionType.Empty, null));
-			}
+			regionObject = RectangleF.Empty;
 
+			var path = RectangleToPath (RectangleF.Empty);
+
+			// clear out our containers.
+			regionList.Clear ();
+			solution.Clear ();
+
+			solution.Add (path);
+			regionList.Add (new RegionEntry (RegionType.Empty, RectangleF.Empty, path));
+
+			regionPath = new CGPath ();
 		}
 
 		public void Transform(Matrix matrix)
@@ -296,12 +310,17 @@ namespace System.Drawing
 		{
 			Clipper c = new Clipper();
 
-			var subjects = new Paths ();
-			subjects.Add (regionList [0].regionPath);
+			var subjects = solution;
+			//subjects.Add (solution);
+
 			var clips = new Paths ();
-			clips.Add (regionList [1].regionPath);
+
+			clips.Add (regionList [regionList.Count - 1].regionPath);
+
+
 			c.AddPolygons(subjects, PolyType.ptSubject);
 			c.AddPolygons(clips, PolyType.ptClip);
+
 			solution.Clear();
 
 			bool succeeded = c.Execute(clipType, solution, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
