@@ -379,13 +379,6 @@ namespace System.Drawing
 		{
 			get 
 			{
-//				RectangleF? rect = null;
-//				if (regionObject is RectangleF)
-//					rect = (RectangleF)regionObject;
-//				if (rect == null || rect.Equals (infinite))
-//					return true;
-//
-//				return false;
 				return regionBounds.Equals (infinite);
 			}
 		}
@@ -394,13 +387,7 @@ namespace System.Drawing
 		{
 			get 
 			{
-				RectangleF? rect = null;
-				if (regionObject is RectangleF)
-					rect = (RectangleF)regionObject;
-				if (rect != null && rect.Equals (RectangleF.Empty))
-					return true;
-
-				return false;
+				return regionBounds.Equals (RectangleF.Empty);
 			}
 		}
 
