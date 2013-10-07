@@ -363,7 +363,10 @@ namespace System.Drawing
 //				regionBounds.Width = (bounds.right - bounds.left) / scale;
 //				regionBounds.Height = (bounds.bottom - bounds.top) / scale;
 
-				regionBounds = regionPath.BoundingBox;
+				if (regionPath.IsEmpty)
+					regionBounds = RectangleF.Empty;
+				else
+					regionBounds = regionPath.BoundingBox;
 
 			}
 
