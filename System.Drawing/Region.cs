@@ -63,6 +63,8 @@ namespace System.Drawing
 		internal object regionObject; 
 		internal List<RegionEntry> regionList = new List<RegionEntry>();
 		internal CGPath regionPath;
+		internal RectangleF regionBounds;
+
 
 		//Here we are scaling all coordinates up by 100 when they're passed to Clipper 
 		//via Polygon (or Polygons) objects because Clipper no longer accepts floating  
@@ -137,6 +139,8 @@ namespace System.Drawing
 			regionPath.AddLineToPoint (infinite.Right, infinite.Top);
 			regionPath.AddLineToPoint (infinite.Right, infinite.Bottom);
 			regionPath.AddLineToPoint (infinite.Left, infinite.Bottom);
+
+			regionBounds = infinite;
 		}
 		
 		public Region (Rectangle rect) : 
@@ -154,6 +158,8 @@ namespace System.Drawing
 			regionPath.AddLineToPoint (rect.Right, rect.Top);
 			regionPath.AddLineToPoint (rect.Right, rect.Bottom);
 			regionPath.AddLineToPoint (rect.Left, rect.Bottom);
+
+			regionBounds = rect;
 		}
 
 		~Region ()
@@ -180,6 +186,7 @@ namespace System.Drawing
 			region.regionPath = this.regionPath;
 			region.regionList = this.regionList;
 			region.regionObject = this.regionObject;
+			region.regionBounds = this.regionBounds;
 
 			return region;
 		}
@@ -223,6 +230,8 @@ namespace System.Drawing
 			regionPath.AddLineToPoint (infinite.Right, infinite.Top);
 			regionPath.AddLineToPoint (infinite.Right, infinite.Bottom);
 			regionPath.AddLineToPoint (infinite.Left, infinite.Bottom);
+
+			regionBounds = regionPath.BoundingBox;
 		}
 
 		public void MakeEmpty() 
@@ -239,6 +248,8 @@ namespace System.Drawing
 			regionList.Add (new RegionEntry (RegionType.Empty, RectangleF.Empty, path));
 
 			regionPath = new CGPath ();
+
+			regionBounds = Rectangle.Empty;
 		}
 
 		public void Transform(Matrix matrix)
@@ -344,30 +355,38 @@ namespace System.Drawing
 						regionPath.AddLineToPoint (IntPointToPointF (poly [p]));
 					}
 				}
+
+				// Not sure what this is returning
+//				var bounds = c.GetBounds ();
+//				regionBounds.X = bounds.left / scale;
+//				regionBounds.Y = bounds.top / scale;
+//				regionBounds.Width = (bounds.right - bounds.left) / scale;
+//				regionBounds.Height = (bounds.bottom - bounds.top) / scale;
+
+				regionBounds = regionPath.BoundingBox;
+
 			}
 
 		}
 
 		internal RectangleF GetBounds()
 		{
-			RectangleF? rect = null;
-			if (regionObject is RectangleF)
-				return (RectangleF)regionObject;
 
-			return infinite;
+			return regionBounds;
 		}
 
 		internal bool IsInfinite 
 		{
 			get 
 			{
-				RectangleF? rect = null;
-				if (regionObject is RectangleF)
-					rect = (RectangleF)regionObject;
-				if (rect == null || rect.Equals (infinite))
-					return true;
-
-				return false;
+//				RectangleF? rect = null;
+//				if (regionObject is RectangleF)
+//					rect = (RectangleF)regionObject;
+//				if (rect == null || rect.Equals (infinite))
+//					return true;
+//
+//				return false;
+				return regionBounds.Equals (infinite);
 			}
 		}
 
