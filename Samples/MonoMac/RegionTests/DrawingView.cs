@@ -155,6 +155,12 @@ namespace RegionTests
 			case 14:
 				FillRegionEmptyXor(g);
 				break;
+			case 15:
+				TranslateRegion(g);
+				break;
+			case 16:
+				TransformRegion(g);
+				break;
 			}
 
 			g.ResetTransform ();
@@ -660,6 +666,63 @@ namespace RegionTests
 			g.FillRegion(myBrush, myRegion);
 
 			title = "FillRegionEmptyXor";
+		}
+
+		public void TranslateRegion(Graphics g)
+		{
+
+			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+
+			// Create the first rectangle and draw it to the screen in blue.
+			Rectangle regionRect = new Rectangle(100, 50, 100, 100);
+			g.DrawRectangle(myPen, regionRect);
+			g.FillRectangle (myBrush, regionRect);
+
+			// Create a region using the first rectangle.
+			Region myRegion = new Region(regionRect);
+
+			// Apply the translation to the region.
+			myRegion.Translate(150, 100);
+
+			// Fill the transformed region with red and draw it to the screen in red.
+			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+			g.FillRegion(myBrush, myRegion);
+
+			title = "TranslateRegion";
+		}
+
+		public void TransformRegion(Graphics g)
+		{
+
+			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+
+			// Create the first rectangle and draw it to the screen in blue.
+			Rectangle regionRect = new Rectangle(100, 50, 100, 100);
+			g.DrawRectangle(myPen, regionRect);
+			g.FillRectangle (myBrush, regionRect);
+
+			// Create a region using the first rectangle.
+			Region myRegion = new Region(regionRect);
+
+			// Create a transform matrix and set it to have a 45 degree 
+
+			// rotation.
+			Matrix transformMatrix = new Matrix();
+			transformMatrix.RotateAt(45, new Point(100, 50));
+
+			// Apply the transform to the region.
+			myRegion.Transform(transformMatrix);
+
+			// Fill the transformed region with red and draw it to the screen 
+			// in color.
+			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+			g.FillRegion(myBrush, myRegion);
+
+			title = "TransformRegion";
 		}
 
 		void DrawRegionTranslateClip(Graphics g)

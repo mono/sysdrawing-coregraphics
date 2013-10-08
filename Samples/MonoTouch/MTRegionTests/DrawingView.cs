@@ -189,50 +189,56 @@ namespace MTRegionTests
 			//g.SmoothingMode = SmoothingMode.None;
 			switch (currentView) 
 			{
-				case 0:
+			case 0:
 				FillRegionInfinite (g);
 				break;
-				case 1:
+			case 1:
 				FillRegionEmpty (g);
 				break;
-				case 2:
+			case 2:
 				FillRegion1 (g);
 				break;
-				case 3:
+			case 3:
 				FillRegionIntersect (g);
 				break;
-				case 4:
+			case 4:
 				FillRegionUnion (g);
 				break;
-				case 5:
+			case 5:
 				FillRegionExclude (g);
 				break;
-				case 6:
+			case 6:
 				FillRegionXor(g);
 				break;
 			case 7:
 				FillRegionInfiniteIntersect(g);
 				break;
-				case 8:
+			case 8:
 				FillRegionInfiniteUnion(g);
 				break;
-				case 9:
+			case 9:
 				FillRegionInfiniteExclude(g);
 				break;
-				case 10:
+			case 10:
 				FillRegionInfiniteXor(g);
 				break;
-				case 11:
+			case 11:
 				FillRegionEmptyIntersect(g);
 				break;
-				case 12:
+			case 12:
 				FillRegionEmptyUnion(g);
 				break;
-				case 13:
+			case 13:
 				FillRegionEmptyExclude(g);
 				break;
-				case 14:
+			case 14:
 				FillRegionEmptyXor(g);
+				break;
+			case 15:
+				TranslateRegion(g);
+				break;
+			case 16:
+				TransformRegion(g);
 				break;
 
 			}
@@ -742,6 +748,64 @@ namespace MTRegionTests
 			g.FillRegion(myBrush, myRegion);
 
 			title = "FillRegionEmptyXor";
+		}
+
+		
+		public void TranslateRegion(Graphics g)
+		{
+
+			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+
+			// Create the first rectangle and draw it to the screen in blue.
+			Rectangle regionRect = new Rectangle(100, 50, 100, 100);
+			g.DrawRectangle(myPen, regionRect);
+			g.FillRectangle (myBrush, regionRect);
+
+			// Create a region using the first rectangle.
+			Region myRegion = new Region(regionRect);
+
+			// Apply the translation to the region.
+			myRegion.Translate(150, 100);
+
+			// Fill the transformed region with red and draw it to the screen in red.
+			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+			g.FillRegion(myBrush, myRegion);
+
+			title = "TranslateRegion";
+		}
+
+		public void TransformRegion(Graphics g)
+		{
+
+			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+
+			// Create the first rectangle and draw it to the screen in blue.
+			Rectangle regionRect = new Rectangle(100, 50, 100, 100);
+			g.DrawRectangle(myPen, regionRect);
+			g.FillRectangle (myBrush, regionRect);
+
+			// Create a region using the first rectangle.
+			Region myRegion = new Region(regionRect);
+
+			// Create a transform matrix and set it to have a 45 degree 
+
+			// rotation.
+			Matrix transformMatrix = new Matrix();
+			transformMatrix.RotateAt(45, new Point(100, 50));
+
+			// Apply the transform to the region.
+			myRegion.Transform(transformMatrix);
+
+			// Fill the transformed region with red and draw it to the screen 
+			// in color.
+			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+			g.FillRegion(myBrush, myRegion);
+
+			title = "TransformRegion";
 		}
 
 	}
