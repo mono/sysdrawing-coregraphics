@@ -47,6 +47,9 @@ namespace System.Drawing {
 		// Text Layout
 		internal Color lastBrushColor;
 
+		// Clipping state variables
+		int clipSet = 0;
+
 		// User Space variables
 		internal Matrix modelMatrix;
 		internal Matrix viewMatrix;
@@ -974,26 +977,46 @@ namespace System.Drawing {
 			case CombineMode.Replace:
 				// Set our clip region by cloning the region that is passed for now
 				clipRegion = region.Clone ();
+				break;
+			case CombineMode.Intersect:
 
-				//Unlike the current path, the current clipping path is part of the graphics state. 
-				//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
-				//prior state, you must save the graphics state before you clip and restore the graphics 
-				//state after you’ve completed any clipped drawing.
-				context.SaveState ();
-				if (clipRegion.IsEmpty) {
-					context.ClipToRect (RectangleF.Empty);
-				} 
-				else 
-				{
-					//context.ClipToRect ((RectangleF)clipRegion.regionObject);
-					context.AddPath (clipRegion.regionPath);
-					context.ClosePath ();
-					context.Clip ();
-				}
+				clipRegion.Intersect (region);
+
+				break;
+			case CombineMode.Union:
+
+				clipRegion.Union (region);
+
+				break;
+			case CombineMode.Exclude:
+
+				clipRegion.Exclude (region);
+
+				break;
+			case CombineMode.Xor:
+
+				clipRegion.Xor (region);
+
 				break;
 			default:
 				throw new NotImplementedException ("SetClip for CombineMode " + combineMode + " not implemented");
 			}
+
+			//Unlike the current path, the current clipping path is part of the graphics state. 
+			//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
+			//prior state, you must save the graphics state before you clip and restore the graphics 
+			//state after you’ve completed any clipped drawing.
+			context.SaveState ();
+			if (clipRegion.IsEmpty) {
+				context.ClipToRect (RectangleF.Empty);
+			} else {
+				//context.ClipToRect ((RectangleF)clipRegion.regionObject);
+				context.AddPath (clipRegion.regionPath);
+				context.ClosePath ();
+				context.Clip ();
+			}
+			clipSet++;
+
 		}
 		
 		public GraphicsContainer BeginContainer ()
@@ -1191,13 +1214,12 @@ namespace System.Drawing {
 			clipRegion.Translate (dx, dy);
 			SetClip (clipRegion, CombineMode.Replace);
 		}
-		
+
 		public void ResetClip ()
 		{
-			if (!clipRegion.IsInfinite) 
+			if (clipSet > 0) 
 			{
 
-				clipRegion.MakeInfinite ();
 				//Unlike the current path, the current clipping path is part of the graphics state. 
 				//Therefore, to re-enlarge the paintable area by restoring the clipping path to a 
 				//prior state, you must save the graphics state before you clip and restore the graphics 
@@ -1208,28 +1230,38 @@ namespace System.Drawing {
 				// We are clobbering our transform when we do the restore.
 				// there are probably other one as well.
 				applyModelView ();
-
+				clipSet--;
 			}
 		}
 		
 		public void ExcludeClip (Rectangle rect)
 		{
-			throw new NotImplementedException ();
+			SetClip ((RectangleF)rect, CombineMode.Exclude);
 		}
 		
+		public void ExcludeClip (RectangleF rect)
+		{
+			SetClip (rect, CombineMode.Exclude);
+		}
+
+		public void ExcludeClip (Region region)
+		{
+			SetClip (region, CombineMode.Exclude);
+		}
+
 		public void IntersectClip (Rectangle rect)
 		{
-			throw new NotImplementedException ();
+			SetClip ((RectangleF)rect, CombineMode.Intersect);
 		}
 		
 		public void IntersectClip (RectangleF rect)
 		{
-			throw new NotImplementedException ();
+			SetClip (rect, CombineMode.Intersect);
 		}
 
 		public void IntersectClip (Region region)
 		{
-			throw new NotImplementedException ();
+			SetClip (region, CombineMode.Intersect);
 		}
 
 		NSString FontAttributedName = (NSString)"NSFont";

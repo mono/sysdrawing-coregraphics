@@ -79,22 +79,31 @@ namespace System.Drawing
 		{
 			public RegionType regionType;
 			public object regionObject;
-			public Path regionPath;
+			public Paths regionPath;
 			public RegionClipType regionClipType;
 
 			public RegionEntry (RegionType type) :
-				this (type, null, null, RegionClipType.None)
+				this (type, null, new Paths(), RegionClipType.None)
 			{   }
 
 			public RegionEntry (RegionType type, object obj) : 
-				this (type, obj, null, RegionClipType.None)
+				this (type, obj, new Paths(), RegionClipType.None)
 			{	}
 
 			public RegionEntry (RegionType type, object obj, Path path) :
 				this (type, obj, path, RegionClipType.None)
 			{ 	}
 
-			public RegionEntry (RegionType type, object obj, Path path, RegionClipType clipType)
+			public RegionEntry (RegionType type, object obj, Path path, RegionClipType clipType) //:
+				//this (type, obj, new Paths<List<IntPoint>>(path), clipType)
+			{	
+				regionType = type;
+				regionObject = obj;
+				regionPath = new Paths() { path };
+				regionClipType = clipType;
+			}
+
+			public RegionEntry (RegionType type, object obj, Paths path, RegionClipType clipType)
 			{
 
 				regionType = type;
@@ -102,6 +111,15 @@ namespace System.Drawing
 				regionPath = path;
 				regionClipType = clipType;
 			}
+
+//			public RegionEntry (RegionType type, object obj, Paths path, RegionClipType clipType)
+//			{
+//
+//				regionType = type;
+//				regionObject = obj;
+//				regionPath = path;
+//				regionClipType = clipType;
+//			}
 		}
 		
 		internal enum RegionType
@@ -109,6 +127,7 @@ namespace System.Drawing
 			Rectangle = 10000,
 			Infinity = 10001,
 			Empty = 10002,
+			Path = 10003,
 		}
 
 		internal enum RegionClipType { 
@@ -290,6 +309,14 @@ namespace System.Drawing
 			calculateRegionPath (ClipType.ctIntersection);
 		}
 
+		public void Intersect(Region region)
+		{
+
+			regionList.Add(new RegionEntry(RegionType.Path, region.solution, region.solution, RegionClipType.Intersection));
+			calculateRegionPath (ClipType.ctIntersection);
+		}
+
+
 		public void Union(Rectangle rect)
 		{
 			Union ((RectangleF)rect);
@@ -298,6 +325,13 @@ namespace System.Drawing
 		public void Union(RectangleF rect)
 		{
 			regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Union));
+			calculateRegionPath (ClipType.ctUnion);
+		}
+
+		public void Union(Region region)
+		{
+
+			regionList.Add(new RegionEntry(RegionType.Path, region.solution, region.solution, RegionClipType.Union));
 			calculateRegionPath (ClipType.ctUnion);
 		}
 
@@ -312,6 +346,13 @@ namespace System.Drawing
 			calculateRegionPath (ClipType.ctXor);
 		}
 
+		public void Xor(Region region)
+		{
+
+			regionList.Add(new RegionEntry(RegionType.Path, region.solution, region.solution, RegionClipType.Xor));
+			calculateRegionPath (ClipType.ctXor);
+		}
+
 		public void Exclude(Rectangle rect)
 		{
 			Exclude ((RectangleF)rect);
@@ -320,6 +361,13 @@ namespace System.Drawing
 		public void Exclude(RectangleF rect)
 		{
 			regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Difference));
+			calculateRegionPath (ClipType.ctDifference);
+		}
+
+		public void Exclude(Region region)
+		{
+
+			regionList.Add(new RegionEntry(RegionType.Path, region.solution, region.solution, RegionClipType.Difference));
 			calculateRegionPath (ClipType.ctDifference);
 		}
 
@@ -332,7 +380,8 @@ namespace System.Drawing
 
 			var clips = new Paths ();
 
-			clips.Add (regionList [regionList.Count - 1].regionPath);
+			foreach (var path in regionList [regionList.Count - 1].regionPath)
+				clips.Add (path);
 
 
 			c.AddPolygons(subjects, PolyType.ptSubject);
