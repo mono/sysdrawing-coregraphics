@@ -275,15 +275,36 @@ namespace System.Drawing
 		{
 			if (!IsEmpty && !IsInfinite) 
 			{
-				if (regionObject is RectangleF) 
+				foreach (var path in solution) 
 				{
-					var rect = (RectangleF)regionObject;
-					//GeomUtilities.TransformRectangle (ref rect, matrix);
-					regionObject = rect.Transform (matrix);
-					//regionObject = rect;
+					for (int p = 0; p < path.Count; p++) 
+					{
+						var point = path [p];
+						TransformIntPoint (ref point, matrix);
+						path [p] = point;
+					}
 				}
+
+				PathsToInternalPath (solution);
+
 			}
 		}
+
+		/// <summary>
+		/// Transform the specified Rectangle by the matrix that is passed.
+		/// </summary>
+		/// <param name="matrix">Matrix.</param>
+		private static void TransformIntPoint (ref IntPoint point, Matrix matrix) 
+		{
+			var transform = matrix.transform;
+			var x = point.X / scale;
+			var y = point.Y / scale;
+
+			point.X = (long)((transform.xx * x + transform.xy * y + transform.x0) * scale);
+			point.Y = (long)((transform.yx * x + transform.yy * y + transform.y0) * scale);
+
+		}
+
 
 		public void Translate(int dx,int dy)
 		{
@@ -393,17 +414,7 @@ namespace System.Drawing
 
 			if (succeeded) 
 			{
-				regionPath = new CGPath ();
-
-				foreach (var poly in solution)
-				{
-					regionPath.MoveToPoint(IntPointToPointF(poly[0]));
-
-					for (var p =1; p < poly.Count; p++) 
-					{
-						regionPath.AddLineToPoint (IntPointToPointF (poly [p]));
-					}
-				}
+				PathsToInternalPath (solution);
 
 				// Not sure what this is returning
 //				var bounds = c.GetBounds ();
@@ -417,6 +428,23 @@ namespace System.Drawing
 				else
 					regionBounds = regionPath.BoundingBox;
 
+			}
+
+		}
+
+		void PathsToInternalPath(Paths paths)
+		{
+
+			regionPath = new CGPath ();
+
+			foreach (var poly in solution)
+			{
+				regionPath.MoveToPoint(IntPointToPointF(poly[0]));
+
+				for (var p =1; p < poly.Count; p++) 
+				{
+					regionPath.AddLineToPoint (IntPointToPointF (poly [p]));
+				}
 			}
 
 		}
