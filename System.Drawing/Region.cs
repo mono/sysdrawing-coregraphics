@@ -499,7 +499,19 @@ namespace System.Drawing
 
 		}
 
+		public bool IsVisible(float x, float y)
+		{
+			// eoFill - A Boolean value that, if true, specifies to use the even-odd fill rule to evaluate 
+			// the painted region of the path. If false, the winding fill rule is used.
+			return regionPath.ContainsPoint (new PointF(x,y), EVEN_ODD_FILL);
+		}
 
+		public bool IsVisible(int x, int y)
+		{
+			// eoFill - A Boolean value that, if true, specifies to use the even-odd fill rule to evaluate 
+			// the painted region of the path. If false, the winding fill rule is used.
+			return regionPath.ContainsPoint (new PointF(x,y), EVEN_ODD_FILL);
+		}
 
 		internal bool IsEmpty
 		{
