@@ -59,6 +59,11 @@ namespace System.Drawing
 
 	public sealed class Region : MarshalByRefObject, IDisposable 
 	{
+
+		const PolyFillType SUBJ_FILL_TYPE = PolyFillType.pftNonZero;
+		const PolyFillType CLIP_FILL_TYPE = PolyFillType.pftNonZero;
+		const bool EVEN_ODD_FILL = false;
+
 		internal static RectangleF infinite = new RectangleF(-4194304, -4194304, 8388608, 8388608);
 		internal object regionObject; 
 		internal List<RegionEntry> regionList = new List<RegionEntry>();
@@ -410,7 +415,7 @@ namespace System.Drawing
 
 			solution.Clear();
 
-			bool succeeded = c.Execute(clipType, solution, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
+			bool succeeded = c.Execute(clipType, solution, SUBJ_FILL_TYPE, CLIP_FILL_TYPE);
 
 			if (succeeded) 
 			{
@@ -462,6 +467,39 @@ namespace System.Drawing
 				return regionBounds.Equals (infinite);
 			}
 		}
+
+		public bool IsVisible(Point point)
+		{
+			return IsVisible ((PointF)point);
+		}
+
+		public bool IsVisible(PointF point)
+		{
+			// eoFill - A Boolean value that, if true, specifies to use the even-odd fill rule to evaluate 
+			// the painted region of the path. If false, the winding fill rule is used.
+			return regionPath.ContainsPoint (point, EVEN_ODD_FILL);
+		}
+
+		public bool IsVisible(Rectangle rectangle)
+		{
+			return IsVisible ((RectangleF)rectangle);
+		}
+
+		public bool IsVisible(RectangleF rectangle)
+		{
+			// eoFill - A Boolean value that, if true, specifies to use the even-odd fill rule to evaluate 
+			// the painted region of the path. If false, the winding fill rule is used.
+			var topLeft = new PointF (rectangle.Left, rectangle.Top);
+			var topRight = new PointF (rectangle.Right, rectangle.Top);
+			var bottomRight = new PointF (rectangle.Right, rectangle.Bottom);
+			var bottomLeft = new PointF (rectangle.Left, rectangle.Bottom);
+
+			return regionPath.ContainsPoint (topLeft, EVEN_ODD_FILL) || regionPath.ContainsPoint (topRight, EVEN_ODD_FILL)
+				|| regionPath.ContainsPoint (bottomRight, EVEN_ODD_FILL) || regionPath.ContainsPoint (bottomLeft, EVEN_ODD_FILL);
+
+		}
+
+
 
 		internal bool IsEmpty
 		{
