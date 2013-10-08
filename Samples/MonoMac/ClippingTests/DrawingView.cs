@@ -73,7 +73,7 @@ namespace ClippingTests
 		RectangleF regionRectF2 = new RectangleF(110, 60, 100, 100);
 
 
-		int currentView = 7;
+		int currentView = 0;
 		int totalViews = 20;
 
 		public Rectangle ClientRectangle 
@@ -110,50 +110,59 @@ namespace ClippingTests
 			//g.SmoothingMode = SmoothingMode.None;
 			switch (currentView) 
 			{
-				case 0:
+			case 0:
 				ClipRegionInfinite (g);
 				break;
-				case 1:
+			case 1:
 				ClipRegionEmpty (g);
 				break;
-				case 2:
+			case 2:
 				ClipRegion1 (g);
 				break;
-				case 3:
+			case 3:
 				ClipRegionIntersect (g);
 				break;
-				case 4:
+			case 4:
 				ClipRegionUnion (g);
 				break;
-				case 5:
+			case 5:
 				ClipRegionExclude (g);
 				break;
-				case 6:
+			case 6:
 				ClipRegionXor(g);
 				break;
-				case 7:
+			case 7:
 				ClipRegionInfiniteIntersect(g);
 				break;
-				case 8:
+			case 8:
 				ClipRegionInfiniteUnion(g);
 				break;
-				case 9:
+			case 9:
 				ClipRegionInfiniteExclude(g);
 				break;
-				case 10:
+			case 10:
 				ClipRegionInfiniteXor(g);
 				break;
-				case 11:
+			case 11:
 				ClipRegionEmptyIntersect(g);
 				break;
-				case 12:
+			case 12:
 				ClipRegionEmptyUnion(g);
 				break;
-				case 13:
+			case 13:
 				ClipRegionEmptyExclude(g);
 				break;
-				case 14:
+			case 14:
 				ClipRegionEmptyXor(g);
+				break;
+			case 15:
+				IntersectClipRectangle(g);
+				break;
+			case 16:
+				ExcludeClipRectangle(g);
+				break;
+			case 17:
+				TranslateClip (g);
 				break;
 			}
 
@@ -691,6 +700,92 @@ namespace ClippingTests
 
 			title = "ClipRegionEmptyXor";
 		}
+
+		public void IntersectClipRectangle(Graphics g)
+		{
+
+			Pen myPen = new Pen(Color.FromArgb(255, 0, 0x33, 0), (float)0.6);
+			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0x66, 0xEF, 0x7F));
+
+			// Set clipping region.
+			Rectangle clipRect = new Rectangle(0, 0, 200, 200);
+			Region clipRegion = new Region(clipRect);
+			g.SetClip(clipRegion, CombineMode.Replace);
+
+			// Update clipping region to intersection of 
+
+			// existing region with specified rectangle.
+			Rectangle intersectRect = new Rectangle(100, 100, 200, 200);
+			Region intersectRegion = new Region(intersectRect);
+			g.IntersectClip(intersectRegion);
+
+			// Fill rectangle to demonstrate effective clipping region.
+			g.FillRectangle(myBrush, 0, 0, 500, 500);
+
+			// Reset clipping region to infinite.
+			g.ResetClip();
+
+			// Draw clipRect and intersectRect to screen.
+			myPen.Color = Color.FromArgb(196, 0xC3, 0xC9, 0xCF);
+			myBrush.Color = Color.FromArgb(127, 0xDD, 0xDD, 0xF0);
+			g.DrawRectangle(myPen, clipRect);
+			g.FillRectangle(myBrush, clipRect);
+
+			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+
+			g.DrawRectangle(myPen, intersectRect);
+			g.FillRectangle(myBrush, intersectRect);
+
+			title = "IntersectClipRectangle";
+		}
+
+		public void ExcludeClipRectangle(Graphics g)
+		{
+
+			// Create rectangle for exclusion.
+			Rectangle excludeRect = new Rectangle(100, 100, 200, 200);
+
+			// Set clipping region to exclude rectangle.
+			g.ExcludeClip(excludeRect);
+
+			var myBrush = new SolidBrush(Color.FromArgb(127, 0x66, 0xEF, 0x7F));
+
+			// Fill large rectangle to show clipping region.
+			g.FillRectangle(myBrush, 0, 0, 500, 500);
+
+			title = "ExcludeClipRectangle";
+		}
+
+
+		
+		public void TranslateClip (Graphics g)
+		{
+
+			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+
+			// Create the first rectangle and draw it to the screen in blue.
+			Rectangle regionRect = new Rectangle(100, 50, 100, 100);
+			g.DrawRectangle(myPen, regionRect);
+			g.FillRectangle (myBrush, regionRect);
+
+			// Create a region using the first rectangle.
+			Region myRegion = new Region(regionRect);
+
+			g.Clip = myRegion;
+
+			// Apply the translation to the region.
+			g.TranslateClip(150, 100);
+
+			// Fill the transformed region with red and draw it to the screen in red.
+			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+			g.FillRectangle(myBrush, new Rectangle(0,0,500,500) );
+
+			title = "TranslateClip";
+		}
+
 
 		void DrawRegionTranslateClip(Graphics g)
 		{
