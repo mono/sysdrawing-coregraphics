@@ -28,7 +28,7 @@ namespace MTExample3_1
 
 		public override void Draw (RectangleF dirtyRect)
 		{
-			Graphics g = new Graphics();
+			Graphics g = Graphics.FromCurrentContext();
 			
 			var ClientRectangle = new Rectangle((int)dirtyRect.X,
 			                                    (int)dirtyRect.Y,

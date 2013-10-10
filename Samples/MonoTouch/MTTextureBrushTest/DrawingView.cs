@@ -19,7 +19,7 @@ namespace MTTextureBrushTest
 
 		public override void Draw (RectangleF rect)
 		{
-			Graphics g = new Graphics();
+			Graphics g = Graphics.FromCurrentContext();
 			
 			var mainBundle = NSBundle.MainBundle;
 			var filePath = mainBundle.PathForResource("CocoaMono","png");

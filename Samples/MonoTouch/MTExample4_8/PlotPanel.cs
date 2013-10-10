@@ -137,7 +137,7 @@ namespace MTExample4_8
 		{
 			if(Paint != null)
 			{
-				Graphics g = new Graphics();
+				Graphics g = Graphics.FromCurrentContext();
 				Rectangle clip = new Rectangle((int)dirtyRect.X,
 				                               (int)dirtyRect.Y,
 				                               (int)dirtyRect.Width,

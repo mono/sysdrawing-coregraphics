@@ -131,7 +131,7 @@ namespace MTExample3_5
 
 		public override void Draw (RectangleF dirtyRect)
 		{
-			Graphics g = new Graphics();
+			Graphics g = Graphics.FromCurrentContext();
 			cs.ChartArea = this.ClientRectangle;
 			SetPlotArea(g);
 			AddData(g);

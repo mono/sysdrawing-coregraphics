@@ -26,7 +26,7 @@ namespace MTExample1_2
 
 		public override void Draw (System.Drawing.RectangleF dirtyRect)
 		{
-			var g = new Graphics();
+			var g = Graphics.FromCurrentContext();
 			
 			// NSView does not have a background color so we just use Clear to white here
 			g.Clear(Color.White);

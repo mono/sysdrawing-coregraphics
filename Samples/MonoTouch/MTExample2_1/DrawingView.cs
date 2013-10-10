@@ -17,7 +17,7 @@ namespace MTExample2_1
 
 		public override void Draw (RectangleF rect)
 		{
-			Graphics g = new Graphics();
+			Graphics g = Graphics.FromCurrentContext();
 			int offset = 20;
 			
 			// Invert matrix:

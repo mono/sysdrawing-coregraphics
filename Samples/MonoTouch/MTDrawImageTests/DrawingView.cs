@@ -133,7 +133,7 @@ namespace MTDrawImageTests
 
 		public override void Draw (RectangleF dirtyRect)
 		{
-			Graphics g = new Graphics();
+			Graphics g = Graphics.FromCurrentContext();
 			g.Clear(backColor);
 
 			Rectangle clip = new Rectangle((int)dirtyRect.X,

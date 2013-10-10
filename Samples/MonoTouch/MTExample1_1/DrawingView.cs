@@ -15,7 +15,7 @@ namespace MTExample1_1
 
 		public override void Draw (RectangleF rect)
 		{
-			var g = new Graphics();
+			var g = Graphics.FromCurrentContext();
 
 			//g.Clear(Color.White);
 			

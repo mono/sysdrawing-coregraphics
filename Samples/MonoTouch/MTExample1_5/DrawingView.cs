@@ -15,7 +15,7 @@ namespace MTExample1_5
 
 		public override void Draw (RectangleF rect)
 		{
-			Graphics g = new Graphics();
+			Graphics g = Graphics.FromCurrentContext();
 			
 			//g.Clear(Color.White);
 			g.SmoothingMode = SmoothingMode.AntiAlias;

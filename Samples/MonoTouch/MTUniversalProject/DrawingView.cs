@@ -19,7 +19,7 @@ namespace MTUniversalProject
 
 		public override void Draw (RectangleF rect)
 		{
-			Graphics g = new Graphics();
+			Graphics g = Graphics.FromCurrentContext();
 			Console.WriteLine ("Draw {0}", rect);
 			g.Clear(Color.Wheat);
 

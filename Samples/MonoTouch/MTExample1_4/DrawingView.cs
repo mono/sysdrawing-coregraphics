@@ -22,7 +22,7 @@ namespace MTExample1_4
 		
 		public override void Draw (RectangleF dirtyRect)
 		{
-			Graphics g = new Graphics();
+			Graphics g = Graphics.FromCurrentContext();
 			// Create a pen object:
 			Pen aPen = new Pen(Color.Blue, 4);
 			

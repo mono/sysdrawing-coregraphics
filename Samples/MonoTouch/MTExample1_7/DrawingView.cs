@@ -18,7 +18,7 @@ namespace MTExample1_7
 
 		public override void Draw (RectangleF rect)
 		{
-			Graphics g = new Graphics();
+			Graphics g = Graphics.FromCurrentContext();
 			
 			//g.Clear(Color.LightGreen);
 			// TODO: Fill in the UI Just lazy right now	
