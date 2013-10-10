@@ -1,64 +1,166 @@
-
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.IO;
+using MonoTouch.UIKit;
+using MonoTouch.Foundation;
+using MonoTouch.CoreGraphics;
 
-using MonoMac.Foundation;
-using MonoMac.AppKit;
-using MonoMac.CoreGraphics;
-
-namespace ClippingTests
+namespace MTClippingTests
 {
-	public partial class DrawingView : MonoMac.AppKit.NSView
-	{
+	public class DrawingView : UIView {
 
-		#region Constructors
-
-		// Called when created from unmanaged code
-		public DrawingView (IntPtr handle) : base (handle)
-		{
-			Initialize ();
-		}
-
-		// Called when created directly from a XIB file
-		[Export ("initWithCoder:")]
-		public DrawingView (NSCoder coder) : base (coder)
-		{
-			Initialize ();
-		}
-
-		// Shared initialization code
-		void Initialize ()
-		{
-			this.AutoresizingMask = NSViewResizingMask.HeightSizable | NSViewResizingMask.WidthSizable;
-
-
-			// We need to set these two view properites so that when we clear an infinite region
-			// it actually clears to the background color.
-			// If not set this may set the rectangle to Black depending on the context
-			// passed.  
-			this.WantsLayer = true;
-			Layer.BackgroundColor = new CGColor (0, 0, 0, 0);
-
-
-			var mainBundle = NSBundle.MainBundle;
-			//			var filePath = mainBundle.PathForResource("bitmap50","png");
-			//			bmp = Bitmap.FromFile(filePath);
-			//
-			//			filePath = mainBundle.PathForResource("bitmap25","png");
-			//			bmp2 = Bitmap.FromFile(filePath);
-		}
+		public event PaintEventHandler Paint;
 
 		public DrawingView (RectangleF rect) : base (rect)
 		{
-			Initialize();
+			ContentMode = UIViewContentMode.Redraw;
+			this.AutoresizingMask = UIViewAutoresizing.All;
+			BackgroundColor = new UIColor (0, 0, 0, 0);
+			BackColor = Color.Wheat;
+
+			var mainBundle = NSBundle.MainBundle;
+
+//			var filePath = mainBundle.PathForResource("bitmap50","png");
+//			bmp = Bitmap.FromFile(filePath);
+//
+//			filePath = mainBundle.PathForResource("bitmap25","png");
+//			bmp2 = Bitmap.FromFile(filePath);
 		}
 
-		#endregion
+		#region Panel interface
+		public Rectangle ClientRectangle 
+		{
+			get {
+				return new Rectangle((int)Bounds.X,
+				                     (int)Bounds.Y,
+				                     (int)Bounds.Width,
+				                     (int)Bounds.Height);
+			}
+		}
+		
+		Color backColor = Color.White;
+		public Color BackColor 
+		{
+			get {
+				return backColor;
+			}
+			
+			set {
+				backColor = value;
+			}
+		}
+		
+		Font font;
+		public Font Font
+		{
+			get {
+				if (font == null)
+					font = new Font("Helvetica",12);
+				return font;
+			}
+			set 
+			{
+				font = value;
+			}
+		}
+		
+		public int Left 
+		{
+			get { 
+				
+				return (int)Frame.Left; 
+			}
+			
+			set {
+				var location = new PointF(value, Frame.Y);
+				Frame = new RectangleF(location, Frame.Size);
+			}
+			
+		}
+		
+		public int Right 
+		{
+			get { return (int)Frame.Right; }
+			
+			set { 
+				var size = Frame;
+				size.Width = size.X - value;
+				Frame = size;
+			}
+			
+		}
+		
+		public int Top
+		{
+			get { return (int)Frame.Top; }
+			set { 
+				var location = new PointF(Frame.X, value);
+				Frame = new RectangleF(location, Frame.Size);
+				
+			}
+		}
+		
+		public int Bottom
+		{
+			get { return (int)Frame.Bottom; }
+			set { 
+				var frame = Frame;
+				frame.Height = frame.Y - value;
+				Frame = frame;
+				
+			}
+		}
+		
+		public int Width 
+		{
+			get { return (int)Frame.Width; }
+			set { 
+				var frame = Frame;
+				frame.Width = value;
+				Frame = frame;
+			}
+		}
+		
+		public int Height
+		{
+			get { return (int)Frame.Height; }
+			set { 
+				var frame = Frame;
+				frame.Height = value;
+				Frame = frame;
+			}
+		}
+#endregion
+
+		public override void Draw (RectangleF dirtyRect)
+		{
+			Graphics g = new Graphics();
+			g.Clear(backColor);
+
+			Rectangle clip = new Rectangle((int)dirtyRect.X,
+			                               (int)dirtyRect.Y,
+			                               (int)dirtyRect.Width,
+			                               (int)dirtyRect.Height);
+
+			var args = new PaintEventArgs(g, clip);
+
+			OnPaint(args);
+
+			if(Paint != null)
+			{
+				Paint(this, args);
+			}
+		}
+
+		public override void TouchesBegan (MonoTouch.Foundation.NSSet touches, UIEvent evt)
+		{
+			currentView++;
+			currentView %= totalViews;
+			//Console.WriteLine("Current View: {0}", currentView);
+			MarkDirty();
+			//this.NeedsDisplay = true;
+			SetNeedsDisplay ();
+		}
 
 		Font anyKeyFont = new Font("Chalkduster", 18, FontStyle.Bold);
 		Font clipFont = new Font("Helvetica",12, FontStyle.Bold);
@@ -73,37 +175,14 @@ namespace ClippingTests
 		RectangleF regionRectF2 = new RectangleF(110, 60, 100, 100);
 
 
-		int currentView = 0;
+		int currentView = 13;
 		int totalViews = 20;
-
-		public Rectangle ClientRectangle 
-		{
-			get {
-				return new Rectangle((int)Bounds.X,
-				                     (int)Bounds.Y,
-				                     (int)Bounds.Width,
-				                     (int)Bounds.Height);
-			}
-		}
-
-		public override bool AcceptsFirstResponder ()
-		{
-			return true;
-		}
-
-		public override void KeyDown (NSEvent theEvent)
-		{
-			currentView++;
-			currentView %= totalViews;
-			//Console.WriteLine("Current View: {0}", currentView);
-			this.NeedsDisplay = true;
-		}
 
 		string title = string.Empty;
 
-		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
+		protected void OnPaint(PaintEventArgs e)
 		{
-			Graphics g = new Graphics();
+			Graphics g = e.Graphics;
 			g.InterpolationMode = InterpolationMode.NearestNeighbor;
 
 			g.Clear(Color.White);
@@ -166,8 +245,9 @@ namespace ClippingTests
 				break;
 			}
 
-			g.ResetTransform ();
 			Brush sBrush = Brushes.Black;
+
+			g.ResetTransform ();
 
 //			if (!g.IsClipEmpty) 
 //			{
@@ -182,7 +262,7 @@ namespace ClippingTests
 //			}
 
 			var anyKeyPoint = PointF.Empty;
-			var anyKey = "Press any key to continue.";
+			var anyKey = "Tap screen to continue.";
 			var anyKeySize = g.MeasureString(anyKey, anyKeyFont);
 			anyKeyPoint.X = (ClientRectangle.Width / 2) - (anyKeySize.Width / 2);
 			anyKeyPoint.Y = ClientRectangle.Height - (anyKeySize.Height + 10);
@@ -758,7 +838,7 @@ namespace ClippingTests
 		}
 
 
-		
+
 		public void TranslateClip (Graphics g)
 		{
 
@@ -900,7 +980,63 @@ namespace ClippingTests
 			title = "GraphicsIsVisibleRectangleF";
 
 		}
-		
+
 	}
+
+
 }
 
+public delegate void PaintEventHandler(object sender, PaintEventArgs e);
+
+
+public class PaintEventArgs : EventArgs, IDisposable
+{
+	private readonly Rectangle clipRect;
+	private Graphics graphics;
+
+	public PaintEventArgs(Graphics graphics, Rectangle clipRect)
+	{
+		if (graphics == null)
+		{
+			throw new ArgumentNullException("graphics");
+		}
+		this.graphics = graphics;
+		this.clipRect = clipRect;
+	}
+
+	public void Dispose()
+	{
+		this.Dispose(true);
+		GC.SuppressFinalize(this);
+	}
+
+	protected virtual void Dispose(bool disposing)
+	{
+		if ((disposing && (this.graphics != null)))
+		{
+			this.graphics.Dispose();
+		}
+	}
+
+	~PaintEventArgs()
+	{
+		this.Dispose(false);
+	}
+
+	public Rectangle ClipRectangle
+	{
+		get
+		{
+			return this.clipRect;
+		}
+	}
+
+	public Graphics Graphics
+	{
+		get
+		{
+			return this.graphics;
+		}
+	}
+
+}
