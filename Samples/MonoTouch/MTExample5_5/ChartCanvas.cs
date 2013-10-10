@@ -15,8 +15,8 @@ namespace MTExample5_5
 			this.AutoresizingMask = UIViewAutoresizing.All;
 			this.BackColor = Color.Wheat;
 
-			var panelRect = new RectangleF(rect.X,rect.Y,rect.Width,rect.Height-100);
-			panelRect.Inflate(-100,-100);
+			var panelRect = new RectangleF(rect.X,rect.Y,rect.Width,rect.Height-20 / UIScreen.MainScreen.Scale);
+			panelRect.Inflate(-20 / UIScreen.MainScreen.Scale,-20 / UIScreen.MainScreen.Scale);
 			panel1 = new PlotPanel(panelRect);
 			panel1.BackColor = Color.AliceBlue;
 

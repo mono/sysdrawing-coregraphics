@@ -149,7 +149,7 @@ namespace Example4_8
 		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
 		{
 
-			var g = Graphics.FromCurrentContext() ();
+			var g = Graphics.FromCurrentContext();
 
 			g.Clear (backColor);
 
