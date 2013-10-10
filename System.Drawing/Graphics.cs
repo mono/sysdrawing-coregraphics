@@ -72,13 +72,21 @@ namespace System.Drawing {
 		}
 
 #if MONOTOUCH
-		public Graphics() {
+		private Graphics() :
+			this (UIGraphics.GetCurrentContext())
+		{
 
-			var gc = UIGraphics.GetCurrentContext ();
+		}
+
+		private Graphics(CGContext context)
+		{
+			var gc = context;
 			nativeObject = gc;
 			screenScale = UIScreen.MainScreen.Scale;
 			InitializeContext(gc);
+
 		}
+
 #endif
 
 #if MONOMAC
