@@ -73,7 +73,7 @@ namespace RegionTests
 		RectangleF regionRectF2 = new RectangleF(110, 60, 100, 100);
 
 
-		int currentView = 0;
+		int currentView = 17;
 		int totalViews = 20;
 
 		public Rectangle ClientRectangle 
@@ -160,6 +160,9 @@ namespace RegionTests
 				break;
 			case 16:
 				TransformRegion(g);
+				break;
+			case 17:
+				RegionIsVisibleRectangleF(g);
 				break;
 			}
 
@@ -724,6 +727,77 @@ namespace RegionTests
 
 			title = "TransformRegion";
 		}
+
+        public void RegionIsVisibleRectangleF(Graphics g)
+		{
+
+			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+
+			// Create the first rectangle and draw it to the screen in blue.
+			g.DrawRectangle(myPen, regionRect1);
+			g.FillRectangle (myBrush, regionRect1);
+
+			// Create the second rectangle and draw it to the screen in red.
+			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+
+			g.DrawRectangle(myPen, Rectangle.Round(regionRectF2));
+			g.FillRectangle (myBrush, Rectangle.Round (regionRectF2));
+
+			// Create a region using the first rectangle.
+			Region myRegion = new Region(regionRect1);
+
+			// Determine if myRect is contained in the region. 
+			bool contained = myRegion.IsVisible(regionRect2);
+
+			// Display the result.
+			Font myFont = new Font("Arial", 8);
+			SolidBrush txtBrush = new SolidBrush(Color.Black);
+			g.DrawString("contained = " + contained.ToString(),
+			             myFont,
+			             txtBrush,
+			             new PointF(regionRectF2.Right + 10, regionRectF2.Top));
+
+			regionRect1.Y += 120;
+			regionRectF2.Y += 120;
+			regionRectF2.X += 41;
+
+			myPen.Color = Color.FromArgb (196, 0xC3, 0xC9, 0xCF);
+			myBrush.Color = Color.FromArgb(127, 0xDD, 0xDD, 0xF0);
+
+			// Create the first rectangle and draw it to the screen in blue.
+			g.DrawRectangle(myPen, regionRect1);
+			g.FillRectangle (myBrush, regionRect1);
+
+			// Create the second rectangle and draw it to the screen in red.
+			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+
+			g.DrawRectangle(myPen, Rectangle.Round(regionRectF2));
+			g.FillRectangle (myBrush, Rectangle.Round (regionRectF2));
+
+			// Create a region using the first rectangle.
+			myRegion = new Region(regionRect1);
+
+			// Determine if myRect is contained in the region. 
+			contained = myRegion.IsVisible(regionRectF2);
+
+			// Display the result.
+			g.DrawString("contained = " + contained.ToString(),
+			             myFont,
+			             txtBrush,
+			             new PointF(regionRectF2.Right + 10, regionRectF2.Top));
+
+			// restore defaults
+			regionRect1.Y -= 120;
+			regionRectF2.Y -= 120;
+			regionRectF2.X -= 41;
+
+			title = "RegionIsVisibleRectangleF";
+
+		}
+
 
 		void DrawRegionTranslateClip(Graphics g)
 		{
