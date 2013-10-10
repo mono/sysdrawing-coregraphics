@@ -88,7 +88,7 @@ namespace DrawStringTest
 		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
 		{
 
-			var g = new Graphics();
+			var g = Graphics.FromCurrentContext();
 
 			//g.Clear(backColor);
 			PointF point = new PointF(50,50);

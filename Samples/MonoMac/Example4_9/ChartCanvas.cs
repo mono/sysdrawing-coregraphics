@@ -122,7 +122,7 @@ namespace Example4_9
 		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
 		{
 
-			var g = new Graphics ();
+			var g = Graphics.FromCurrentContext() ();
 
 			g.Clear (backColor);
 

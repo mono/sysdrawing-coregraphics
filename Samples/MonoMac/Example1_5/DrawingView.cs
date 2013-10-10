@@ -43,7 +43,7 @@ namespace Example1_5
 		
 		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
 		{
-			Graphics g = new Graphics();
+			Graphics g = Graphics.FromCurrentContext();
 
 			g.Clear(Color.White);
 			g.SmoothingMode = SmoothingMode.AntiAlias;

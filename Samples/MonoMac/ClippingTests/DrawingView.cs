@@ -103,7 +103,7 @@ namespace ClippingTests
 
 		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
 		{
-			Graphics g = new Graphics();
+			Graphics g = Graphics.FromCurrentContext();
 			g.InterpolationMode = InterpolationMode.NearestNeighbor;
 
 			g.Clear(Color.White);

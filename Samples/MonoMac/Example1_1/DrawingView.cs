@@ -34,13 +34,7 @@ namespace sampleMac
 
 		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
 		{
-//			var gc = NSGraphicsContext.FromGraphicsPort(
-//				NSGraphicsContext.CurrentContext.GraphicsPort.Handle,true);
-
-//			var gc = NSGraphicsContext.CurrentContext;
-//
-//			var g = new Graphics(gc.GraphicsPort);
-			var g = new Graphics();
+			var g = Graphics.FromCurrentContext();
 
 			// NSView does not have a background color so we just use Clear to white here
 			g.Clear(Color.White);

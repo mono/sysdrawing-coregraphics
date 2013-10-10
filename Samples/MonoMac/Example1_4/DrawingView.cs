@@ -117,7 +117,7 @@ namespace Example1_4
 
 
 
-			Graphics g = new Graphics();
+			Graphics g = Graphics.FromCurrentContext();
 			// Create a pen object:
 			Pen aPen = new Pen(Color.Blue, 4);
 

@@ -156,7 +156,7 @@ namespace Example5_5
 		{
 			if(Paint != null)
 			{
-				Graphics g = new Graphics();
+				Graphics g = Graphics.FromCurrentContext();
 				g.Clear(backColor);
 
 				Rectangle clip = new Rectangle((int)dirtyRect.X,

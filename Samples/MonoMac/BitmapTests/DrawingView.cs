@@ -45,7 +45,7 @@ namespace BitmapTests
 
 		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
 		{
-			Graphics g = new Graphics();
+			Graphics g = Graphics.FromCurrentContext();
 
 			g.Clear(Color.Wheat);
 
