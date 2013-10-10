@@ -73,18 +73,30 @@ namespace System.Drawing {
 
 #if MONOTOUCH
 		private Graphics() :
-			this (UIGraphics.GetCurrentContext())
-		{
+			this (UIGraphics.GetCurrentContext(), UIScreen.MainScreen.Scale)
+		{	}
 
-		}
+		private Graphics(CGContext context) :
+			this (context, UIScreen.MainScreen.Scale)
+		{	}
 
-		private Graphics(CGContext context)
+		private Graphics(CGContext context, float screenScale)
 		{
 			var gc = context;
 			nativeObject = gc;
-			screenScale = UIScreen.MainScreen.Scale;
+			this.screenScale = screenScale;
 			InitializeContext(gc);
 
+		}
+
+		public static Graphics FromContext(CGContext context)
+		{
+			return new Graphics (context, UIScreen.MainScreen.Scale);
+		}
+
+		public static Graphics FromContext(CGContext context, float screenScale)
+		{
+			return new Graphics (context, screenScale);
 		}
 
 #endif
