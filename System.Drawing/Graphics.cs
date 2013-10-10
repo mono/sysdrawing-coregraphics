@@ -82,9 +82,13 @@ namespace System.Drawing {
 #endif
 
 #if MONOMAC
-		public Graphics() {
+		private Graphics() :
+			this (NSGraphicsContext.CurrentContext)
+		{	}
 
-			var gc = NSGraphicsContext.CurrentContext;
+		private Graphics (NSGraphicsContext context)
+		{
+			var gc = context;
 
 			if (gc.IsFlipped)
 				gc = NSGraphicsContext.FromGraphicsPort (gc.GraphicsPort, false);
@@ -103,7 +107,18 @@ namespace System.Drawing {
 			InitializeContext(gc.GraphicsPort);
 
 		}
+
+		public static Graphics FromContext (NSGraphicsContext context)
+		{
+			return new Graphics (context);
+		}
 #endif
+
+		public static Graphics FromCurrentContext()
+		{
+			return new Graphics ();
+		}
+
 		private void InitializeContext(CGContext context) 
 		{
 			this.context = context;
