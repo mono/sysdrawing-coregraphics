@@ -1942,35 +1942,33 @@ namespace System.Drawing {
 		
 		public bool IsVisible (Point point)
 		{
-			throw new NotImplementedException();
+			return clipRegion.IsVisible (point);
 		}
 
 		
 		public bool IsVisible (RectangleF rect)
 		{
-			throw new NotImplementedException ();
+			return clipRegion.IsVisible (rect);
 		}
 
 		public bool IsVisible (PointF point)
 		{
-			throw new NotImplementedException ();
+			return clipRegion.IsVisible (point);
 		}
 		
 		public bool IsVisible (Rectangle rect)
 		{
-			bool isVisible = false;
-
-			throw new NotImplementedException ();
+			return clipRegion.IsVisible (rect);
 		}
 		
 		public bool IsVisible (float x, float y)
 		{
-			return IsVisible (new PointF (x, y));
+			return clipRegion.IsVisible (x, y);
 		}
 		
 		public bool IsVisible (int x, int y)
 		{
-			return IsVisible (new Point (x, y));
+			return clipRegion.IsVisible (x, y);
 		}
 		
 		public bool IsVisible (float x, float y, float width, float height)
@@ -1981,7 +1979,7 @@ namespace System.Drawing {
 		
 		public bool IsVisible (int x, int y, int width, int height)
 		{
-			return IsVisible (new Rectangle (x, y, width, height));
+			return IsVisible (new RectangleF (x, y, width, height));
 		}
 		
 		public Region[] MeasureCharacterRanges (string text, Font font, RectangleF layoutRect, StringFormat stringFormat)
