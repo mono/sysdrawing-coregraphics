@@ -294,39 +294,7 @@ namespace System.Drawing {
 		/// <param name="pixfmt">Pixfmt.</param>
 		public static int GetPixelFormatSize(PixelFormat pixfmt)
 		{
-			switch (pixfmt) {
-			
-			case PixelFormat.Format16bppArgb1555:
-			case PixelFormat.Format16bppGrayScale:
-			case PixelFormat.Format16bppRgb555:
-			case PixelFormat.Format16bppRgb565:
-				return 16;		
-			case PixelFormat.Format24bppRgb:
-				return 24;		
-			case PixelFormat.Format32bppArgb:
-			case PixelFormat.Format32bppPArgb:
-			case PixelFormat.Format32bppRgb:
-				return 32;		
-			case PixelFormat.Format48bppRgb:
-				return 48;		
-			case PixelFormat.Format64bppArgb:
-			case PixelFormat.Format64bppPArgb:
-				return 64;
-
-			case PixelFormat.Format8bppIndexed:
-				return 8;
-
-			case PixelFormat.Format4bppIndexed:
-				return 4;
-
-			case PixelFormat.Format1bppIndexed:
-				return 1;
-
-			default:
-				break;
-			}
-
-			return 0;
+			return ((int)pixfmt >> 8) & 0xff;
 		}
 
 		/// <summary>
@@ -334,25 +302,26 @@ namespace System.Drawing {
 		/// </summary>
 		/// <returns><c>true</c> if the pixelFormat contain alpha information; otherwise, <c>false</c>.</returns>
 		/// <param name="pixelFormat">Pixel format.</param>
-		public static bool IsAlphaPixelFormat (PixelFormat pixelFormat)
+		public static bool IsAlphaPixelFormat (PixelFormat pixfmt)
 		{
-			switch (pixelFormat) 
-			{
-			case PixelFormat.Alpha:
-			case PixelFormat.Format16bppArgb1555:
-			case PixelFormat.Format32bppPArgb:
-			case PixelFormat.Format64bppPArgb:
-			case PixelFormat.Format32bppArgb:
-			case PixelFormat.Format64bppArgb:
-				return true;
-			default:
-				return false;
-			}
+			return (pixfmt & PixelFormat.Alpha) != 0;
 
 		}
 
+		public static bool IsExtendedPixelFormat(PixelFormat pixfmt)
+		{
+			return (pixfmt & PixelFormat.Indexed) != 0;
+		}
 
+		public static bool IsCanonicalPixelFormat(PixelFormat pixfmt)
+		{
+			return (pixfmt & PixelFormat.Canonical) != 0;
+		}
 
+		public static bool IsExtendedPixelFormat1(PixelFormat pixfmt)
+		{
+			return (pixfmt & PixelFormat.Extended) != 0;
+		}
 
 		/// <summary>
 		/// Gets the number of components for the pixel format.
@@ -361,31 +330,7 @@ namespace System.Drawing {
 		/// <param name="pixfmt">Pixfmt.</param>
 		internal static int GetPixelFormatComponents(PixelFormat pixfmt)
 		{
-			switch (pixfmt) {
-			
-			case PixelFormat.Format32bppArgb:
-			case PixelFormat.Format32bppPArgb:
-			case PixelFormat.Format64bppArgb:
-			case PixelFormat.Format64bppPArgb:
-			case PixelFormat.Format32bppRgb:	// Specifies that the format is 32 bits per pixel; 8 bits each are used for the red, green, and blue components. The remaining 8 bits are not used.
-				return 4;
-
-			case PixelFormat.Format16bppRgb555:
-			case PixelFormat.Format48bppRgb:
-			case PixelFormat.Format24bppRgb:
-				return 3;
-
-			case PixelFormat.Format16bppGrayScale:
-			case PixelFormat.Format8bppIndexed:
-			case PixelFormat.Format4bppIndexed:
-			case PixelFormat.Format1bppIndexed:
-				return 1;
-
-			default:
-				break;
-			}
-
-			return 0;
+			return (((int)pixfmt >> 8) & 0xff) / 8;
 		}
 
 	}
