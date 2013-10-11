@@ -232,6 +232,7 @@
       <Link>External\ColorAdjustType.cs</Link>
     </Compile>
     <Compile Include="Utilities\ClipperLib\clipper.cs" />
+    <Compile Include="System.Drawing\Graphics-DrawString.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />

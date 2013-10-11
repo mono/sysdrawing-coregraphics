@@ -285,6 +285,9 @@
     <Compile Include="..\Utilities\ClipperLib\clipper.cs">
       <Link>Utilities\ClipperLib\clipper.cs</Link>
     </Compile>
+    <Compile Include="..\System.Drawing\Graphics-DrawString.cs">
+      <Link>System.Drawing\Graphics-DrawString.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
