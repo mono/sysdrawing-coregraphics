@@ -689,6 +689,43 @@ namespace System.Drawing.Drawing2D {
 			}
 		}
 
+		public void AddPath(GraphicsPath addingPath, bool connect)
+		{
+			if (addingPath == null)
+				throw new ArgumentNullException ("addingPath");
+
+			var length = addingPath.PointCount;
+
+			if (length < 1)
+				return;
+
+			var pts = addingPath.PathPoints;
+			var types = addingPath.PathTypes;
+
+			// We can connect only open figures. If first figure is closed
+	 		// it can't be connected.
+			var first = connect ? GetFirstPointType() : PathPointType.Start;
+
+			AppendPoint (pts[0], first, false); 
+
+			for (int i = 1; i < length; i++)
+				AppendPoint (pts [i], (PathPointType)types [i], false);
+
+		}
+
+		private PathPointType GetFirstPointType()
+		{
+			/* check for a new figure flag or an empty path */ 
+			if (start_new_fig || (points.Count == 0))
+				return PathPointType.Start;
+
+			/* check if the previous point is a closure */
+			var type = types [types.Count - 1];
+			if ((type & (byte)PathPointType.CloseSubpath) != 0)
+				return PathPointType.Start;
+			else
+				return PathPointType.Line;
+		}
 
 		internal static PointF [] OpenCurveTangents (int terms, PointF [] points, int count, float tension)
 		{
