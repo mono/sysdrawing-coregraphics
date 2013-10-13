@@ -747,10 +747,8 @@ namespace System.Drawing.Drawing2D {
 
 			/* close at the end */
 			lastType |= (byte)PathPointType.CloseSubpath;
-			//g_byte_array_append (path->types, &lastType, 1);
 			types.Add(lastType);
 
-			//path->start_new_fig = TRUE;
 			start_new_fig = true;
 		}
 
