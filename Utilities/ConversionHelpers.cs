@@ -199,6 +199,21 @@ namespace System.Drawing
 			return elements;
 		}
 
+		internal static PointF[] ToFloat (this Point[] points)
+		{
+			if (points == null)
+				throw new ArgumentNullException ("points");
+
+			var pointfs = new PointF[points.Length];
+			for (int p = 0; p < points.Length; p++) 
+			{
+				pointfs [p] = new PointF (points [p].X, points [p].Y);
+			}
+
+			return pointfs;
+		}
+
+
 		//
 		// Idea came from http://www.modejong.com/blog/post3_pixel_binary_layout_w_premultiplied_alpha/index.html
 		// where it says:

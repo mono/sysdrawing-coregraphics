@@ -7,6 +7,7 @@
 //      Ravindra (rkumar@novell.com)
 //      Sebastien Pouliot  <spouliot@xamarin.com>
 //      Jordi Mas
+//		Kenneth J. Pouncey ( kjpou@pt.lu )
 //
 //     
 // Copyright 2011 Xamarin Inc.
@@ -42,11 +43,12 @@ using MonoTouch.CoreGraphics;
 namespace System.Drawing.Drawing2D {
 	internal enum CurveType { Open, Close }
 	
-	public sealed class GraphicsPath : ICloneable, IDisposable {
+	public sealed class GraphicsPath : ICloneable, IDisposable 
+	{
 		List<PointF> points;
 		List<byte> types;
 		FillMode fillMode;
-		bool start_new_fig;
+		bool start_new_fig = true;
 
 		internal const int CURVE_MIN_TERMS = 1;
 		internal const int CURVE_MAX_TERMS = 7;
@@ -292,21 +294,80 @@ namespace System.Drawing.Drawing2D {
 			}
 		}
 
-		static PointF [] ToFloat (Point [] points)
+		public void AddClosedCurve(Point[] points)
+		{
+
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			if (points.Length < 3)
+				throw new ArgumentException ("number of points");
+
+			AddClosedCurve (points.ToFloat (), 0.5f);
+		}
+
+		public void AddClosedCurve(PointF[] points)
+		{
+
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			if (points.Length < 3)
+				throw new ArgumentException ("number of points");
+
+			AddClosedCurve (points, 0.5f);
+		}
+
+		public void AddClosedCurve(Point[] points, float tension)
 		{
 			if (points == null)
 				throw new ArgumentNullException ("points");
-			PointF []f = new PointF [points.Length];
-			for (int i = 0; i < points.Length; i++)
-				f [i] = new PointF (points [i].X, points [i].Y);
-			return f;
+			if (points.Length < 3)
+				throw new ArgumentException ("number of points");
+
+			AddClosedCurve (points.ToFloat (), tension);
 		}
-		
+
+		public void AddClosedCurve(PointF[] points, float tension)
+		{
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			if (points.Length < 3)
+				throw new ArgumentException ("number of points");
+			var tangents = OpenCurveTangents (CURVE_MIN_TERMS, points, points.Length, tension);
+
+			AppendCurve (points, tangents, 0, points.Length - 1, CurveType.Close);
+		}
+
+		public void AddCurve (Point [] points)
+		{
+			AddCurve (points.ToFloat(), 0.5f);
+		}
+
+		public void AddCurve (PointF [] points)
+		{
+			AddCurve (points, 0.5f);
+		}
+
+		public void AddCurve (Point [] points, float tension)
+		{
+			AddCurve (points.ToFloat (), tension);
+		}
+
+		public void AddCurve (PointF [] points, float tension)
+		{
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			if (points.Length < 2)
+				throw new ArgumentException ("not enough points for polygon", "points");
+			
+			var tangents = OpenCurveTangents (CURVE_MIN_TERMS, points, points.Length, tension);
+			AppendCurve (points, tangents, 0, points.Length-1, CurveType.Open);
+		}
+			
 		public void AddCurve (Point[] points, int offset, int numberOfSegments, float tension)
 		{
-			AddCurve (ToFloat (points), offset, numberOfSegments, tension);
+			AddCurve (points.ToFloat(), offset, numberOfSegments, tension);
 		}
-		
+
 		public void AddCurve (PointF[] points, int offset, int numberOfSegments, float tension)
 		{
 			if (points == null)
@@ -325,31 +386,10 @@ namespace System.Drawing.Drawing2D {
 			var tangents = OpenCurveTangents (CURVE_MIN_TERMS, points, count, tension);
 			AppendCurve (points, tangents, offset, numberOfSegments, CurveType.Open);
 		}
-
-		public void AddCurve (Point [] points)
-		{
-			AddCurve (ToFloat (points), 0.5f);
-		}
-
-		public void AddCurve (PointF [] points)
-		{
-			AddCurve (points, 0.5f);
-		}
-
-		public void AddCurve (PointF [] points, float tension)
-		{
-			if (points == null)
-				throw new ArgumentNullException ("points");
-			if (points.Length < 2)
-				throw new ArgumentException ("not enough points for polygon", "points");
-			
-			var tangents = OpenCurveTangents (CURVE_MIN_TERMS, points, points.Length, tension);
-			AppendCurve (points, tangents, 0, points.Length-1, CurveType.Open);
-		}
-				      
+			      
 		public void AddPolygon (Point [] points)
 		{
-			AddPolygon (ToFloat (points));
+			AddPolygon (points.ToFloat());
 		}
 		
 		public void AddPolygon (PointF [] points)
@@ -484,20 +524,44 @@ namespace System.Drawing.Drawing2D {
 		
 		public void AddRectangle (Rectangle rect)
 		{
+			if (rect.Width == 0 || rect.Height == 0)
+				return;
+
 			Append (rect.X, rect.Y, PathPointType.Start, false);
-			Append (rect.Right, rect.Y, PathPointType.Start, false);
-			Append (rect.Right, rect.Bottom, PathPointType.Start, false);
-			Append (rect.X, rect.Y, PathPointType.Start, false);
+			Append (rect.Right, rect.Y, PathPointType.Line, false);
+			Append (rect.Right, rect.Bottom, PathPointType.Line, false);
+			Append (rect.X, rect.Bottom, PathPointType.Line | PathPointType.CloseSubpath, false);
 		}
 		
 		public void AddRectangle (RectangleF rect)
 		{
+			if (rect.Width == 0 || rect.Height == 0)
+				return;
+
 			Append (rect.X, rect.Y, PathPointType.Start, false);
-			Append (rect.Right, rect.Y, PathPointType.Start, false);
-			Append (rect.Right, rect.Bottom, PathPointType.Start, false);
-			Append (rect.X, rect.Y, PathPointType.Start, false);
+			Append (rect.Right, rect.Y, PathPointType.Line, false);
+			Append (rect.Right, rect.Bottom, PathPointType.Line, false);
+			Append (rect.X, rect.Bottom, PathPointType.Line | PathPointType.CloseSubpath, false);
 		}
-		
+
+		public void AddRectangles (Rectangle[] rects)
+		{
+			if (rects == null)
+				throw new ArgumentNullException ("rects");
+
+			foreach (var rect in rects)
+				AddRectangle (rect);
+		}
+
+		public void AddRectangles (RectangleF[] rects)
+		{
+			if (rects == null)
+				throw new ArgumentNullException ("rects");
+
+			foreach (var rect in rects)
+				AddRectangle (rect);
+		}
+
 		public void AddPie (float x, float y, float width, float height, float startAngle, float sweepAngle)
 		{
 			float sin_alpha, cos_alpha;
@@ -537,12 +601,12 @@ namespace System.Drawing.Drawing2D {
 
 		public void AddPie(Rectangle rect, float startAngle, float sweepAngle)
 		{
-			AddPie (rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
+			AddPie ((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height, startAngle, sweepAngle);
 		}
 
 		public void AddPie(int x, int y, int width, int height, float startAngle, float sweepAngle)
 		{
-			AddPie (x, y, width, height, startAngle, sweepAngle);
+			AddPie ((float)x, (float)y, (float)width, (float)height, startAngle, sweepAngle);
 		}
 		
         public void AddArc (Rectangle rect, float start_angle, float sweep_angle)
@@ -564,6 +628,67 @@ namespace System.Drawing.Drawing2D {
         {
 			AppendArcs (x, y, width, height, start_angle, sweep_angle);
         }
+
+		public void AddBezier(Point pt1, Point pt2,	Point pt3, Point pt4)
+		{
+			Append (pt1.X, pt1.Y, PathPointType.Line, true);
+			AppendBezier (pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
+		}
+
+		public void AddBezier(PointF pt1, PointF pt2, PointF pt3, PointF pt4)
+		{
+			Append (pt1.X, pt1.Y, PathPointType.Line, true);
+			AppendBezier (pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
+		}
+
+		public void AddBezier(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
+		{
+			Append (x1, y1, PathPointType.Line, true);
+			AppendBezier (x2, y2, x3, y3, x4, y4);
+		}
+
+		public void AddBezier(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+		{
+			Append (x1, y1, PathPointType.Line, true);
+			AppendBezier (x2, y2, x3, y3, x4, y4);
+		}
+
+		public void AddBeziers(params Point[] points)
+		{
+
+			if (points == null)
+				throw new ArgumentNullException ("points");
+
+			int count = points.Length;
+
+			/* first bezier requires 4 points, other 3 more points */
+			if ((count < 4) || ((count % 3) != 1))
+				throw new ArgumentException ("points");
+
+			AddBeziers (points.ToFloat ());
+
+		}
+
+		public void AddBeziers(params PointF[] points)
+		{
+
+			if (points == null)
+				throw new ArgumentNullException ("points");
+
+			int count = points.Length;
+
+			/* first bezier requires 4 points, other 3 more points */
+			if ((count < 4) || ((count % 3) != 1))
+				throw new ArgumentException ("points");
+
+			AppendPoint (points [0], PathPointType.Line, true);
+
+			for (int i = 1; i < count; i++) 
+			{
+				AppendPoint (points [i], PathPointType.Bezier3, false);
+			}
+		}
+
 
 		internal static PointF [] OpenCurveTangents (int terms, PointF [] points, int count, float tension)
 		{
