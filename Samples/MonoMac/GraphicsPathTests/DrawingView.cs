@@ -213,6 +213,12 @@ namespace GraphicsPathTests
 			case 32:
 				AddRectangles2 (g);
 				break;
+			case 33:
+				AddPath1 (g);
+				break;
+			case 34:
+				CloseAllFigures1 (g);
+				break;
 			}
 
 			g.ResetTransform ();
@@ -868,6 +874,68 @@ namespace GraphicsPathTests
 
 			title = "AddRectanglesRectangleF";
 
+		}
+
+		private void AddPath1(Graphics g)
+		{
+
+			// Create the first pathright side up triangle.
+			Point[] myArray =
+			{
+				new Point(30,30),
+				new Point(60,60),
+				new Point(0,60),
+				new Point(30,30)
+			};
+			GraphicsPath myPath = new GraphicsPath();
+			myPath.AddLines(myArray);
+
+			// Create the second pathinverted triangle.
+			Point[] myArray2 =
+			{
+				new Point(30,30),
+				new Point(0,0),
+				new Point(60,0),
+				new Point(30,30)
+			};
+			GraphicsPath myPath2 = new GraphicsPath();
+			myPath2.AddLines(myArray2);
+
+			// Add the second path to the first path.
+			myPath.AddPath(myPath2,true);
+
+			// Draw the combined path to the screen.
+			Pen myPen = new Pen(Color.Black, 2);
+			g.DrawPath(myPen, myPath);
+
+			title = "AddPath";
+		}
+
+		private void CloseAllFigures1(Graphics g)
+		{
+
+			// Create a path containing several open-ended figures.
+			GraphicsPath myPath = new GraphicsPath();
+			myPath.StartFigure();
+			myPath.AddLine(new Point(10, 10), new Point(150, 10));
+			myPath.AddLine(new Point(150, 10), new Point(10, 150));
+			myPath.StartFigure();
+			myPath.AddArc(200, 200, 100, 100, 0, 90);
+			myPath.StartFigure();
+			Point point1 = new Point(300, 300);
+			Point point2 = new Point(400, 325);
+			Point point3 = new Point(400, 375);
+			Point point4 = new Point(300, 400);
+			Point[] points = {point1, point2, point3, point4};
+			myPath.AddCurve(points);
+
+			// Close all the figures.
+			myPath.CloseAllFigures();
+
+			// Draw the path to the screen.
+			g.DrawPath(new Pen(Color.Black, 3), myPath);
+
+			title = "CloseAllFigures";
 		}
 	}
 }

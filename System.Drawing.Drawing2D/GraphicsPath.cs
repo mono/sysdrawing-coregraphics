@@ -713,6 +713,47 @@ namespace System.Drawing.Drawing2D {
 
 		}
 
+
+		public void CloseAllFigures()
+		{
+			int index = 0;
+			byte currentType;
+			byte lastType;
+			byte[] oldTypes;
+
+			/* first point is not closed */
+			if (points.Count <= 1)
+				return;
+
+			oldTypes = types.ToArray();
+			types = new List<byte> ();
+
+			lastType = oldTypes[index];
+			index++;
+
+			for (index = 1; index < points.Count; index++) {
+				currentType = oldTypes [index];
+				/* we dont close on the first point */
+				if ((currentType == (byte)PathPointType.Start) && (index > 1)) 
+				{
+					lastType |= (byte)PathPointType.CloseSubpath;
+					types.Add (lastType);
+				}
+				else
+					types.Add(lastType);
+
+				lastType = currentType;
+			}
+
+			/* close at the end */
+			lastType |= (byte)PathPointType.CloseSubpath;
+			//g_byte_array_append (path->types, &lastType, 1);
+			types.Add(lastType);
+
+			//path->start_new_fig = TRUE;
+			start_new_fig = true;
+		}
+
 		private PathPointType GetFirstPointType()
 		{
 			/* check for a new figure flag or an empty path */ 
