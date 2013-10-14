@@ -219,6 +219,12 @@ namespace GraphicsPathTests
 			case 34:
 				CloseAllFigures1 (g);
 				break;
+			case 35:
+				GetLastPoint1 (g);
+				break;
+			case 36:
+				GetLastPoint2 (g);
+				break;
 			}
 
 			g.ResetTransform ();
@@ -936,6 +942,54 @@ namespace GraphicsPathTests
 			g.DrawPath(new Pen(Color.Black, 3), myPath);
 
 			title = "CloseAllFigures";
+		}
+
+		private void GetLastPoint1(Graphics g)
+		{
+			GraphicsPath myPath = new GraphicsPath();
+			myPath.AddLine(100, 100, 300, 100);
+			PointF lastPoint = myPath.GetLastPoint();
+			if(!lastPoint.IsEmpty)
+			{
+				string lastPointXString = lastPoint.X.ToString();
+				string lastPointYString = lastPoint.Y.ToString();
+				Console.WriteLine(lastPointXString + ", " + lastPointYString);
+			}
+			else
+				Console.WriteLine("lastPoint is empty");
+
+			// Draw the path to the screen.
+			g.DrawPath(new Pen(Color.Black, 2), myPath);
+
+			title = "GetLastPoint - Console";
+		}
+
+		
+		private void GetLastPoint2(Graphics g)
+		{
+			GraphicsPath myPath = new GraphicsPath();
+
+			try
+			{
+				PointF lastPoint = myPath.GetLastPoint();
+				if(!lastPoint.IsEmpty)
+				{
+					string lastPointXString = lastPoint.X.ToString();
+					string lastPointYString = lastPoint.Y.ToString();
+					Console.WriteLine(lastPointXString + ", " + lastPointYString);
+				}
+				else
+					Console.WriteLine("lastPoint is empty");
+			}
+			catch (ArgumentException ae) 
+			{
+				Console.WriteLine (ae.Message);
+			}
+
+			// Draw the path to the screen.
+			g.DrawPath(new Pen(Color.Black, 2), myPath);
+
+			title = "GetLastPointEmptyPath - Console";
 		}
 	}
 }

@@ -752,6 +752,16 @@ namespace System.Drawing.Drawing2D {
 			start_new_fig = true;
 		}
 
+		public PointF GetLastPoint()
+		{
+			if (points.Count <= 0)
+				throw new ArgumentException("Parameter is not valid");
+
+			var lastPoint = points [points.Count - 1];
+			return lastPoint;
+
+		}
+
 		private PathPointType GetFirstPointType()
 		{
 			/* check for a new figure flag or an empty path */ 
