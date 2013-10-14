@@ -762,6 +762,15 @@ namespace System.Drawing.Drawing2D {
 
 		}
 
+		public void Reset()
+		{
+			points.Clear ();
+			types.Clear ();
+			fillMode = FillMode.Alternate;
+			start_new_fig = true;
+
+		}
+
 		private PathPointType GetFirstPointType()
 		{
 			/* check for a new figure flag or an empty path */ 

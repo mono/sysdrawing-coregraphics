@@ -77,7 +77,7 @@ namespace GraphicsPathTests
 		RectangleF pathRectF4 = new RectangleF(110, 60, 100, 50);
 
 
-		int currentView = 17;
+		int currentView = 35;
 		int totalViews = 40;
 
 		public Rectangle ClientRectangle 
@@ -224,6 +224,9 @@ namespace GraphicsPathTests
 				break;
 			case 36:
 				GetLastPoint2 (g);
+				break;
+			case 37:
+				Reset1 (g);
 				break;
 			}
 
@@ -991,6 +994,66 @@ namespace GraphicsPathTests
 
 			title = "GetLastPointEmptyPath - Console";
 		}
+
+		public void Reset1(Graphics g)
+		{
+			Font myFont = new Font("Arial", 8);
+
+			// Create a path and add a line, an ellipse, and an arc.
+			GraphicsPath myPath = new GraphicsPath();
+			myPath.AddLine(new Point(0, 0), new Point(100, 100));
+			myPath.AddEllipse(100, 100, 200, 250);
+			myPath.AddArc(300, 250, 100, 100, 0, 90);
+
+			// Draw the pre-reset path to the screen
+			g.DrawPath (Pens.Blue, myPath);
+
+			// Draw the pre-reset points array to the screen.
+			DrawPoints1(g, myPath.PathPoints, 20);
+
+			// Reset the path.
+			myPath.Reset();
+
+			// See if any points remain. 
+			if(myPath.PointCount > 0)
+			{
+
+				// Draw the post-reset points array to the screen.
+				DrawPoints1(g, myPath.PathPoints, 150);
+			}
+			else 
+
+				// If there are no points, say so.
+				g.DrawString("No Points",
+				                      myFont,
+				                      Brushes.Black,
+				                      150,
+				                      20);
+
+			title = "Reset";
+		} 
+		//End GraphicsPathResetExample 
+
+		// A helper function GraphicsPathResetExample uses to draw the points. 
+
+		// to the screen. 
+		public void DrawPoints1(Graphics g, PointF[] pathPoints, int xOffset)
+		{
+			int y = 20;
+			Font myFont = new Font("Arial", 8);
+			for(int i=0;i < pathPoints.Length; i++)
+			{
+				g.DrawString(pathPoints[i].X.ToString() + ", " +
+				                      pathPoints[i].Y.ToString(),
+				                      myFont,
+				                      Brushes.Black,
+				                      xOffset,
+				                      y);
+				y += 20;
+			}
+		} 
+		// End DrawPoints
+
 	}
 }
 
