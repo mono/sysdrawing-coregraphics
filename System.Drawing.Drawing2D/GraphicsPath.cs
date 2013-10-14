@@ -881,6 +881,44 @@ namespace System.Drawing.Drawing2D {
 
 		}
 
+		public void SetMarkers()
+		{
+			if (points.Count == 0)
+				return;
+
+			var current = types [points.Count - 1];
+
+			types.RemoveAt (points.Count - 1);
+
+			current |= (byte)PathPointType.PathMarker;
+
+			types.Add(current);
+		}
+
+		public void ClearMarkers()
+		{
+
+			// shortcut to avoid allocations 
+			if (types.Count == 0)
+				return;
+
+			var cleared = new List<byte> ();
+			byte current = 0;
+
+			for (int i = 0; i < types.Count; i++) {
+				current = types [i];
+
+				/* take out the marker if there is one */
+				if ((current & (byte)PathPointType.PathMarker) != 0)
+					//current &= ~PathPointType.PathMarker;
+					current &= ((byte)PathPointType.PathMarker ^ 0xff);
+
+				cleared.Add (current);
+			}
+
+			/* replace the existing with the cleared array */
+			types = cleared;
+		}
 
 		private PathPointType GetFirstPointType()
 		{

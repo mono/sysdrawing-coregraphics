@@ -78,7 +78,7 @@ namespace GraphicsPathTests
 
 
 		int currentView = 38;
-		int totalViews = 40;
+		int totalViews = 50;
 
 		public Rectangle ClientRectangle 
 		{
@@ -230,6 +230,18 @@ namespace GraphicsPathTests
 				break;
 			case 38:
 				Reverse1 (g);
+				break;
+			case 39:
+				SetMarkers1 (g);
+				break;
+			case 40:
+				SetMarkers2 (g);
+				break;
+			case 41:
+				ClearMarkers1 (g);
+				break;
+			case 42:
+				ClearMarkers2 (g);
 				break;
 			}
 
@@ -1124,6 +1136,165 @@ namespace GraphicsPathTests
 		} 
 		// End DrawPoints
 
+		private void SetMarkers1(Graphics g)
+		{
+
+			// Create a path and set two markers.
+			GraphicsPath myPath = new GraphicsPath();
+			myPath.AddLine(new Point(0, 0), new Point(50, 50));
+			myPath.SetMarkers();
+			Rectangle rect = new Rectangle(50, 50, 50, 50);
+			myPath.AddRectangle(rect);
+			myPath.SetMarkers();
+			myPath.AddEllipse(100, 100, 100, 50);
+
+			var pathPoints = myPath.PathPoints;
+			var pathTypes = myPath.PathTypes;
+
+			// Draw the path to screen.
+			g.DrawPath(new Pen(Color.Black, 2), myPath);
+
+
+			title = "SetMarkers";
+		}
+
+		private void SetMarkers2(Graphics g)
+		{
+
+			// Create a path and set two markers.
+			GraphicsPath myPath = new GraphicsPath();
+			myPath.AddLine(new Point(0, 0), new Point(50, 50));
+			myPath.SetMarkers();
+			Rectangle rect = new Rectangle(50, 50, 50, 50);
+			myPath.AddRectangle(rect);
+			myPath.SetMarkers();
+			myPath.AddEllipse(100, 100, 100, 50);
+
+			var pathPoints = myPath.PathPoints;
+			var pathTypes = myPath.PathTypes;
+
+			Console.WriteLine("SetMarkers Before reverse");
+			for (int i = 0; i < myPath.PathTypes.Length; i++)
+			{
+				Console.WriteLine("{0} - {1},{2}", (PathPointType)pathTypes[i], pathPoints[i].X, pathPoints[i].Y);
+			}
+
+			// Draw the path to screen.
+			g.FillPath(Brushes.Red, myPath);
+			g.DrawPath(new Pen(Color.Black, 2), myPath);
+
+			// Draw the first set of points to the screen.
+			DrawPoints2(g, myPath.PathPoints, 20);
+
+			// Call GraphicsPath.Reverse.
+			myPath.Reverse();
+
+			pathPoints = myPath.PathPoints;
+			pathTypes = myPath.PathTypes;
+
+
+			Console.WriteLine("SetMarkers After reverse");
+			for (int i = 0; i < myPath.PathTypes.Length; i++)
+			{
+				Console.WriteLine("{0} - {1},{2}", (PathPointType)pathTypes[i], pathPoints[i].X, pathPoints[i].Y);
+			}
+
+			// Draw the path to screen.
+			g.FillPath(Brushes.CornflowerBlue, myPath);
+			g.DrawPath(new Pen(Color.Black, 2), myPath);
+
+
+			// Draw the reversed set of points to the screen.
+			DrawPoints2(g, myPath.PathPoints, 150);
+
+			title = "SetMarkersReverse";
+		}
+
+		
+		private void ClearMarkers1(Graphics g)
+		{
+
+			// Create a path and set two markers.
+			GraphicsPath myPath = new GraphicsPath();
+			myPath.AddLine(new Point(0, 0), new Point(50, 50));
+			myPath.SetMarkers();
+			Rectangle rect = new Rectangle(50, 50, 50, 50);
+			myPath.AddRectangle(rect);
+			myPath.SetMarkers();
+			myPath.AddEllipse(100, 100, 100, 50);
+
+			myPath.ClearMarkers ();
+
+			// Draw the path to screen.
+			g.DrawPath(new Pen(Color.Black, 2), myPath);
+
+
+			title = "ClearMarkers";
+		}
+
+		private void ClearMarkers2(Graphics g)
+		{
+
+			// Create a path and set two markers.
+			GraphicsPath myPath = new GraphicsPath();
+			myPath.AddLine(new Point(0, 0), new Point(50, 50));
+			myPath.SetMarkers();
+			Rectangle rect = new Rectangle(50, 50, 50, 50);
+			myPath.AddRectangle(rect);
+			myPath.SetMarkers();
+			myPath.AddEllipse(100, 100, 100, 50);
+
+			var pathPoints = myPath.PathPoints;
+			var pathTypes = myPath.PathTypes;
+
+			Console.WriteLine("ClearMarkers Before reverse");
+			for (int i = 0; i < myPath.PathTypes.Length; i++)
+			{
+				Console.WriteLine("{0} - {1},{2}", (PathPointType)pathTypes[i], pathPoints[i].X, pathPoints[i].Y);
+			}
+
+			// Draw the path to screen.
+			g.FillPath(Brushes.Red, myPath);
+			g.DrawPath(new Pen(Color.Black, 2), myPath);
+
+			// Draw the first set of points to the screen.
+			DrawPoints2(g, myPath.PathPoints, 20);
+
+			// Call GraphicsPath.Reverse.
+			myPath.Reverse();
+
+			pathPoints = myPath.PathPoints;
+			pathTypes = myPath.PathTypes;
+
+
+			Console.WriteLine("ClearMarkers After reverse");
+			for (int i = 0; i < myPath.PathTypes.Length; i++)
+			{
+				Console.WriteLine("{0} - {1},{2}", (PathPointType)pathTypes[i], pathPoints[i].X, pathPoints[i].Y);
+			}
+
+			// Call GraphicsPath.ClearMarkers.
+			myPath.ClearMarkers();
+
+			pathPoints = myPath.PathPoints;
+			pathTypes = myPath.PathTypes;
+
+
+			Console.WriteLine("ClearMarkers After Clear");
+			for (int i = 0; i < myPath.PathTypes.Length; i++)
+			{
+				Console.WriteLine("{0} - {1},{2}", (PathPointType)pathTypes[i], pathPoints[i].X, pathPoints[i].Y);
+			}
+			// Draw the path to screen.
+			g.FillPath(Brushes.CornflowerBlue, myPath);
+			g.DrawPath(new Pen(Color.Black, 2), myPath);
+
+
+			// Draw the reversed set of points to the screen.
+			DrawPoints2(g, myPath.PathPoints, 150);
+
+			title = "ClearMarkersReverse";
+		}
 
 	}
 }
