@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Diagnostics;
 #if MONOMAC
 using MonoMac.CoreGraphics;
 #else
@@ -770,6 +771,116 @@ namespace System.Drawing.Drawing2D {
 			start_new_fig = true;
 
 		}
+
+
+		/*
+ 		 * Append old_types[start, end] to new_types, adjusting flags.
+ 		 */
+		static void ReverseSubpathAndAdjustFlags (int start, int end, List<byte> old_types, List<byte> new_types, ref bool isPrevHadMarker)
+		{
+
+			/* Copy all but PathPointTypeStart */
+			if (end != start)
+				new_types.AddRange (old_types.GetRange (start + 1, end - start));
+
+			/* Append PathPointTypeStart */
+			new_types.Add ((byte)PathPointType.Start);
+
+			Debug.Assert (new_types.Count == end + 1);
+
+			var prev_first = old_types [start];    
+			var prev_last = old_types [end];   
+
+			/* Remove potential flags from our future start point */
+			if (end != start)
+				new_types[end - 1] &= (byte)PathPointType.PathTypeMask;
+
+			/* Set the flags on our to-be-last point */
+			if ((prev_last & (byte)PathPointType.DashMode) != 0)
+				new_types[start] |= (byte)PathPointType.DashMode;
+
+			if ((prev_last & (byte)PathPointType.CloseSubpath) != 0)
+				new_types[start] |= (byte)PathPointType.CloseSubpath;
+
+			//
+	 		// Swap markers
+	 		//
+			for (int i = start + 1; i < end; i++) {
+				if ((old_types [i - 1] & (byte)PathPointType.PathMarker) != 0)
+					new_types [i] |= (byte)PathPointType.PathMarker;
+				else
+					//new_types[i] &= ~PathPointType.PathMarker;
+					// Can not take compliment for negative numbers so we XOR
+					new_types [i] &= ((byte)PathPointType.PathMarker ^ 0xff);
+			}
+
+			/* If the last point of the previous subpath had a marker, we inherit it */
+			if (isPrevHadMarker)
+				new_types[start] |= (byte)PathPointType.PathMarker;
+			else
+				//new_types[start] &= ~PathPointType.PathMarker;
+				// Can not take compliment for negative numbers so we XOR
+				new_types[start] &= ((byte)PathPointType.PathMarker ^ 0xff);
+
+			isPrevHadMarker = ((prev_last & (byte)PathPointType.PathMarker) == (byte)PathPointType.PathMarker);
+		}
+
+
+		public void Reverse()
+		{
+			var length = points.Count;
+			var start = 0;
+			var isPrevHadMarker = false;
+
+			// shortcut 
+			if (length <= 1)
+				return;
+
+			// PathTypes reversal 
+
+			// First adjust the flags for each subpath 
+			var newTypes = new List<byte> (length);
+
+			for (int i = 1; i < length; i++) {
+				byte t = types [i];
+				if ((t & (byte)PathPointType.PathTypeMask) == (byte)PathPointType.Start) 
+				{
+					ReverseSubpathAndAdjustFlags (start, i - 1, types, newTypes, ref isPrevHadMarker);
+					start = i;
+				}
+			}
+
+			if (start < length - 1)
+				ReverseSubpathAndAdjustFlags (start, length - 1, types, newTypes, ref isPrevHadMarker);
+
+			/* Then reverse the resulting array */
+			for (int i = 0; i < (length >> 1); i++) {
+				byte a = newTypes [i]; 
+				byte b = newTypes [length - i - 1]; 
+				byte temp = a;
+				newTypes [i] = b;
+				newTypes [length - i - 1] = temp;
+			}
+
+			types = newTypes;			
+
+			
+			// PathPoints reversal
+	 		// note: if length is odd then the middle point doesn't need to switch side
+	 		//
+			for (int i = 0; i < (length >> 1); i++) {
+				PointF first = points [i]; 
+				PointF last = points [length - i - 1]; 
+
+				PointF temp = PointF.Empty;
+				temp.X = first.X;
+				temp.Y = first.Y;
+				points [i] = last;
+				points [length - i - 1] = temp;
+			}
+
+		}
+
 
 		private PathPointType GetFirstPointType()
 		{

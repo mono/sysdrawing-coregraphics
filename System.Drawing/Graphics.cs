@@ -874,7 +874,7 @@ namespace System.Drawing {
 			if (path == null)
 				throw new ArgumentNullException ("path");
 			PlotPath (path);
-			FillBrush (brush);
+			FillBrush (brush, path.FillMode);
 		}
 		
 		CompositingMode compositing_mode;

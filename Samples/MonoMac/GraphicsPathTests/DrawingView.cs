@@ -77,7 +77,7 @@ namespace GraphicsPathTests
 		RectangleF pathRectF4 = new RectangleF(110, 60, 100, 50);
 
 
-		int currentView = 35;
+		int currentView = 38;
 		int totalViews = 40;
 
 		public Rectangle ClientRectangle 
@@ -227,6 +227,9 @@ namespace GraphicsPathTests
 				break;
 			case 37:
 				Reset1 (g);
+				break;
+			case 38:
+				Reverse1 (g);
 				break;
 			}
 
@@ -1053,6 +1056,74 @@ namespace GraphicsPathTests
 			}
 		} 
 		// End DrawPoints
+
+		public void Reverse1(Graphics g)
+		{
+
+			// Create a path and add a line, ellipse, and arc.
+			GraphicsPath myPath = new GraphicsPath(FillMode.Winding);
+			myPath.AddLine(new Point(0, 0), new Point(100, 100));
+			myPath.AddEllipse(100, 100, 200, 250);
+			myPath.AddArc(300, 250, 100, 100, 0, 90);
+
+			g.DrawPath (Pens.Red, myPath);
+			g.FillPath (Brushes.Red, myPath);
+
+			var pathPoints = myPath.PathPoints;
+			var pathTypes = myPath.PathTypes;
+
+			Console.WriteLine ("Before reverse");
+			for(int i=0;i < myPath.PathTypes.Length; i++)
+			{
+				Console.WriteLine ("{0} - {1},{2}", (PathPointType)pathTypes [i], pathPoints[i].X,pathPoints[i].Y);
+			}
+
+			// Draw the first set of points to the screen.
+			DrawPoints2(g, myPath.PathPoints, 20);
+
+			// Call GraphicsPath.Reverse.
+			myPath.Reverse();
+
+			g.DrawPath (Pens.Blue, myPath);
+			g.FillPath (Brushes.Blue, myPath);
+
+			pathPoints = myPath.PathPoints;
+			pathTypes = myPath.PathTypes;
+
+
+			Console.WriteLine ("After reverse");
+			for(int i=0;i < myPath.PathTypes.Length; i++)
+			{
+				Console.WriteLine ("{0} - {1},{2}", (PathPointType)pathTypes [i], pathPoints[i].X,pathPoints[i].Y);
+			}
+
+			// Draw the reversed set of points to the screen.
+			DrawPoints2(g, myPath.PathPoints, 150);
+
+			title = "Reverse";
+		}
+		//End GraphicsPathReverseExample. 
+
+		// A helper function GraphicsPathReverseExample is used to draw the 
+
+		// points to the screen. 
+		public void DrawPoints2(Graphics g, PointF[] pathPoints, int xOffset)
+		{
+			int y = 20;
+			Font myFont = new Font("Arial", 8);
+			for(int i=0;i < pathPoints.Length; i++)
+			{
+				g.DrawString(pathPoints[i].X.ToString() + ", " +
+				                      pathPoints[i].Y.ToString(),
+				                      myFont,
+				                      Brushes.Black,
+				                      xOffset,
+				                      y);
+				y += 20;
+			}
+		} 
+		// End DrawPoints
+
 
 	}
 }
