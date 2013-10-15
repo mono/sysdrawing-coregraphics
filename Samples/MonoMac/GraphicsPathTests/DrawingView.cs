@@ -77,7 +77,7 @@ namespace GraphicsPathTests
 		RectangleF pathRectF4 = new RectangleF(110, 60, 100, 50);
 
 
-		int currentView = 38;
+		int currentView = 43;
 		int totalViews = 50;
 
 		public Rectangle ClientRectangle 
@@ -242,6 +242,12 @@ namespace GraphicsPathTests
 				break;
 			case 42:
 				ClearMarkers2 (g);
+				break;
+			case 43:
+				TransformPath (g);
+				break;
+			case 44:
+				StartFigure (g);
 				break;
 			}
 
@@ -1295,6 +1301,60 @@ namespace GraphicsPathTests
 
 			title = "ClearMarkersReverse";
 		}
+
+		private void TransformPath(Graphics g)
+		{
+
+			// Create a path and add and ellipse.
+			GraphicsPath myPath = new GraphicsPath();
+			myPath.AddEllipse(50, 50, 100, 200);
+
+			// Draw the starting position to screen.
+			g.DrawPath(Pens.Black, myPath);
+
+			// Move the ellipse 100 points to the right.
+			Matrix translateMatrix = new Matrix();
+			translateMatrix.Translate(100, 0);
+			myPath.Transform(translateMatrix);
+
+			// Draw the transformed ellipse to the screen.
+			g.DrawPath(new Pen(Color.Red, 2), myPath);
+
+			title = "TransformPath";
+
+		}
+
+		public void StartFigure(Graphics g)
+		{
+
+			// Create a GraphicsPath object.
+			GraphicsPath myPath = new GraphicsPath();
+
+			// First set of figures.
+			myPath.StartFigure();
+			myPath.AddArc(10, 10, 50, 50, 0, 270);
+			myPath.AddLine(new Point(50, 0), new Point(100, 50));
+			myPath.AddArc(50, 100, 75, 75, 0, 270);
+			myPath.CloseFigure();
+			myPath.StartFigure();
+			myPath.AddArc(100, 10, 50, 50, 0, 270);
+
+			// Second set of figures.
+			myPath.StartFigure();
+			myPath.AddArc(10, 200, 50, 50, 0, 270);
+			myPath.CloseFigure();
+			myPath.StartFigure();
+			myPath.AddLine(new Point(60, 200), new Point(110, 250));
+			myPath.AddArc(50, 300, 75, 75, 0, 270);
+			myPath.CloseFigure();
+			myPath.StartFigure();
+			myPath.AddArc(100, 200, 50, 50, 0, 270);
+
+			// Draw the path to the screen.
+			g.DrawPath(new Pen(Color.Black), myPath);
+
+			title = "StartFigure";
+		} 
 
 	}
 }
