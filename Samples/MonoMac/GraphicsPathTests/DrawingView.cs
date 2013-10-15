@@ -77,7 +77,7 @@ namespace GraphicsPathTests
 		RectangleF pathRectF4 = new RectangleF(110, 60, 100, 50);
 
 
-		int currentView = 43;
+		int currentView = 45;
 		int totalViews = 50;
 
 		public Rectangle ClientRectangle 
@@ -248,6 +248,12 @@ namespace GraphicsPathTests
 				break;
 			case 44:
 				StartFigure (g);
+				break;
+			case 45:
+				GetBounds (g);
+				break;
+			case 46:
+				Flatten1 (g);
 				break;
 			}
 
@@ -1356,6 +1362,68 @@ namespace GraphicsPathTests
 			title = "StartFigure";
 		} 
 
+		public void GetBounds(Graphics g)
+		{
+
+			// Create path number 1 and a Pen for drawing.
+			GraphicsPath myPath = new GraphicsPath();
+			Pen pathPen = new Pen(Color.Black, 1);
+
+			// Add an Ellipse to the path and Draw it (circle in start 
+
+			// position).
+			myPath.AddEllipse(20, 20, 100, 100);
+			g.DrawPath(pathPen, myPath);
+
+			// Get the path bounds for Path number 1 and draw them.
+			RectangleF boundRect = myPath.GetBounds();
+			g.DrawRectangle(new Pen(Color.Red, 1),
+			                         boundRect.X,
+			                         boundRect.Y,
+			                         boundRect.Height,
+			                         boundRect.Width);
+
+			// Create a second graphics path and a wider Pen.
+			GraphicsPath myPath2 = new GraphicsPath();
+			Pen pathPen2 = new Pen(Color.Black, 10);
+
+			// Create a new ellipse with a width of 10.
+			myPath2.AddEllipse(150, 20, 100, 100);
+			//myPath2.Widen(pathPen2);
+			g.FillPath(Brushes.Black, myPath2);
+
+			// Get the second path bounds.
+			RectangleF boundRect2 = myPath2.GetBounds();
+
+			// Draw the bounding rectangle.
+			g.DrawRectangle(new Pen(Color.Red, 1),
+			                         boundRect2.X,
+			                         boundRect2.Y,
+			                         boundRect2.Height,
+			                         boundRect2.Width);
+
+			// Display the rectangle size.
+			//MessageBox.Show(boundRect2.ToString());
+			title = "GetBounds";
+		}
+
+		private void Flatten1 (Graphics g)
+		{
+			GraphicsPath myPath = new GraphicsPath();
+			Matrix translateMatrix = new Matrix();
+			translateMatrix.Translate(0, 10);
+			Point point1 = new Point(20, 100);
+			Point point2 = new Point(70, 10);
+			Point point3 = new Point(130, 200);
+			Point point4 = new Point(180, 100);
+			Point[] points = {point1, point2, point3, point4};
+			myPath.AddCurve(points);
+			g.DrawPath(new Pen(Color.Black, 2), myPath);
+			myPath.Flatten(translateMatrix, 10f);
+			g.DrawPath(new Pen(Color.Red, 1), myPath);
+
+			title = "Flatten";
+		}
 	}
 }
 

@@ -53,6 +53,7 @@ namespace System.Drawing.Drawing2D {
 
 		internal const int CURVE_MIN_TERMS = 1;
 		internal const int CURVE_MAX_TERMS = 7;
+		const int FLATTEN_RECURSION_LIMIT = 10;
 			
 		public GraphicsPath () : this (FillMode.Alternate)
 		{
@@ -763,6 +764,294 @@ namespace System.Drawing.Drawing2D {
 
 		}
 
+		public RectangleF GetBounds()
+		{
+			return GetBounds (null);
+		}
+
+		public RectangleF GetBounds(Matrix matrix)
+		{
+			return GetBounds (matrix, null);
+		}
+
+		// return TRUE if the specified path has (at least one) curves, FALSE otherwise */
+		static bool PathHasCurve (GraphicsPath path)
+		{
+
+			if (path == null)
+				return false;
+
+			var types = path.PathTypes;
+			for (int i = 0; i < types.Length; i++) {
+				if (types[i] == (byte)PathPointType.Bezier)
+					return true;
+			}
+
+			return false;
+		}
+
+		// nr_curve_flatten comes from Sodipodi's libnr (public domain) available from http://www.sodipodi.com/ 
+		// Mono changes: converted to float (from double), added recursion limit, use List<PointF> 
+		static bool	nr_curve_flatten (float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, float flatness, int level, List<PointF> points)
+		{
+			float dx1_0, dy1_0, dx2_0, dy2_0, dx3_0, dy3_0, dx2_3, dy2_3, d3_0_2;
+			float s1_q, t1_q, s2_q, t2_q, v2_q;
+			float f2, f2_q;
+			float x00t, y00t, x0tt, y0tt, xttt, yttt, x1tt, y1tt, x11t, y11t;
+
+			dx1_0 = x1 - x0;
+			dy1_0 = y1 - y0;
+			dx2_0 = x2 - x0;
+			dy2_0 = y2 - y0;
+			dx3_0 = x3 - x0;
+			dy3_0 = y3 - y0;
+			dx2_3 = x3 - x2;
+			dy2_3 = y3 - y2;
+			f2 = flatness;
+			d3_0_2 = dx3_0 * dx3_0 + dy3_0 * dy3_0;
+			if (d3_0_2 < f2) {
+				float d1_0_2, d2_0_2;
+				d1_0_2 = dx1_0 * dx1_0 + dy1_0 * dy1_0;
+				d2_0_2 = dx2_0 * dx2_0 + dy2_0 * dy2_0;
+				if ((d1_0_2 < f2) && (d2_0_2 < f2)) {
+					goto nosubdivide;
+				} else {
+					goto subdivide;
+				}
+			}
+			f2_q = f2 * d3_0_2;
+			s1_q = dx1_0 * dx3_0 + dy1_0 * dy3_0;
+			t1_q = dy1_0 * dx3_0 - dx1_0 * dy3_0;
+			s2_q = dx2_0 * dx3_0 + dy2_0 * dy3_0;
+			t2_q = dy2_0 * dx3_0 - dx2_0 * dy3_0;
+			v2_q = dx2_3 * dx3_0 + dy2_3 * dy3_0;
+			if ((t1_q * t1_q) > f2_q) goto subdivide;
+			if ((t2_q * t2_q) > f2_q) goto subdivide;
+			if ((s1_q < 0.0) && ((s1_q * s1_q) > f2_q)) goto subdivide;
+			if ((v2_q < 0.0) && ((v2_q * v2_q) > f2_q)) goto subdivide;
+			if (s1_q >= s2_q) goto subdivide;
+
+			nosubdivide:
+			{
+				points.Add(new PointF(x3,y3));
+				return true;
+			}
+			subdivide:
+				// things gets *VERY* memory intensive without a limit 
+				if (level >= FLATTEN_RECURSION_LIMIT)
+					return false;
+
+			x00t = (x0 + x1) * 0.5f;
+			y00t = (y0 + y1) * 0.5f;
+			x0tt = (x0 + 2 * x1 + x2) * 0.25f;
+			y0tt = (y0 + 2 * y1 + y2) * 0.25f;
+			x1tt = (x1 + 2 * x2 + x3) * 0.25f;
+			y1tt = (y1 + 2 * y2 + y3) * 0.25f;
+			x11t = (x2 + x3) * 0.5f;
+			y11t = (y2 + y3) * 0.5f;
+			xttt = (x0tt + x1tt) * 0.5f;
+			yttt = (y0tt + y1tt) * 0.5f;
+
+			if (!nr_curve_flatten (x0, y0, x00t, y00t, x0tt, y0tt, xttt, yttt, flatness, level+1, points)) return false;
+			if (!nr_curve_flatten (xttt, yttt, x1tt, y1tt, x11t, y11t, x3, y3, flatness, level+1, points)) return false;
+			return true;
+		}
+
+		static bool ConvertBezierToLines (GraphicsPath path, int index, float flatness, List<PointF> flat_points, List<byte> flat_types)
+		{
+			PointF pt;
+			byte type;
+			int i;
+
+			if ((index <= 0) || (index + 2 >= path.points.Count))
+				return false; // bad path data 
+
+			var start = path.points [index - 1];
+			var first = path.points [index];
+			var second = path.points [index + 1];
+			var end = path.points [index + 2];
+
+			// we can't add points directly to the original list as we could end up with too much recursion 
+			var points = new List<PointF> ();
+			if (!nr_curve_flatten (start.X, start.Y, first.X, first.Y, second.X, second.Y, end.X, end.Y, flatness, 0, points)) 
+			{
+				// curved path is too complex (i.e. would result in too many points) to render as a polygon 
+				return false;
+			}
+
+			// recursion was within limits, append the result to the original supplied list 
+			if (points.Count > 0) 
+			{
+				type = (byte)PathPointType.Line;
+				foreach (var pts in points)
+				{
+					flat_points.Add (pts);
+					flat_types.Add (type);
+				}
+			}
+
+			// always PathPointTypeLine 
+			type = (byte)PathPointType.Line;
+			for (i = 1; i < points.Count; i++) 
+			{
+
+				pt = points [i];
+				flat_points.Add (pt);
+				flat_types.Add (type); 
+			}
+
+			return true;
+		}
+
+		static int FlattenPath (GraphicsPath path, Matrix matrix, float flatness)
+		{
+			var status = 0;
+
+			if (path == null)
+				return -1;
+
+			// apply matrix before flattening (as there's less points at this stage) 
+			if (matrix != null) {
+				path.Transform(matrix);
+			}
+
+			// if no bezier are present then the path doesn't need to be flattened
+			if (!PathHasCurve (path))
+				return status;
+
+			var points = new List<PointF> ();
+			var types = new List<byte> ();
+
+			// Iterate the current path and replace each bezier with multiple lines 
+			for (int i = 0; i < path.points.Count; i++) {
+				var point = path.points [i];
+				var type = path.types [i];
+
+				// PathPointTypeBezier3 has the same value as PathPointTypeBezier 
+				if ((type & (byte)PathPointType.Bezier) == (byte)PathPointType.Bezier) 
+				{
+					if (!ConvertBezierToLines (path, i, Math.Abs (flatness), points, types)) 
+					{
+						// uho, too much recursion - do not pass go, do not collect 200$ 
+						PointF pt = PointF.Empty;
+
+						// mimic MS behaviour when recursion becomes a problem */
+						// note: it's not really an empty rectangle as the last point isn't closing 
+						points.Clear ();
+						types.Clear ();
+
+						type = (byte)PathPointType.Start;
+						points.Add (pt);
+						types.Add (type);
+
+						type = (byte)PathPointType.Line;
+						points.Add (pt);
+						types.Add (type);
+
+						points.Add (pt);
+						types.Add (type);
+						break;
+					}
+					// beziers have 4 points: the previous one, the current and the next two 
+					i += 2;
+				} else {
+					// no change required, just copy the point 
+					points.Add (point);
+					types.Add (type);
+				}
+			}
+
+			// transfer new path informations 
+			path.points = points;
+			path.types = types;
+
+			// note: no error code is given for excessive recursion 
+			return 0;
+		}
+
+
+
+		public RectangleF GetBounds(Matrix matrix,Pen pen)
+		{
+
+			var bounds = RectangleF.Empty;
+
+			if (points.Count < 1) {
+				return bounds;
+			}
+
+			var workPath = (GraphicsPath)Clone ();
+
+			// We don't need a very precise flat value to get the bounds (GDI+ isn't, big time) -
+			// however flattening helps by removing curves, making the rest of the algorithm a 
+	        // lot simpler.
+			// note: only the matrix is applied if no curves are present in the path 
+			var status = FlattenPath (workPath, matrix, 25.0f);
+
+			if (status == 0) 
+			{
+				int i;
+				PointF boundaryPoints;
+
+				boundaryPoints = workPath.points [0];//g_array_index (workpath->points, GpPointF, 0);
+				bounds.X = boundaryPoints.X;		// keep minimum X here 
+				bounds.Y = boundaryPoints.Y;		// keep minimum Y here 
+				if (workPath.points.Count == 1) {
+					// special case #2 - Only one element 
+					bounds.Width = 0.0f;
+					bounds.Height = 0.0f;
+					return bounds;
+				}
+
+				bounds.Width = boundaryPoints.X;	// keep maximum X here 
+				bounds.Height = boundaryPoints.Y;	// keep maximum Y here 
+
+				for (i = 1; i < workPath.points.Count; i++) {
+					boundaryPoints = workPath.points[i];
+					if (boundaryPoints.X < bounds.X)
+						bounds.X = boundaryPoints.X;
+					if (boundaryPoints.Y < bounds.Y)
+						bounds.Y = boundaryPoints.Y;
+					if (boundaryPoints.X > bounds.Width)
+						bounds.Width = boundaryPoints.X;
+					if (boundaryPoints.Y > bounds.Height)
+						bounds.Height = boundaryPoints.Y;
+				}
+
+				// convert maximum values (width/height) as length 
+				bounds.Width -= bounds.X;
+				bounds.Height -= bounds.Y;
+
+				if (pen != null) 
+				{
+					/* in calculation the pen's width is at least 1.0 */
+					float width = (pen.Width < 1.0f) ? 1.0f : pen.Width;
+					float halfw = (width / 2);
+
+					bounds.X -= halfw;
+					bounds.Y -= halfw;
+					bounds.Width += width;
+					bounds.Height += width;
+				}
+			}
+			return bounds;
+		}
+
+		public void Flatten()
+		{
+			Flatten (null, 0.25f);
+		}
+
+		public void Flatten(Matrix matrix)
+		{
+			Flatten (matrix, 0.25f);
+		}
+
+		public void Flatten(Matrix matrix, float flatness)
+		{
+			FlattenPath (this, matrix, flatness);
+		}
+
 		public void Reset()
 		{
 			points.Clear ();
@@ -779,11 +1068,11 @@ namespace System.Drawing.Drawing2D {
 		static void ReverseSubpathAndAdjustFlags (int start, int end, List<byte> old_types, List<byte> new_types, ref bool isPrevHadMarker)
 		{
 
-			/* Copy all but PathPointTypeStart */
+			// Copy all but PathPointTypeStart 
 			if (end != start)
 				new_types.AddRange (old_types.GetRange (start + 1, end - start));
 
-			/* Append PathPointTypeStart */
+			// Append PathPointTypeStart 
 			new_types.Add ((byte)PathPointType.Start);
 
 			Debug.Assert (new_types.Count == end + 1);
@@ -791,11 +1080,11 @@ namespace System.Drawing.Drawing2D {
 			var prev_first = old_types [start];    
 			var prev_last = old_types [end];   
 
-			/* Remove potential flags from our future start point */
+			// Remove potential flags from our future start point 
 			if (end != start)
 				new_types[end - 1] &= (byte)PathPointType.PathTypeMask;
 
-			/* Set the flags on our to-be-last point */
+			// Set the flags on our to-be-last point 
 			if ((prev_last & (byte)PathPointType.DashMode) != 0)
 				new_types[start] |= (byte)PathPointType.DashMode;
 
@@ -814,7 +1103,7 @@ namespace System.Drawing.Drawing2D {
 					new_types [i] &= ((byte)PathPointType.PathMarker ^ 0xff);
 			}
 
-			/* If the last point of the previous subpath had a marker, we inherit it */
+			// If the last point of the previous subpath had a marker, we inherit it 
 			if (isPrevHadMarker)
 				new_types[start] |= (byte)PathPointType.PathMarker;
 			else
