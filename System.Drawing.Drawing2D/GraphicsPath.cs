@@ -334,7 +334,8 @@ namespace System.Drawing.Drawing2D {
 				throw new ArgumentNullException ("points");
 			if (points.Length < 3)
 				throw new ArgumentException ("number of points");
-			var tangents = OpenCurveTangents (CURVE_MIN_TERMS, points, points.Length, tension);
+
+			var tangents = GeomUtilities.GetCurveTangents (CURVE_MIN_TERMS, points, points.Length, tension, CurveType.Close);
 
 			AppendCurve (points, tangents, 0, points.Length - 1, CurveType.Close);
 		}
@@ -361,7 +362,7 @@ namespace System.Drawing.Drawing2D {
 			if (points.Length < 2)
 				throw new ArgumentException ("not enough points for polygon", "points");
 			
-			var tangents = OpenCurveTangents (CURVE_MIN_TERMS, points, points.Length, tension);
+			var tangents = GeomUtilities.GetCurveTangents (CURVE_MIN_TERMS, points, points.Length, tension, CurveType.Open);
 			AppendCurve (points, tangents, 0, points.Length-1, CurveType.Open);
 		}
 			
@@ -385,7 +386,7 @@ namespace System.Drawing.Drawing2D {
 			if (numberOfSegments >= points.Length - offset)
 				throw new ArgumentException ("offset");
 
-			var tangents = OpenCurveTangents (CURVE_MIN_TERMS, points, count, tension);
+			var tangents = GeomUtilities.GetCurveTangents (CURVE_MIN_TERMS, points, count, tension, CurveType.Open);
 			AppendCurve (points, tangents, offset, numberOfSegments, CurveType.Open);
 		}
 			      
@@ -1221,31 +1222,6 @@ namespace System.Drawing.Drawing2D {
 				return PathPointType.Start;
 			else
 				return PathPointType.Line;
-		}
-
-		internal static PointF [] OpenCurveTangents (int terms, PointF [] points, int count, float tension)
-		{
-			float coefficient = tension / 3f;
-			PointF [] tangents = new PointF [count];
-			
-			if (count <= 2)
-				return tangents;
-
-			for (int i = 0; i < count; i++) {
-				int r = i + 1;
-				int s = i - 1;
-
-				if (r >= count)
-					r = count - 1;
-				if (s < 0)
-					s = 0;
-
-				tangents [i].X += (coefficient * (points [r].X - points [s].X));
-				tangents [i].Y += (coefficient * (points [r].Y - points [s].Y));
-			}
-			
-			return tangents;        
-			
 		}
 
 		public void Transform (Matrix matrix)

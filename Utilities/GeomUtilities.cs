@@ -500,6 +500,39 @@ namespace System.Drawing
 
 			return new RectangleF (rectangle.Location, rectangle.Size);;
 		}
+
+		internal static PointF [] GetCurveTangents (int terms, PointF [] points, int count, float tension, CurveType type)
+		{
+			float coefficient = tension / 3f;
+			PointF [] tangents = new PointF [count];
+
+			if (count <= 2)
+				return tangents;
+
+			for (int i = 0; i < count; i++) {
+				int r = i + 1;
+				int s = i - 1;
+
+				if (r >= count)
+					r = count - 1;
+				if (type == CurveType.Open) {
+					if (s < 0)
+						s = 0;
+				} 
+				else 
+				{
+					if (s < 0) 
+						s += count;
+				}
+
+				tangents [i].X += (coefficient * (points [r].X - points [s].X));
+				tangents [i].Y += (coefficient * (points [r].Y - points [s].Y));
+			}
+
+			return tangents;        
+
+		}
+
 	}
 }
 

@@ -778,7 +778,7 @@ namespace System.Drawing {
 			if (numberOfSegments >= points.Length - offset)
 				throw new ArgumentException ("offset");
 
-			var tangents = GraphicsPath.OpenCurveTangents (GraphicsPath.CURVE_MIN_TERMS, points, count, tension);
+			var tangents = GeomUtilities.GetCurveTangents (GraphicsPath.CURVE_MIN_TERMS, points, count, tension, CurveType.Open);
 			MakeCurve (points, tangents, offset, numberOfSegments, CurveType.Open);
 			StrokePen (pen);
 		}
@@ -1490,7 +1490,7 @@ namespace System.Drawing {
 			else {
 				int segments = (count > 3) ? (count-1) : (count-2);
 
-				var tangents = GraphicsPath.OpenCurveTangents (GraphicsPath.CURVE_MIN_TERMS, points, count, tension);
+				var tangents = GeomUtilities.GetCurveTangents (GraphicsPath.CURVE_MIN_TERMS, points, count, tension, CurveType.Close);
 				MakeCurve (points, tangents, 0, segments, CurveType.Close);
 				StrokePen (pen);
 			}
@@ -1544,7 +1544,7 @@ namespace System.Drawing {
 			else {
 				int segments = (count > 3) ? (count-1) : (count-2);
 				
-				var tangents = GraphicsPath.OpenCurveTangents (GraphicsPath.CURVE_MIN_TERMS, points, count, tension);
+				var tangents = GeomUtilities.GetCurveTangents (GraphicsPath.CURVE_MIN_TERMS, points, count, tension, CurveType.Close);
 				MakeCurve (points, tangents, 0, segments, CurveType.Close);
 				FillBrush(brush);
 			}
