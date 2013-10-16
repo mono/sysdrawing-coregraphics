@@ -233,6 +233,7 @@
     </Compile>
     <Compile Include="Utilities\ClipperLib\clipper.cs" />
     <Compile Include="System.Drawing\Graphics-DrawString.cs" />
+    <Compile Include="System.Drawing.Drawing2D\GraphicsPathIterator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />

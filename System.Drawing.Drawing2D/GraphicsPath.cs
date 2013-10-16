@@ -46,8 +46,8 @@ namespace System.Drawing.Drawing2D {
 	
 	public sealed class GraphicsPath : ICloneable, IDisposable 
 	{
-		List<PointF> points;
-		List<byte> types;
+		internal List<PointF> points;
+		internal List<byte> types;
 		FillMode fillMode;
 		bool start_new_fig = true;
 
@@ -776,7 +776,7 @@ namespace System.Drawing.Drawing2D {
 		}
 
 		// return TRUE if the specified path has (at least one) curves, FALSE otherwise */
-		static bool PathHasCurve (GraphicsPath path)
+		internal static bool PathHasCurve (GraphicsPath path)
 		{
 
 			if (path == null)
