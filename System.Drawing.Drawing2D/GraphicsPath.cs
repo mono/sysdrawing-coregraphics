@@ -861,8 +861,9 @@ namespace System.Drawing.Drawing2D {
 		static bool ConvertBezierToLines (GraphicsPath path, int index, float flatness, List<PointF> flat_points, List<byte> flat_types)
 		{
 			PointF pt;
-			byte type;
-			int i;
+
+			// always PathPointTypeLine 
+			byte type = (byte)PathPointType.Line;;
 
 			if ((index <= 0) || (index + 2 >= path.points.Count))
 				return false; // bad path data 
@@ -883,17 +884,12 @@ namespace System.Drawing.Drawing2D {
 			// recursion was within limits, append the result to the original supplied list 
 			if (points.Count > 0) 
 			{
-				type = (byte)PathPointType.Line;
-				foreach (var pts in points)
-				{
-					flat_points.Add (pts);
-					flat_types.Add (type);
-				}
+				flat_points.Add (points [0]);
+				flat_types.Add (type);
 			}
 
 			// always PathPointTypeLine 
-			type = (byte)PathPointType.Line;
-			for (i = 1; i < points.Count; i++) 
+			for (int i = 1; i < points.Count; i++) 
 			{
 
 				pt = points [i];
