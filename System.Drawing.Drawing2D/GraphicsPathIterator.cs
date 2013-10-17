@@ -131,6 +131,39 @@ namespace System.Drawing.Drawing2D
 		{
 			int resultCount = 0;
 
+			int index = 0;
+			byte type;
+			PointF point;
+
+			// There are no paths or markers or we are done with all the markers 
+			if (path == null || (this.path.points.Count == 0) ||
+			    (markerPosition == this.path.points.Count)) {
+
+				return resultCount;
+			}
+
+			// Clear the existing values from path 
+			if (path.points.Count > 0) {
+				path.points.Clear();
+				path.types.Clear();
+			}
+
+			for (index = markerPosition; index < this.path.points.Count; index++) {
+				type = this.path.types[index];
+				point = this.path.points[index];
+				path.points.Add(point);
+				path.types.Add(type);
+
+				// Copy the marker and stop copying the points when we reach a marker type 
+				if ((type & (byte)PathPointType.PathMarker) != 0) {
+					index++;
+					break;
+				}
+			}
+
+			resultCount = index - markerPosition;
+			markerPosition = index;
+
 			return resultCount;
 		}
 
