@@ -263,8 +263,59 @@ namespace System.Drawing.Drawing2D
 		public int NextSubpath (GraphicsPath path, out bool isClosed)
 		{
 			int resultCount = 0;
+
+			// We have to initialize all out parameters
 			isClosed = false;
 
+
+			int index = 0;
+			PointF point;
+			byte currentType;
+
+			// There are no subpaths or we are done with all the subpaths 
+			if (path == null || this.path.points.Count == 0 || 
+			    (subpathPosition == this.path.points.Count)) {
+				isClosed = true;
+				return resultCount;
+			}
+
+			// Clear the existing values from path 
+			if (this.path.points.Count > 0) 
+			{
+				path.points.Clear ();
+				path.types.Clear ();
+			}
+
+			// Copy the starting point
+			currentType = this.path.types [subpathPosition];
+			point = this.path.points [subpathPosition];
+			path.points.Add (point);
+			path.types.Add (currentType);
+
+			// Check for next start point 
+			for (index = subpathPosition + 1; index < this.path.points.Count; index++) {
+				currentType = this.path.types [index];
+
+				// Copy the start point till next start point 
+				if (currentType == (byte)PathPointType.Start)
+					break;
+
+				point = this.path.points [index];
+				path.points.Add (point);
+				path.types.Add (currentType);
+			}
+
+			resultCount = index - subpathPosition;
+			// set positions for next iteration
+			pathTypePosition = subpathPosition;
+			subpathPosition = index;
+
+			// Check if last subpath was closed
+			currentType = this.path.types[index - 1];
+			if ((currentType & (byte)PathPointType.CloseSubpath) != 0)
+				isClosed = true;
+			else
+				isClosed = false;
 
 			return resultCount;
 		}
