@@ -35,13 +35,20 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
+using System.Linq;
 #if MONOMAC
 using MonoMac.CoreGraphics;
 #else
 using MonoTouch.CoreGraphics;
 #endif
+using ClipperLib;
 
 namespace System.Drawing.Drawing2D {
+
+	// Clipper lib definitions
+	using Path = List<IntPoint>;
+	using Paths = List<List<IntPoint>>;
+
 	internal enum CurveType { Open, Close }
 	
 	public sealed class GraphicsPath : ICloneable, IDisposable 
@@ -1224,7 +1231,155 @@ namespace System.Drawing.Drawing2D {
 		{
 			matrix.TransformPoints (points);
 		}
-		
+
+		public void Widen(Pen pen)
+		{
+
+			Widen (pen, null);
+		}
+
+		public void Widen(Pen pen, Matrix matrix)
+		{
+			Widen (pen, matrix, .25f);
+
+		}
+
+		public void Widen(Pen pen, Matrix matrix, float flatness)
+		{
+
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+
+			if (points.Count <= 1)
+				return;
+
+			var flat_path = (GraphicsPath)Clone();
+
+			flat_path.Flatten (matrix, flatness);
+			List<PointF> widePoints;
+			List<byte> wideTypes;
+
+			WidenPath (flat_path, pen, out widePoints, out wideTypes);
+
+			points = widePoints;
+			types = wideTypes;
+			start_new_fig = true;
+		}
+
+		const int scale = 10000;
+
+		static void WidenPath (GraphicsPath path, Pen pen, out List<PointF> widePoints, out List<byte> wideTypes)
+		{
+
+			widePoints = new List<PointF> ();
+			wideTypes = new List<byte> ();
+
+			var pathData = path.PathData;
+
+			var iterator = new GraphicsPathIterator(path);
+			var subPaths = iterator.SubpathCount;
+
+			int startIndex = 0;
+			int endIndex = 0;
+			bool isClosed = false;
+
+			var flattenedSubpath = new Paths();
+			var offsetPaths = new Paths();
+			var offsetClipSolution = new Paths();
+
+			var clipper = new Clipper();
+
+			var subjectFillType = (path.FillMode == FillMode.Alternate)? PolyFillType.pftEvenOdd : PolyFillType.pftNonZero;
+			var clipFillType = (path.FillMode == FillMode.Alternate) ? PolyFillType.pftNonZero : PolyFillType.pftEvenOdd;
+
+			var width = (pen.Width / 2) * scale;
+
+			for (int sp = 0; sp < subPaths; sp++)
+			{
+
+				var numOfPoints = iterator.NextSubpath(out startIndex, out endIndex, out isClosed);
+				//Console.WriteLine("subPath {0} - from {1} to {2} closed {3}", sp+1, startIndex, endIndex, isClosed);
+
+				var subPoints = pathData.Points.Skip(startIndex).Take(numOfPoints).ToArray();
+
+				//for (int pp = startIndex; pp <= endIndex; pp++)
+				//{
+				//    Console.WriteLine("         {0} - {1}", pathData.Points[pp], (PathPointType)pathData.Types[pp]);
+				//}
+
+
+				// Load our Figure Subpath
+				flattenedSubpath.Clear();
+				flattenedSubpath.Add(PointFArrayToIntArray(subPoints, scale));
+
+				// Calculate the outter offset region
+				var outerOffsets = Clipper.OffsetPaths(flattenedSubpath, width, JoinType.jtMiter, EndType.etClosed, 0);
+				// Calculate the inner offset region
+				var innerOffsets = Clipper.OffsetPaths(flattenedSubpath, -width, JoinType.jtMiter, EndType.etClosed, 0);
+
+				offsetPaths.Clear();
+				// Load the paths so we can clip them
+				offsetPaths.AddRange(outerOffsets);
+				offsetPaths.AddRange(innerOffsets);
+
+				// Set the Clip and Subject paths to be clipped
+				clipper.AddPaths(offsetClipSolution, PolyType.ptClip, true);
+				clipper.AddPaths(offsetPaths, PolyType.ptSubject, true);
+
+				// Do the clip
+				var clipResult = clipper.Execute(ClipType.ctUnion, offsetClipSolution, subjectFillType, clipFillType);
+
+
+			}
+
+			foreach (var offPath in offsetClipSolution)
+			{
+				if (offPath.Count < 1)
+					continue;
+
+				var pointArray = PathToPointFArray(offPath, scale);
+
+				var type = (byte)PathPointType.Start;
+				widePoints.Add (pointArray [0]);
+				wideTypes.Add (type);
+
+				type = (byte)PathPointType.Line;
+				for (int i = 1; i < offPath.Count-2; i++) 
+				{
+					widePoints.Add (pointArray [i]);
+					wideTypes.Add (type);
+
+				}
+
+				type = (byte)PathPointType.CloseSubpath;
+				widePoints.Add (pointArray [offPath.Count - 1]);
+				wideTypes.Add (type);
+
+			}
+
+		}
+
+		static private PointF[] PathToPointFArray(Path pg, float scale)
+		{
+			PointF[] result = new PointF[pg.Count];
+			for (int i = 0; i < pg.Count; ++i)
+			{
+				result[i].X = (float)pg[i].X / scale;
+				result[i].Y = (float)pg[i].Y / scale;
+			}
+			return result;
+		}
+
+		static private Path PointFArrayToIntArray(PointF[] points, float scale)
+		{
+			Path result = new Path();
+			for (int i = 0; i < points.Length; ++i)
+			{
+				result.Add(new IntPoint((int)points[i].X * scale, (int)points[i].Y * scale)); 
+			}
+			return result;
+		}
+
 		public void Dispose ()
 		{
 		}

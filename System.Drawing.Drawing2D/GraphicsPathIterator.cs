@@ -64,13 +64,15 @@ namespace System.Drawing.Drawing2D
 		{
 			get {
 				int count = 0;
+				byte current;
+				byte start = (byte)PathPointType.Start;
 
 				for (int i = 0; i < path.types.Count; i++) 
 				{
-					var current = path.types [i];
+					current = path.types [i];
 
 					// count only the starts
-					if ((current & (byte)PathPointType.Start) != 0)
+					if (current == start) 
 						count++;
 				}
 
