@@ -203,6 +203,27 @@ namespace System.Drawing
 			StartCap = startCap;
 		}
 
+		LineJoin lineJoin = LineJoin.Miter;
+		public LineJoin LineJoin 
+		{ 
+			get { return lineJoin; }
+			set { 
+				lineJoin = value;
+				changed = true;
+			}
+		}
+
+		float miterLimit = 10f;
+		public float MiterLimit 
+		{ 
+			get { return miterLimit; }
+			set {
+				miterLimit = value;
+				changed = true;
+			}
+		}
+
+
 		static float[] Dot = { 1.0f, 1.0f };
 		static float[] Dash = { 3.0f, 1.0f };
 		static float[] DashDot = { 3.0f, 1.0f, 1.0f, 1.0f };
