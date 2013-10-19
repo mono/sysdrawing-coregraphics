@@ -62,6 +62,8 @@ namespace System.Drawing.Drawing2D {
 		internal const int CURVE_MAX_TERMS = 7;
 		const int FLATTEN_RECURSION_LIMIT = 10;
 			
+		internal bool isReverseWindingOnFill = false;
+
 		public GraphicsPath () : this (FillMode.Alternate)
 		{
 		}
@@ -1264,6 +1266,8 @@ namespace System.Drawing.Drawing2D {
 			points = widePoints;
 			types = wideTypes;
 			start_new_fig = true;
+
+			isReverseWindingOnFill = true;
 		}
 
 		const int scale = 10000;

@@ -874,7 +874,12 @@ namespace System.Drawing {
 			if (path == null)
 				throw new ArgumentNullException ("path");
 			PlotPath (path);
-			FillBrush (brush, path.FillMode);
+
+			var fillMode = path.FillMode;
+			if (path.isReverseWindingOnFill)
+				fillMode = (fillMode == FillMode.Alternate) ? FillMode.Winding : FillMode.Alternate;
+
+			FillBrush (brush, fillMode);
 		}
 		
 		CompositingMode compositing_mode;
