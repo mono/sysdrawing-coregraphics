@@ -280,6 +280,9 @@ namespace GraphicsPathTests
 			case 54:
 				Widen1 (g);
 				break;
+			case 55:
+				Widen2 (g);
+				break;
 
 			}
 
@@ -2108,6 +2111,53 @@ namespace GraphicsPathTests
 			//g.DrawPath (Pens.Black, myPath);
 
 			title = "Widen 1";
+
+		}
+
+		private void Widen2(Graphics g)
+		{
+
+			// Create a path and add two ellipses.
+			GraphicsPath myPath = new GraphicsPath();
+			myPath.AddLines(new Point[] { new Point(20, 10),
+				new Point(50, 50),
+				new Point(80, 10) });
+
+			myPath.AddPolygon(new Point[] { new Point(20, 30),
+				new Point(50, 70),
+				new Point(80, 30) });
+
+			var cx = Bounds.Width;
+			var cy = Bounds.Height;
+
+			var clr = Color.Aquamarine;
+
+			g.ScaleTransform(cx / 300f, cy / 200f);
+
+			for (int i = 0; i < 6; i++)
+			{
+				GraphicsPath pathClone = (GraphicsPath)myPath.Clone();
+				Matrix matrix = new Matrix();
+				Pen penThin = new Pen(clr, 1);
+				Pen penThick = new Pen(clr, 5);
+				Pen penWiden = new Pen(clr, 7.5f);
+				Brush brush = new SolidBrush(clr);
+
+				matrix.Translate((i % 3) * 100, (i / 3) * 100);
+
+				if (i < 3)
+					pathClone.Transform(matrix);
+				else
+					pathClone.Widen(penWiden, matrix);
+
+				switch (i % 3)
+				{
+					case 0: g.DrawPath(penThin, pathClone); break;
+					case 1: g.DrawPath(penThick, pathClone); break;
+					case 2: g.FillPath(brush, pathClone); break;
+				}
+			}
+			title = "Widen 2";
 
 		}
 

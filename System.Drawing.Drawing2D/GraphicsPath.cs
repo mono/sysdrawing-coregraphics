@@ -1332,6 +1332,19 @@ namespace System.Drawing.Drawing2D {
 			var offsetPaths = new Paths();
 
 			var width = (pen.Width / 2) * scale;
+			var miterLimit = pen.MiterLimit * scale;
+
+			var joinType = JoinType.jtMiter;
+			switch (pen.LineJoin) 
+			{
+			case LineJoin.Round:
+				joinType = JoinType.jtRound;
+				break;
+			case LineJoin.Bevel:
+				joinType = JoinType.jtSquare;
+				break;
+			}
+
 
 			for (int sp = 0; sp < subPaths; sp++)
 			{
@@ -1352,9 +1365,9 @@ namespace System.Drawing.Drawing2D {
 				flattenedSubpath.Add(PointFArrayToIntArray(subPoints, scale));
 
 				// Calculate the outter offset region
-				var outerOffsets = Clipper.OffsetPaths(flattenedSubpath, width, JoinType.jtMiter, EndType.etClosed, 0);
+				var outerOffsets = Clipper.OffsetPaths(flattenedSubpath, width, joinType, EndType.etClosed, miterLimit);
 				// Calculate the inner offset region
-				var innerOffsets = Clipper.OffsetPaths(flattenedSubpath, -width, JoinType.jtMiter, EndType.etClosed, 0);
+				var innerOffsets = Clipper.OffsetPaths(flattenedSubpath, -width, joinType, EndType.etClosed, miterLimit);
 
 				// Add the offsets to our paths
 				offsetPaths.AddRange(outerOffsets);
