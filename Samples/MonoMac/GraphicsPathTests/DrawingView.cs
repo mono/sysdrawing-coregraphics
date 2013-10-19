@@ -11,6 +11,8 @@ using MonoMac.Foundation;
 using MonoMac.AppKit;
 using MonoMac.CoreGraphics;
 
+using Plasmoid.Extensions;
+
 namespace GraphicsPathTests
 {
 
@@ -282,6 +284,9 @@ namespace GraphicsPathTests
 				break;
 			case 55:
 				Widen2 (g);
+				break;
+			case 56:
+				RoundeRectangle1 (g);
 				break;
 
 			}
@@ -2159,6 +2164,33 @@ namespace GraphicsPathTests
 			}
 			title = "Widen 2";
 
+		}
+
+		// Example code taken from here : http://www.codeproject.com/Articles/38436/Extended-Graphics-Rounded-rectangles-Font-metrics
+		// Wanted to test the graphics path and LinearGradientBrush code together.
+		void RoundeRectangle1(Graphics g)
+		{
+			var width = this.ClientRectangle.Width;
+			var height = this.ClientRectangle.Height;
+
+			var GradientInactiveCaption = Color.FromArgb (255, 215, 228, 242);
+			var GradientActiveCaptionDark2 = Color.FromArgb (255, 52, 112, 171);
+			var GradientActiveCaptionDark5 = Color.FromArgb (255, 33, 79, 107);
+			var InactiveBorderLight = Color.FromArgb (255, 143, 247, 253);
+
+			g.SmoothingMode = SmoothingMode.AntiAlias;
+			g.FillRoundedRectangle(new SolidBrush(GradientActiveCaptionDark2), 10, 10, width - 40, height - 60, 10);
+			LinearGradientBrush brush = new LinearGradientBrush(
+				new Point(width/2, 0),
+				new Point(width/2, height),
+				GradientInactiveCaption,
+				GradientActiveCaptionDark5
+				);
+			g.FillRoundedRectangle(brush, 12, 12, width - 44, height - 64, 10);
+			g.DrawRoundedRectangle(new Pen(InactiveBorderLight), 12, 12, width - 44, height - 64, 10);
+			g.FillRoundedRectangle(new SolidBrush(Color.FromArgb(100, 70, 130, 180)), 12, 12 + ((height - 64) / 2), width - 44, (height - 64)/2, 10);
+
+			title = "RoundedRectangle1";
 		}
 
 	}
