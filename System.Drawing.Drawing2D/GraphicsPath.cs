@@ -1317,18 +1317,20 @@ namespace System.Drawing.Drawing2D {
 				// Calculate the inner offset region
 				var innerOffsets = Clipper.OffsetPaths(flattenedSubpath, -width, JoinType.jtMiter, EndType.etClosed, 0);
 
-				offsetPaths.Clear();
-				// Load the paths so we can clip them
-				offsetPaths.AddRange(outerOffsets);
-				offsetPaths.AddRange(innerOffsets);
-
-				// Set the Clip and Subject paths to be clipped
-				clipper.AddPaths(offsetClipSolution, PolyType.ptClip, true);
-				clipper.AddPaths(offsetPaths, PolyType.ptSubject, true);
-
-				// Do the clip
-				var clipResult = clipper.Execute(ClipType.ctUnion, offsetClipSolution, subjectFillType, clipFillType);
-
+//				offsetPaths.Clear();
+//				// Load the paths so we can clip them
+//				offsetPaths.AddRange(outerOffsets);
+//				offsetPaths.AddRange(innerOffsets);
+//
+//				// Set the Clip and Subject paths to be clipped
+//				clipper.AddPaths(offsetClipSolution, PolyType.ptClip, true);
+//				clipper.AddPaths(offsetPaths, PolyType.ptSubject, true);
+//
+//				// Do the clip
+//				var clipResult = clipper.Execute(ClipType.ctUnion, offsetClipSolution, subjectFillType, clipFillType);
+				offsetClipSolution.AddRange(outerOffsets);
+				Clipper.ReversePaths (innerOffsets);
+				offsetClipSolution.AddRange(innerOffsets);
 
 			}
 
@@ -1344,19 +1346,72 @@ namespace System.Drawing.Drawing2D {
 				wideTypes.Add (type);
 
 				type = (byte)PathPointType.Line;
-				for (int i = 1; i < offPath.Count-2; i++) 
+				for (int i = 1; i < offPath.Count; i++) 
 				{
 					widePoints.Add (pointArray [i]);
 					wideTypes.Add (type);
 
 				}
 
-				type = (byte)PathPointType.CloseSubpath;
-				widePoints.Add (pointArray [offPath.Count - 1]);
-				wideTypes.Add (type);
+//				type = (byte)PathPointType.CloseSubpath;
+//				widePoints.Add (pointArray [offPath.Count - 1]);
+//				wideTypes.Add (type);
+
+				if (widePoints.Count > 0)
+					wideTypes [wideTypes.Count-1] = (byte) (wideTypes [wideTypes.Count-1] | (byte) PathPointType.CloseSubpath);
 
 			}
 
+//			foreach (var offPath in offsetClipSolution)
+//			{
+//
+//				var pointArray = PathToPointFArray(offPath, scale);
+//
+//				
+//				byte t = (byte) PathPointType.Line;
+//				//byte type;
+//
+//				bool newFig = true;
+//
+//				/* only the first point can be compressed (i.e. removed if identical to previous) */
+//				for (int i = 0, count = pointArray.Length; i < count; i++) 
+//				{
+//					//Append (points [i].X, points [i].Y, PathPointType.Line, (i == 0));
+//					bool compress = (i == 0);
+//					PointF pt = PointF.Empty;
+//					t = (byte) PathPointType.Line;
+//					// in some case we're allowed to compress identical points 
+//					if (compress && (widePoints.Count > 0)) {
+//						// points (X, Y) must be identical 
+//						PointF lastPoint = widePoints [widePoints.Count - 1];
+//						if ((lastPoint.X == pointArray [i].X) && (lastPoint.Y == pointArray [i].Y)) {
+//							// types need not be identical but must handle closed subpaths 
+//							PathPointType last_type = (PathPointType)wideTypes [wideTypes.Count - 1];
+//							if ((last_type & PathPointType.CloseSubpath) != PathPointType.CloseSubpath)
+//								continue;
+//						}
+//					}
+//
+//					if (newFig)
+//						t = (byte)PathPointType.Start;
+//					// if we closed a subpath, then start new figure and append 
+//					else if (widePoints.Count > 0) {
+//							byte type = wideTypes [wideTypes.Count - 1];
+//							if ((type & (byte)PathPointType.CloseSubpath) != 0)
+//								t = (byte)PathPointType.Start;
+//					}
+//
+//					pt.X = pointArray [i].X;
+//					pt.Y = pointArray [i].Y;
+//
+//					widePoints.Add (pt);
+//					wideTypes.Add (t);
+//					newFig = false;
+//				}
+//
+//				if (widePoints.Count > 0)
+//					wideTypes [wideTypes.Count-1] = (byte) (wideTypes [wideTypes.Count-1] | (byte) PathPointType.CloseSubpath);
+//			}
 		}
 
 		static private PointF[] PathToPointFArray(Path pg, float scale)
