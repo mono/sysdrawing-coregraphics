@@ -13,6 +13,7 @@ using MonoMac.CoreGraphics;
 
 namespace GraphicsPathTests
 {
+
 	public partial class DrawingView : MonoMac.AppKit.NSView
 	{
 
@@ -77,7 +78,7 @@ namespace GraphicsPathTests
 		RectangleF pathRectF4 = new RectangleF(110, 60, 100, 50);
 
 
-		int currentView = 47;
+		int currentView = 54;
 		int totalViews = 60;
 
 		public Rectangle ClientRectangle 
@@ -275,6 +276,9 @@ namespace GraphicsPathTests
 				break;
 			case 53:
 				PathIterator7(g);
+				break;
+			case 54:
+				Widen1 (g);
 				break;
 
 			}
@@ -1411,7 +1415,7 @@ namespace GraphicsPathTests
 
 			// Create a new ellipse with a width of 10.
 			myPath2.AddEllipse(150, 20, 100, 100);
-			//myPath2.Widen(pathPen2);
+			myPath2.Widen(pathPen2);
 			g.FillPath(Brushes.Black, myPath2);
 
 			// Get the second path bounds.
@@ -2080,6 +2084,33 @@ namespace GraphicsPathTests
 
 			title = "PathIteratorNextSubpath2";
 		}
+
+		private void Widen1(Graphics g)
+		{
+
+			// Create a path and add two ellipses.
+			GraphicsPath myPath = new GraphicsPath();
+			myPath.AddEllipse(50, 50, 100, 100);
+			myPath.AddEllipse(150, 50, 100, 100);
+
+			// Draw the original ellipses to the screen in black.
+			g.DrawPath(Pens.Black, myPath);
+
+			// Widen the path.
+			Pen widenPen = new Pen(Color.Black, 10);
+			Matrix widenMatrix = new Matrix();
+			widenMatrix.Translate(50, 50);
+			myPath.Widen(widenPen, widenMatrix, 1.0f);
+
+			// Draw the widened path to the screen in red.
+			g.FillPath(new SolidBrush(Color.Red), myPath);		
+		
+			//g.DrawPath (Pens.Black, myPath);
+
+			title = "Widen 1";
+
+		}
+
 	}
 }
 
