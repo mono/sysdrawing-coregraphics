@@ -158,9 +158,17 @@ namespace System.Drawing.Drawing2D {
 
 		void AppendBezier (float x1, float y1, float x2, float y2, float x3, float y3)
 		{
-			Append (x1, y1, PathPointType.Bezier3, false);
-			Append (x2, y2, PathPointType.Bezier3, false);
-			Append (x3, y3, PathPointType.Bezier3, false);
+			if (isReverseWindingOnFill) {
+				Append (y1, x1, PathPointType.Bezier3, false);
+				Append (y2, x2, PathPointType.Bezier3, false);
+				Append (y3, x3, PathPointType.Bezier3, false);
+			} 
+			else 
+			{
+				Append (x1, y1, PathPointType.Bezier3, false);
+				Append (x2, y2, PathPointType.Bezier3, false);
+				Append (x3, y3, PathPointType.Bezier3, false);
+			}
 		}
 
 		void AppendArc (bool start, float x, float y, float width, float height, float startAngle, float endAngle)
@@ -439,33 +447,66 @@ namespace System.Drawing.Drawing2D {
 		public void AddEllipse (RectangleF rect)
 		{
 			const float C1 = 0.552285f;
+			const float C2 = 0.552285f;
 			float rx = rect.Width / 2;
 			float ry = rect.Height / 2;
 			float cx = rect.X + rx;
 			float cy = rect.Y + ry;
 
-			/* origin */
-			Append (cx + rx, cy, PathPointType.Start, false);
+			if (!isReverseWindingOnFill) {
+				/* origin */
+				Append (cx + rx, cy, PathPointType.Start, false);
 
-			/* quadrant I */
-			AppendBezier (cx + rx, cy - C1 * ry,
-				      cx + C1 * rx, cy - ry,
-				      cx, cy - ry);
+				/* quadrant I */
+				AppendBezier (cx + rx, cy - C1 * ry,
+				              cx + C1 * rx, cy - ry,
+				              cx, cy - ry);
 
-			/* quadrant II */
-			AppendBezier (cx - C1 * rx, cy - ry,
-				      cx - rx, cy - C1 * ry,
-				      cx - rx, cy);
+				/* quadrant II */
+				AppendBezier (cx - C1 * rx, cy - ry,
+				              cx - rx, cy - C1 * ry,
+				              cx - rx, cy);
 			
-			/* quadrant III */
-			AppendBezier (cx - rx, cy + C1 * ry,
-				      cx - C1 * rx, cy + ry,
-				      cx, cy + ry);
+				/* quadrant III */
+				AppendBezier (cx - rx, cy + C1 * ry,
+				              cx - C1 * rx, cy + ry,
+				              cx, cy + ry);
 
-			/* quadrant IV */
-			AppendBezier (cx + C1 * rx, cy + ry,
-				      cx + rx, cy + C1 * ry,
-				      cx + rx, cy);
+				/* quadrant IV */
+				AppendBezier (cx + C1 * rx, cy + ry,
+				              cx + rx, cy + C1 * ry,
+				              cx + rx, cy);
+			} 
+			else 
+			{
+				// We need to reverse the drawing of the ellipse so that the
+				// winding is taken into account to not leave holes.
+
+				/* origin */
+				Append (cx + rx, cy, PathPointType.Start, false);
+
+				/* quadrant IV */
+				AppendBezier (cx + C1 * rx, cy + ry,
+				              cx + rx, cy + C1 * ry,
+				              cx + rx, cy);
+
+				/* quadrant I */
+				AppendBezier (cx + rx, cy - C1 * ry,
+				              cx + C1 * rx, cy - ry,
+				              cx, cy - ry);
+
+				/* quadrant II */
+				AppendBezier (cx - C1 * rx, cy - ry,
+				              cx - rx, cy - C1 * ry,
+				              cx - rx, cy);
+
+				/* quadrant III */
+				AppendBezier (cx - rx, cy + C1 * ry,
+				              cx - C1 * rx, cy + ry,
+				              cx, cy + ry);
+
+
+			}
 
 			CloseFigure ();
 		}
