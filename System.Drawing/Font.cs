@@ -56,9 +56,9 @@ namespace System.Drawing
 
 		public Font (FontFamily family, float emSize, FontStyle style,
 				GraphicsUnit unit, byte gdiCharSet, bool gdiVerticalFont)
+			: this (family.Name, emSize, style, unit, gdiCharSet, gdiVerticalFont)
 		{
-			if (family == null)
-				throw new ArgumentNullException ("family");
+
 		}
 
 		public Font (string familyName, float emSize)

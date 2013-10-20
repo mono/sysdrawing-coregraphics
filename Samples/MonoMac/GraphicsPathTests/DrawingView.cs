@@ -2201,16 +2201,20 @@ namespace GraphicsPathTests
 
 			// Create a GraphicsPath object.
 			GraphicsPath myPath = new GraphicsPath();
-			//myPath.AddEllipse(50, 50, 100, 100);
-			//myPath.AddEllipse(150, 50, 100, 100);
+
 			// Set up all the string parameters. 
+			//string stringText = "Sample Text";
 			string stringText = "Sample Text";
 			FontFamily family = new FontFamily("Arial");
 			int fontStyle = (int)FontStyle.Italic;
 			int emSize = 26;
-			Point origin = new Point(20, 20);
+			Point origin = new Point(50, 50);
 			StringFormat format = StringFormat.GenericDefault;
 
+			var size = g.MeasureString (stringText, new Font (family, emSize));
+			//format.Alignment = StringAlignment.Far;
+			format.LineAlignment = StringAlignment.Far;
+			myPath.AddRectangle (new RectangleF (origin.X, origin.Y, size.Width, size.Height));
 			// Add the string to the path.
 			myPath.AddString(stringText,
 			                 family,
@@ -2220,7 +2224,8 @@ namespace GraphicsPathTests
 			                 format);
 
 			//Draw the path to the screen.
-			g.FillPath(Brushes.Black, myPath);
+			//g.FillPath(Brushes.Black, myPath);
+			g.DrawPath (Pens.Blue, myPath);
 
 			OutputPaths("", myPath);
 

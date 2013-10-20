@@ -34,9 +34,17 @@
 namespace System.Drawing {
 
 	public sealed class FontFamily : MarshalByRefObject, IDisposable {
-		
+
+		string familyName;
+
 		public FontFamily (string name)
 		{			
+			familyName = name;
+		}
+
+		public string Name
+		{
+			get { return familyName; }
 		}
 
 		~FontFamily ()
