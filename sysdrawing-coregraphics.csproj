@@ -234,6 +234,10 @@
     <Compile Include="Utilities\ClipperLib\clipper.cs" />
     <Compile Include="System.Drawing\Graphics-DrawString.cs" />
     <Compile Include="System.Drawing.Drawing2D\GraphicsPathIterator.cs" />
+    <Compile Include="System.Drawing.Drawing2D\GraphicsPath-AddString.cs" />
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing\StringTrimming.cs">
+      <Link>External\StringTrimming.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />

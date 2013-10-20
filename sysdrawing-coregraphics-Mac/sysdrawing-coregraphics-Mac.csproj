@@ -291,6 +291,12 @@
     <Compile Include="..\System.Drawing.Drawing2D\GraphicsPathIterator.cs">
       <Link>System.Drawing.Drawing2D\GraphicsPathIterator.cs</Link>
     </Compile>
+    <Compile Include="..\System.Drawing.Drawing2D\GraphicsPath-AddString.cs">
+      <Link>System.Drawing.Drawing2D\GraphicsPath-AddString.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\StringTrimming.cs">
+      <Link>External\StringTrimming.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

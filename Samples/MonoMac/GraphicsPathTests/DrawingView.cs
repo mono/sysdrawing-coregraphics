@@ -80,7 +80,7 @@ namespace GraphicsPathTests
 		RectangleF pathRectF4 = new RectangleF(110, 60, 100, 50);
 
 
-		int currentView = 54;
+		int currentView = 57;
 		int totalViews = 60;
 
 		public Rectangle ClientRectangle 
@@ -288,7 +288,9 @@ namespace GraphicsPathTests
 			case 56:
 				RoundeRectangle1 (g);
 				break;
-
+			case 57:
+				AddString1 (g);
+				break;
 			}
 
 			g.ResetTransform ();
@@ -2193,6 +2195,65 @@ namespace GraphicsPathTests
 			title = "RoundedRectangle1";
 		}
 
+		
+		private void AddString1(Graphics g)
+		{
+
+			// Create a GraphicsPath object.
+			GraphicsPath myPath = new GraphicsPath();
+			//myPath.AddEllipse(50, 50, 100, 100);
+			//myPath.AddEllipse(150, 50, 100, 100);
+			// Set up all the string parameters. 
+			string stringText = "Sample Text";
+			FontFamily family = new FontFamily("Arial");
+			int fontStyle = (int)FontStyle.Italic;
+			int emSize = 26;
+			Point origin = new Point(20, 20);
+			StringFormat format = StringFormat.GenericDefault;
+
+			// Add the string to the path.
+			myPath.AddString(stringText,
+			                 family,
+			                 fontStyle,
+			                 emSize,
+			                 origin,
+			                 format);
+
+			//Draw the path to the screen.
+			g.FillPath(Brushes.Black, myPath);
+
+			OutputPaths("", myPath);
+
+			title = "AddString1";
+
+		}
+
+
+		public void OutputPaths (string title, GraphicsPath myPath)
+		{
+
+			var iterator = new GraphicsPathIterator(myPath);
+			int startIndex, endIndex;
+			bool isClosed;
+			int subPaths = iterator.SubpathCount;
+			var pathData = myPath.PathData;
+
+			Console.WriteLine("{0} - num paths {1}", title, subPaths);
+			for (int sp = 0; sp < subPaths; sp++)
+			{
+
+				var numOfPoints = iterator.NextSubpath(out startIndex, out endIndex, out isClosed);
+				Console.WriteLine("subPath {0} - from {1} to {2} closed {3}", sp + 1, startIndex, endIndex, isClosed);
+
+				for (int pp = startIndex; pp <= endIndex; pp++)
+				{
+					Console.WriteLine("         {0} - {1}", pathData.Points[pp], (PathPointType)pathData.Types[pp]);
+				}
+
+			}
+
+
+		}
 	}
 }
 

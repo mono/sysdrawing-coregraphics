@@ -51,7 +51,7 @@ namespace System.Drawing.Drawing2D {
 
 	internal enum CurveType { Open, Close }
 	
-	public sealed class GraphicsPath : ICloneable, IDisposable 
+	public sealed partial class GraphicsPath : ICloneable, IDisposable 
 	{
 		internal List<PointF> points;
 		internal List<byte> types;

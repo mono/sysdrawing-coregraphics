@@ -35,27 +35,51 @@ namespace System.Drawing {
 
 	public sealed class StringFormat : MarshalByRefObject, IDisposable, ICloneable {
 
+
+		StringFormatFlags formatFlags = 0;
+
 		public StringFormat ()
 		{
 			Alignment = StringAlignment.Near;
 		}
-		
+
+		public StringFormat (StringFormat format)
+		{
+			if (format == null)
+				throw new ArgumentNullException ("format");
+
+			Alignment = format.Alignment;
+			LineAlignment = format.LineAlignment;
+			FormatFlags = format.FormatFlags;
+		}
+
+		public StringFormat(StringFormatFlags options) : this()
+		{
+			formatFlags = options;
+		}
+
+		public StringFormat(StringFormatFlags options, int language) : this(options)
+		{
+
+		}
+
 		~StringFormat ()
 		{
 			Dispose (false);
 		}
 		
 		
-		// FIXME
 		public StringAlignment Alignment {
 			get; set;
 		}
 
-		
+		public StringAlignment LineAlignment { get; set; }
+				
+		public StringTrimming Trimming { get; set; }
+
 		public object Clone()
 		{
-			// FIXME
-			return new StringFormat ();
+			return new StringFormat (this);
 		}
 		
 		public void Dispose ()
@@ -67,20 +91,29 @@ namespace System.Drawing {
 		void Dispose (bool disposing)
 		{
 		}
-		
-		public static StringFormat GenericTypographic {
+
+		public static StringFormat GenericDefault
+		{
 			get {
-				throw new NotImplementedException ();
+				return new StringFormat () { FormatFlags = 0 };
 			}
 		}
-		
+
+		public static StringFormat GenericTypographic 
+		{
+			get {
+				return new StringFormat () { FormatFlags = StringFormatFlags.FitBlackBox | StringFormatFlags.LineLimit | StringFormatFlags.NoClip };
+			}
+		}
+
+
 		public StringFormatFlags FormatFlags {
 			get {				
-				throw new NotImplementedException ();
+				return formatFlags;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				formatFlags = value;
 			}
 		}
 		
