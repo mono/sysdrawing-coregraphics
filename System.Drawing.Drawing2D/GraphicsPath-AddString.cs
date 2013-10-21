@@ -209,11 +209,10 @@ namespace System.Drawing.Drawing2D
 										elementPoints[0] = textMatrix.TransformPoint(pathElement.Point1);
 										elementPoints[1] = textMatrix.TransformPoint(pathElement.Point2);
 								        elementPoints[2] = textMatrix.TransformPoint(pathElement.Point3);
-								//Console.WriteLine ("Applying {0} {1} {2} {3}", pathElement.Type, elementPoints[0], elementPoints[1], elementPoints[2]);
+								//Console.WriteLine ("Applying {0} - {1}, {2}, {3}", pathElement.Type, elementPoints[0], elementPoints[1], elementPoints[2]);
 										
 										
 										// now add position offsets
-
 										switch(pathElement.Type)
 										{
 										case CGPathElementType.MoveToPoint:
@@ -221,14 +220,24 @@ namespace System.Drawing.Drawing2D
 											Append(elementPoints[0].X, elementPoints[0].Y,PathPointType.Line,true);
 											break;
 										case CGPathElementType.AddLineToPoint:
-											AppendPoint(elementPoints[0], PathPointType.Line, false);
+											var lastPoint = points[points.Count - 1];
+											AppendPoint(lastPoint, PathPointType.Line, false);
 											AppendPoint(elementPoints[0], PathPointType.Line, false);
 											break;
 										case CGPathElementType.AddCurveToPoint:
 										case CGPathElementType.AddQuadCurveToPoint:
-											var points = new PointF[] { elementPoints[0], elementPoints[1] };
-											var tangents = GeomUtilities.GetCurveTangents (CURVE_MIN_TERMS, points, points.Length, 0.5f, CurveType.Open);
-											AppendCurve (points, tangents, 0, points.Length-1, CurveType.Open);
+											//  This is the only thing I can think of right now for the fonts that
+											//  I have tested.  See the description of the quadraticToCubic method for
+											//  more information
+
+											// Get the last point
+											var pt1 = points[points.Count - 1];
+											var pt2 = PointF.Empty;
+											var pt3 = PointF.Empty;
+											var pt4 = elementPoints[1];
+											GeomUtilities.QuadraticToCubic(pt1, elementPoints[0], elementPoints[1], out pt2, out pt3);
+											Append (pt1.X, pt1.Y, PathPointType.Line, true);
+											AppendBezier (pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
 											break;
 										case CGPathElementType.CloseSubpath:
 											CloseFigure();
@@ -251,7 +260,6 @@ namespace System.Drawing.Drawing2D
 			}
 
 		}	
-
 
 		private static NSMutableAttributedString buildAttributedString(string text, Font font, 
 		                                                        Color? fontColor=null) 

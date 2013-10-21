@@ -80,8 +80,8 @@ namespace GraphicsPathTests
 		RectangleF pathRectF4 = new RectangleF(110, 60, 100, 50);
 
 
-		int currentView = 58;
-		int totalViews = 60;
+		int currentView = 59;
+		int totalViews = 70;
 
 		public Rectangle ClientRectangle 
 		{
@@ -293,6 +293,9 @@ namespace GraphicsPathTests
 				break;
 			case 58:
 				AddString2 (g);
+				break;
+			case 59:
+				AddString3 (g);
 				break;
 			}
 
@@ -2230,7 +2233,7 @@ namespace GraphicsPathTests
 			//g.FillPath(Brushes.Black, myPath);
 			g.DrawPath (Pens.Blue, myPath);
 
-			OutputPaths("", myPath);
+			//OutputPaths("", myPath);
 
 			title = "AddStringPoint";
 
@@ -2241,7 +2244,7 @@ namespace GraphicsPathTests
 
 			// Create a GraphicsPath object.
 			GraphicsPath myPath = new GraphicsPath();
-
+			g.SmoothingMode = SmoothingMode.HighQuality;
 			// Set up all the string parameters. 
 			//string stringText = "Sample Text";
 			string stringText = "Now is the time for all good men to come to the aid of their country";
@@ -2268,11 +2271,44 @@ namespace GraphicsPathTests
 			//g.FillPath(Brushes.Black, myPath);
 			g.DrawPath (Pens.Blue, myPath);
 
-			OutputPaths("", myPath);
+			//OutputPaths("", myPath);
 
 			title = "AddStringRectangleF";
 
 		}
+
+		private void AddString3(Graphics g)
+		{
+
+			//create a path
+			GraphicsPath pth = new GraphicsPath();
+			//Add a string               
+			pth.AddString("Outline Text",
+			              new FontFamily("Arial"),0,50,
+			              new Point(30,30), StringFormat.GenericTypographic);
+			//Select the pen             
+			Pen p=new Pen(Color.Blue,1.0f);
+			//draw the hollow outlined text
+			g.DrawPath(p,pth);
+			//clear the path
+			pth.Reset();
+			//Add new text
+			pth.AddString("Filled outline Text.",
+			              new FontFamily("Papyrus"),0,35,
+			              new Point(30,120),StringFormat.GenericTypographic);
+			//Fill it
+			g.FillPath(Brushes.Red,pth);
+			//outline it
+			g.DrawPath(p,pth);
+			//tidy up.
+			p.Dispose();
+			pth.Dispose();
+
+
+			title = "AddString3";
+
+		}
+
 
 		public void OutputPaths (string title, GraphicsPath myPath)
 		{

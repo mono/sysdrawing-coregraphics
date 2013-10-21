@@ -533,6 +533,31 @@ namespace System.Drawing
 
 		}
 
+		
+		// from http://fontforge.org/bezier.html
+		//  Formula for converting qudratic to cubic
+		//
+		// Any quadratic spline can be expressed as a cubic (where the cubic term is zero). The end points of the cubic will be the same as the quadratic's.
+		//
+		// CP0 = QP0
+		// CP3 = QP2
+		// The two control points for the cubic are:
+		//
+		// CP1 = QP0 + 2/3 *(QP1-QP0)
+		// CP2 = QP2 + 2/3 *(QP1-QP2)
+		internal static void QuadraticToCubic(PointF start, PointF controlPoint, PointF end, out PointF controlPoint1, out PointF controlPoint2)
+		{
+			controlPoint1 = PointF.Empty;
+			controlPoint2 = PointF.Empty;
+
+			controlPoint1.X = start.X + (2.0f/3.0f * (controlPoint.X - start.X));
+			controlPoint2.X = end.X + (2.0f / 3.0f * (controlPoint.X - end.X));
+
+			controlPoint1.Y = start.Y + (2.0f / 3.0f * (controlPoint.Y - start.Y));
+			controlPoint2.Y = end.Y + (2.0f / 3.0f * (controlPoint.Y - end.Y));
+
+		}
+
 	}
 }
 
