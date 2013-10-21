@@ -80,7 +80,7 @@ namespace GraphicsPathTests
 		RectangleF pathRectF4 = new RectangleF(110, 60, 100, 50);
 
 
-		int currentView = 57;
+		int currentView = 58;
 		int totalViews = 60;
 
 		public Rectangle ClientRectangle 
@@ -290,6 +290,9 @@ namespace GraphicsPathTests
 				break;
 			case 57:
 				AddString1 (g);
+				break;
+			case 58:
+				AddString2 (g);
 				break;
 			}
 
@@ -2229,10 +2232,47 @@ namespace GraphicsPathTests
 
 			OutputPaths("", myPath);
 
-			title = "AddString1";
+			title = "AddStringPoint";
 
 		}
 
+		private void AddString2(Graphics g)
+		{
+
+			// Create a GraphicsPath object.
+			GraphicsPath myPath = new GraphicsPath();
+
+			// Set up all the string parameters. 
+			//string stringText = "Sample Text";
+			string stringText = "Now is the time for all good men to come to the aid of their country";
+			FontFamily family = new FontFamily("Arial");
+			int fontStyle = (int)FontStyle.Italic;
+			int emSize = 26;
+			PointF origin = new PointF(20, 20);
+			SizeF sizeLayout = new SizeF (ClientRectangle.Size.Width - origin.X * 2, ClientRectangle.Size.Height - origin.Y * 2);
+			StringFormat format = StringFormat.GenericDefault;
+
+			var size = g.MeasureString (stringText, new Font (family, emSize));
+			format.Alignment = StringAlignment.Far;
+			format.LineAlignment = StringAlignment.Center;
+			myPath.AddRectangle (new RectangleF (origin.X, origin.Y, sizeLayout.Width, sizeLayout.Height));
+			// Add the string to the path.
+			myPath.AddString(stringText,
+			                 family,
+			                 fontStyle,
+			                 emSize,
+			                 new RectangleF(origin,sizeLayout),
+			                 format);
+
+			//Draw the path to the screen.
+			//g.FillPath(Brushes.Black, myPath);
+			g.DrawPath (Pens.Blue, myPath);
+
+			OutputPaths("", myPath);
+
+			title = "AddStringRectangleF";
+
+		}
 
 		public void OutputPaths (string title, GraphicsPath myPath)
 		{

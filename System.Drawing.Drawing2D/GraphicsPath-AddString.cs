@@ -48,14 +48,34 @@ namespace System.Drawing.Drawing2D
 	public partial class GraphicsPath
 	{
 
-		internal static RectangleF infinite = new RectangleF(-4194304, -4194304, 8388608, 8388608);
-
 		public void AddString(string s,	FontFamily family,	int style, float emSize, Point origin, StringFormat format)
 		{
 			var font = new Font (family.Name, emSize, (FontStyle)style);
-			//var attString = buildAttributedString (s, font, Color.Red);
-			var layoutRect = infinite;
+			var layoutRect = RectangleF.Empty;
 			layoutRect.Location = origin;
+			NativeDrawString (s, font, Color.Red, layoutRect, format);
+
+		}
+
+		public void AddString(string s,	FontFamily family,	int style, float emSize, PointF origin, StringFormat format)
+		{
+			var font = new Font (family.Name, emSize, (FontStyle)style);
+			var layoutRect = RectangleF.Empty;
+			layoutRect.Location = origin;
+			NativeDrawString (s, font, Color.Red, layoutRect, format);
+
+		}
+
+		public void AddString(string s,	FontFamily family,	int style, float emSize, Rectangle layoutRect, StringFormat format)
+		{
+			var font = new Font (family.Name, emSize, (FontStyle)style);
+			NativeDrawString (s, font, Color.Red, layoutRect, format);
+
+		}
+
+		public void AddString(string s,	FontFamily family,	int style, float emSize, RectangleF layoutRect, StringFormat format)
+		{
+			var font = new Font (family.Name, emSize, (FontStyle)style);
 			NativeDrawString (s, font, Color.Red, layoutRect, format);
 
 		}
@@ -72,6 +92,13 @@ namespace System.Drawing.Drawing2D
 
 			// Work out the geometry
 			RectangleF insetBounds = layoutRectangle;
+			bool layoutAvailable = true;
+
+			if (insetBounds.Size == SizeF.Empty) 
+			{
+				insetBounds.Size = new SizeF (8388608, 8388608);
+				layoutAvailable = false;
+			}
 
 			PointF textPosition = new PointF(insetBounds.X,
 			                                 insetBounds.Y);
@@ -88,21 +115,21 @@ namespace System.Drawing.Drawing2D
 
 			// First we need to calculate the offset for Vertical Alignment if we 
 			// are using anything but Top
-//			if (stringFormat.LineAlignment != StringAlignment.Near) {
-//				while (start < length) {
-//					int count = typesetter.SuggestLineBreak (start, boundsWidth);
-//					var line = typesetter.GetLine (new NSRange(start, count));
-//
-//					// Create and initialize some values from the bounds.
-//					float ascent;
-//					float descent;
-//					float leading;
-//					line.GetTypographicBounds (out ascent, out descent, out leading);
-//					baselineOffset += (float)Math.Ceiling (ascent + descent + leading + 1); // +1 matches best to CTFramesetter's behavior  
-//					line.Dispose ();
-//					start += count;
-//				}
-//			}
+			if (layoutAvailable && stringFormat.LineAlignment != StringAlignment.Near) {
+				while (start < length) {
+					int count = typesetter.SuggestLineBreak (start, boundsWidth);
+					var line = typesetter.GetLine (new NSRange(start, count));
+
+					// Create and initialize some values from the bounds.
+					float ascent;
+					float descent;
+					float leading;
+					line.GetTypographicBounds (out ascent, out descent, out leading);
+					baselineOffset += (float)Math.Ceiling (ascent + descent + leading + 1); // +1 matches best to CTFramesetter's behavior  
+					line.Dispose ();
+					start += count;
+				}
+			}
 
 			start = 0;
 
@@ -120,8 +147,12 @@ namespace System.Drawing.Drawing2D
 				float descent;
 				float leading;
 				double lineWidth = line.GetTypographicBounds(out ascent, out descent, out leading);
-				insetBounds.Width = (float)lineWidth;
-				insetBounds.Height = ascent + descent + leading;
+
+				if (!layoutAvailable)
+				{
+					insetBounds.Width = (float)lineWidth;
+					insetBounds.Height = ascent + descent + leading;
+				}
 
 				// Calculate the string format if need be
 				var penFlushness = 0.0f;
@@ -138,9 +169,9 @@ namespace System.Drawing.Drawing2D
 				if (stringFormat.LineAlignment == StringAlignment.Near)
 					textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y); //insetBounds.Height - textPosition.Y -(float)Math.Floor(ascent - 1));
 				if (stringFormat.LineAlignment == StringAlignment.Center)
-					textMatrix.Translate (penFlushness + textPosition.X, -((insetBounds.Height / 2) + (baselineOffset / 2)) + textPosition.Y);  // -(float)Math.Floor(ascent)
+					textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y + ((insetBounds.Height / 2) - (baselineOffset / 2)) );  // -(float)Math.Floor(ascent)
 				if (stringFormat.LineAlignment == StringAlignment.Far)
-					textMatrix.Translate(penFlushness + textPosition.X, -((insetBounds.Height) + (baselineOffset)) + textPosition.Y);
+					textMatrix.Translate(penFlushness + textPosition.X,  textPosition.Y + ((insetBounds.Height) - (baselineOffset)));
 
 				var glyphRuns = line.GetGlyphRuns ();
 
