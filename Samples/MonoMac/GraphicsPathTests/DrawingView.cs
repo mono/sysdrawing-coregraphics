@@ -300,6 +300,9 @@ namespace GraphicsPathTests
 			case 60:
 				AddString4 (g);
 				break;
+			case 61:
+				Warp1 (g);
+				break;
 			}
 
 			g.ResetTransform ();
@@ -2345,12 +2348,42 @@ namespace GraphicsPathTests
 			myPath.AddString (s, new FontFamily ("Times New Roman"), 0, 50, new PointF (30, 110), StringFormat.GenericTypographic);
 			g.FillPath (Brushes.SeaShell, myPath);
 
-//			g.DrawString(s,fn,Brushes.DarkGray,28,108,StringFormat.GenericTypographic);
-//			g.DrawString(s,fn,Brushes.LightGray,32,112,StringFormat.GenericTypographic);
-//			g.DrawString(s,fn,Brushes.SeaShell,30,110,StringFormat.GenericTypographic);
-			//fn.Dispose();
+			fntFamily.Dispose();
 
+			title = "AddString4";
 		}
+
+
+		private void Warp1(Graphics g)
+		{
+
+			// Create a path and add a rectangle.
+			GraphicsPath myPath = new GraphicsPath();
+			RectangleF srcRect = new RectangleF(0, 0, 100, 200);
+			myPath.AddRectangle(srcRect);
+
+			// Draw the source path (rectangle)to the screen.
+			g.DrawPath(Pens.Black, myPath);
+
+			// Create a destination for the warped rectangle.
+			PointF point1 = new PointF(200, 200);
+			PointF point2 = new PointF(400, 250);
+			PointF point3 = new PointF(220, 400);
+			PointF[] destPoints = { point1, point2, point3 };
+
+			// Create a translation matrix.
+			Matrix translateMatrix = new Matrix();
+			translateMatrix.Translate(-100, -100);
+
+			// Warp the source path (rectangle).
+			myPath.Warp(destPoints, srcRect, translateMatrix,
+			            WarpMode.Perspective, 0.5f);
+
+			// Draw the warped path (rectangle) to the screen.
+			g.DrawPath(new Pen(Color.Red), myPath);
+
+			title = "Warp1";
+		} 
 
 		public void OutputPaths (string title, GraphicsPath myPath)
 		{

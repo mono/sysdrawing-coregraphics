@@ -1425,6 +1425,27 @@ namespace System.Drawing.Drawing2D {
 			return result;
 		}
 
+		public void Warp(PointF[] destPoints, RectangleF srcRect)
+		{
+			Warp (destPoints, srcRect, null);
+		}
+
+		public void Warp(PointF[] destPoints, RectangleF srcRect, Matrix matrix)
+		{
+			Warp (destPoints, srcRect, null, WarpMode.Perspective);
+		}
+
+		public void Warp(PointF[] destPoints, RectangleF srcRect, Matrix matrix, WarpMode warpMode)
+		{
+			Warp (destPoints, srcRect, null, WarpMode.Perspective, 0.25f);
+
+		}
+
+		public void Warp(PointF[] destPoints, RectangleF srcRect, Matrix matrix, WarpMode warpMode, float flatness)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public void Dispose ()
 		{
 		}
