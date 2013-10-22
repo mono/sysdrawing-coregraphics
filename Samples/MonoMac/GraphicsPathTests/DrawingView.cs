@@ -297,6 +297,9 @@ namespace GraphicsPathTests
 			case 59:
 				AddString3 (g);
 				break;
+			case 60:
+				AddString4 (g);
+				break;
 			}
 
 			g.ResetTransform ();
@@ -2283,8 +2286,8 @@ namespace GraphicsPathTests
 			//create a path
 			GraphicsPath pth = new GraphicsPath();
 			//Add a string               
-			pth.AddString("Outline Text",
-			              new FontFamily("Arial"),0,50,
+			pth.AddString("Outline Text.",
+			              new FontFamily("Times New Roman"),0,50,
 			              new Point(30,30), StringFormat.GenericTypographic);
 			//Select the pen             
 			Pen p=new Pen(Color.Blue,1.0f);
@@ -2308,7 +2311,46 @@ namespace GraphicsPathTests
 			title = "AddString3";
 
 		}
+		
+		private void AddString4(Graphics g)
+		{
+			g.Clear (Color.FromArgb(255,204,204,204));
 
+			var myPath = new GraphicsPath ();
+
+			FontFamily fntFamily = new FontFamily("Times New Roman");
+			string s="Embossed Text";
+
+			myPath.AddString (s, fntFamily, 0, 50, new PointF (28, 28), StringFormat.GenericTypographic);
+			g.FillPath (Brushes.White, myPath);
+
+			myPath.Reset ();
+			myPath.AddString (s, fntFamily, 0, 50, new PointF (32, 32), StringFormat.GenericTypographic);
+			g.FillPath (Brushes.DarkGray, myPath);
+
+			myPath.Reset ();
+			myPath.AddString (s, fntFamily, 0, 50, new PointF (30, 30), StringFormat.GenericTypographic);
+			g.FillPath (Brushes.Black, myPath);
+
+			s="Chiseled Text";
+			myPath.Reset ();
+			myPath.AddString (s, fntFamily, 0, 50, new PointF (28, 108), StringFormat.GenericTypographic);
+			g.FillPath (Brushes.DarkGray, myPath);
+
+			myPath.Reset ();
+			myPath.AddString (s, fntFamily, 0, 50, new PointF (32, 112), StringFormat.GenericTypographic);
+			g.FillPath (Brushes.LightGray, myPath);
+
+			myPath.Reset ();
+			myPath.AddString (s, new FontFamily ("Times New Roman"), 0, 50, new PointF (30, 110), StringFormat.GenericTypographic);
+			g.FillPath (Brushes.SeaShell, myPath);
+
+//			g.DrawString(s,fn,Brushes.DarkGray,28,108,StringFormat.GenericTypographic);
+//			g.DrawString(s,fn,Brushes.LightGray,32,112,StringFormat.GenericTypographic);
+//			g.DrawString(s,fn,Brushes.SeaShell,30,110,StringFormat.GenericTypographic);
+			//fn.Dispose();
+
+		}
 
 		public void OutputPaths (string title, GraphicsPath myPath)
 		{
