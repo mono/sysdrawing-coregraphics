@@ -80,7 +80,7 @@ namespace GraphicsPathTests
 		RectangleF pathRectF4 = new RectangleF(110, 60, 100, 50);
 
 
-		int currentView = 59;
+		int currentView = 61;
 		int totalViews = 70;
 
 		public Rectangle ClientRectangle 
@@ -301,7 +301,7 @@ namespace GraphicsPathTests
 				AddString4 (g);
 				break;
 			case 61:
-				Warp1 (g);
+				IsVisible1 (g);
 				break;
 			}
 
@@ -2384,6 +2384,53 @@ namespace GraphicsPathTests
 
 			title = "Warp1";
 		} 
+
+		private void IsVisible1(Graphics g)
+		{
+
+			// Create a path and add an ellipse.
+			GraphicsPath myPath = new GraphicsPath();
+			myPath.AddEllipse(0, 0, 100, 100);
+
+			g.DrawPath(Pens.Blue, myPath);
+
+			// Test the visibility of point (50, 50). 
+			bool visible = myPath.IsVisible(50, 50, g);
+			g.FillRectangle(Brushes.Green, new Rectangle(48, 48, 2, 2));
+			// Show the result.
+			g.DrawString("Visible = " + visible, new Font("Arial", 12), Brushes.Green, 60, 50);
+
+			visible = myPath.IsVisible(90, 90, g);
+			g.FillRectangle(Brushes.Red, new Rectangle(88, 88, 2, 2));
+			// Show the result.
+			g.DrawString("Visible = " + visible, new Font("Arial", 12), Brushes.Red, 100, 90);
+
+			title = "IsVisibleInt32";
+		}
+
+		
+		private void IsVisible2(Graphics g)
+		{
+
+			// Create a path and add an ellipse.
+			GraphicsPath myPath = new GraphicsPath();
+			myPath.AddEllipse(0, 0, 100, 100);
+
+			g.DrawPath(Pens.Blue, myPath);
+
+			// Test the visibility of point (50, 50). 
+			bool visible = myPath.IsVisible(new PointF(50, 50), g);
+			g.FillRectangle(Brushes.Green, new Rectangle(48, 48, 2, 2));
+			// Show the result.
+			g.DrawString("Visible = " + visible, new Font("Arial", 12), Brushes.Green, 60, 50);
+
+			visible = myPath.IsVisible(new PointF(90, 90), g);
+			g.FillRectangle(Brushes.Red, new Rectangle(88, 88, 2, 2));
+			// Show the result.
+			g.DrawString("Visible = " + visible, new Font("Arial", 12), Brushes.Red, 100, 90);
+
+			title = "IsVisibleIntPointF";
+		}
 
 		public void OutputPaths (string title, GraphicsPath myPath)
 		{

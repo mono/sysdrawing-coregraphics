@@ -1084,6 +1084,50 @@ namespace System.Drawing.Drawing2D {
 			return bounds;
 		}
 
+		public bool IsVisible(Point point)
+		{
+			return IsVisible (point, null);
+		}
+
+		public bool IsVisible(PointF point)
+		{
+			return IsVisible (point, null);
+		}
+
+		public bool IsVisible(int x, int y)
+		{
+			return IsVisible (new Point(x,y), null);
+		}
+
+		public bool IsVisible(float x, float y)
+		{
+			return IsVisible (new PointF(x,y), null);
+		}
+
+		public bool IsVisible(int x, int y, Graphics graphics)
+		{
+			return IsVisible (new Point(x,y), graphics);
+		}
+
+		public bool IsVisible(float x, float y, Graphics graphics)
+		{
+			return IsVisible (new PointF(x,y), graphics);
+		}
+
+		public bool IsVisible(Point point, Graphics graphics)
+		{
+			var region = new Region (this);
+			return region.IsVisible (point);
+		}
+
+		public bool IsVisible(PointF point, Graphics graphics)
+		{
+			var region = new Region (this);
+			return region.IsVisible (point);
+		}
+
+
+
 		public void Flatten()
 		{
 			Flatten (null, 0.25f);
@@ -1362,7 +1406,7 @@ namespace System.Drawing.Drawing2D {
 
 				// Load our Figure Subpath
 				flattenedSubpath.Clear();
-				flattenedSubpath.Add(PointFArrayToIntArray(subPoints, scale));
+				flattenedSubpath.Add(Region.PointFArrayToIntArray(subPoints, scale));
 
 				// Calculate the outter offset region
 				var outerOffsets = Clipper.OffsetPaths(flattenedSubpath, width, joinType, EndType.etClosed, miterLimit);
@@ -1383,7 +1427,7 @@ namespace System.Drawing.Drawing2D {
 				if (offPath.Count < 1)
 					continue;
 
-				var pointArray = PathToPointFArray(offPath, scale);
+				var pointArray = Region.PathToPointFArray(offPath, scale);
 
 				var type = (byte)PathPointType.Start;
 				widePoints.Add (pointArray [0]);
@@ -1402,27 +1446,6 @@ namespace System.Drawing.Drawing2D {
 
 			}
 
-		}
-
-		static private PointF[] PathToPointFArray(Path pg, float scale)
-		{
-			PointF[] result = new PointF[pg.Count];
-			for (int i = 0; i < pg.Count; ++i)
-			{
-				result[i].X = (float)pg[i].X / scale;
-				result[i].Y = (float)pg[i].Y / scale;
-			}
-			return result;
-		}
-
-		static private Path PointFArrayToIntArray(PointF[] points, float scale)
-		{
-			Path result = new Path();
-			for (int i = 0; i < points.Length; ++i)
-			{
-				result.Add(new IntPoint((int)points[i].X * scale, (int)points[i].Y * scale)); 
-			}
-			return result;
 		}
 
 		public void Warp(PointF[] destPoints, RectangleF srcRect)

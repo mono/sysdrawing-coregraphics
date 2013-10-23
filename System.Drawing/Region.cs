@@ -36,14 +36,8 @@ using System.Collections.Generic;
 
 #if MONOMAC
 using MonoMac.CoreGraphics;
-//using MonoMac.AppKit;
-//using MonoMac.Foundation;
-//using MonoMac.CoreText;
 #else
 using MonoTouch.CoreGraphics;
-//using MonoTouch.UIKit;
-//using MonoTouch.Foundation;
-//using MonoTouch.CoreText;
 #endif
 
 // Polygon Clipping Library
@@ -75,7 +69,7 @@ namespace System.Drawing
 		//via Polygon (or Polygons) objects because Clipper no longer accepts floating  
 		//point values. Likewise when Clipper returns a solution in a Polygons object, 
 		//we need to scale down these returned values by the same amount before displaying.
-		private static float scale = 100; //or 1 or 10 or 10000 etc for lesser or greater precision.
+		private static float scale = 10000; //or 1 or 10 or 10000 etc for lesser or greater precision.
 
 		internal Paths solution = new Paths();
 
@@ -185,6 +179,93 @@ namespace System.Drawing
 
 			regionBounds = rect;
 		}
+
+		public Region (GraphicsPath path)
+		{
+			var clonePath = (GraphicsPath)path.Clone(); 
+			regionObject = clonePath;
+			regionPath = new CGPath ();
+
+			PlotPath (clonePath);
+
+			clonePath.Flatten ();
+			var flatPath = PointFArrayToIntArray (clonePath.PathPoints, scale);
+			solution.Add (flatPath);
+			regionList.Add (new RegionEntry (RegionType.Path, clonePath, flatPath));
+			regionBounds = regionPath.BoundingBox;
+		}
+
+		internal static Path PointFArrayToIntArray(PointF[] points, float scale)
+		{
+			Path result = new Path();
+			for (int i = 0; i < points.Length; ++i)
+			{
+				result.Add(new IntPoint((int)points[i].X * scale, (int)points[i].Y * scale)); 
+			}
+			return result;
+		}
+
+		
+		internal static PointF[] PathToPointFArray(Path pg, float scale)
+		{
+			PointF[] result = new PointF[pg.Count];
+			for (int i = 0; i < pg.Count; ++i)
+			{
+				result[i].X = (float)pg[i].X / scale;
+				result[i].Y = (float)pg[i].Y / scale;
+			}
+			return result;
+		}
+
+		void PlotPath (GraphicsPath path)
+		{
+			float x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0;
+			var points = path.PathPoints;
+			var types = path.PathTypes;
+			int bidx = 0;
+
+			for (int i = 0; i < points.Length; i++){
+				var point = points [i];
+				var type = (PathPointType) types [i];
+
+				switch (type & PathPointType.PathTypeMask){
+				case PathPointType.Start:
+					regionPath.MoveToPoint (point);
+					break;
+
+				case PathPointType.Line:
+					regionPath.AddLineToPoint (point);
+					break;
+
+				case PathPointType.Bezier3:
+					// collect 3 points
+					switch (bidx++){
+						case 0:
+						x1 = point.X;
+						y1 = point.Y;
+						break;
+						case 1:
+						x2 = point.X;
+						y2 = point.Y;
+						break;
+						case 2:
+						x3 = point.X;
+						y3 = point.Y;
+						break;
+					}
+					if (bidx == 3){
+						regionPath.AddCurveToPoint (x1, y1, x2, y2, x3, y3);
+						bidx = 0;
+					}
+					break;
+					default:
+					throw new Exception ("Inconsistent internal state, path type=" + type);
+				}
+				if ((type & PathPointType.CloseSubpath) != 0)
+					regionPath.CloseSubpath ();
+			}
+		}
+
 
 		~Region ()
 		{
