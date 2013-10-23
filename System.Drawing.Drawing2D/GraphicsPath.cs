@@ -1126,7 +1126,54 @@ namespace System.Drawing.Drawing2D {
 			return region.IsVisible (point);
 		}
 
+		public bool IsOutlineVisible(Point point, Pen pen)
+		{
+			return IsOutlineVisible (point, pen, null);
+		}
 
+		public bool IsOutlineVisible(PointF point, Pen pen)
+		{
+			return IsOutlineVisible (point, pen, null);
+		}
+
+		public bool IsOutlineVisible(int x, int y, Pen pen)
+		{
+			return IsOutlineVisible (new Point(x,y), pen, null);
+		}
+
+		public bool IsOutlineVisible(Point pt, Pen pen, Graphics graphics)
+		{
+			return IsOutlineVisible ((PointF)pt, pen, graphics);
+		}
+
+		public bool IsOutlineVisible(PointF pt, Pen pen, Graphics graphics)
+		{
+			var outlinePath = (GraphicsPath)Clone ();
+			if (graphics != null)
+				outlinePath.Transform (graphics.Transform);
+
+			outlinePath.Widen (pen);
+			var outlineRegion = new Region (outlinePath);
+			return outlineRegion.IsVisible (pt);
+		}
+
+		public bool IsOutlineVisible(float x, float y, Pen pen)
+		{
+			return IsOutlineVisible (new PointF(x,y), pen, null);
+
+		}
+
+		public bool IsOutlineVisible(int x, int y, Pen pen, Graphics graphics)
+		{
+			return IsOutlineVisible (new Point(x,y), pen, graphics);
+
+		}
+
+		public bool IsOutlineVisible(float x, float y, Pen pen, Graphics graphics)
+		{
+			return IsOutlineVisible (new PointF(x,y), pen, graphics);
+
+		}
 
 		public void Flatten()
 		{

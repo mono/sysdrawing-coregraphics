@@ -80,7 +80,7 @@ namespace GraphicsPathTests
 		RectangleF pathRectF4 = new RectangleF(110, 60, 100, 50);
 
 
-		int currentView = 64;
+		int currentView = 68;
 		int totalViews = 70;
 
 		public Rectangle ClientRectangle 
@@ -321,6 +321,10 @@ namespace GraphicsPathTests
 			case 67:
 				SetClip5 (g);
 				break;
+			case 68:
+				IsOutlineVisible1 (g);
+				break;
+
 			}
 
 			g.ResetTransform ();
@@ -2543,6 +2547,36 @@ namespace GraphicsPathTests
 
 			title = "SetClipPathCombineXor";
 		}
+		
+		public void IsOutlineVisible1(Graphics g)
+		{
+			GraphicsPath myPath = new GraphicsPath();
+			Rectangle rect = new Rectangle(20, 20, 100, 100);
+			myPath.AddRectangle(rect);
+			Pen testPen = new Pen(Color.AliceBlue, 20);
+			var widePath = (GraphicsPath)myPath.Clone();
+			widePath.Widen(testPen);
+			g.FillPath(Brushes.Wheat, widePath);
+			g.DrawPath(Pens.Black, myPath);
+
+			var point = new PointF(100, 50);
+
+			bool visible = myPath.IsOutlineVisible(point, testPen, g);
+			g.FillRectangle(Brushes.Red, new RectangleF(point.X, point.Y, 2, 2));
+			// Show the result.
+			g.DrawString("Visible = " + visible, new Font("Arial", 12), Brushes.Red, point.X + 10, point.Y);
+
+			point.X = 115;
+			point.Y = 80;
+
+			visible = myPath.IsOutlineVisible(point, testPen, g);
+			g.FillRectangle(Brushes.Green, new RectangleF(point.X, point.Y, 2, 2));
+			// Show the result.
+			g.DrawString("Visible = " + visible, new Font("Arial", 12), Brushes.Green, point.X + 10, point.Y);
+
+			title = "IsOutlineVisible";
+		}
+
 
 		public void OutputPaths (string title, GraphicsPath myPath)
 		{
