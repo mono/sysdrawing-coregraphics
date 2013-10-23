@@ -80,7 +80,7 @@ namespace GraphicsPathTests
 		RectangleF pathRectF4 = new RectangleF(110, 60, 100, 50);
 
 
-		int currentView = 61;
+		int currentView = 64;
 		int totalViews = 70;
 
 		public Rectangle ClientRectangle 
@@ -302,6 +302,24 @@ namespace GraphicsPathTests
 				break;
 			case 61:
 				IsVisible1 (g);
+				break;
+			case 62:
+				IsVisible2 (g);
+				break;
+			case 63:
+				SetClip1 (g);
+				break;
+			case 64:
+				SetClip2 (g);
+				break;
+			case 65:
+				SetClip3 (g);
+				break;
+			case 66:
+				SetClip4 (g);
+				break;
+			case 67:
+				SetClip5 (g);
 				break;
 			}
 
@@ -2430,6 +2448,100 @@ namespace GraphicsPathTests
 			g.DrawString("Visible = " + visible, new Font("Arial", 12), Brushes.Red, 100, 90);
 
 			title = "IsVisibleIntPointF";
+		}
+
+
+		private void SetClip1 (Graphics g)
+		{
+
+			// Create graphics path.
+			GraphicsPath clipPath = new GraphicsPath();
+			clipPath.AddEllipse(0, 0, 200, 100);
+			Matrix transform = new Matrix ();
+			transform.Translate (100, 100);
+			clipPath.Transform (transform);
+			// Set clipping region to path.
+			g.SetClip(clipPath);
+
+			// Fill rectangle to demonstrate clipping region.
+			g.FillRectangle(new SolidBrush(Color.Blue), 0, 0, 500, 300);
+
+			title = "SetClipPath";
+		}
+
+		private void SetClip2(Graphics g)
+		{
+
+			g.SetClip (new RectangleF (50, 50, 100, 100));
+
+			// Create graphics path.
+			GraphicsPath clipPath = new GraphicsPath();
+			clipPath.AddEllipse(75, 75, 200, 100);
+
+			// Set clipping region to path.
+			g.SetClip(clipPath, CombineMode.Intersect);
+
+			// Fill rectangle to demonstrate clipping region.
+			g.FillRectangle(new SolidBrush(Color.Blue), 0, 0, 500, 300);
+
+			title = "SetClipPathCombineIntersect";
+		}
+
+		
+		private void SetClip3(Graphics g)
+		{
+
+			g.SetClip (new RectangleF (50, 50, 100, 100));
+
+			// Create graphics path.
+			GraphicsPath clipPath = new GraphicsPath();
+			clipPath.AddEllipse(75, 75, 200, 100);
+
+			// Set clipping region to path.
+			g.SetClip(clipPath, CombineMode.Union);
+
+			// Fill rectangle to demonstrate clipping region.
+			g.FillRectangle(new SolidBrush(Color.Blue), 0, 0, 500, 300);
+
+			title = "SetClipPathCombineUnion";
+		}
+
+		
+		private void SetClip4(Graphics g)
+		{
+
+			g.SetClip (new RectangleF (50, 50, 100, 100));
+
+			// Create graphics path.
+			GraphicsPath clipPath = new GraphicsPath();
+			clipPath.AddEllipse(75, 75, 200, 100);
+
+			// Set clipping region to path.
+			g.SetClip(clipPath, CombineMode.Exclude);
+
+			// Fill rectangle to demonstrate clipping region.
+			g.FillRectangle(new SolidBrush(Color.Blue), 0, 0, 500, 300);
+
+			title = "SetClipPathCombineExclude";
+		}
+
+		
+		private void SetClip5(Graphics g)
+		{
+
+			g.SetClip (new RectangleF (50, 50, 100, 100));
+
+			// Create graphics path.
+			GraphicsPath clipPath = new GraphicsPath();
+			clipPath.AddEllipse(75, 75, 200, 100);
+
+			// Set clipping region to path.
+			g.SetClip(clipPath, CombineMode.Xor);
+
+			// Fill rectangle to demonstrate clipping region.
+			g.FillRectangle(new SolidBrush(Color.Blue), 0, 0, 500, 300);
+
+			title = "SetClipPathCombineXor";
 		}
 
 		public void OutputPaths (string title, GraphicsPath myPath)

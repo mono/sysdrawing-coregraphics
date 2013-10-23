@@ -999,7 +999,7 @@ namespace System.Drawing {
 
 		public void SetClip (GraphicsPath graphicsPath, CombineMode combineMode)
 		{
-			throw new NotImplementedException ();
+			SetClip (new Region (graphicsPath), combineMode);
 		}
 		
 		public void SetClip (Graphics g, CombineMode combineMode)
