@@ -70,58 +70,12 @@ namespace System.Drawing
 			}
 		}
 
-
-		/*-------------------------------------------------------------*
-         *                Projective coordinate transformation         *
-         * http://tpgit.github.io/Leptonica/projective_8c_source.html  *
-         *-------------------------------------------------------------*/
-		/*!
-         *  CalcProjectiveXformCoeffs()
+		/*
+        *  CalcProjectiveXformCoeffs()
          *
          *      Input:  srcPoints  (source 4 points; unprimed)
          *              destPoints  (transformed 4 points; primed)
          *              out transformCoeffs   (<return> vector of coefficients of transform)
-         *
-         *  We have a set of 8 equations, describing the projective
-         *  transformation that takes 4 points (srcPoints) into 4 other
-         *  points (desPoints).  These equations are:
-         *
-         *          x1' = (c[0]*x1 + c[1]*y1 + c[2]) / (c[6]*x1 + c[7]*y1 + 1)
-         *          y1' = (c[3]*x1 + c[4]*y1 + c[5]) / (c[6]*x1 + c[7]*y1 + 1)
-         *          x2' = (c[0]*x2 + c[1]*y2 + c[2]) / (c[6]*x2 + c[7]*y2 + 1)
-         *          y2' = (c[3]*x2 + c[4]*y2 + c[5]) / (c[6]*x2 + c[7]*y2 + 1)
-         *          x3' = (c[0]*x3 + c[1]*y3 + c[2]) / (c[6]*x3 + c[7]*y3 + 1)
-         *          y3' = (c[3]*x3 + c[4]*y3 + c[5]) / (c[6]*x3 + c[7]*y3 + 1)
-         *          x4' = (c[0]*x4 + c[1]*y4 + c[2]) / (c[6]*x4 + c[7]*y4 + 1)
-         *          y4' = (c[3]*x4 + c[4]*y4 + c[5]) / (c[6]*x4 + c[7]*y4 + 1)
-         *
-         *  Multiplying both sides of each eqn by the denominator, we get
-         *
-         *           AC = B
-         *
-         *  where B and C are column vectors
-         *
-         *         B = [ x1' y1' x2' y2' x3' y3' x4' y4' ]
-         *         C = [ c[0] c[1] c[2] c[3] c[4] c[5] c[6] c[7] ]
-         *
-         *  and A is the 8x8 matrix
-         *
-         *             x1   y1     1     0   0    0   -x1*x1'  -y1*x1'
-         *              0    0     0    x1   y1   1   -x1*y1'  -y1*y1'
-         *             x2   y2     1     0   0    0   -x2*x2'  -y2*x2'
-         *              0    0     0    x2   y2   1   -x2*y2'  -y2*y2'
-         *             x3   y3     1     0   0    0   -x3*x3'  -y3*x3'
-         *              0    0     0    x3   y3   1   -x3*y3'  -y3*y3'
-         *             x4   y4     1     0   0    0   -x4*x4'  -y4*x4'
-         *              0    0     0    x4   y4   1   -x4*y4'  -y4*y4'
-         *
-         *  These eight equations are solved here for the coefficients C.
-         *
-         *  These eight coefficients can then be used to find the mapping
-         *  (x,y) --> (x',y'):
-         *
-         *           x' = (c[0]x + c[1]y + c[2]) / (c[6]x + c[7]y + 1)
-         *           y' = (c[3]x + c[4]y + c[5]) / (c[6]x + c[7]y + 1)
          *
          */
 		static void CalcProjectiveXformCoeffs(PointF[] srcPoints,
@@ -203,57 +157,12 @@ namespace System.Drawing
 		}
 
 
-		/*-------------------------------------------------------------*
-         *                Bilinear coordinate transformation           *
-         * http://tpgit.github.io/Leptonica/bilinear_8c_source.html    *               
-         *-------------------------------------------------------------*/
-		/*!
+		/*
          *  CalcBilinearXformCoeffs()
          *
          *      Input:  srcPoints  (source 4 points; unprimed)
          *              destPoints  (transformed 4 points; primed)
          *              out transformCoeffs   (<return> vector of coefficients of transform)
-         *
-         *  We have a set of 8 equations, describing the bilinear
-         *  transformation that takes 4 points (ptas) into 4 other
-         *  points (ptad).  These equations are:
-         *
-         *          x1' = c[0]*x1 + c[1]*y1 + c[2]*x1*y1 + c[3]
-         *          y1' = c[4]*x1 + c[5]*y1 + c[6]*x1*y1 + c[7]
-         *          x2' = c[0]*x2 + c[1]*y2 + c[2]*x2*y2 + c[3]
-         *          y2' = c[4]*x2 + c[5]*y2 + c[6]*x2*y2 + c[7]
-         *          x3' = c[0]*x3 + c[1]*y3 + c[2]*x3*y3 + c[3]
-         *          y3' = c[4]*x3 + c[5]*y3 + c[6]*x3*y3 + c[7]
-         *          x4' = c[0]*x4 + c[1]*y4 + c[2]*x4*y4 + c[3]
-         *          y4' = c[4]*x4 + c[5]*y4 + c[6]*x4*y4 + c[7]
-         *
-         *  This can be represented as
-         *
-         *           AC = B
-         *
-         *  where B and C are column vectors
-         *
-         *         B = [ x1' y1' x2' y2' x3' y3' x4' y4' ]
-         *         C = [ c[0] c[1] c[2] c[3] c[4] c[5] c[6] c[7] ]
-         *
-         *  and A is the 8x8 matrix
-         *
-         *             x1   y1   x1*y1   1   0    0      0     0
-         *              0    0     0     0   x1   y1   x1*y1   1
-         *             x2   y2   x2*y2   1   0    0      0     0
-         *              0    0     0     0   x2   y2   x2*y2   1
-         *             x3   y3   x3*y3   1   0    0      0     0
-         *              0    0     0     0   x3   y3   x3*y3   1
-         *             x4   y4   x4*y4   1   0    0      0     0
-         *              0    0     0     0   x4   y4   x4*y4   1
-         *
-         *  These eight equations are solved here for the coefficients C.
-         *
-         *  These eight coefficients can then be used to find the mapping
-         *  (x,y) --> (x',y'):
-         *
-         *           x' = c[0]x + c[1]y + c[2]xy + c[3]
-         *           y' = c[4]x + c[5]y + c[6]xy + c[7]
          *
          */
 		static void CalcBilinearXformCoeffs(PointF[] srcPoints,
@@ -327,11 +236,6 @@ namespace System.Drawing
 		}
 
 
-
-		// Full explanation of the following can be found in the book
-		// Technical Java: Developing Scientific and Engineering Applications
-		// Chapter 19. Solving Systems of equations
-		// and conververted to C#
 		private static void PartialPivot(double[][] a, double[] b, int[][] index)
 		{
 			double temp;
@@ -396,10 +300,6 @@ namespace System.Drawing
 			return;
 		}
 
-		// Full explanation of the following can be found in the book
-		// Technical Java: Developing Scientific and Engineering Applications
-		// Chapter 19. Solving Systems of equations
-		// and conververted to C#
 		static void GaussJordan(double[][] a, double[] b)
 		{
 			int i, j, k, m;
