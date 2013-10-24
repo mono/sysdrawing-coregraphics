@@ -90,7 +90,7 @@ namespace System.Drawing.Drawing2D {
 			this.fillMode = fillMode;
 			
 			foreach (int type in types){
-				if (type == 0 || type == 1 || type == 3 || type == 16 || type == 32 || type == 128)
+				if (type == 0 || type == 1 || type == 3 || type == 16 || type == 32 || type == 128 || type == 129)
 					continue;
 				throw new ArgumentException ("The pts array contains an invalid value for PathPointType: " + type);
 			}
@@ -1507,13 +1507,30 @@ namespace System.Drawing.Drawing2D {
 
 		public void Warp(PointF[] destPoints, RectangleF srcRect, Matrix matrix, WarpMode warpMode)
 		{
+
 			Warp (destPoints, srcRect, null, WarpMode.Perspective, 0.25f);
 
 		}
 
 		public void Warp(PointF[] destPoints, RectangleF srcRect, Matrix matrix, WarpMode warpMode, float flatness)
 		{
-			throw new NotImplementedException ();
+			if (destPoints.Length < 3)
+				throw new ArgumentOutOfRangeException ("destPoints must contain 3 or 4 points");
+
+			if (destPoints.Length == 3) 
+			{
+				var destPoints1 = new PointF[4];
+				destPoints1 [0] = destPoints [0];
+				destPoints1 [1] = destPoints [1];
+				destPoints1 [2] = destPoints [2];
+				destPoints1 [3] = new PointF ((destPoints [1].X - destPoints [0].X) + destPoints [2].X,
+				                              (destPoints [1].Y - destPoints [0].Y) + destPoints [2].Y);
+				GeomTransformUtils.WarpPath (this, destPoints1, srcRect, matrix, warpMode, flatness);
+			} 
+			else 
+			{
+				GeomTransformUtils.WarpPath (this, destPoints, srcRect, matrix, warpMode, flatness);
+			}
 		}
 
 		public void Dispose ()
@@ -1559,7 +1576,7 @@ namespace System.Drawing.Drawing2D {
 				return fillMode;
 			}
 			set {
-				FillMode = value;
+				fillMode = value;
 			}
 		}
 	}

@@ -1323,7 +1323,8 @@ namespace System.Drawing {
 
 			var attRange = new NSRange(0, atts.Length);
 			var attsDic = new NSMutableDictionary();
-			
+			var nativeFont = font.nativeFont;
+
 			// Font attribute
 			NSObject fontObject = new NSObject(font.nativeFont.Handle);
 			attsDic.Add(FontAttributedName, fontObject);

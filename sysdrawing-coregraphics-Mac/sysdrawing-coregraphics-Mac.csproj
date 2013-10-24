@@ -165,9 +165,6 @@
     <Compile Include="..\System.Drawing.Drawing2D\GraphicsContainer.cs">
       <Link>System.Drawing.Drawing2D\GraphicsContainer.cs</Link>
     </Compile>
-    <Compile Include="..\System.Drawing.Drawing2D\GraphicsPath.cs">
-      <Link>System.Drawing.Drawing2D\GraphicsPath.cs</Link>
-    </Compile>
     <Compile Include="..\System.Drawing.Drawing2D\GraphicsState.cs">
       <Link>System.Drawing.Drawing2D\GraphicsState.cs</Link>
     </Compile>
@@ -255,9 +252,6 @@
     <Compile Include="..\System.Drawing.Drawing2D\LinearGradientBrush.cs">
       <Link>System.Drawing.Drawing2D\LinearGradientBrush.cs</Link>
     </Compile>
-    <Compile Include="..\Utilities\GeomUtilities.cs">
-      <Link>Utilities\GeomUtilities.cs</Link>
-    </Compile>
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\LinearGradientMode.cs">
       <Link>External\LinearGradientMode.cs</Link>
     </Compile>
@@ -296,6 +290,15 @@
     </Compile>
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\StringTrimming.cs">
       <Link>External\StringTrimming.cs</Link>
+    </Compile>
+    <Compile Include="..\Utilities\GeomTransformUtils.cs">
+      <Link>Utilities\GeomTransformUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\System.Drawing.Drawing2D\GraphicsPath.cs">
+      <Link>System.Drawing.Drawing2D\GraphicsPath.cs</Link>
+    </Compile>
+    <Compile Include="..\Utilities\GeomUtilities.cs">
+      <Link>Utilities\GeomUtilities.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

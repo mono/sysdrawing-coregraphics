@@ -81,7 +81,7 @@ namespace GraphicsPathTests
 
 
 		int currentView = 68;
-		int totalViews = 70;
+		int totalViews = 75;
 
 		public Rectangle ClientRectangle 
 		{
@@ -323,6 +323,12 @@ namespace GraphicsPathTests
 				break;
 			case 68:
 				IsOutlineVisible1 (g);
+				break;
+			case 69:
+				Warp1 (g);
+				break;
+			case 70:
+				Warp2 (g);
 				break;
 
 			}
@@ -2376,37 +2382,6 @@ namespace GraphicsPathTests
 		}
 
 
-		private void Warp1(Graphics g)
-		{
-
-			// Create a path and add a rectangle.
-			GraphicsPath myPath = new GraphicsPath();
-			RectangleF srcRect = new RectangleF(0, 0, 100, 200);
-			myPath.AddRectangle(srcRect);
-
-			// Draw the source path (rectangle)to the screen.
-			g.DrawPath(Pens.Black, myPath);
-
-			// Create a destination for the warped rectangle.
-			PointF point1 = new PointF(200, 200);
-			PointF point2 = new PointF(400, 250);
-			PointF point3 = new PointF(220, 400);
-			PointF[] destPoints = { point1, point2, point3 };
-
-			// Create a translation matrix.
-			Matrix translateMatrix = new Matrix();
-			translateMatrix.Translate(-100, -100);
-
-			// Warp the source path (rectangle).
-			myPath.Warp(destPoints, srcRect, translateMatrix,
-			            WarpMode.Perspective, 0.5f);
-
-			// Draw the warped path (rectangle) to the screen.
-			g.DrawPath(new Pen(Color.Red), myPath);
-
-			title = "Warp1";
-		} 
-
 		private void IsVisible1(Graphics g)
 		{
 
@@ -2577,6 +2552,71 @@ namespace GraphicsPathTests
 			title = "IsOutlineVisible";
 		}
 
+		private void Warp1 (Graphics g)
+		{
+			//create a path
+			GraphicsPath pth = new GraphicsPath();
+			string s = "Star Wars Warped!!";
+			FontFamily ff = new FontFamily("Verdana");
+			//Add the text strings
+			for (int y = 0; y < 5; y++)
+			{
+				pth.AddString(s, ff, 0, 70, new Point(0, 90 * y), StringFormat.GenericTypographic);
+			}
+
+			//Create the warp array
+			PointF[] points = new PointF[]{
+				new PointF(this.ClientRectangle.Width/2-this.ClientRectangle.Width/4,0),
+				new PointF(this.ClientRectangle.Width/2+this.ClientRectangle.Width/4,0),
+				new PointF(0,this.ClientRectangle.Height),
+				new PointF(this.ClientRectangle.Width,this.ClientRectangle.Height)
+			};
+			var rect = new RectangleF(0, 0, 1000, 500);
+
+			//Warp the path
+			pth.Warp(points, rect);
+
+			//Fill the background
+			g.FillRectangle(Brushes.DarkGray, this.ClientRectangle);
+			//Paint the warped path by filling it
+			g.FillPath(Brushes.Yellow, pth);
+			pth.Dispose();
+
+			title = "Warp - Perspective";
+
+		}
+
+		
+		private void Warp2(Graphics g)
+		{
+
+			// Create a path and add a rectangle.
+			GraphicsPath myPath = new GraphicsPath();
+			RectangleF srcRect = new RectangleF(0, 0, 100, 200);
+			myPath.AddRectangle(srcRect);
+
+			// Draw the source path (rectangle)to the screen.
+			g.DrawPath(Pens.Black, myPath);
+
+			// Create a destination for the warped rectangle.
+			PointF point1 = new PointF(200, 200);
+			PointF point2 = new PointF(400, 250);
+			PointF point3 = new PointF(220, 400);
+			PointF[] destPoints = { point1, point2, point3 };
+
+			// Create a translation matrix.
+			Matrix translateMatrix = new Matrix();
+			translateMatrix.Translate(0, 0);
+
+			// Warp the source path (rectangle).
+			myPath.Warp(destPoints, srcRect, translateMatrix,
+			            WarpMode.Perspective, 0.5f);
+
+			// Draw the warped path (rectangle) to the screen.
+			g.DrawPath(new Pen(Color.Red), myPath);
+
+			title = "Warp2";
+		} 
 
 		public void OutputPaths (string title, GraphicsPath myPath)
 		{

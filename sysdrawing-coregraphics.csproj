@@ -73,7 +73,9 @@
     <Compile Include="System.Drawing\Region.cs" />
     <Compile Include="System.Drawing\SolidBrush.cs" />
     <Compile Include="System.Drawing\StringFormat.cs" />
-    <Compile Include="System.Drawing.Drawing2D\GraphicsPath.cs" />
+    <Compile Include="System.Drawing.Drawing2D\GraphicsPath.cs">
+      <Link>System.Drawing.Drawing2D\GraphicsPath.cs</Link>
+    </Compile>
     <Compile Include="System.Drawing.Drawing2D\Matrix.cs" />
     <Compile Include="System.Drawing.Printing\PageSettings.cs" />
     <Compile Include="System.Drawing.Printing\PrintDocument.cs" />
@@ -238,6 +240,7 @@
     <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing\StringTrimming.cs">
       <Link>External\StringTrimming.cs</Link>
     </Compile>
+    <Compile Include="Utilities\GeomTransformUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />
