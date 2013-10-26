@@ -1502,13 +1502,13 @@ namespace System.Drawing.Drawing2D {
 
 		public void Warp(PointF[] destPoints, RectangleF srcRect, Matrix matrix)
 		{
-			Warp (destPoints, srcRect, null, WarpMode.Perspective);
+			Warp (destPoints, srcRect, matrix, WarpMode.Perspective);
 		}
 
 		public void Warp(PointF[] destPoints, RectangleF srcRect, Matrix matrix, WarpMode warpMode)
 		{
 
-			Warp (destPoints, srcRect, null, WarpMode.Perspective, 0.25f);
+			Warp (destPoints, srcRect, matrix, WarpMode.Perspective, 0.25f);
 
 		}
 

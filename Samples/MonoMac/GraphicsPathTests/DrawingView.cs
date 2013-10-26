@@ -80,7 +80,7 @@ namespace GraphicsPathTests
 		RectangleF pathRectF4 = new RectangleF(110, 60, 100, 50);
 
 
-		int currentView = 68;
+		int currentView = 71;
 		int totalViews = 75;
 
 		public Rectangle ClientRectangle 
@@ -330,6 +330,13 @@ namespace GraphicsPathTests
 			case 70:
 				Warp2 (g);
 				break;
+			case 71:
+				Warp3 (g);
+				break;
+			case 72:
+				Warp4 (g);
+				break;
+
 
 			}
 
@@ -2617,6 +2624,100 @@ namespace GraphicsPathTests
 
 			title = "Warp2";
 		} 
+
+
+		private void Warp3(Graphics g)
+		{
+
+			// Create a path and add a rectangle.
+			GraphicsPath myPath = new GraphicsPath();
+			string s = "Warp Perspective";
+			FontFamily ff = new FontFamily("Chalkduster");
+			var emSize = 30;
+			var font = new Font (ff, emSize);
+			var sSize = g.MeasureString (s, font);
+			var location = new PointF (50,100);
+			var srcRect = new RectangleF (location, sSize);
+			g.DrawRectangle (Pens.Blue, srcRect);
+			//Add the text string
+			myPath.AddString(s, ff, 0, emSize, srcRect.Location, StringFormat.GenericTypographic);
+
+
+			// Create a destination for the warped rectangle.
+			PointF point1 = location;
+			point1.X -= 30;
+			point1.Y -= 40;
+			PointF point2 = new PointF(srcRect.Right, srcRect.Top);
+			point2.Y += 10;
+			PointF point3 = new PointF (srcRect.Left, srcRect.Bottom);
+			PointF point4 = new PointF (srcRect.Right, srcRect.Bottom);
+
+			PointF[] destPoints = { point1, point2, point3, point4 };
+
+			// draw the destination points to the screen
+			g.DrawLines (Pens.Green, new PointF[] {point1, point2, point4, point3, point1});
+
+			// Create a translation matrix.
+			Matrix translateMatrix = new Matrix();
+			translateMatrix.Translate(0, 0);
+
+			// Warp the source path (rectangle).
+			myPath.Warp(destPoints, srcRect, translateMatrix,
+			            WarpMode.Perspective);
+
+			// Draw the warped path (rectangle) to the screen.
+			g.FillPath(new HatchBrush(HatchStyle.HorizontalBrick, Color.Red), myPath);
+
+			title = "WarpPerspective";
+		} 
+
+
+		
+		private void Warp4(Graphics g)
+		{
+
+			// Create a path and add a rectangle.
+			GraphicsPath myPath = new GraphicsPath();
+			string s = "Warp Bilinear";
+			FontFamily ff = new FontFamily("Chalkduster");
+			var emSize = 30;
+			var font = new Font (ff, emSize);
+			var sSize = g.MeasureString (s, font);
+			var location = new PointF (50,100);
+			var srcRect = new RectangleF (location, sSize);
+			g.DrawRectangle (Pens.Blue, srcRect);
+			//Add the text string
+			myPath.AddString(s, ff, 0, emSize, srcRect.Location, StringFormat.GenericTypographic);
+
+
+			// Create a destination for the warped rectangle.
+			PointF point1 = location;
+			point1.X -= 30;
+			point1.Y -= 40;
+			PointF point2 = new PointF(srcRect.Right, srcRect.Top);
+			point2.Y += 10;
+			PointF point3 = new PointF (srcRect.Left, srcRect.Bottom);
+			PointF point4 = new PointF (srcRect.Right, srcRect.Bottom);
+
+			PointF[] destPoints = { point1, point2, point3, point4 };
+
+			// draw the destination points to the screen
+			g.DrawLines (Pens.Green, new PointF[] {point1, point2, point4, point3, point1});
+
+			// Create a translation matrix.
+			Matrix translateMatrix = new Matrix();
+			translateMatrix.Translate(0, 0);
+
+			// Warp the source path (rectangle).
+			myPath.Warp(destPoints, srcRect, translateMatrix,
+			            WarpMode.Perspective);
+
+			// Draw the warped path (rectangle) to the screen.
+			g.FillPath(new HatchBrush(HatchStyle.HorizontalBrick, Color.Red), myPath);
+
+			title = "WarpBilinear";
+		} 
+
 
 		public void OutputPaths (string title, GraphicsPath myPath)
 		{
