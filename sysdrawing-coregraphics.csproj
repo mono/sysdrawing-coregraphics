@@ -241,6 +241,7 @@
       <Link>External\StringTrimming.cs</Link>
     </Compile>
     <Compile Include="Utilities\GeomTransformUtils.cs" />
+    <Compile Include="System.Drawing.Drawing2D\PathGradientBrush.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />

@@ -33,6 +33,16 @@ namespace System.Drawing
 			return degrees * F_PI / 180f;
 		}
 		
+		internal static float ToDegrees (this float radians) 
+		{
+			return radians * 180 / F_PI;
+		}
+
+		internal static float RadiansToDegrees (float radians) 
+		{
+			return radians * 180 / F_PI;
+		}
+
 		internal static float ToAngle (this LinearGradientMode mode) 
 		{
 			switch (mode) {

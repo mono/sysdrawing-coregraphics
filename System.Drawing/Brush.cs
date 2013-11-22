@@ -16,7 +16,7 @@ using MonoTouch.CoreGraphics;
 namespace System.Drawing {
 
 	public abstract partial class Brush : MarshalByRefObject, IDisposable, ICloneable {
-		bool changed = true;
+		protected bool changed = true;
 		
 		~Brush ()
 		{

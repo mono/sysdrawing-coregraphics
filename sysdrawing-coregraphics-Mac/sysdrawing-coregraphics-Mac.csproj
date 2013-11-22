@@ -300,6 +300,9 @@
     <Compile Include="..\Utilities\GeomUtilities.cs">
       <Link>Utilities\GeomUtilities.cs</Link>
     </Compile>
+    <Compile Include="..\System.Drawing.Drawing2D\PathGradientBrush.cs">
+      <Link>System.Drawing.Drawing2D\PathGradientBrush.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

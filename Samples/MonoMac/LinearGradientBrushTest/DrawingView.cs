@@ -178,8 +178,8 @@ namespace LinearGradientBrushTest
 			return true;
 		}
 
-		int currentView = 0;
-		int totalViews = 17;
+		int currentView = 17;
+		int totalViews = 18;
 
 		public override void KeyDown (NSEvent theEvent)
 		{
@@ -247,6 +247,9 @@ namespace LinearGradientBrushTest
 				break;
 			case 16:
 				PaintView16 (g);
+				break;
+			case 17:
+				PaintView17 (g);
 				break;
 			};
 
@@ -789,6 +792,24 @@ namespace LinearGradientBrushTest
 			rgBrush.GammaCorrection = true;
 			// Fill rectangle
 			g.FillRectangle(rgBrush, rect);
+		}
+
+		void PaintView17 (Graphics g)
+		{
+			// Create Cock Face
+
+			var faceRect = new RectangleF (120, 120, 173, 173);
+			// Create a linear gradient brush
+
+		//<pds:LinearGradientFill GradientType="TwoColor" Angle="45"<BR>         EndColor="0, 0, 0" StartColor="125, 123, 168" />
+			var rgBrush =
+				new LinearGradientBrush(
+					faceRect, Color.FromArgb(255,125,123,168), Color.FromArgb(255,0,0,0),
+					45.0f, true);
+
+
+			// Fill rectangle
+			g.FillEllipse(rgBrush, faceRect);
 		}
 
 		// Here we make sure we are flipped so our subview PlotPanel size and location

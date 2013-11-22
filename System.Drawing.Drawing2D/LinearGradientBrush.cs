@@ -32,7 +32,7 @@ namespace System.Drawing.Drawing2D
 		bool interpolationColorsWasSet;
 		WrapMode wrapMode = WrapMode.Tile;
 		bool gammaCorrection;
-		bool changed;
+		//bool changed;
 		Matrix gradientTransform = new Matrix();
 
 		PointF startPoint;

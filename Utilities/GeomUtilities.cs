@@ -559,6 +559,161 @@ namespace System.Drawing
 
 		}
 
+		#region PathGradientBrush 
+		
+		internal static float DotProduct(PointF u, PointF v)
+		{
+			return (u.X * v.X + u.Y * v.Y);  // + (u).z * (v).z)
+		}
+
+		internal static float Normal(Point v)
+		{
+			return (float)Math.Sqrt(DotProduct(v, v));  // normal = length of  vector
+		}
+
+
+		/*
+         * Calculates crossProduct of two 2D vectors / points.
+         * @param p1 first point used as vector
+         * @param p2 second point used as vector
+         * @return crossProduct of vectors
+         */
+		internal static float CrossProduct(PointF v1, PointF v2)
+		{
+			return v1.X * v2.Y - v1.Y * v2.X;
+		}
+
+		// Basic bounding box implementation getting min X, min Y, max X and max Y
+		// from the array of PointF's only the first three will be used.
+		internal static RectangleF TriangleBoundingBox(PointF[] points)
+		{
+
+			/* get the bounding box of the triangle */
+			int maxX = (int)Math.Max(points[0].X, Math.Max(points[1].X, points[2].X));
+			int minX = (int)Math.Min(points[0].X, Math.Min(points[1].X, points[2].X));
+			int maxY = (int)Math.Max(points[0].Y, Math.Max(points[1].Y, points[2].Y));
+			int minY = (int)Math.Min(points[0].Y, Math.Min(points[1].Y, points[2].Y));
+
+			var bb = new RectangleF(minX, minY, maxX - minX, maxY - minY);
+
+			return bb; 
+		}
+
+
+		// Basic bounding box implementation getting min X, min Y, max X and max Y
+		// from the array of PointF's
+		internal static RectangleF PolygonBoundingBox(PointF[] points)
+		{
+
+			var minX = float.MaxValue;
+			var minY = float.MaxValue;
+			var maxX = float.MinValue;
+			var maxY = float.MinValue;
+
+			/* get the bounding box of the polygon */
+			for (int m = 0; m < points.Length; m++)
+			{
+				minX = Math.Min(points[m].X, minX);
+				minY = Math.Min(points[m].Y, minY);
+
+				maxX = Math.Max(points[m].X, maxX);
+				maxY = Math.Max(points[m].Y, maxY);
+
+			}
+
+			var bb = new RectangleF(minX, minY, maxX - minX, maxY - minY);
+
+			return bb;
+		}
+
+
+		// http://en.wikipedia.org/wiki/Centroid
+		// 
+		// NOTE: this algorithm doesn`t apply to complex polygons. If this is causing problems
+		// we may have to change this.  
+		internal static PointF PolygonCentroid(PointF[] points)
+		{
+			var C = PointF.Empty;
+			var area = 0f;
+
+			//var A6 = 6.0f * (float)PolygonArea(points);
+
+			var first = points[0];
+			var last = points[points.Length - 1];
+			// make sure we have a closed path
+			if (last != first)
+				last = first;
+
+			last = first;
+
+			var dotProd = 0f;
+
+			for (int i = 1; i < points.Length; i++)
+			{
+				var next = points[i];
+				dotProd = last.X * next.Y - next.X * last.Y;
+				area += dotProd;
+				C.X += (last.X + next.X) * dotProd;
+				C.Y += (last.Y + next.Y) * dotProd;
+
+				last = next;
+			}
+
+			dotProd = last.X * first.Y - first.X * last.Y; 
+			area += dotProd;
+
+			C.X += (last.X + first.X) * dotProd;
+			C.Y += (last.Y + first.Y) * dotProd;
+
+			var aaa = PolygonArea (points);
+			// Note: The result is positive if the polygon is clockwise for our coordinate system in
+			// which increasing Y goes downward. 
+			// Positive - clockwise
+			// Negative - counterclockwise
+			//
+			// We want to keep the area positive so we do not get negative numbers
+			// depending on the polygon winding. This may not be right though.
+			// 
+			var A6 = 6.0f * (area / 2);
+			var reciprocal = 1.0f / A6;
+
+			// We need make sure we are positive here.
+			C.X = C.X * reciprocal;
+			C.Y = C.Y * reciprocal;
+
+			return C;
+		}
+
+
+		// Note: The result is positive if the polygon is clockwise for our coordinate system in
+		// which increasing Y goes downward. 
+		// Positive - clockwise
+		// Negative - counterclockwise
+		internal static double PolygonArea (PointF[] points)
+		{
+			var first = points[0];
+			var last = points[points.Length -1];
+			// make sure we have a closed path
+			if (last != first)
+				last = first;
+
+			double area = 0;
+
+			for (int p = 1; p < points.Length; p++)
+			{
+				var next = points[p];
+				area += last.X * next.Y - next.X * last.Y;
+				last = next;
+			}
+			area += last.X * first.Y - first.X * last.Y;
+
+			return area / 2;
+		}
+
+
+
+		#endregion
+
 	}
 }
 
