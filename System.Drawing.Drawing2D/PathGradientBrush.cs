@@ -439,6 +439,11 @@ namespace System.Drawing.Drawing2D {
 			var startIndex = 0;
 			var endIndex = 1;
 
+//			// Create new stopwatch
+//			var stopwatch = new System.Diagnostics.Stopwatch ();
+//
+//			// Begin timing
+//			stopwatch.Start();
 
 			for (int p = 1; p <= count; p++)
 			{
@@ -480,7 +485,12 @@ namespace System.Drawing.Drawing2D {
 
 			}
 
-
+//			// Stop timing
+//			stopwatch.Stop();
+//
+//			// Write result
+//			Console.WriteLine("Time elapsed: {0}",
+//				stopwatch.Elapsed);
 		}
 
 		struct Edge {
@@ -536,6 +546,24 @@ namespace System.Drawing.Drawing2D {
 
 		};
 
+
+		int edge32Red = 0;
+		int edge32Green = 0;
+		int edge32Blue = 0;
+		int edge32Alpha = 0;
+
+		int edge13Red = 0;
+		int edge13Green = 0;
+		int edge13Blue = 0;
+		int edge13Alpha = 0;
+
+		int edge21Red = 0;
+		int edge21Green = 0;
+		int edge21Blue = 0;
+		int edge21Alpha = 0;
+
+
+
 		/// <summary>
 		/// Rasterizes the triangle specified by the vector / points and their associated colors
 		/// using barycentric coordinates.
@@ -555,8 +583,6 @@ namespace System.Drawing.Drawing2D {
 			int maxY = (int)Math.Max(vt1.Y, Math.Max(vt2.Y, vt3.Y));
 			int minY = (int)Math.Min(vt1.Y, Math.Min(vt2.Y, vt3.Y));
 
-			var p = PointF.Empty;
-
 			// Barycentric coordinates at minX/minY corner
 			PointF pm = new PointF( minX, minY );
 
@@ -569,10 +595,27 @@ namespace System.Drawing.Drawing2D {
 			int span13 = edge13.EdgeOrigin;
 			int span21 = edge21.EdgeOrigin;
 
+			edge32Red = colorV1.R;
+			edge32Green = colorV1.G;
+			edge32Blue = colorV1.B;
+			edge32Alpha = colorV1.A;
+
+			edge13Red = colorV2.R;
+			edge13Green = colorV2.G;
+			edge13Blue = colorV2.B;
+			edge13Alpha = colorV2.A;
+
+			edge21Red = colorV3.R;
+			edge21Green = colorV3.G;
+			edge21Blue = colorV3.B;
+			edge21Alpha = colorV3.A;
+
 			int span32XOffset = 0;
 			int span13XOffset = 0;
 			int span21XOffset = 0;
 
+			bool inside = false;
+			int mask = 0;
 			//  Iterate over each pixel of bounding box and check if it's inside
 			//  the triangle using the barycentirc approach.
 			for (int y = minY; y <= maxY; y += Edge.StepYSize)
@@ -582,24 +625,35 @@ namespace System.Drawing.Drawing2D {
 				span13XOffset = span13;
 				span21XOffset = span21;
 
+				inside = false;
 				for (int x = minX; x <= maxX; x += Edge.StepXSize)
 				{
 
-					p.X = x;
-					p.Y = y;
+					mask = span32XOffset | span13XOffset | span21XOffset;
 
 					// If p is on or inside all edges for any pixels,
 					// render those pixels.
-					if ((span32XOffset | span13XOffset | span21XOffset) >= 0)
+					if (mask >= 0)
 					{
+						if (!inside)
+						{
+							inside = true;
+						}
 						RenderPixels(context, x, y, edge32, edge13, edge21, span32XOffset, span13XOffset, span21XOffset);
 					}
+
 					// Step to the right
 					span32XOffset += edge32.StepX;
 					span13XOffset += edge13.StepX;
 					span21XOffset += edge21.StepX;
+					if (mask < 0 && inside)
+					{
+						inside = false;
+						break;
+					}
 
 				}
+
 
 				// Row step
 				span32 += edge32.StepY;
@@ -622,7 +676,7 @@ namespace System.Drawing.Drawing2D {
 			float beta = (float)(w2 * edge13.VertexFactor);
 			float gamma = (float)(w3 * edge21.VertexFactor);
 
-			GradientLerp3 (alpha, beta, gamma, edge32.Color, edge13.Color, edge21.Color);
+			GradientLerp3 (alpha, beta, gamma);
 			// Set the color
 			context.SetFillColor (colorOutput [0], colorOutput [1], colorOutput [2], colorOutput [3]);
 
@@ -636,18 +690,18 @@ namespace System.Drawing.Drawing2D {
 		}
 
 		float[] colorOutput = new float[4];
-		private void GradientLerp3(float alpha, float beta, float gamma, Color colorV1, Color colorV2, Color colorV3)
+		private void GradientLerp3(float alpha, float beta, float gamma)
 		{
 
-			var resRed = (alpha * colorV1.R) + ((beta * colorV2.R) + (gamma *  colorV3.R));
-			var resGreen = (alpha * colorV1.G) + ((beta * colorV2.G) + (gamma  * colorV3.G));
-			var resBlue = (alpha * colorV1.B) + ((beta * colorV2.B) + (gamma * colorV3.B));
-			var resAlpha = (alpha * colorV1.A) + ((beta * colorV2.A) + (gamma * colorV3.A));
+			var resRed = (alpha * edge32Red) + ((beta * edge13Red) + (gamma * edge21Red));
+			var resGreen = (alpha * edge32Green) + ((beta * edge13Green) + (gamma  * edge21Green));
+			var resBlue = (alpha * edge32Blue) + ((beta * edge13Blue) + (gamma * edge21Blue));
+			var resAlpha = (alpha * edge32Alpha) + ((beta * edge13Alpha) + (gamma * edge21Alpha));
 
 			colorOutput [0] = resRed/ 255f;
 			colorOutput [1] = resGreen / 255;
-	        	colorOutput [2] = resBlue / 255f; 
-	        	colorOutput [3] = resAlpha / 255f;
+        	colorOutput [2] = resBlue / 255f; 
+        	colorOutput [3] = resAlpha / 255f;
 		}
 
 	}
