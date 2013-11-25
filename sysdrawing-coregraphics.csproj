@@ -248,6 +248,7 @@
     <Compile Include="System.Drawing\FontFamily-CoreText.cs" />
     <Compile Include="System.Drawing.Text\FontCollection.cs" />
     <Compile Include="System.Drawing.Text\InstalledFontCollection.cs" />
+    <Compile Include="System.Drawing.Text\FontCollection-CoreText.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />

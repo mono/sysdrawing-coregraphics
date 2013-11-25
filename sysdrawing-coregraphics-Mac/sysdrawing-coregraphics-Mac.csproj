@@ -315,6 +315,9 @@
     <Compile Include="..\System.Drawing.Text\InstalledFontCollection.cs">
       <Link>System.Drawing.Text\InstalledFontCollection.cs</Link>
     </Compile>
+    <Compile Include="..\System.Drawing.Text\FontCollection-CoreText.cs">
+      <Link>System.Drawing.Text\FontCollection-CoreText.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 
 using MonoMac.Foundation;
 using MonoMac.AppKit;
@@ -128,9 +129,25 @@ namespace DrawStringTest
 //			g.DrawString("Test2 Far", this.Font, Brushes.Blue, rect, format);
 //
 //			g.Dispose();
+
+			AvailableFonts ();
 		}
 
+		private void AvailableFonts()
+		{
+			var installedFonts = new InstalledFontCollection ();
 
+			foreach ( FontFamily ff in installedFonts.Families )
+			{
+				Console.WriteLine(ff.ToString());
+				// Something like this would be nice, but AFAIK nothing similar exists
+				/*				
+	foreach ( FontStyle style in ff.Styles )
+		Console.WriteLine(style.ToString());
+	*/
+			}
+
+		}
 
 //				public override bool IsFlipped {
 //					get {

@@ -5,6 +5,7 @@
 // Author: Everaldo Canuto everaldo.canuto@bol.com.br
 //         Alexandre Pigolkine ( pigolkine@gmx.de)
 //			Sanjay Gupta (gsanjay@novell.com)
+//         Kennth J. Pouncey (kjpou@pt.lu)
 //
 // Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
@@ -28,14 +29,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Drawing.Text {
+namespace System.Drawing.Text 
+{
 
-	public sealed class InstalledFontCollection : FontCollection {
+	public sealed class InstalledFontCollection : FontCollection 
+	{
 
 		public InstalledFontCollection ()
 		{
-//			Status status = GDIPlus.GdipNewInstalledFontCollection (out nativeFontCollection);						
-//			GDIPlus.CheckStatus (status);			
+
 		}
 	}
 }

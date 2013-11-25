@@ -33,12 +33,12 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace System.Drawing.Text {
+namespace System.Drawing.Text 
+{
 
-	public abstract class FontCollection : IDisposable {
+	public abstract partial class FontCollection : IDisposable 
+	{
 		
-		internal IntPtr nativeFontCollection = IntPtr.Zero;
-				
 		internal FontCollection ()
 		{
 		}
@@ -52,40 +52,33 @@ namespace System.Drawing.Text {
 
 		protected virtual void Dispose (bool disposing)
 		{
-			// DO NOT FREE FROM HERE
-			// FIXME: InstalledFontCollection cannot be freed safely and will leak one time 
-			// (inside libgdiplus). MS has a similar behaviour (but probably doesn't leak)
+			if (nativeFontCollection != null) 
+			{
+				nativeFontCollection.Dispose();
+				nativeFontCollection = null;
+			}
 		}
 
 		// properties
 		public FontFamily[] Families
 		{
 			get { 
-//				int found;
-//				int returned = 0;
-//				Status status;
-				FontFamily[] families = null;
+				var families = new List<FontFamily> ();
 
-//				IntPtr[] result;
-//
-//				// MS doesn't throw ObjectDisposedException in this case
-//				if (nativeFontCollection == IntPtr.Zero)
-//					throw new ArgumentException (Locale.GetText ("Collection was disposed."));
-//				
-//				status = GDIPlus.GdipGetFontCollectionFamilyCount (nativeFontCollection, out found);
-//				GDIPlus.CheckStatus (status);
-//				if (found == 0)
-//					return new FontFamily [0];
-//
-//				result = new IntPtr[found];
-//				status = GDIPlus.GdipGetFontCollectionFamilyList (nativeFontCollection, found, result, out returned);
-//				   
-//				families = new FontFamily [returned];
-//				for ( int i = 0; i < returned ; i++) {
-//					families[i] = new FontFamily(result[i]);
-//				}
+				var familyNames = NativeFontFamilies ();
+
+				// Lets sort the family names
+				familyNames.Sort ();
+
+				if (nativeFontCollection == null)
+					throw new ArgumentException ("Collection was disposed or can not be created.");
+
+				foreach (var family in familyNames) 
+				{
+					families.Add(new FontFamily (family));
+				}
            
-				return families;               
+				return families.ToArray ();;               
 			}
 		}
 
