@@ -55,6 +55,8 @@ namespace System.Drawing
 				familyName = SERIF;
 				break;
 			}
+
+			CreateNativeFontFamily (familyName, true);
 		}
 
 		public FontFamily (string name)
@@ -64,6 +66,8 @@ namespace System.Drawing
 
 
 			familyName = name;
+
+			CreateNativeFontFamily (familyName, false);
 		}
 
 		public string Name

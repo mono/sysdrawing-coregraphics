@@ -309,6 +309,12 @@
     <Compile Include="..\System.Drawing\FontFamily-CoreText.cs">
       <Link>System.Drawing\FontFamily-CoreText.cs</Link>
     </Compile>
+    <Compile Include="..\System.Drawing.Text\FontCollection.cs">
+      <Link>System.Drawing.Text\FontCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\System.Drawing.Text\InstalledFontCollection.cs">
+      <Link>System.Drawing.Text\InstalledFontCollection.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -328,5 +334,6 @@
     <Folder Include="Utilities\" />
     <Folder Include="System.Drawing\" />
     <Folder Include="Utilities\ClipperLib\" />
+    <Folder Include="System.Drawing.Text\" />
   </ItemGroup>
 </Project>
