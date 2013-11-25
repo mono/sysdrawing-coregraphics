@@ -245,6 +245,7 @@
     <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Text\GenericFontFamilies.cs">
       <Link>External\GenericFontFamilies.cs</Link>
     </Compile>
+    <Compile Include="System.Drawing\FontFamily-CoreText.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />

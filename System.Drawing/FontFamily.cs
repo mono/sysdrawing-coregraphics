@@ -31,14 +31,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Drawing.Text;
+
 namespace System.Drawing {
 
-	public sealed class FontFamily : MarshalByRefObject, IDisposable {
+	public sealed partial class FontFamily : MarshalByRefObject, IDisposable {
 
 		string familyName;
 
+		public FontFamily(GenericFontFamilies genericFamily)
+		{
+			switch (genericFamily) 
+			{
+			case GenericFontFamilies.Monospace:
+				familyName = "Courier";
+				break;
+			case GenericFontFamilies.SansSerif:
+				familyName = "Helvetica";
+				break;
+			case GenericFontFamilies.Serif:
+				familyName = "Times";
+				break;
+			}
+		}
+
 		public FontFamily (string name)
 		{			
+			if (string.IsNullOrEmpty (name))
+				throw new ArgumentException ("name can not be null or empty");
+
+
 			familyName = name;
 		}
 
