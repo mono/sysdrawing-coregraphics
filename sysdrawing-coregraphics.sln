@@ -1219,7 +1219,7 @@ Global
 		{823BC082-D37F-4F14-BD74-E921AE27D0DC} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Samples\MonoMac\PathGradientBrushTests\PathGradientBrushTests.csproj
+		StartupItem = Samples\MonoMac\DrawStringTest\DrawStringTest.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.inheritsSet = Mono

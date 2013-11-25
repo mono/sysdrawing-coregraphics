@@ -33,9 +33,11 @@
 
 using System.Drawing.Text;
 
-namespace System.Drawing {
+namespace System.Drawing 
+{
 
-	public sealed partial class FontFamily : MarshalByRefObject, IDisposable {
+	public sealed partial class FontFamily : MarshalByRefObject, IDisposable 
+	{
 
 		string familyName;
 
@@ -44,13 +46,13 @@ namespace System.Drawing {
 			switch (genericFamily) 
 			{
 			case GenericFontFamilies.Monospace:
-				familyName = "Courier";
+				familyName = MONO_SPACE;
 				break;
 			case GenericFontFamilies.SansSerif:
-				familyName = "Helvetica";
+				familyName = SANS_SERIF;
 				break;
 			case GenericFontFamilies.Serif:
-				familyName = "Times";
+				familyName = SERIF;
 				break;
 			}
 		}
@@ -82,6 +84,11 @@ namespace System.Drawing {
 
 		void Dispose (bool disposing)
 		{
+		}
+
+		public override string ToString ()
+		{
+			return string.Format ("[FontFamily: Name={0}]", Name);
 		}
 	}
 }
