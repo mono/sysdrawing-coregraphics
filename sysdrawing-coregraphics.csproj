@@ -242,6 +242,9 @@
     </Compile>
     <Compile Include="Utilities\GeomTransformUtils.cs" />
     <Compile Include="System.Drawing.Drawing2D\PathGradientBrush.cs" />
+    <Compile Include="..\mono\mcs\class\System.Drawing\System.Drawing.Text\GenericFontFamilies.cs">
+      <Link>External\GenericFontFamilies.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="External\" />
