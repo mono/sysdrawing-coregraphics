@@ -60,7 +60,6 @@ namespace System.Drawing
 			else 
 			{
 				var attrs = nativeFontDescriptor.GetAttributes ();
-				var dic = attrs.Dictionary;
 				familyName = attrs.FamilyName;
 				// if the font description attributes do not contain a value for FamilyName then we
 				// need to try and create the font to get the family name from the actual font.
@@ -71,6 +70,54 @@ namespace System.Drawing
 				}
 			}
 
+		}
+
+		private bool nativeStyleAvailable(FontStyle style)
+		{
+			var attributes = new CTFontDescriptorAttributes (nativeFontDescriptor.GetAttributes ().Dictionary);
+			var options = new CTFontOptions ();
+
+			var font = new CTFont (nativeFontDescriptor,0);
+			var vari = font.GetVariation ();
+			var traits = font.GetTraits ();
+
+			switch (style) 
+			{
+			case FontStyle.Bold:
+				var tMaskBold = CTFontSymbolicTraits.None;
+				tMaskBold |= CTFontSymbolicTraits.Bold;
+				var bFont = font.WithSymbolicTraits (0, tMaskBold, tMaskBold);
+				if (bFont == null)
+					return false;
+				var bold = (bFont.SymbolicTraits & CTFontSymbolicTraits.Bold) == CTFontSymbolicTraits.Bold;
+				return bold;
+
+			case FontStyle.Italic:
+				//return (font.SymbolicTraits & CTFontSymbolicTraits.Italic) == CTFontSymbolicTraits.Italic; 
+				var tMaskItalic = CTFontSymbolicTraits.None;
+				tMaskItalic |= CTFontSymbolicTraits.Italic;
+				var iFont = font.WithSymbolicTraits (0, tMaskItalic, tMaskItalic);
+				if (iFont == null)
+					return false;
+				var italic = (iFont.SymbolicTraits & CTFontSymbolicTraits.Italic) == CTFontSymbolicTraits.Italic;
+				return italic;
+
+			case FontStyle.Regular:
+
+				// Verify if this is correct somehow
+				if ((font.SymbolicTraits & CTFontSymbolicTraits.Condensed) == CTFontSymbolicTraits.Condensed
+					||  (font.SymbolicTraits & CTFontSymbolicTraits.Expanded) == CTFontSymbolicTraits.Expanded)
+					return false;
+				else
+					return true;
+			case FontStyle.Underline:
+				return font.UnderlineThickness > 0;
+			case FontStyle.Strikeout:
+				// not implemented yet
+				return false;
+
+			}
+			return false;
 		}
 
 	}

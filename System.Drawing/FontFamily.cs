@@ -80,9 +80,9 @@ namespace System.Drawing
 			get { return familyName; }
 		}
 
-		public bool IsStyleAvailable (FontStyle regular)
+		public bool IsStyleAvailable (FontStyle fontStyle)
 		{
-			throw new NotImplementedException ();
+			return nativeStyleAvailable (fontStyle);
 		}
 
 		~FontFamily ()

@@ -141,11 +141,12 @@ namespace DrawStringTest
 			foreach ( FontFamily ff in installedFonts.Families )
 			{
 				Console.WriteLine(ff.ToString());
-				// Something like this would be nice, but AFAIK nothing similar exists
-				/*								
-	foreach ( FontStyle style in ff.Styles )
-		Console.WriteLine(style.ToString());
-	*/
+
+				foreach (var style in Enum.GetValues(typeof(FontStyle)) )
+				{
+					if (ff.IsStyleAvailable((FontStyle)style))
+						Console.WriteLine(ff.ToString() + " - " + (FontStyle)style);
+				}
 			}
 
 		}
