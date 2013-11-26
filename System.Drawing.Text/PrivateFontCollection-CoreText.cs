@@ -16,8 +16,8 @@ namespace System.Drawing.Text
 {
 	public sealed partial class PrivateFontCollection 
 	{
-		List<string> familyNames = new List<string> ();
-		List<CTFont> nativeFonts = new List<CTFont> ();
+
+		//internal Dictionary<string, CTFontDescriptor> nativeFontDescriptors = new Dictionary<string, CTFontDescriptor> ();
 
 		void LoadFontFile (string fileName)
 		{
@@ -28,6 +28,10 @@ namespace System.Drawing.Text
 			//Try loading from Bundle first
 			if (!String.IsNullOrEmpty(ext))
 			{
+
+				if (nativeFontDescriptors == null)
+					nativeFontDescriptors = new Dictionary<string, CTFontDescriptor> ();
+
 				var fontName = fileName.Substring (0, fileName.Length - ext.Length);
 				var pathForResource = NSBundle.MainBundle.PathForResource (fontName, ext.Substring(1));
 
@@ -37,8 +41,10 @@ namespace System.Drawing.Text
 
 					try {
 						nativeFont = new CTFont(cgFont, dpiSize, null);
-						familyNames.Add(nativeFont.FamilyName);
-						nativeFonts.Add(nativeFont);
+						if (!nativeFontDescriptors.ContainsKey(nativeFont.FamilyName))
+						{
+							nativeFontDescriptors.Add(nativeFont.FamilyName, nativeFont.GetFontDescriptor());
+						}
 					}
 					catch
 					{
@@ -49,8 +55,10 @@ namespace System.Drawing.Text
 				{
 					try {
 						nativeFont = new CTFont(Path.GetFileNameWithoutExtension(fileName),dpiSize);
-						familyNames.Add(nativeFont.FamilyName);
-						nativeFonts.Add(nativeFont);
+						if (!nativeFontDescriptors.ContainsKey(nativeFont.FamilyName))
+						{
+							nativeFontDescriptors.Add(nativeFont.FamilyName, nativeFont.GetFontDescriptor());
+						}
 					}
 					catch
 					{

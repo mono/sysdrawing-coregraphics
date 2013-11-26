@@ -12,6 +12,7 @@ namespace System.Drawing.Text
 	public abstract partial class FontCollection
 	{
 		internal CTFontCollection nativeFontCollection = null;
+		internal Dictionary<string, CTFontDescriptor> nativeFontDescriptors = null;
 
 		List<string> NativeFontFamilies ()
 		{
@@ -20,22 +21,24 @@ namespace System.Drawing.Text
 				var collectionOptions = new CTFontCollectionOptions ();
 				collectionOptions.RemoveDuplicates = true;
 				nativeFontCollection = new CTFontCollection (collectionOptions);
+				nativeFontDescriptors = new Dictionary<string, CTFontDescriptor> ();
 			}
 
 			var fontdescs = nativeFontCollection.GetMatchingFontDescriptors ();
 
-			var fontFamilies = new List<string> ();
-			foreach (var fontdesc in fontdescs) {
-
+			foreach (var fontdesc in fontdescs) 
+			{
+				var attribs = fontdesc.GetAttributes ();
 				var font = new CTFont (fontdesc, 0);
 
 				// Just in case RemoveDuplicates collection option is not working
-				if (!fontFamilies.Contains (font.FamilyName)) 
+				if (!nativeFontDescriptors.ContainsKey (font.FamilyName)) 
 				{
-					fontFamilies.Add (font.FamilyName);
+					nativeFontDescriptors.Add (font.FamilyName, fontdesc);
 				}
 
 			}
+			var fontFamilies = new List<string> (nativeFontDescriptors.Keys);
 
 			return fontFamilies;
 		}

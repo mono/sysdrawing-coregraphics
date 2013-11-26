@@ -198,6 +198,10 @@ namespace System.Drawing
 			get { return strikeThrough; }
 		}
 
+		public int Height {
+			get { return (int)Math.Round (GetHeight ()); }
+		}
+
 		/**
 		 * 
 		 * Returns: The line spacing, in pixels, of this font.

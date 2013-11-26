@@ -65,15 +65,24 @@ namespace System.Drawing
 			if (string.IsNullOrEmpty (name))
 				throw new ArgumentException ("name can not be null or empty");
 
+			CreateNativeFontFamily (name, false);
 
-			familyName = name;
+		}
 
-			CreateNativeFontFamily (familyName, false);
+		public FontFamily(string name, FontCollection fontCollection)
+		{
+			CreateNativeFontFamily (name, fontCollection, false);
+
 		}
 
 		public string Name
 		{
 			get { return familyName; }
+		}
+
+		public bool IsStyleAvailable (FontStyle regular)
+		{
+			throw new NotImplementedException ();
 		}
 
 		~FontFamily ()

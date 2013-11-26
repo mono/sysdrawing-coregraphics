@@ -68,12 +68,13 @@ namespace System.Drawing.Text
 			get { 
 				var families = new List<FontFamily> ();
 
+				var familyNames = new List<string>(nativeFontDescriptors.Keys);
 				// Lets sort the family names
 				familyNames.Sort ();
 
 				foreach (var family in familyNames) 
 				{
-					families.Add(new FontFamily (family));
+					families.Add(new FontFamily (family, this));
 				}
 
 				return families.ToArray ();;               
