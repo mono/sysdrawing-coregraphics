@@ -89,9 +89,9 @@ namespace DrawStringTest
 		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
 		{
 
-//			var g = Graphics.FromCurrentContext();
-//
-//			//g.Clear(backColor);
+			var g = Graphics.FromCurrentContext();
+
+			g.Clear(backColor);
 //			PointF point = new PointF(50,50);
 //			var rect = new Rectangle(50,50,20,20);
 //			//g.RotateTransform(-20);
@@ -128,9 +128,10 @@ namespace DrawStringTest
 //			g.DrawRectangle(Pens.Red, rect);
 //			g.DrawString("Test2 Far", this.Font, Brushes.Blue, rect, format);
 //
-//			g.Dispose();
 
-			AvailableFonts ();
+			//AvailableFonts ();
+			PrivateFonts ();
+			g.Dispose();
 		}
 
 		private void AvailableFonts()
@@ -141,12 +142,29 @@ namespace DrawStringTest
 			{
 				Console.WriteLine(ff.ToString());
 				// Something like this would be nice, but AFAIK nothing similar exists
-				/*				
+				/*								
 	foreach ( FontStyle style in ff.Styles )
 		Console.WriteLine(style.ToString());
 	*/
 			}
 
+		}
+
+		private void PrivateFonts()
+		{
+			var privateFonts = new PrivateFontCollection ();
+
+			privateFonts.AddFontFile ("Paint Boy.ttf");
+
+			foreach ( FontFamily ff in privateFonts.Families )
+			{
+				Console.WriteLine(ff.ToString());
+				// Something like this would be nice, but AFAIK nothing similar exists
+				/*												
+	foreach ( FontStyle style in ff.Styles )
+		Console.WriteLine(style.ToString());
+	*/
+			}
 		}
 
 //				public override bool IsFlipped {

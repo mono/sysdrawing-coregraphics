@@ -6,6 +6,7 @@
 //   Alexandre Pigolkine (pigolkine@gmx.de)
 //   Peter Dennis Bartok (pbartok@novell.com)
 //   Sebastien Pouliot  <sebastien@xamarin.com>
+//   Kenneth J. Pouncey (kjpou@pt.lu)
 //
 // Copyright (C) 2002/2004 Ximian, Inc http://www.ximian.com
 // Copyright (C) 2004 - 2006 Novell, Inc (http://www.novell.com)

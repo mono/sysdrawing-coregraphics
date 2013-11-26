@@ -96,4 +96,21 @@
       <Name>sysdrawing-coregraphics-Mac</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\Resources\Fonts\A Damn Mess.ttf">
+      <Link>A Damn Mess.ttf</Link>
+    </Content>
+    <Content Include="..\..\Resources\Fonts\Abberancy.ttf">
+      <Link>Abberancy.ttf</Link>
+    </Content>
+    <Content Include="..\..\Resources\Fonts\Abduction.ttf">
+      <Link>Abduction.ttf</Link>
+    </Content>
+    <Content Include="..\..\Resources\Fonts\American Typewriter.ttf">
+      <Link>American Typewriter.ttf</Link>
+    </Content>
+    <Content Include="..\..\Resources\Fonts\Paint Boy.ttf">
+      <Link>Paint Boy.ttf</Link>
+    </Content>
+  </ItemGroup>
 </Project>

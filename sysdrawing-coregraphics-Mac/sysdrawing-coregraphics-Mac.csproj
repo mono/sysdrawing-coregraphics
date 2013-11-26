@@ -318,6 +318,12 @@
     <Compile Include="..\System.Drawing.Text\FontCollection-CoreText.cs">
       <Link>System.Drawing.Text\FontCollection-CoreText.cs</Link>
     </Compile>
+    <Compile Include="..\System.Drawing.Text\PrivateFontCollection.cs">
+      <Link>System.Drawing.Text\PrivateFontCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\System.Drawing.Text\PrivateFontCollection-CoreText.cs">
+      <Link>System.Drawing.Text\PrivateFontCollection-CoreText.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
