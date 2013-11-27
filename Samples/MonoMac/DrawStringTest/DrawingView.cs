@@ -129,8 +129,9 @@ namespace DrawStringTest
 //			g.DrawString("Test2 Far", this.Font, Brushes.Blue, rect, format);
 //
 
-			AvailableFonts ();
+			//AvailableFonts ();
 			//PrivateFonts ();
+			CreatePrivateFontCollection (g);
 			g.Dispose();
 		}
 
@@ -155,16 +156,20 @@ namespace DrawStringTest
 		{
 			var privateFonts = new PrivateFontCollection ();
 
+			privateFonts.AddFontFile ("A Damn Mess.ttf");
+			privateFonts.AddFontFile ("Abberancy.ttf");
+			privateFonts.AddFontFile ("Abduction.ttf");
+			privateFonts.AddFontFile ("American Typewriter.ttf");
 			privateFonts.AddFontFile ("Paint Boy.ttf");
 
 			foreach ( FontFamily ff in privateFonts.Families )
 			{
 				Console.WriteLine(ff.ToString());
-				// Something like this would be nice, but AFAIK nothing similar exists
-				/*												
-	foreach ( FontStyle style in ff.Styles )
-		Console.WriteLine(style.ToString());
-	*/
+				foreach (var style in Enum.GetValues(typeof(FontStyle)) )
+				{
+					if (ff.IsStyleAvailable((FontStyle)style))
+						Console.WriteLine(ff.ToString() + " - " + (FontStyle)style);
+				}
 			}
 		}
 
@@ -183,12 +188,18 @@ namespace DrawStringTest
 
 			// Add three font files to the private collection.
 
-			var path = Environment.ExpandEnvironmentVariables("%SystemRoot%\\Fonts\\");
+//			var path = Environment.ExpandEnvironmentVariables("%SystemRoot%\\Fonts\\");
+//
+//			privateFontCollection.AddFontFile(System.IO.Path.Combine(path,"Arial.ttf"));
+//			privateFontCollection.AddFontFile(System.IO.Path.Combine(path,"CourBI.ttf"));
+//			//privateFontCollection.AddFontFile(System.IO.Path.Combine(path, "Courier New.ttf"));
+//			privateFontCollection.AddFontFile(System.IO.Path.Combine(path, "TimesBD.ttf"));
+			privateFontCollection.AddFontFile ("A Damn Mess.ttf");
+			privateFontCollection.AddFontFile ("Abberancy.ttf");
+			privateFontCollection.AddFontFile ("Abduction.ttf");
+			privateFontCollection.AddFontFile ("American Typewriter.ttf");
+			privateFontCollection.AddFontFile ("Paint Boy.ttf");
 
-			privateFontCollection.AddFontFile(System.IO.Path.Combine(path,"Arial.ttf"));
-			privateFontCollection.AddFontFile(System.IO.Path.Combine(path,"CourBI.ttf"));
-			//privateFontCollection.AddFontFile(System.IO.Path.Combine(path, "Courier New.ttf"));
-			privateFontCollection.AddFontFile(System.IO.Path.Combine(path, "TimesBD.ttf"));
 
 			// Get the array of FontFamily objects.
 			fontFamilies = privateFontCollection.Families;
@@ -212,7 +223,7 @@ namespace DrawStringTest
 
 					Font regFont = new Font(
 						familyName,
-						16,
+						26,
 						FontStyle.Regular,
 						GraphicsUnit.Pixel);
 
@@ -234,7 +245,7 @@ namespace DrawStringTest
 
 					Font boldFont = new Font(
 						familyName,
-						16,
+						26,
 						FontStyle.Bold,
 						GraphicsUnit.Pixel);
 
@@ -251,7 +262,7 @@ namespace DrawStringTest
 
 					Font italicFont = new Font(
 						familyName,
-						16,
+						26,
 						FontStyle.Italic,
 						GraphicsUnit.Pixel);
 
@@ -274,7 +285,7 @@ namespace DrawStringTest
 
 					Font italicFont = new Font(
 						familyName,
-						16,
+						26,
 						FontStyle.Italic | FontStyle.Bold,
 						GraphicsUnit.Pixel);
 
@@ -295,7 +306,7 @@ namespace DrawStringTest
 
 					Font underlineFont = new Font(
 						familyName,
-						16,
+						26,
 						FontStyle.Underline,
 						GraphicsUnit.Pixel);
 
@@ -317,7 +328,7 @@ namespace DrawStringTest
 
 					Font strikeFont = new Font(
 						familyName,
-						16,
+						26,
 						FontStyle.Strikeout,
 						GraphicsUnit.Pixel);
 

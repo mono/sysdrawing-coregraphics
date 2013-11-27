@@ -54,12 +54,12 @@ namespace System.Drawing
 		{
 		}
 
-		public Font (FontFamily family, float emSize, FontStyle style,
-				GraphicsUnit unit, byte gdiCharSet, bool gdiVerticalFont)
-			: this (family.Name, emSize, style, unit, gdiCharSet, gdiVerticalFont)
-		{
-
-		}
+//		public Font (FontFamily family, float emSize, FontStyle style,
+//				GraphicsUnit unit, byte gdiCharSet, bool gdiVerticalFont)
+//			: this (family.Name, emSize, style, unit, gdiCharSet, gdiVerticalFont)
+//		{
+//
+//		}
 
 		public Font (string familyName, float emSize)
 			: this (familyName, emSize, FontStyle.Regular, GraphicsUnit.Point, DefaultCharSet, false)
@@ -72,7 +72,7 @@ namespace System.Drawing
 		}
 
 		public Font (string familyName, float emSize, FontStyle style, GraphicsUnit unit)
-			: this (familyName, emSize, style, unit, DefaultCharSet, false)
+			: this (new FontFamily(familyName), emSize, style, unit, DefaultCharSet, false)
 		{
 		}
 
@@ -82,8 +82,14 @@ namespace System.Drawing
 		}
 
 		public Font (string familyName, float emSize, FontStyle style,
+			GraphicsUnit unit, byte gdiCharSet, bool  gdiVerticalFont )
+		{
+		}
+
+		public Font (FontFamily familyName, float emSize, FontStyle style,
 		             GraphicsUnit unit, byte gdiCharSet, bool  gdiVerticalFont )
 		{
+
 			if (emSize <= 0)
 				throw new ArgumentException("emSize is less than or equal to 0, evaluates to infinity, or is not a valid number.","emSize");
 
@@ -92,7 +98,7 @@ namespace System.Drawing
 			var dpiSize = emSize * dpiScale;
 
 			try {
-				nativeFont = new CTFont(familyName,dpiSize);
+				nativeFont = new CTFont(familyName.NativeDescriptor,dpiSize);
 			}
 			catch
 			{

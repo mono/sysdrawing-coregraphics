@@ -74,12 +74,12 @@ namespace System.Drawing
 
 		private bool nativeStyleAvailable(FontStyle style)
 		{
-			var attributes = new CTFontDescriptorAttributes (nativeFontDescriptor.GetAttributes ().Dictionary);
-			var options = new CTFontOptions ();
 
+			// we are going to actually have to create a font object here
+			// will not create an actual variable for this yet.  We may
+			// want to do this in the future so that we do not have to keep 
+			// creating it over and over again.
 			var font = new CTFont (nativeFontDescriptor,0);
-			var vari = font.GetVariation ();
-			var traits = font.GetTraits ();
 
 			switch (style) 
 			{
@@ -104,7 +104,7 @@ namespace System.Drawing
 
 			case FontStyle.Regular:
 
-				// Verify if this is correct somehow
+				// Verify if this is correct somehow - we may need to add Bold here as well not sure
 				if ((font.SymbolicTraits & CTFontSymbolicTraits.Condensed) == CTFontSymbolicTraits.Condensed
 					||  (font.SymbolicTraits & CTFontSymbolicTraits.Expanded) == CTFontSymbolicTraits.Expanded)
 					return false;
