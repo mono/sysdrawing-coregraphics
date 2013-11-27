@@ -82,7 +82,27 @@ namespace System.Drawing
 
 		public bool IsStyleAvailable (FontStyle fontStyle)
 		{
-			return nativeStyleAvailable (fontStyle);
+			return NativeStyleAvailable (fontStyle);
+		}
+
+		public int GetEmHeight(FontStyle style)
+		{
+			return GetNativeMetric (Metric.EMHeight, style);
+		}
+
+		public int GetCellDescent(FontStyle style)
+		{
+			return GetNativeMetric (Metric.CellDescent, style);
+		}
+
+		public int GetCellAscent(FontStyle style)
+		{
+			return GetNativeMetric (Metric.CellAscent, style);
+		}
+
+		public int GetLineSpacing(FontStyle style)
+		{
+			return GetNativeMetric (Metric.LineSpacing, style);
 		}
 
 		~FontFamily ()

@@ -17,9 +17,20 @@ namespace System.Drawing
 {
 	public sealed partial class FontFamily
 	{
-		const string MONO_SPACE = "Courier";
-		const string SANS_SERIF = "Helvetica";
-		const string SERIF = "Times";
+		const string MONO_SPACE = "Courier New";
+		// Wikipedia - On October 16, 2007, Apple announced on their website that the next version of their flagship operating system, 
+		// Mac OS X v10.5 ("Leopard"), would include Microsoft Sans Serif.
+		// Just because it ships does not mean we have to use it though.
+		const string SANS_SERIF = "Microsoft Sans Serif";  // "Arial";  or even "Helvetica";
+		const string SERIF = "Times New Roman";
+
+		enum Metric
+		{
+			EMHeight,
+			CellAscent,
+			CellDescent,
+			LineSpacing
+		}
 
 		CTFontDescriptor nativeFontDescriptor;
 
@@ -72,7 +83,7 @@ namespace System.Drawing
 
 		}
 
-		private bool nativeStyleAvailable(FontStyle style)
+		private bool NativeStyleAvailable(FontStyle style)
 		{
 
 			// we are going to actually have to create a font object here
@@ -118,6 +129,49 @@ namespace System.Drawing
 
 			}
 			return false;
+		}
+
+		private int GetNativeMetric(Metric metric, FontStyle style)
+		{
+
+			// we are going to actually have to create a font object here
+			// will not create an actual variable for this yet.  We may
+			// want to do this in the future so that we do not have to keep 
+			// creating it over and over again.
+			var font = new CTFont (nativeFontDescriptor,16);
+			//font = new CTFont (nativeFontDescriptor, font.Size * 96f / 72f);
+			switch (style) 
+			{
+			case FontStyle.Bold:
+				var tMaskBold = CTFontSymbolicTraits.None;
+				tMaskBold |= CTFontSymbolicTraits.Bold;
+				font = font.WithSymbolicTraits (0, tMaskBold, tMaskBold);
+				break;
+			case FontStyle.Italic:
+				//return (font.SymbolicTraits & CTFontSymbolicTraits.Italic) == CTFontSymbolicTraits.Italic; 
+				var tMaskItalic = CTFontSymbolicTraits.None;
+				tMaskItalic |= CTFontSymbolicTraits.Italic;
+				font = font.WithSymbolicTraits (0, tMaskItalic, tMaskItalic);
+				break;
+			}
+
+			switch (metric)
+			{
+			case Metric.EMHeight:
+				return (int)font.UnitsPerEmMetric;
+			case Metric.CellAscent:
+				return (int)Math.Round(font.AscentMetric / font.Size * font.UnitsPerEmMetric);
+			case Metric.CellDescent:
+				return (int)Math.Round(font.DescentMetric / font.Size * font.UnitsPerEmMetric);
+			case  Metric.LineSpacing:
+				float lineHeight = 0;
+				lineHeight += font.AscentMetric;
+				lineHeight += font.DescentMetric;
+				lineHeight += font.LeadingMetric;
+				return (int)Math.Round(lineHeight / font.Size * font.UnitsPerEmMetric);
+			}
+
+			return 0;
 		}
 
 	}

@@ -131,9 +131,93 @@ namespace DrawStringTest
 
 			//AvailableFonts ();
 			//PrivateFonts ();
-			CreatePrivateFontCollection (g);
+			//CreatePrivateFontCollection (g);
+			ObtainFontMetrics (g);
 			g.Dispose();
 		}
+
+
+
+		void ObtainFontMetrics(Graphics g)
+		{
+			string infoString = "";  // enough space for one line of output 
+			int ascent;             // font family ascent in design units 
+			float ascentPixel;      // ascent converted to pixels 
+			int descent;            // font family descent in design units 
+			float descentPixel;     // descent converted to pixels 
+			int lineSpacing;        // font family line spacing in design units 
+			float lineSpacingPixel; // line spacing converted to pixels
+
+			FontStyle fontStyle = FontStyle.Regular; //  FontStyle.Italic | FontStyle.Bold;
+			FontFamily fontFamily = new FontFamily("arial");
+			fontFamily = new FontFamily (GenericFontFamilies.SansSerif);
+
+			Font font = new Font(
+				fontFamily,
+				16, fontStyle,
+				GraphicsUnit.Pixel);
+			PointF pointF = new PointF(10, 10);
+			SolidBrush solidBrush = new SolidBrush(Color.Black);
+
+			// Display the font size in pixels.
+			infoString = "font family : " + font.FontFamily.Name + " " + fontStyle + ".";
+			g.DrawString(infoString, font, solidBrush, pointF);
+
+			// Move down one line.
+			pointF.Y += font.Height;
+
+			// Display the font size in pixels.
+			infoString = "font.Size returns " + font.Size + ".";
+			g.DrawString(infoString, font, solidBrush, pointF);
+
+			// Move down one line.
+			pointF.Y += font.Height;
+
+			// Display the font family em height in design units.
+			infoString = "fontFamily.GetEmHeight() returns " +
+			             fontFamily.GetEmHeight(fontStyle) + ".";
+			g.DrawString(infoString, font, solidBrush, pointF);
+
+			// Move down two lines.
+			pointF.Y += 2 * font.Height;
+
+			// Display the ascent in design units and pixels.
+			ascent = fontFamily.GetCellAscent(fontStyle);
+
+			// 14.484375 = 16.0 * 1854 / 2048
+			ascentPixel =
+				font.Size * ascent / fontFamily.GetEmHeight(fontStyle);
+			infoString = "The ascent is " + ascent + " design units, " + ascentPixel +
+			             " pixels.";
+			g.DrawString(infoString, font, solidBrush, pointF);
+
+			// Move down one line.
+			pointF.Y += font.Height;
+
+			// Display the descent in design units and pixels.
+			descent = fontFamily.GetCellDescent(fontStyle);
+
+			// 3.390625 = 16.0 * 434 / 2048
+			descentPixel =
+				font.Size * descent / fontFamily.GetEmHeight(fontStyle);
+			infoString = "The descent is " + descent + " design units, " +
+			             descentPixel + " pixels.";
+			g.DrawString(infoString, font, solidBrush, pointF);
+
+			// Move down one line.
+			pointF.Y += font.Height;
+
+			// Display the line spacing in design units and pixels.
+			lineSpacing = fontFamily.GetLineSpacing(fontStyle);
+
+			// 18.398438 = 16.0 * 2355 / 2048
+			lineSpacingPixel =
+				font.Size * lineSpacing / fontFamily.GetEmHeight(fontStyle);
+			infoString = "The line spacing is " + lineSpacing + " design units, " +
+			             lineSpacingPixel + " pixels.";
+			g.DrawString(infoString, font, solidBrush, pointF);
+		}
+
 
 		private void AvailableFonts()
 		{
