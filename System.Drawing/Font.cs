@@ -16,6 +16,8 @@ namespace System.Drawing
 		bool strikeThrough = false;
 		FontFamily fontFamily;
 		FontStyle fontStyle;
+		byte gdiCharSet = 1;
+		bool  gdiVerticalFont;
 
 		static float dpiScale = 96f / 72f;
 
@@ -79,11 +81,14 @@ namespace System.Drawing
 		             GraphicsUnit unit, byte gdiCharSet, bool  gdiVerticalFont )
 		{
 
-			fontFamily = familyName;
-			fontStyle = style;
 
 			if (emSize <= 0)
 				throw new ArgumentException("emSize is less than or equal to 0, evaluates to infinity, or is not a valid number.","emSize");
+
+			fontFamily = familyName;
+			fontStyle = style;
+			this.gdiVerticalFont = gdiVerticalFont;
+			this.gdiCharSet = gdiCharSet;
 
 			CreateNativeFont (familyName, emSize, style, unit, gdiCharSet, gdiVerticalFont);
 		}
@@ -98,7 +103,7 @@ namespace System.Drawing
 		#region ICloneable implementation
 		public object Clone ()
 		{
-			throw new NotImplementedException ();
+			return new Font (fontFamily, size, fontStyle, unit, gdiCharSet, gdiVerticalFont);
 		}
 		#endregion
 
