@@ -69,6 +69,15 @@ namespace System.Drawing
 
 		}
 
+		internal FontFamily (string name, bool createDefaultIfNotExists)
+		{			
+			if (string.IsNullOrEmpty (name))
+				throw new ArgumentException ("name can not be null or empty");
+
+			CreateNativeFontFamily (name, createDefaultIfNotExists);
+
+		}
+
 		public FontFamily(string name, FontCollection fontCollection)
 		{
 			CreateNativeFontFamily (name, fontCollection, false);
