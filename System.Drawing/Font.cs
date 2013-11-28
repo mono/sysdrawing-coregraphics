@@ -31,7 +31,7 @@ namespace System.Drawing
 		}
 
 		public Font (string familyName, float emSize,  GraphicsUnit unit)
-			: this (new FontFamily (familyName), emSize, FontStyle.Regular, unit, DefaultCharSet, false)
+			: this (new FontFamily (familyName, true), emSize, FontStyle.Regular, unit, DefaultCharSet, false)
 		{
 		}
 
@@ -55,35 +55,29 @@ namespace System.Drawing
 		{
 		}
 
-//		public Font (FontFamily family, float emSize, FontStyle style,
-//				GraphicsUnit unit, byte gdiCharSet, bool gdiVerticalFont)
-//			: this (family.Name, emSize, style, unit, gdiCharSet, gdiVerticalFont)
-//		{
-//
-//		}
-
 		public Font (string familyName, float emSize)
-			: this (familyName, emSize, FontStyle.Regular, GraphicsUnit.Point, DefaultCharSet, false)
+			: this (new FontFamily (familyName, true), emSize, FontStyle.Regular, GraphicsUnit.Point, DefaultCharSet, false)
 		{
 		}
 
 		public Font (string familyName, float emSize, FontStyle style)
-			: this (familyName, emSize, style, GraphicsUnit.Point, DefaultCharSet, false)
+			: this (new FontFamily (familyName, true), emSize, style, GraphicsUnit.Point, DefaultCharSet, false)
 		{
 		}
 
 		public Font (string familyName, float emSize, FontStyle style, GraphicsUnit unit)
-			: this (new FontFamily(familyName), emSize, style, unit, DefaultCharSet, false)
+			: this (new FontFamily (familyName, true), emSize, style, unit, DefaultCharSet, false)
 		{
 		}
 
 		public Font (string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte gdiCharSet)
-			: this (familyName, emSize, style, unit, gdiCharSet, false)
+			: this (new FontFamily (familyName, true), emSize, style, unit, gdiCharSet, false)
 		{
 		}
 
 		public Font (string familyName, float emSize, FontStyle style,
-			GraphicsUnit unit, byte gdiCharSet, bool  gdiVerticalFont )
+		           GraphicsUnit unit, byte gdiCharSet, bool  gdiVerticalFont)
+			: this (new FontFamily (familyName, true), emSize, style, unit, gdiCharSet, gdiVerticalFont)
 		{
 		}
 
