@@ -138,22 +138,15 @@ namespace System.Drawing
 			// will not create an actual variable for this yet.  We may
 			// want to do this in the future so that we do not have to keep 
 			// creating it over and over again.
-			var font = new CTFont (nativeFontDescriptor,16);
-			//font = new CTFont (nativeFontDescriptor, font.Size * 96f / 72f);
-			switch (style) 
-			{
-			case FontStyle.Bold:
-				var tMaskBold = CTFontSymbolicTraits.None;
-				tMaskBold |= CTFontSymbolicTraits.Bold;
-				font = font.WithSymbolicTraits (0, tMaskBold, tMaskBold);
-				break;
-			case FontStyle.Italic:
-				//return (font.SymbolicTraits & CTFontSymbolicTraits.Italic) == CTFontSymbolicTraits.Italic; 
-				var tMaskItalic = CTFontSymbolicTraits.None;
-				tMaskItalic |= CTFontSymbolicTraits.Italic;
-				font = font.WithSymbolicTraits (0, tMaskItalic, tMaskItalic);
-				break;
-			}
+			CTFontSymbolicTraits tMask = CTFontSymbolicTraits.None;
+
+			if ((style & FontStyle.Bold) == FontStyle.Bold)
+				tMask |= CTFontSymbolicTraits.Bold;
+			if ((style & FontStyle.Italic) == FontStyle.Italic)
+				tMask |= CTFontSymbolicTraits.Italic;
+
+			var font = new CTFont (nativeFontDescriptor,0);
+			font = font.WithSymbolicTraits (0, tMask, tMask);
 
 			switch (metric)
 			{

@@ -150,7 +150,7 @@ namespace DrawStringTest
 
 			FontStyle fontStyle = FontStyle.Regular; //  FontStyle.Italic | FontStyle.Bold;
 			FontFamily fontFamily = new FontFamily("arial");
-			fontFamily = new FontFamily (GenericFontFamilies.SansSerif);
+			//fontFamily = FontFamily.GenericSansSerif;
 
 			Font font = new Font(
 				fontFamily,

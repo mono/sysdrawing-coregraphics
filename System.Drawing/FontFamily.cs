@@ -105,6 +105,38 @@ namespace System.Drawing
 			return GetNativeMetric (Metric.LineSpacing, style);
 		}
 
+		public static FontFamily[] Families
+		{
+			get
+			{
+				return new InstalledFontCollection().Families;
+			}
+		}
+
+		public static FontFamily GenericMonospace
+		{
+			get
+			{
+				return new FontFamily(MONO_SPACE);
+			}
+		}
+
+		public static FontFamily GenericSansSerif
+		{
+			get
+			{
+				return new FontFamily(SANS_SERIF);
+			}
+		}
+
+		public static FontFamily GenericSerif
+		{
+			get
+			{
+				return new FontFamily(SERIF);
+			}
+		}
+
 		~FontFamily ()
 		{
 			Dispose (false);
