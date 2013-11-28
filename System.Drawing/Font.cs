@@ -1,14 +1,6 @@
 using System;
 using System.Runtime.Serialization;
 
-//#if MONOMAC
-//using MonoMac.CoreGraphics;
-//using MonoMac.CoreText;
-//#else
-//using MonoTouch.CoreGraphics;
-//using MonoTouch.CoreText;
-//#endif
-
 namespace System.Drawing
 {
 
