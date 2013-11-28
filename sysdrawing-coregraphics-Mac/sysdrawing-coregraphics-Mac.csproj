@@ -324,6 +324,9 @@
     <Compile Include="..\System.Drawing.Text\PrivateFontCollection-CoreText.cs">
       <Link>System.Drawing.Text\PrivateFontCollection-CoreText.cs</Link>
     </Compile>
+    <Compile Include="..\System.Drawing\Font-CoreText.cs">
+      <Link>System.Drawing\Font-CoreText.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
