@@ -148,7 +148,8 @@ namespace DrawStringTest
 			int lineSpacing;        // font family line spacing in design units 
 			float lineSpacingPixel; // line spacing converted to pixels
 
-			FontStyle fontStyle = FontStyle.Regular; //  FontStyle.Italic | FontStyle.Bold;
+			FontStyle fontStyle = FontStyle.Regular; 
+			//fontStyle = FontStyle.Italic | FontStyle.Bold;
 			FontFamily fontFamily = new FontFamily("arial");
 			//fontFamily = FontFamily.GenericSansSerif;
 

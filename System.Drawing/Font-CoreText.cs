@@ -73,8 +73,8 @@ namespace System.Drawing
 			if (nativeFont2 != null)
 				nativeFont = nativeFont2;
 
-			bold = (nativeFont.SymbolicTraits & ~CTFontSymbolicTraits.Bold) == CTFontSymbolicTraits.Bold; 
-			italic = (nativeFont.SymbolicTraits & ~CTFontSymbolicTraits.Italic) == CTFontSymbolicTraits.Italic;
+			bold = (nativeFont.SymbolicTraits & CTFontSymbolicTraits.Bold) == CTFontSymbolicTraits.Bold; 
+			italic = (nativeFont.SymbolicTraits & CTFontSymbolicTraits.Italic) == CTFontSymbolicTraits.Italic;
 			sizeInPoints = emSize;
 			this.unit = unit;
 
