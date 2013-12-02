@@ -84,7 +84,12 @@ namespace System.Drawing.Text
 							NSError error;
 							var registered = CTFontManager.RegisterGraphicsFont(cgFont, out error);
 							if (!registered)
-								throw new ArgumentException("Error registering: " + Path.GetFileName(fileName));
+							{
+								// If the error code is 105 then the font we are trying to register is already registered
+								// We will not report this as an error.
+								if (error.Code != 105)
+									throw new ArgumentException("Error registering: " + Path.GetFileName(fileName));
+							}
 						}
 					}
 					catch
