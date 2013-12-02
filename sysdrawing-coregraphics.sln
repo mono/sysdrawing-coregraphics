@@ -155,6 +155,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTClippingTests", "Samples\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTGraphicsPathTests", "Samples\MonoTouch\MTGraphicsPathTests\MTGraphicsPathTests.csproj", "{823BC082-D37F-4F14-BD74-E921AE27D0DC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTFontTest", "Samples\MonoTouch\MTFontTest\MTFontTest.csproj", "{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -306,6 +308,20 @@ Global
 		{15A4C3D1-419B-4F0D-9894-93A92693BE20}.Release|iPhone.Build.0 = Release|iPhone
 		{15A4C3D1-419B-4F0D-9894-93A92693BE20}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{15A4C3D1-419B-4F0D-9894-93A92693BE20}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA}.AppStore|iPhone.Build.0 = AppStore|iPhone
+		{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA}.AppStore|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA}.AppStore|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA}.Debug|iPhone.Build.0 = Debug|iPhone
+		{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA}.Release|iPhone.ActiveCfg = Release|iPhone
+		{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA}.Release|iPhone.Build.0 = Release|iPhone
+		{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{1C81B532-1642-45E6-860A-A8F3817734E7}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhoneSimulator
 		{1C81B532-1642-45E6-860A-A8F3817734E7}.Ad-Hoc|iPhone.Build.0 = Debug|iPhoneSimulator
 		{1C81B532-1642-45E6-860A-A8F3817734E7}.AppStore|iPhone.ActiveCfg = Debug|iPhoneSimulator
@@ -1234,9 +1250,10 @@ Global
 		{27C7B295-F41F-4942-97AF-72C25B971C20} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 		{F030F636-012F-4021-BB3F-AA3A1F0C81F7} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 		{823BC082-D37F-4F14-BD74-E921AE27D0DC} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
+		{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Samples\MonoMac\FontTest\FontTest.csproj
+		StartupItem = Samples\MonoTouch\MTFontTest\MTFontTest.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.inheritsSet = Mono

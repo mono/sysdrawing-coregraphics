@@ -62,7 +62,7 @@ namespace System.Drawing.Text
 
 				NSUrl url;
 
-				if (!string.IsNullOrEmpty(pathForResource))
+ 				if (!string.IsNullOrEmpty(pathForResource))
 					url = NSUrl.FromFilename (pathForResource);
 				else
 					url = NSUrl.FromFilename (fileName);

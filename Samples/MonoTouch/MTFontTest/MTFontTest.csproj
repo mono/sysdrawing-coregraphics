@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>MTFontTest</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>MTFontTest</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>DEBUG;__MOBILE__;__IOS__;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <MtouchDebug>true</MtouchDebug>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <DefineConstants>__MOBILE__;__IOS__;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchLink>None</MtouchLink>
+    <ConsolePause>false</ConsolePause>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG;__MOBILE__;__IOS__;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <MtouchDebug>true</MtouchDebug>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <DefineConstants>__MOBILE__;__IOS__;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Ad-Hoc</OutputPath>
+    <DefineConstants>__MOBILE__;__IOS__;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <BuildIpa>true</BuildIpa>
+    <CodesignProvision>Automatic:AdHoc</CodesignProvision>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\AppStore</OutputPath>
+    <DefineConstants>__MOBILE__;__IOS__;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <CodesignProvision>Automatic:AppStore</CodesignProvision>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="monotouch" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Default-568h%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Info.plist" />
+    <None Include="Entitlements.plist" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="AppDelegate.cs" />
+    <Compile Include="MTFontTestViewController.cs" />
+    <Compile Include="MTFontTestViewController.designer.cs">
+      <DependentUpon>MTFontTestViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DrawingView.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="MTFontTestViewController_iPhone.xib" />
+    <InterfaceDefinition Include="MTFontTestViewController_iPad.xib" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\sysdrawing-coregraphics.csproj">
+      <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
+      <Name>sysdrawing-coregraphics</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\Resources\Fonts\A Damn Mess.ttf">
+      <Link>A Damn Mess.ttf</Link>
+    </Content>
+    <Content Include="..\..\Resources\Fonts\Abberancy.ttf">
+      <Link>Abberancy.ttf</Link>
+    </Content>
+    <Content Include="..\..\Resources\Fonts\Abduction.ttf">
+      <Link>Abduction.ttf</Link>
+    </Content>
+    <Content Include="..\..\Resources\Fonts\American Typewriter.ttf">
+      <Link>American Typewriter.ttf</Link>
+    </Content>
+    <Content Include="..\..\Resources\Fonts\Paint Boy.ttf">
+      <Link>Paint Boy.ttf</Link>
+    </Content>
+  </ItemGroup>
+</Project>
