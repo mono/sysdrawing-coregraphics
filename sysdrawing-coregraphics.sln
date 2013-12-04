@@ -1253,7 +1253,7 @@ Global
 		{192C5B9E-5FF5-4C68-AAF6-B571695DA0EA} = {9F1E821E-5BAC-40C6-9FBE-4C81C1AD4E6A}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Samples\MonoTouch\MTFontTest\MTFontTest.csproj
+		StartupItem = Samples\MonoMac\DrawStringTest\DrawStringTest.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.inheritsSet = Mono
