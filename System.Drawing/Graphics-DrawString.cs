@@ -137,6 +137,11 @@ namespace System.Drawing
 			if (s == null || s.Length == 0)
 				return;
 
+			if (format == null) 
+			{
+				format = StringFormat.GenericDefault;
+			}
+
 			// TODO: Take into consideration units
 
 			// Not sure we need the Save and Restore around this yet.
@@ -194,9 +199,31 @@ namespace System.Drawing
 			// Calculate the lines
 			int start = 0;
 			int length = attributedString.Length;
+			float baselineOffset = 0;
 
 			var typesetter = new CTTypesetter(attributedString);
 
+
+			// First we need to calculate the offset for Vertical Alignment if we 
+			// are using anything but Top
+			if (layoutAvailable && format.LineAlignment != StringAlignment.Near) {
+				while (start < length) {
+					int count = typesetter.SuggestLineBreak (start, boundsWidth);
+					var line = typesetter.GetLine (new NSRange(start, count));
+
+					// Create and initialize some values from the bounds.
+					float ascent;
+					float descent;
+					float leading;
+					line.GetTypographicBounds (out ascent, out descent, out leading);
+					baselineOffset += (float)Math.Ceiling (ascent + descent + leading + 1); // +1 matches best to CTFramesetter's behavior  
+					line.Dispose ();
+					start += count;
+				}
+
+				//textPosition.Y += baselineOffset;
+			}
+			start = 0;
 			while (start < length && textPosition.Y < insetBounds.Bottom)
 			{
 
@@ -239,20 +266,27 @@ namespace System.Drawing
 				}
 
 				// initialize our Text Matrix or we could get trash in here
-				var textMatrix = CGAffineTransform.MakeIdentity();
-				// flip us over or things just do not look good
-				textMatrix.Scale(1,-1);
+				var textMatrix = new CGAffineTransform (
+					1, 0, 0, -1, 0, ascent);
+
+				if (format.LineAlignment == StringAlignment.Near)
+					textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y); //insetBounds.Height - textPosition.Y -(float)Math.Floor(ascent - 1));
+				if (format.LineAlignment == StringAlignment.Center)
+					textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y + ((insetBounds.Height / 2) - (baselineOffset / 2)) );  // -(float)Math.Floor(ascent)
+				if (format.LineAlignment == StringAlignment.Far)
+					textMatrix.Translate(penFlushness + textPosition.X,  textPosition.Y + ((insetBounds.Height) - (baselineOffset)));
+
 				context.TextMatrix = textMatrix;
 
 				// move us to our graphics baseline
-				var textViewPos = textPosition;
-				textViewPos.Y += (float)Math.Floor(ascent - 1);
+				//var textViewPos = textPosition;
+				//textViewPos.Y += (float)Math.Floor(ascent - 1);
 
 				// take into account our justification
-				textViewPos.X += penFlushness;
+				//textViewPos.X += penFlushness;
 
 				// setup our text position
-				context.TextPosition = textViewPos;
+				//context.TextPosition = textViewPos;
 				// and draw the line
 				line.Draw(context);
 
