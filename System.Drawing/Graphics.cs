@@ -313,7 +313,6 @@ namespace System.Drawing {
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
 
-#if MONOTOUCH
 			// DrawLine is throwing an assertion error on MonoTouch
 			// Assertion failed: (CGFloatIsValid(x) && CGFloatIsValid(y))
 			// , function void CGPathAddLineToPoint(CGMutablePathRef, const CGAffineTransform *, CGFloat, CGFloat)
@@ -323,14 +322,8 @@ namespace System.Drawing {
 			{
 				MoveTo (pt1.X, pt1.Y);
 				LineTo (pt2.X, pt2.Y);
+				StrokePen (pen);
 			}
-#else
-
-			MoveTo (pt1.X, pt1.Y);
-			LineTo (pt2.X, pt2.Y);
-#endif
-
-			StrokePen (pen);
 		}
 		
 		public void DrawBezier (Pen pen, PointF pt1, PointF pt2, PointF pt3, PointF pt4)
@@ -406,7 +399,6 @@ namespace System.Drawing {
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
 
-#if MONOTOUCH
 			// DrawLine is throwing an assertion error on MonoTouch
 			// Assertion failed: (CGFloatIsValid(x) && CGFloatIsValid(y))
 			// , function void CGPathAddLineToPoint(CGMutablePathRef, const CGAffineTransform *, CGFloat, CGFloat)
@@ -418,12 +410,6 @@ namespace System.Drawing {
 				LineTo (pt2.X, pt2.Y);
 				StrokePen (pen);
 			}
-#else
-
-			MoveTo (pt1.X, pt1.Y);
-			LineTo (pt2.X, pt2.Y);
-			StrokePen (pen);
-#endif
 		}
 
 		public void DrawLine (Pen pen, int x1, int y1, int x2, int y2)
