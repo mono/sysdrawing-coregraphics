@@ -92,7 +92,7 @@ namespace DrawStringTest
 
 
 		int currentView = 0;
-		int totalViews = 4;
+		int totalViews = 8;
 
 		public override bool AcceptsFirstResponder ()
 		{
@@ -157,7 +157,21 @@ namespace DrawStringTest
 			case 0:
 				DrawStringPointF (g);
 				break;
-
+			case 1:
+				DrawStringRectangleF (g);
+				break;
+			case 2:
+				DrawStringPointFFormat (g);
+				break;
+			case 3:
+				DrawStringRectangleFFormat (g);
+				break;
+			case 4:
+				DrawStringFloat (g);
+				break;
+			case 5:
+				DrawStringFloatFormat (g);
+				break;
 			}
 
 			g.ResetTransform ();
@@ -205,10 +219,143 @@ namespace DrawStringTest
 			// Create point for upper-left corner of drawing.
 			PointF drawPoint = new PointF(150.0F, 150.0F);
 
+			var outline = g.MeasureString (drawString, drawFont);
+
+			g.DrawRectangle (Pens.Blue, new RectangleF (drawPoint, outline));
+
 			// Draw string to screen.
 			g.DrawString(drawString, drawFont, drawBrush, drawPoint);
 
 			title = "DrawStringPointF";
+		}
+
+		public void DrawStringRectangleF(Graphics g)
+		{
+
+			// Create string to draw.
+			String drawString = "Sample Text";
+
+			// Create font and brush.
+			Font drawFont = new Font("Arial", 16);
+			SolidBrush drawBrush = new SolidBrush(Color.Black);
+
+			// Create rectangle for drawing. 
+			float x = 150.0F;
+			float y = 150.0F;
+			float width = 200.0F;
+			float height = 50.0F;
+			RectangleF drawRect = new RectangleF(x, y, width, height);
+
+			// Draw rectangle to screen.
+			Pen blackPen = new Pen(Color.Black);
+			g.DrawRectangle(blackPen, x, y, width, height);
+
+			// Draw string to screen.
+			g.DrawString(drawString, drawFont, drawBrush, drawRect);
+
+			title = "DrawStringRectangleF";
+		}
+
+		public void DrawStringPointFFormat(Graphics g)
+		{
+
+			// Create string to draw.
+			String drawString = "Sample Text";
+
+			// Create font and brush.
+			Font drawFont = new Font("Arial", 16);
+			SolidBrush drawBrush = new SolidBrush(Color.Black);
+
+			// Create point for upper-left corner of drawing.
+			PointF drawPoint = new PointF(150.0F, 50.0F);
+
+			// Set format of string.
+			StringFormat drawFormat = new StringFormat();
+			drawFormat.FormatFlags = StringFormatFlags.DirectionVertical;
+
+			// Draw string to screen.
+			g.DrawString(drawString, drawFont, drawBrush, drawPoint, drawFormat);
+
+			title = "DrawStringPointFFormat";
+		}
+
+		public void DrawStringRectangleFFormat(Graphics g)
+		{
+
+			// Create string to draw.
+			String drawString = "Sample Text";
+
+			// Create font and brush.
+			Font drawFont = new Font("Arial", 16);
+			SolidBrush drawBrush = new SolidBrush(Color.Black);
+
+			// Create rectangle for drawing. 
+			float x = 150.0F;
+			float y = 150.0F;
+			float width = 200.0F;
+			float height = 50.0F;
+			RectangleF drawRect = new RectangleF(x, y, width, height);
+
+			// Draw rectangle to screen.
+			Pen blackPen = new Pen(Color.Black);
+			g.DrawRectangle(blackPen, x, y, width, height);
+
+			// Set format of string.
+			StringFormat drawFormat = new StringFormat();
+			drawFormat.Alignment = StringAlignment.Center;
+
+			// Draw string to screen.
+			g.DrawString(drawString, drawFont, drawBrush, drawRect, drawFormat);
+
+			title = "DrawStringRectangleFFormat";
+		}
+
+		public void DrawStringFloat(Graphics g)
+		{
+
+			// Create string to draw.
+			String drawString = "Sample Text";
+
+			// Create font and brush.
+			Font drawFont = new Font("Arial", 16);
+			SolidBrush drawBrush = new SolidBrush(Color.Black);
+
+			// Create point for upper-left corner of drawing. 
+			float x = 150.0F;
+			float y = 150.0F;
+
+			var outline = g.MeasureString (drawString, drawFont);
+
+			g.DrawRectangle (Pens.Blue, new RectangleF (x,y, outline.Width, outline.Height));
+
+			// Draw string to screen.
+			g.DrawString(drawString, drawFont, drawBrush, x, y);
+
+			title = "DrawStringFloat";
+		}
+
+		public void DrawStringFloatFormat(Graphics g)
+		{
+
+			// Create string to draw.
+			String drawString = "Sample Text";
+
+			// Create font and brush.
+			Font drawFont = new Font("Arial", 16);
+			SolidBrush drawBrush = new SolidBrush(Color.Black);
+
+			// Create point for upper-left corner of drawing. 
+			float x = 150.0F;
+			float y =  50.0F;
+
+			// Set format of string.
+			StringFormat drawFormat = new StringFormat();
+			drawFormat.FormatFlags = StringFormatFlags.DirectionVertical;
+
+			// Draw string to screen.
+			g.DrawString(drawString, drawFont, drawBrush, x, y, drawFormat);
+
+			title = "DrawStringFloatFormat";
 		}
 
 //				public override bool IsFlipped {
