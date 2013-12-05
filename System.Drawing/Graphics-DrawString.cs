@@ -268,7 +268,9 @@ namespace System.Drawing
 				// initialize our Text Matrix or we could get trash in here
 				var textMatrix = new CGAffineTransform (
 					1, 0, 0, -1, 0, ascent);
-
+//				if ((format.FormatFlags & StringFormatFlags.DirectionVertical) == StringFormatFlags.DirectionVertical)
+//					textMatrix.Rotate (ConversionHelpers.DegreesToRadians(90));
+				//				context.RotateCTM (90);
 				if (format.LineAlignment == StringAlignment.Near)
 					textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y); //insetBounds.Height - textPosition.Y -(float)Math.Floor(ascent - 1));
 				if (format.LineAlignment == StringAlignment.Center)
@@ -308,6 +310,78 @@ namespace System.Drawing
 
 
 		}	
+
+		private NSMutableAttributedString buildAttributedString(string text, Font font, 
+			Color? fontColor=null) 
+		{
+
+
+			// Create a new attributed string definition
+			var ctAttributes = new CTStringAttributes ();
+
+			// Font attribute
+			ctAttributes.Font = font.nativeFont;
+			// -- end font 
+
+
+			if (fontColor.HasValue) {
+
+				// Font color
+				var fc = fontColor.Value;
+				var cgColor = new CGColor(fc.R / 255f, 
+					fc.G / 255f,
+					fc.B / 255f,
+					fc.A / 255f);
+
+				ctAttributes.ForegroundColor = cgColor;
+				ctAttributes.ForegroundColorFromContext = false;
+				// -- end font Color
+			}
+
+			if (font.Underline) {
+				// Underline
+#if MONOMAC
+				int single = (int)MonoMac.AppKit.NSUnderlineStyle.Single;
+				int solid = (int)MonoMac.AppKit.NSUnderlinePattern.Solid;
+				var attss = single | solid;
+				ctAttributes.UnderlineStyleValue = attss;
+#else
+				ctAttributes.UnderlineStyleValue = 1;
+#endif
+				// --- end underline
+			}
+
+
+			if (font.Strikeout) {
+				// StrikeThrough
+#if MONOMAC
+				int single = (int)MonoMac.AppKit.NSUnderlineStyle.Single;
+				int solid = (int)MonoMac.AppKit.NSUnderlinePattern.Solid;
+				var attss = single | solid;
+				ctAttributes.UnderlineStyleValue = attss;
+#else
+				ctAttributes.UnderlineStyleValue = 1;
+#endif
+
+				// --- end StrikeThrough
+			}
+
+
+			var alignment = CTTextAlignment.Left;
+			var alignmentSettings = new CTParagraphStyleSettings();
+			alignmentSettings.Alignment = alignment;
+			var paragraphStyle = new CTParagraphStyle(alignmentSettings);
+
+			ctAttributes.ParagraphStyle = paragraphStyle;
+			// end text alignment
+
+			NSMutableAttributedString atts = 
+				new NSMutableAttributedString(text,ctAttributes.Dictionary);
+
+			return atts;
+
+		}
+
 
 	}
 }
