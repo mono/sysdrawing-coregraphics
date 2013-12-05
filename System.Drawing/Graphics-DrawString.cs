@@ -180,7 +180,7 @@ namespace System.Drawing
 			// I think we only Fill the text with no Stroke surrounding
 			context.SetTextDrawingMode(CGTextDrawingMode.Fill);
 
-			var attributedString = buildAttributedString(s, font, lastBrushColor);
+			var attributedString = buildAttributedString(s, font, format, lastBrushColor);
 
 			// Work out the geometry
 			RectangleF insetBounds = layoutRectangle;
@@ -203,7 +203,6 @@ namespace System.Drawing
 
 			var typesetter = new CTTypesetter(attributedString);
 
-
 			// First we need to calculate the offset for Vertical Alignment if we 
 			// are using anything but Top
 			if (layoutAvailable && format.LineAlignment != StringAlignment.Near) {
@@ -223,6 +222,32 @@ namespace System.Drawing
 
 				//textPosition.Y += baselineOffset;
 			}
+
+			// If we are drawing vertial direction then we need to rotate our context transform by 90 degrees
+			if ((format.FormatFlags & StringFormatFlags.DirectionVertical) == StringFormatFlags.DirectionVertical) 
+			{
+				//textMatrix.Rotate (ConversionHelpers.DegreesToRadians (90));
+				var verticalOffset = 0.0f;
+				while (start < length) {
+					int count = typesetter.SuggestLineBreak (start, boundsWidth);
+					var line = typesetter.GetLine (new NSRange(start, count));
+
+					// Create and initialize some values from the bounds.
+					float ascent;
+					float descent;
+					float leading;
+					line.GetTypographicBounds (out ascent, out descent, out leading);
+					verticalOffset += (float)Math.Ceiling (ascent + descent + leading + 1); // +1 matches best to CTFramesetter's behavior  
+					line.Dispose ();
+					start += count;
+				}
+				context.TranslateCTM (layoutRectangle.X, layoutRectangle.Y);
+				context.RotateCTM (ConversionHelpers.DegreesToRadians (90));
+				context.TranslateCTM (-layoutRectangle.X, -layoutRectangle.Y);
+				context.TranslateCTM (0, -verticalOffset);
+				start = 0;
+			}
+
 			start = 0;
 			while (start < length && textPosition.Y < insetBounds.Bottom)
 			{
@@ -268,27 +293,16 @@ namespace System.Drawing
 				// initialize our Text Matrix or we could get trash in here
 				var textMatrix = new CGAffineTransform (
 					1, 0, 0, -1, 0, ascent);
-//				if ((format.FormatFlags & StringFormatFlags.DirectionVertical) == StringFormatFlags.DirectionVertical)
-//					textMatrix.Rotate (ConversionHelpers.DegreesToRadians(90));
-				//				context.RotateCTM (90);
+
 				if (format.LineAlignment == StringAlignment.Near)
-					textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y); //insetBounds.Height - textPosition.Y -(float)Math.Floor(ascent - 1));
+					textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y); 
 				if (format.LineAlignment == StringAlignment.Center)
-					textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y + ((insetBounds.Height / 2) - (baselineOffset / 2)) );  // -(float)Math.Floor(ascent)
+					textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y + ((insetBounds.Height / 2) - (baselineOffset / 2)) );
 				if (format.LineAlignment == StringAlignment.Far)
 					textMatrix.Translate(penFlushness + textPosition.X,  textPosition.Y + ((insetBounds.Height) - (baselineOffset)));
 
 				context.TextMatrix = textMatrix;
 
-				// move us to our graphics baseline
-				//var textViewPos = textPosition;
-				//textViewPos.Y += (float)Math.Floor(ascent - 1);
-
-				// take into account our justification
-				//textViewPos.X += penFlushness;
-
-				// setup our text position
-				//context.TextPosition = textViewPos;
 				// and draw the line
 				line.Draw(context);
 
@@ -311,7 +325,7 @@ namespace System.Drawing
 
 		}	
 
-		private NSMutableAttributedString buildAttributedString(string text, Font font, 
+		private NSMutableAttributedString buildAttributedString(string text, Font font, StringFormat format = null, 
 			Color? fontColor=null) 
 		{
 
@@ -323,6 +337,11 @@ namespace System.Drawing
 			ctAttributes.Font = font.nativeFont;
 			// -- end font 
 
+			if (format != null && (format.FormatFlags & StringFormatFlags.DirectionVertical) == StringFormatFlags.DirectionVertical) 
+			{
+				//ctAttributes.VerticalForms = true;
+
+			}
 
 			if (fontColor.HasValue) {
 

@@ -260,7 +260,7 @@ namespace DrawStringTest
 		{
 
 			// Create string to draw.
-			String drawString = "Sample Text";
+			String drawString = "Sample\n Text";
 
 			// Create font and brush.
 			Font drawFont = new Font("Arial", 16);
@@ -272,6 +272,7 @@ namespace DrawStringTest
 			// Set format of string.
 			StringFormat drawFormat = new StringFormat();
 			drawFormat.FormatFlags = StringFormatFlags.DirectionVertical;
+			g.FillRectangle(Brushes.Red, new RectangleF(drawPoint.X - 1, drawPoint.Y - 1, 2, 2));
 
 			// Draw string to screen.
 			g.DrawString(drawString, drawFont, drawBrush, drawPoint, drawFormat);
@@ -347,7 +348,7 @@ namespace DrawStringTest
 			// Create point for upper-left corner of drawing. 
 			float x = 150.0F;
 			float y =  50.0F;
-
+			g.FillRectangle(Brushes.Red, new RectangleF(x - 1, y - 1, 2, 2));
 			// Set format of string.
 			StringFormat drawFormat = new StringFormat();
 			drawFormat.FormatFlags = StringFormatFlags.DirectionVertical;
@@ -356,6 +357,7 @@ namespace DrawStringTest
 			g.DrawString(drawString, drawFont, drawBrush, x, y, drawFormat);
 
 			title = "DrawStringFloatFormat";
+
 		}
 
 //				public override bool IsFlipped {
