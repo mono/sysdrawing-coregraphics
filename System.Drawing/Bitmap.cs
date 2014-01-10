@@ -3,7 +3,7 @@
 //
 // Copyright (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
-// Copyright 2011 Xamarin Inc.
+// Copyright 2011-2013 Xamarin Inc.
 //
 // Authors: 
 //	Alexandre Pigolkine (pigolkine@gmx.de)
