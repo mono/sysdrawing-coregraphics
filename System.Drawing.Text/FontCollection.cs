@@ -31,10 +31,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
-namespace System.Drawing.Text 
-{
+
+#if MONOMAC
+using System.DrawingNative;
+namespace System.DrawingNative.Text {
+#else
+using System.Drawing;
+namespace System.Drawing.Text {
+#endif
 
 	public abstract partial class FontCollection : IDisposable 
 	{

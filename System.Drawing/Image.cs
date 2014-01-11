@@ -10,7 +10,7 @@
 //
 // Copyright (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
-// Copyright 2011-2013 Xamarin Inc.
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,9 +37,10 @@ using System.Runtime.Remoting;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
-using System.Drawing.Imaging;
+using Size = System.Drawing.Size;
 using System.IO;
 using System.Reflection;
+using System.DrawingNative;
 
 #if MONOMAC
 using MonoMac.CoreGraphics;
@@ -51,7 +52,11 @@ using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 #endif
 
+#if MONOMAC
+namespace System.DrawingNative {
+#else
 namespace System.Drawing {
+#endif
 	
 	[Serializable]
 	[TypeConverter (typeof (ImageConverter))]
@@ -64,7 +69,7 @@ namespace System.Drawing {
 		// This is obtained from a PDF file.  Not supported right now.
 		internal CGPDFDocument nativeMetafile;
 		string tag = string.Empty;
-		internal SizeF physicalSize;
+		internal System.Drawing.SizeF physicalSize;
 
 		internal CGAffineTransform imageTransform;
 		protected ImageFlags pixelFlags;
@@ -146,7 +151,7 @@ namespace System.Drawing {
 			}
 		}
 
-		public Size Size 
+		public System.Drawing.Size  Size   
 		{ 
 			get { 
 				var b = this as Bitmap;
@@ -168,11 +173,11 @@ namespace System.Drawing {
 		/// Gets the width and height of this image.
 		/// </summary>
 		/// <value>A SizeF structure that represents the width and height of this Image.</value>
-		public SizeF PhysicalDimension
+		public System.Drawing.SizeF PhysicalDimension
 		{
 			get { 
 				var b = this as Bitmap;
-				return b == null ? SizeF.Empty : b.physicalDimension;	 			
+				return b == null ? System.Drawing.SizeF.Empty : b.physicalDimension;	 			
 			}
 		}
 
@@ -260,17 +265,17 @@ namespace System.Drawing {
 		/// </summary>
 		/// <returns>The bounds.</returns>
 		/// <param name="pageUnit">Page unit.</param>
-		public RectangleF GetBounds(ref GraphicsUnit pageUnit)
+		public System.Drawing.RectangleF GetBounds(ref GraphicsUnit pageUnit)
 		{
 
 			var b = this as Bitmap;
 			if (b == null)
-				return RectangleF.Empty;
+				return System.Drawing.RectangleF.Empty;
 
 			// Right now we only have bitmaps of images so we will default
 			// this to Pixel
 			pageUnit = GraphicsUnit.Pixel;
-			return new RectangleF(new PointF(0,0),b.physicalDimension);
+			return new System.Drawing.RectangleF(new System.Drawing.PointF(0,0),b.physicalDimension);
 
 		}
 

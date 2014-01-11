@@ -4,7 +4,7 @@
 // Author:
 //   Kenneth J. Pouncey (kjpou@pt.lu)
 //
-// Copyright 2011-2013 Xamarin Inc.
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
-using System.Drawing.Text;
+
 
 #if MONOMAC
 using MonoMac.AppKit;
@@ -40,8 +40,13 @@ using MonoTouch.CoreGraphics;
 using MonoTouch.CoreText;
 #endif
 
-namespace System.Drawing
-{
+#if MONOMAC
+using System.DrawingNative.Text;
+namespace System.DrawingNative {
+#else
+using System.Drawing.Text;
+namespace System.Drawing {
+#endif
 	public sealed partial class FontFamily
 	{
 		const string MONO_SPACE = "Courier New";
@@ -180,15 +185,15 @@ namespace System.Drawing
 			case Metric.EMHeight:
 				return (int)font.UnitsPerEmMetric;
 			case Metric.CellAscent:
-				return (int)Math.Round(font.AscentMetric / font.Size * font.UnitsPerEmMetric);
+				return (int)Math.Round(font.AscentMetric / font.Size   * font.UnitsPerEmMetric);
 			case Metric.CellDescent:
-				return (int)Math.Round(font.DescentMetric / font.Size * font.UnitsPerEmMetric);
+				return (int)Math.Round(font.DescentMetric / font.Size   * font.UnitsPerEmMetric);
 			case  Metric.LineSpacing:
 				float lineHeight = 0;
 				lineHeight += font.AscentMetric;
 				lineHeight += font.DescentMetric;
 				lineHeight += font.LeadingMetric;
-				return (int)Math.Round(lineHeight / font.Size * font.UnitsPerEmMetric);
+				return (int)Math.Round(lineHeight / font.Size   * font.UnitsPerEmMetric);
 			}
 
 			return 0;

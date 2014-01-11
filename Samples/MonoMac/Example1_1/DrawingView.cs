@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MonoMac.Foundation;
 using MonoMac.AppKit;
-using System.Drawing;
+using System.DrawingNative;
 
 namespace sampleMac
 {
@@ -40,7 +40,7 @@ namespace sampleMac
 			g.Clear(Color.White);
 
 			//RectangleF ClientRectangle = this.Bounds;
-			RectangleF ClientRectangle = dirtyRect;
+			System.Drawing.RectangleF ClientRectangle = dirtyRect;
 
 			// Following codes draw a line from (0, 0) to (1, 1) in unit of inch:
 			/*g.PageUnit = GraphicsUnit.Inch;

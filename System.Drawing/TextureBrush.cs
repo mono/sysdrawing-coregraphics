@@ -7,14 +7,24 @@
 // Copyright 2012
 //
 using System;
-using System.Drawing.Drawing2D;
+
+using PointF = System.Drawing.PointF;
+
 #if MONOMAC
 using MonoMac.CoreGraphics;
+using System.DrawingNative.Drawing2D;
+using System.DrawingNative;
 #else
 using MonoTouch.CoreGraphics;
+using System.Drawing.Drawing2D;
+using System.Drawing;
 #endif
 
+#if MONOMAC
+namespace System.DrawingNative
+#else
 namespace System.Drawing 
+#endif
 {
 	/// <summary>
 	/// Summary description for TextureBrush.
@@ -45,11 +55,11 @@ namespace System.Drawing
 //		{
 //		}
 //		
-//		public TextureBrush(Image image, RectangleF dstRect) : this(image, dstRect, null)
+//		public TextureBrush(Image image, System.Drawing.RectangleF dstRect) : this(image, dstRect, null)
 //		{
 //		}
 		
-		public TextureBrush(Image image, WrapMode wrapMode, Rectangle dstRect)
+		public TextureBrush(Image image, WrapMode wrapMode, System.Drawing.Rectangle dstRect)
 		{
 			if (image == null)
 			{
@@ -57,7 +67,7 @@ namespace System.Drawing
 			}
 		}
 		
-		public TextureBrush(Image image, WrapMode wrapMode, RectangleF dstRect)
+		public TextureBrush(Image image, WrapMode wrapMode, System.Drawing.RectangleF dstRect)
 		{
 			if (image == null)
 			{
@@ -73,7 +83,7 @@ namespace System.Drawing
 //			}
 //		}
 //		
-//		public TextureBrush(Image image, RectangleF dstRect, ImageAttributes imageAttr)
+//		public TextureBrush(Image image, System.Drawing.RectangleF dstRect, ImageAttributes imageAttr)
 //		{
 //			if (image == null)
 //			{
@@ -186,7 +196,7 @@ namespace System.Drawing
 		// test draw pattern
 		protected void DrawTexture (CGContext context)
 		{
-			var destRect = new RectangleF(0,0,textureImage.Width,textureImage.Height);
+			var destRect = new System.Drawing.RectangleF(0,0,textureImage.Width,textureImage.Height);
 			context.DrawImage(destRect, textureImage.NativeCGImage);
 
 			if (wrapMode == WrapMode.TileFlipX) 
@@ -275,7 +285,7 @@ namespace System.Drawing
 			patternSpace.Dispose();
 			
 			// Pattern default work variables
-			var patternRect = new RectangleF(HALF_PIXEL_X,HALF_PIXEL_Y,
+			var patternRect = new System.Drawing.RectangleF(HALF_PIXEL_X,HALF_PIXEL_Y,
 			                                 textureWidth+HALF_PIXEL_X,
 			                                 textureHeight+HALF_PIXEL_Y);
 			var patternTransform = CGAffineTransform.MakeIdentity();

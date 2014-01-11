@@ -4,7 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using MonoMac.Foundation;
 using MonoMac.AppKit;
-using System.Drawing;
+using System.DrawingNative;
+
+using Point = System.Drawing.Point;
+using Size = System.Drawing.Size;
+using Rectangle = System.Drawing.Rectangle;
+using SizeF = System.Drawing.SizeF;
+using PointF = System.Drawing.PointF;
+using RectangleF = System.Drawing.RectangleF;
 
 namespace Example2
 {
@@ -12,7 +19,7 @@ namespace Example2
 	{
 
 		// Define the drawing area
-		private Rectangle drawingRectangle;
+		private System.Drawing.Rectangle drawingRectangle;
 		// Unit defined in world coordinate system:
 		private float xMin = 4f;
 		private float xMax = 6f;
@@ -42,7 +49,7 @@ namespace Example2
 			this.AutoresizingMask = NSViewResizingMask.HeightSizable | NSViewResizingMask.WidthSizable;
 		}
 
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (System.Drawing.RectangleF rect) : base (rect)
 		{
 			Initialize();
 		}
@@ -100,9 +107,9 @@ namespace Example2
 		//			}
 		//		}
 
-		private PointF Point2D(PointF ptf)
+		private System.Drawing.PointF Point2D(System.Drawing.PointF ptf)
 		{
-			PointF aPoint = new PointF();
+			System.Drawing.PointF aPoint = new System.Drawing.PointF();
 			aPoint.X = drawingRectangle.X + (ptf.X - xMin) *
 				drawingRectangle.Width / (xMax - xMin);
 			aPoint.Y = drawingRectangle.Bottom - (ptf.Y - yMin) *

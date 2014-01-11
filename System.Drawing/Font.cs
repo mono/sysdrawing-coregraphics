@@ -1,8 +1,11 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace System.Drawing
-{
+#if MONOMAC
+namespace System.DrawingNative {
+#else
+namespace System.Drawing {
+	#endif
 
 	public sealed partial class Font : MarshalByRefObject, ISerializable, ICloneable, IDisposable 
 	{
@@ -141,7 +144,7 @@ namespace System.Drawing
 			
 		}
 		
-		public float Size 
+		public float Size   
 		{
 			get { 
 				return size; 

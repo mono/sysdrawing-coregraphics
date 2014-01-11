@@ -4,20 +4,26 @@
 // Authors:
 //   Miguel de Icaza (miguel@xamarin.com)
 //
-// Copyright 2011-2013 Xamarin Inc
+// Copyright 2011 Xamarin Inc
 //
 using System;
-using System.Drawing.Drawing2D;
+
 using System.ComponentModel;
 
 #if MONOMAC
 using MonoMac.CoreGraphics;
+using System.DrawingNative.Drawing2D;
 #else
 using MonoTouch.CoreGraphics;
+using System.Drawing.Drawing2D;
 #endif
 
-namespace System.Drawing
-{
+#if MONOMAC
+namespace System.DrawingNative {
+#else
+namespace System.Drawing {
+	#endif
+
 	public sealed partial class Pen : MarshalByRefObject, IDisposable, ICloneable
 	{
 		Brush brush;
@@ -232,9 +238,12 @@ namespace System.Drawing
 		internal void Setup (Graphics graphics, bool fill)
 		{
 
-			CGContext context = graphics.context;
+			var context = graphics.context;
 
-			brush.Setup (graphics, fill);
+			//TODO I ADDED THIS
+			if (brush != null) {
+				brush.Setup (graphics, fill);
+			}
 			// TODO: apply matrix
 
 			if (graphics.LastPen == this && !changed)

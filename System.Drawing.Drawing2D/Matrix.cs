@@ -11,7 +11,7 @@
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
-// Copyright 2011-2013 Xamarin Inc
+// Copyright 2011 Xamarin Inc
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,13 +35,20 @@
 
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+
+
+
 #if MONOMAC
 using MonoMac.CoreGraphics;
 #else
 using MonoTouch.CoreGraphics;
 #endif
 
-namespace System.Drawing.Drawing2D
+#if MONOMAC
+namespace System.DrawingNative.Drawing2D 
+#else
+namespace System.Drawing.Drawing2D 
+#endif
 {
 	public sealed class Matrix : MarshalByRefObject, IDisposable
 	{
@@ -57,16 +64,16 @@ namespace System.Drawing.Drawing2D
 			this.transform = transform;
 		}
 		
-		public Matrix (Rectangle rect, Point[] plgpts)
+		public Matrix (System.Drawing.Rectangle rect, System.Drawing.Point[] plgpts)
 		{
 			if (plgpts == null)
 				throw new ArgumentNullException ("plgpts");
 			if (plgpts.Length != 3)
 				throw new ArgumentException ("plgpts");
 			
-			Point p0 = plgpts [0];
-			Point p1 = plgpts [1];
-			Point p2 = plgpts [2];
+			System.Drawing.Point p0 = plgpts [0];
+			System.Drawing.Point p1 = plgpts [1];
+			System.Drawing.Point p2 = plgpts [2];
 			
 			float m11 = (p1.X - p0.X) / (float)rect.Width;
 			float m12 = (p1.Y - p0.Y) / (float)rect.Width;
@@ -77,16 +84,16 @@ namespace System.Drawing.Drawing2D
 			transform.Multiply(new CGAffineTransform (m11, m12, m21, m22, p0.X, p0.Y));
 		}
 		
-		public Matrix (RectangleF rect, PointF[] plgpts)
+		public Matrix (System.Drawing.RectangleF rect, System.Drawing.PointF[] plgpts)
 		{
 			if (plgpts == null)
 				throw new ArgumentNullException ("plgpts");
 			if (plgpts.Length != 3)
 				throw new ArgumentException ("plgpts");
 			
-			PointF p0 = plgpts [0];
-			PointF p1 = plgpts [1];
-			PointF p2 = plgpts [2];
+			System.Drawing.PointF p0 = plgpts [0];
+			System.Drawing.PointF p1 = plgpts [1];
+			System.Drawing.PointF p2 = plgpts [2];
 			
 			float m11 = (p1.X - p0.X) / rect.Width;
 			float m12 = (p1.Y - p0.Y) / rect.Width;
@@ -231,12 +238,12 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 		
-		public void RotateAt (float angle, PointF point)
+		public void RotateAt (float angle, System.Drawing.PointF point)
 		{
 			RotateAt (angle, point, MatrixOrder.Prepend);
 		}
 		
-		public void RotateAt (float angle, PointF point, MatrixOrder order)
+		public void RotateAt (float angle, System.Drawing.PointF point, MatrixOrder order)
 		{
 			if ((order < MatrixOrder.Prepend) || (order > MatrixOrder.Append))
 				throw new ArgumentException ("order");
@@ -296,19 +303,19 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 		
-		public void TransformPoints (Point[] pts)
+		public void TransformPoints (System.Drawing.Point[] pts)
 		{
 			if (pts == null)
 				throw new ArgumentNullException ("pts");
 			
 			for (int i = 0; i < pts.Length; i++){
 				var point = pts [i];
-				pts [i] = new Point ((int)(transform.xx * point.X + transform.xy * point.Y + transform.x0),
+				pts [i] = new System.Drawing.Point ((int)(transform.xx * point.X + transform.xy * point.Y + transform.x0),
 				                     (int)(transform.yx * point.X + transform.yy * point.Y + transform.y0));
 			}
 		}
 		
-		public void TransformPoints (PointF[] pts)
+		public void TransformPoints (System.Drawing.PointF[] pts)
 		{
 			if (pts == null)
 				throw new ArgumentNullException ("pts");
@@ -317,7 +324,7 @@ namespace System.Drawing.Drawing2D
 				pts [i] = transform.TransformPoint (pts [i]);
 		}
 		
-		internal void TransformPoints (List<PointF> pts)
+		internal void TransformPoints (List<System.Drawing.PointF> pts)
 		{
 			if (pts == null)
 				throw new ArgumentNullException ("pts");
@@ -326,26 +333,26 @@ namespace System.Drawing.Drawing2D
 				pts [i] = transform.TransformPoint (pts [i]);
 		}
 		
-		public void TransformVectors (Point[] pts)
+		public void TransformVectors (System.Drawing.Point[] pts)
 		{
 			if (pts == null)
 				throw new ArgumentNullException ("pts");
 			
 			for (int i = 0; i < pts.Length; i++){
 				var point = pts [i];
-				pts [i] = new Point ((int)(transform.xx * point.X + transform.xy * point.Y),
+				pts [i] = new System.Drawing.Point ((int)(transform.xx * point.X + transform.xy * point.Y),
 				                     (int)(transform.yx * point.X + transform.yy * point.Y));
 			}
 		}
 		
-		public void TransformVectors (PointF[] pts)
+		public void TransformVectors (System.Drawing.PointF[] pts)
 		{
 			if (pts == null)
 				throw new ArgumentNullException ("pts");
 			
 			for (int i = 0; i < pts.Length; i++){
 				var point = pts [i];
-				pts [i] = new PointF ((float)(transform.xx * point.X + transform.xy * point.Y),
+				pts [i] = new System.Drawing.PointF ((float)(transform.xx * point.X + transform.xy * point.Y),
 				                      (float)(transform.yx * point.X + transform.yy * point.Y));
 			}
 		}
@@ -366,7 +373,7 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 		
-		public void VectorTransformPoints (Point[] pts)
+		public void VectorTransformPoints (System.Drawing.Point[] pts)
 		{
 			TransformVectors (pts);
 		}

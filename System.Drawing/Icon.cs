@@ -34,20 +34,29 @@
 
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing.Imaging;
+
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
-namespace System.Drawing
-{
+
+using Size = System.Drawing.Size;
+
+#if MONOMAC
+using System.DrawingNative.Imaging;
+namespace System.DrawingNative  {
+#else
+using System.Drawing.Imaging;
+namespace System.Drawing {
+#endif 
+
 #if !NET_2_0
 	[ComVisible (false)] 
 #endif 
 	[Serializable]	
 #if !MONOTOUCH && !MONOMAC
-	[Editor ("System.Drawing.Design.IconEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
+	[Editor ("System.Drawing.Design.IconEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.DrawingNative.Design.UITypeEditor))]
 #endif
 	[TypeConverter(typeof(IconConverter))]
 	
@@ -106,7 +115,7 @@ namespace System.Drawing
 			internal byte []		data;
 		};
 		
-		private Size iconSize;
+		private System.Drawing.Size iconSize;
 		private IntPtr handle = IntPtr.Zero;
 		private IconDir	iconDir;
 		private ushort id;
@@ -125,10 +134,10 @@ namespace System.Drawing
 			this.handle = handle;
 #if !MONOMAC
 			bitmap = Bitmap.FromHicon (handle);
-			iconSize = new Size (bitmap.Width, bitmap.Height);
+			iconSize = new System.Drawing.Size   (bitmap.Width, bitmap.Height);
 			if (GDIPlus.RunningOnUnix ()) {
 				bitmap = Bitmap.FromHicon (handle);
-				iconSize = new Size (bitmap.Width, bitmap.Height);
+				iconSize = new System.Drawing.Size   (bitmap.Width, bitmap.Height);
 				// FIXME: we need to convert the bitmap into an icon
 			} else {
 				IconInfo ii;
@@ -137,7 +146,7 @@ namespace System.Drawing
 					throw new NotImplementedException (Locale.GetText ("Handle doesn't represent an ICON."));
 				
 				// If this structure defines an icon, the hot spot is always in the center of the icon
-				iconSize = new Size (ii.xHotspot * 2, ii.yHotspot * 2);
+				iconSize = new System.Drawing.Size   (ii.xHotspot * 2, ii.yHotspot * 2);
 				bitmap = (Bitmap) Image.FromHbitmap (ii.hbmColor);
 			}
 			undisposable = true;
@@ -146,11 +155,11 @@ namespace System.Drawing
 #endif
 		
 		public Icon (Icon original, int width, int height)
-			: this (original, new Size (width, height))
+			: this (original, new System.Drawing.Size   (width, height))
 		{
 		}
 		
-		public Icon (Icon original, Size size)
+		public Icon (Icon original, System.Drawing.Size size)
 		{
 			if (original == null)
 				throw new ArgumentException ("original");
@@ -237,7 +246,7 @@ namespace System.Drawing
 			
 			using (Stream s = type.Assembly.GetManifestResourceStream (type, resource)) {
 				if (s == null) {
-					string msg = Locale.GetText ("Resource '{0}' was not found.", resource);
+				string msg = string.Format ("Resource '{0}' was not found.", resource);
 					throw new FileNotFoundException (msg);
 				}
 				InitFromStreamWithSize (s, 32, 32);		// 32x32 is default
@@ -269,7 +278,7 @@ namespace System.Drawing
 		{
 			using (Stream s = typeof (Icon).Assembly.GetManifestResourceStream (resourceName)) {
 				if (s == null) {
-					string msg = Locale.GetText ("Resource '{0}' was not found.", resourceName);
+				string msg = string.Format ("Resource '{0}' was not found.", resourceName);
 					throw new FileNotFoundException (msg);
 				}
 				InitFromStreamWithSize (s, 32, 32);		// 32x32 is default
@@ -669,7 +678,7 @@ namespace System.Drawing
 			}
 		}
 		
-		public Size Size {
+		public System.Drawing.Size Size   {
 			get {
 				return iconSize;
 			}
@@ -855,7 +864,7 @@ namespace System.Drawing
 				iidata.iconXOR = new byte [xorSize];
 				int nread = bihReader.Read (iidata.iconXOR, 0, xorSize);
 				if (nread != xorSize) {
-					string msg = Locale.GetText ("{0} data length expected {1}, read {2}", "XOR", xorSize, nread);
+		string msg = string.Format ("{0} data length expected {1}, read {2}", "XOR", xorSize, nread);
 					throw new ArgumentException (msg, "stream");
 				}
 				
@@ -865,7 +874,7 @@ namespace System.Drawing
 				iidata.iconAND = new byte [andSize];
 				nread = bihReader.Read (iidata.iconAND, 0, andSize);
 				if (nread != andSize) {
-					string msg = Locale.GetText ("{0} data length expected {1}, read {2}", "AND", andSize, nread);
+		string msg = string.Format("{0} data length expected {1}, read {2}", "AND", andSize, nread);
 					throw new ArgumentException (msg, "stream");
 				}
 				

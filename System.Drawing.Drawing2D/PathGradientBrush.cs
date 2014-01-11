@@ -7,9 +7,10 @@
 // Copyright 2013
 //
 
-using System.Drawing;
+using System.DrawingNative;
 using System.ComponentModel;
 
+using PointF = System.Drawing.PointF;
 #if MONOMAC
 using MonoMac.AppKit;
 using MonoMac.Foundation;
@@ -21,11 +22,15 @@ using MonoTouch.CoreGraphics;
 #endif
 
 
+#if MONOMAC
+namespace System.DrawingNative.Drawing2D  {
+#else
 namespace System.Drawing.Drawing2D {
+#endif 
 
 	public sealed class PathGradientBrush : Brush {
 
-		PointF[] pathPoints;
+		System.Drawing.PointF[] pathPoints;
 
 		// Fields
 		bool interpolationColorsWasSet;
@@ -38,11 +43,11 @@ namespace System.Drawing.Drawing2D {
 
 		Blend blend;
 		Color centerColor = Color.White;
-		PointF focusScales = PointF.Empty;
+		System.Drawing.PointF focusScales = System.Drawing.PointF.Empty;
 		Color[] surroundColors = new Color[] { Color.White };
 		ColorBlend colorBlend = new ColorBlend();
-		RectangleF rectangle = RectangleF.Empty;
-		PointF centerPoint = PointF.Empty;
+		System.Drawing.RectangleF rectangle = System.Drawing.RectangleF.Empty;
+		System.Drawing.PointF centerPoint = System.Drawing.PointF.Empty;
 
 		// Everything I have read on the internet shows Microsoft 
 		// using a 2.2 gamma correction for colors.
@@ -104,16 +109,16 @@ namespace System.Drawing.Drawing2D {
 			blend.Positions = new float[] { 1.0f };
 		}
 
-		public PathGradientBrush (Point [] points) : this (points, WrapMode.Clamp)
+		public PathGradientBrush (System.Drawing.Point [] points) : this (points, WrapMode.Clamp)
 		{	}
 
-		public PathGradientBrush (PointF [] points) : this (points, WrapMode.Clamp)
+		public PathGradientBrush (System.Drawing.PointF [] points) : this (points, WrapMode.Clamp)
 		{	}
 
-		public PathGradientBrush (Point [] points, WrapMode wrapMode) : this(points.ToFloat(), wrapMode)
+		public PathGradientBrush (System.Drawing.Point [] points, WrapMode wrapMode) : this(points.ToFloat(), wrapMode)
 		{	}
 
-		public PathGradientBrush (PointF [] points, WrapMode wrapMode)
+		public PathGradientBrush (System.Drawing.PointF [] points, WrapMode wrapMode)
 		{
 			if (points == null)
 				throw new ArgumentNullException ("points");
@@ -126,7 +131,7 @@ namespace System.Drawing.Drawing2D {
 			if (pathPoints[0] != pathPoints[pathPoints.Length - 1])
 			{
 				var first = pathPoints [0];
-				var temps = new PointF[pathPoints.Length + 1];
+				var temps = new System.Drawing.PointF[pathPoints.Length + 1];
 				for (var p = 0; p < pathPoints.Length; p++)
 					temps[p] = pathPoints[p];
 
@@ -187,7 +192,7 @@ namespace System.Drawing.Drawing2D {
 			}
 		}
 
-		public PointF CenterPoint {
+		public System.Drawing.PointF CenterPoint {
 			get {
 
 				return centerPoint;
@@ -197,7 +202,7 @@ namespace System.Drawing.Drawing2D {
 			}
 		}
 
-		public PointF FocusScales {
+		public System.Drawing.PointF FocusScales {
 			get {
 				return focusScales;
 			}
@@ -237,7 +242,7 @@ namespace System.Drawing.Drawing2D {
 			}
 		}
 
-		public RectangleF Rectangle {
+		public System.Drawing.RectangleF Rectangle {
 			get {
 				return rectangle;
 			}
@@ -382,7 +387,7 @@ namespace System.Drawing.Drawing2D {
 		internal override void Setup (Graphics graphics, bool fill)
 		{
 
-			CGContext context = graphics.context;
+			var context = graphics.context;
 
 			// if fill is false then we are being called from a Pen stroke so
 			// we need to setup a transparency layer
@@ -426,7 +431,7 @@ namespace System.Drawing.Drawing2D {
 		}
 
 
-		internal void RasterizePolygon(CGContext context, PointF center, PointF[] pathPoints,
+		internal void RasterizePolygon(CGContext context, System.Drawing.PointF center, System.Drawing.PointF[] pathPoints,
 		                                      Color[] surroundColors, Color centerColor)
 		{
 
@@ -516,7 +521,7 @@ namespace System.Drawing.Drawing2D {
 			public int B;
 			public int C;
 
-			public Edge(PointF v1, PointF v2, PointF v3, PointF origin, Color color)
+			public Edge(System.Drawing.PointF v1, System.Drawing.PointF v2, System.Drawing.PointF v3, System.Drawing.PointF origin, Color color)
 			{
 
 				var ax = (int)v1.X;
@@ -575,7 +580,7 @@ namespace System.Drawing.Drawing2D {
 		/// <param name="colorV1"></param>
 		/// <param name="colorV2"></param>
 		/// <param name="colorV3"></param>
-		internal void RasterizeTriangle(CGContext context, PointF vt1, PointF vt2, PointF vt3, Color colorV1, Color colorV2, Color colorV3)
+		internal void RasterizeTriangle(CGContext context, System.Drawing.PointF vt1, System.Drawing.PointF vt2, System.Drawing.PointF vt3, Color colorV1, Color colorV2, Color colorV3)
 		{
 			// get the bounding box of the triangle 
 			int maxX = (int)Math.Max(vt1.X, Math.Max(vt2.X, vt3.X));
@@ -662,8 +667,8 @@ namespace System.Drawing.Drawing2D {
 			}
 		}
 
-		RectangleF pixelRect = new RectangleF (0, 0, 1, 1);
-		void RenderPixels(CGContext context, int x, int y, Edge edge32, Edge edge13, Edge edge21, int w1, int w2, int w3)
+		System.Drawing.RectangleF pixelRect = new System.Drawing.RectangleF (0, 0, 1, 1);
+		void RenderPixels(CGContext  context, int x, int y, Edge edge32, Edge edge13, Edge edge21, int w1, int w2, int w3)
 		{
 
 			//VertexInterpoliation = A * x + B * y + C;

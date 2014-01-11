@@ -3,7 +3,7 @@
 //
 // Copyright (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
-// Copyright 2011-2013 Xamarin Inc.
+// Copyright 2011 Xamarin Inc.
 //
 // Authors: 
 //	Alexandre Pigolkine (pigolkine@gmx.de)
@@ -36,12 +36,13 @@
 
 using System;
 using System.IO;
-using System.Drawing.Imaging;
+
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Collections.Generic;
-
+using Rectangle = System.Drawing.Rectangle;
+using PointF = System.Drawing.PointF;
 #if MONOMAC
 using MonoMac.CoreGraphics;
 using MonoMac.Foundation;
@@ -55,8 +56,15 @@ using MonoTouch.ImageIO;
 using MonoTouch.MobileCoreServices;
 #endif
 
+#if MONOMAC
+#if MONOMAC
+namespace System.DrawingNative {
+#else
 namespace System.Drawing {
-	
+#endif
+#else
+namespace System.Drawing {
+	#endif
 	[Serializable]
 	public sealed class Bitmap : Image {
 		// if null, we created the bitmap in memory, otherwise, the backing file.
@@ -70,8 +78,8 @@ namespace System.Drawing {
 		internal PixelFormat pixelFormat;
 		internal float dpiWidth = 0;
 		internal float dpiHeight = 0;
-		internal Size imageSize = Size.Empty;
-		internal SizeF physicalDimension = SizeF.Empty;
+		internal System.Drawing.Size imageSize = System.Drawing.Size.Empty;
+		internal System.Drawing.SizeF physicalDimension = System.Drawing.SizeF.Empty;
 		internal ImageFormat rawFormat;
 
 		private CGDataProvider dataProvider;
@@ -142,7 +150,7 @@ namespace System.Drawing {
 			}
 		}
 
-		public Bitmap (Image original, Size newSize) : 
+		public Bitmap (Image original, System.Drawing.Size newSize) : 
 			this (newSize.Width, newSize.Height, PixelFormat.Format32bppArgb)
 		{
 			using (Graphics graphics = Graphics.FromImage (this)) {
@@ -208,7 +216,7 @@ namespace System.Drawing {
 			                              bitmapInfo);
 			// This works for now but we need to look into initializing the memory area itself
 			// TODO: Look at what we should do if the image does not have alpha channel
-			bitmap.ClearRect (new RectangleF (0,0,width,height));
+			bitmap.ClearRect (new System.Drawing.RectangleF (0,0,width,height));
 
 			var provider = new CGDataProvider (bitmapBlock, size, true);
 			NativeCGImage = new CGImage (width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace, bitmapInfo, provider, null, false, CGColorRenderingIntent.Default);
@@ -231,7 +239,7 @@ namespace System.Drawing {
 			// PR: https://github.com/mono/maccore/pull/57
 			//
 
-			physicalSize = new SizeF (physicalDimension.Width, physicalDimension.Height);
+			physicalSize = new System.Drawing.SizeF  (physicalDimension.Width, physicalDimension.Height);
 			physicalSize.Width *= ConversionHelpers.MS_DPI / dpiWidth;
 			physicalSize.Height *= ConversionHelpers.MS_DPI / dpiHeight;
 
@@ -352,8 +360,8 @@ namespace System.Drawing {
 
 #else
 
-			dpiWidth =  properties.DPIWidthF != null ? (float)properties.DPIWidthF : ConversionHelpers.MS_DPI;
-			dpiHeight = properties.DPIWidthF != null ? (float)properties.DPIHeightF : ConversionHelpers.MS_DPI;
+			dpiWidth =  properties.DPIWidth != null ? (float)properties.DPIWidth : ConversionHelpers.MS_DPI;
+			dpiHeight = properties.DPIHeight != null ? (float)properties.DPIHeight : ConversionHelpers.MS_DPI;
 #endif
 			physicalDimension.Width = (float)properties.PixelWidth;
 			physicalDimension.Height = (float)properties.PixelHeight;
@@ -372,7 +380,7 @@ namespace System.Drawing {
 			// PR: https://github.com/mono/maccore/pull/57
 			//
 
-			physicalSize = new SizeF (physicalDimension.Width, physicalDimension.Height);
+			physicalSize = new System.Drawing.SizeF  (physicalDimension.Width, physicalDimension.Height);
 			physicalSize.Width *= ConversionHelpers.MS_DPI / dpiWidth;
 			physicalSize.Height *= ConversionHelpers.MS_DPI / dpiHeight;
 
@@ -489,13 +497,13 @@ namespace System.Drawing {
 			                              colorSpace,
 			                              bitmapInfo);
 
-			bitmap.ClearRect (new RectangleF (0,0,width,height));
+			bitmap.ClearRect (new System.Drawing.RectangleF (0,0,width,height));
 
 			// We need to flip the Y axis to go from right handed to lefted handed coordinate system
 			var transform = new CGAffineTransform(1, 0, 0, -1, 0, image.Height);
 			bitmap.ConcatCTM(transform);
 
-			bitmap.DrawImage(new RectangleF (0, 0, image.Width, image.Height), image);
+			bitmap.DrawImage(new System.Drawing.RectangleF (0, 0, image.Width, image.Height), image);
 
 			var provider = new CGDataProvider (bitmapBlock, size, true);
 			NativeCGImage = new CGImage (width, height, bitsPerComponent, 
@@ -517,7 +525,7 @@ namespace System.Drawing {
 			var format = GetBestSupportedFormat (pixelFormat);
 			var bitmapContext = CreateCompatibleBitmapContext (NativeCGImage.Width, NativeCGImage.Height, format);
 
-			bitmapContext.DrawImage (new RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
+			bitmapContext.DrawImage (new System.Drawing.RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
 
 			int size = bitmapContext.BytesPerRow * bitmapContext.Height;
 			var provider = new CGDataProvider (bitmapContext.Data, size, true);
@@ -584,7 +592,7 @@ namespace System.Drawing {
 
 			bitmapContext.ConcatCTM (rotateFlip);
 
-			bitmapContext.DrawImage (new RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
+			bitmapContext.DrawImage (new System.Drawing.RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
 
 			int size = bitmapContext.BytesPerRow * bitmapContext.Height;
 			var provider = new CGDataProvider (bitmapContext.Data, size, true);
@@ -608,7 +616,7 @@ namespace System.Drawing {
 			physicalDimension.Width = (float)width;
 			physicalDimension.Height = (float)height;
 
-			physicalSize = new SizeF (physicalDimension.Width, physicalDimension.Height);
+			physicalSize = new System.Drawing.SizeF  (physicalDimension.Width, physicalDimension.Height);
 			physicalSize.Width *= ConversionHelpers.MS_DPI / dpiWidth;
 			physicalSize.Height *= ConversionHelpers.MS_DPI / dpiHeight;
 
@@ -691,7 +699,7 @@ namespace System.Drawing {
 			                                  colorSpace,
 											  alphaInfo);
 
-			bitmap.ClearRect (new RectangleF (0,0,width,height));
+			bitmap.ClearRect (new System.Drawing.RectangleF (0,0,width,height));
 
 			//colorSpace.Dispose ();
 
@@ -865,7 +873,7 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="rect">Rect.</param>
 		/// <param name="pixelFormat">Pixel format.</param>
-		public Bitmap Clone (Rectangle rect, PixelFormat pixelFormat)
+		public Bitmap Clone (System.Drawing.Rectangle rect, PixelFormat pixelFormat)
 		{
 			if (rect.Width == 0 || rect.Height == 0)
 				throw new ArgumentException ("Width or Height of rect is 0.");
@@ -876,7 +884,7 @@ namespace System.Drawing {
 			var tmpImg = new Bitmap (width, height, pixelFormat);
 
 			using (Graphics g = Graphics.FromImage (tmpImg)) {
-				g.DrawImage (this, new Rectangle(0,0, width, height), rect, GraphicsUnit.Pixel );
+				g.DrawImage (this, new System.Drawing.Rectangle(0,0, width, height), rect, GraphicsUnit.Pixel );
 			}
 			return tmpImg;
 		}
@@ -910,7 +918,7 @@ namespace System.Drawing {
 			// parsing from there a pixel and converting to a format we will just create 
 			// a 1 x 1 image of the pixel that we want.  I am supposing this should be really
 			// fast.
-			var pixelImage = NativeCGImage.WithImageInRect(new RectangleF(x,y,1,1));
+			var pixelImage = NativeCGImage.WithImageInRect(new System.Drawing.RectangleF(x,y,1,1));
 
 			var pData = pixelImage.DataProvider;
 			var nData = pData.CopyData ();
@@ -939,7 +947,7 @@ namespace System.Drawing {
 			cachedContext.ConcatCTM (cachedContext.GetCTM ().Invert ());
 			cachedContext.ConcatCTM (imageTransform);
 			cachedContext.SetFillColor(color.ToCGColor());
-			cachedContext.FillRect (new RectangleF(x,y, 1,1));
+			cachedContext.FillRect (new System.Drawing.RectangleF(x,y, 1,1));
 			cachedContext.FillPath ();
 			cachedContext.RestoreState();
 
@@ -973,7 +981,7 @@ namespace System.Drawing {
 
 			// Lock the bitmap's bits.  
 			Rectangle rect = new Rectangle(0, 0, Width, Height);
-			var bmpData = LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite,
+			var bmpData = LockBits(rect, ImageLockMode.ReadWrite,
 				             pixelFormat);
 
 			var alpha = Color.Transparent.A;
@@ -1053,7 +1061,7 @@ namespace System.Drawing {
 			cachedContext = CreateCompatibleBitmapContext (NativeCGImage.Width, NativeCGImage.Height, pixelFormat);
 
 			// Fill our pixel data with the actual image information
-			cachedContext.DrawImage (new RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
+			cachedContext.DrawImage (new System.Drawing.RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
 
 			// Dispose of the prevous image that is allocated.
 			NativeCGImage.Dispose ();
@@ -1156,7 +1164,7 @@ namespace System.Drawing {
 			}
 			Save (path, format);
 		}
-		public BitmapData LockBits (RectangleF rect, ImageLockMode flags, PixelFormat pixelFormat)
+		public BitmapData LockBits (System.Drawing.RectangleF rect, ImageLockMode flags, PixelFormat pixelFormat)
 		{
 
 			BitmapData bitmapData = new BitmapData ();
@@ -1197,7 +1205,7 @@ namespace System.Drawing {
 				Convert_P_RGBA_8888_To_BGR_888 (ref scan0, srcScan0);
 
 			// We need to support sub rectangles.
-			if (rect != new RectangleF (new PointF (0, 0), physicalDimension)) 
+			if (rect != new System.Drawing.RectangleF (new PointF (0, 0), physicalDimension)) 
 			{
 				throw new NotImplementedException("Sub rectangles of bitmaps not supported yet.");
 			} 

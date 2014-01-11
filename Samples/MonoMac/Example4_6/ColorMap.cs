@@ -1,6 +1,6 @@
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
+using System.DrawingNative;
+using System.DrawingNative.Drawing2D;
 
 namespace Example4_6
 {

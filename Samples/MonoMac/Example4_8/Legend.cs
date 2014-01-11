@@ -1,10 +1,15 @@
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
+using System.DrawingNative;
+using System.DrawingNative.Drawing2D;
 using System.Data;
 using System.Text;
 using System.Collections;
-
+using Point = System.Drawing.Point;
+using Size = System.Drawing.Size;
+using Rectangle = System.Drawing.Rectangle;
+using SizeF = System.Drawing.SizeF;
+using PointF = System.Drawing.PointF;
+using RectangleF = System.Drawing.RectangleF;
 //using System.Windows.Forms;
 
 namespace Example4_8

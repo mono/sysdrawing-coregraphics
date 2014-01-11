@@ -1,15 +1,21 @@
 using System;
 using System.Collections.Generic;
+
+
+#if MONOMAC
+using System.DrawingNative;
+using System.DrawingNative.Drawing2D;
+namespace System.DrawingNative {
+#else
 using System.Drawing;
 using System.Drawing.Drawing2D;
-
-namespace System.Drawing
-{
+namespace System.Drawing {
+#endif
 	internal static class GeomTransformUtils
 	{
 		static double[] coeffs = new double[8];
 
-		public static void WarpPath(GraphicsPath path, PointF[] destPoints, RectangleF srcRect, Matrix matrix = null, WarpMode warpMode = WarpMode.Perspective, float flatness = 0.25f)
+		public static void WarpPath(GraphicsPath path, System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, Matrix matrix = null, WarpMode warpMode = WarpMode.Perspective, float flatness = 0.25f)
 		{
 
 			if (path.PointCount == 0)
@@ -20,10 +26,10 @@ namespace System.Drawing
 			var pathData = path.PathData;
 			var pnts = path.PathPoints;
 
-			var srcPoints = new PointF[] { new PointF(srcRect.Left, srcRect.Top),
-				new PointF(srcRect.Right, srcRect.Top),
-				new PointF(srcRect.Left, srcRect.Bottom),
-				new PointF(srcRect.Right, srcRect.Bottom) };
+			var srcPoints = new System.Drawing.PointF[] { new System.Drawing.PointF(srcRect.Left, srcRect.Top),
+				new System.Drawing.PointF(srcRect.Right, srcRect.Top),
+				new System.Drawing.PointF(srcRect.Left, srcRect.Bottom),
+				new System.Drawing.PointF(srcRect.Right, srcRect.Bottom) };
 
 			var count = pnts.Length;
 			float x1, y1;
@@ -78,8 +84,8 @@ namespace System.Drawing
          *              out transformCoeffs   (<return> vector of coefficients of transform)
          *
          */
-		static void CalcProjectiveXformCoeffs(PointF[] srcPoints,
-		                                      PointF[] destPoints,
+		static void CalcProjectiveXformCoeffs(System.Drawing.PointF[] srcPoints,
+		                                      System.Drawing.PointF[] destPoints,
 		                                      out double[] transformCoeffs)
 		{
 			int i;
@@ -165,8 +171,8 @@ namespace System.Drawing
          *              out transformCoeffs   (<return> vector of coefficients of transform)
          *
          */
-		static void CalcBilinearXformCoeffs(PointF[] srcPoints,
-		                                    PointF[] destPoints,
+		static void CalcBilinearXformCoeffs(System.Drawing.PointF[] srcPoints,
+		                                    System.Drawing.PointF[] destPoints,
 		                                    out double[] transformCoeffs)
 		{
 			int i;

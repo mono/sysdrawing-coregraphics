@@ -7,13 +7,22 @@
 // Copyright 2012
 //
 using System;
+
+
+
 #if MONOMAC
 using MonoMac.CoreGraphics;
 #else
 using MonoTouch.CoreGraphics;
 #endif
 
+
+
+#if MONOMAC
+namespace System.DrawingNative.Drawing2D 
+#else
 namespace System.Drawing.Drawing2D 
+#endif
 {
 	/// <summary>
 	/// Summary description for HatchBrush.
@@ -147,7 +156,7 @@ namespace System.Drawing.Drawing2D
 		void drawBackground(CGContext context, Color color, float width, float height) 
 		{
 			context.SetFillColor(color.ToCGColor());
-			context.FillRect(new RectangleF(HALF_PIXEL_X, HALF_PIXEL_Y, width+HALF_PIXEL_X, height+HALF_PIXEL_Y));
+			context.FillRect(new System.Drawing.RectangleF(HALF_PIXEL_X, HALF_PIXEL_Y, width+HALF_PIXEL_X, height+HALF_PIXEL_Y));
 			context.FillPath();
 		}
 
@@ -280,7 +289,7 @@ namespace System.Drawing.Drawing2D
 			}
 
 			// create a work rectangle for setting pixels
-			RectangleF rect = new RectangleF(0,0,1,1);
+			System.Drawing.RectangleF rect = new System.Drawing.RectangleF(0,0,1,1);
 
 			// Only set the pixels for some
 			if (hatchStyle != HatchStyle.Percent50 &&
@@ -469,7 +478,7 @@ namespace System.Drawing.Drawing2D
 
 
 			// Initialize work rectangle
-			RectangleF rect = new RectangleF(0,0,1,1);
+			System.Drawing.RectangleF rect = new System.Drawing.RectangleF(0,0,1,1);
 
 			float quad = hatchSize / 2.0f;
 
@@ -635,7 +644,7 @@ namespace System.Drawing.Drawing2D
 			/* draw confetti Rectangles in the foreground color */
 			context.SetFillColor(foreColor.ToCGColor());
 
-			RectangleF rect = new RectangleF(0,0,2,2);
+			System.Drawing.RectangleF rect = new System.Drawing.RectangleF(0,0,2,2);
 
 			// Do not see a mathematical equation so will just set
 			// the same ones as in windows pattern.
@@ -744,7 +753,7 @@ namespace System.Drawing.Drawing2D
 			/* draw lines in the foreground color */
 			context.SetFillColor(foreColor.ToCGColor());
 
-			RectangleF rect = new RectangleF(0,0,1,1);
+			System.Drawing.RectangleF rect = new System.Drawing.RectangleF(0,0,1,1);
 			
 			// We could maybe draw some arcs here but there are so few pixels
 			// that it just is not worth it.
@@ -791,7 +800,7 @@ namespace System.Drawing.Drawing2D
 			context.SetLineWidth(lineWidth);
 			context.SetLineCap(CGLineCap.Square);
 
-			RectangleF rect = new RectangleF(0,0,1,1);
+			System.Drawing.RectangleF rect = new System.Drawing.RectangleF(0,0,1,1);
 
 			rect.Y = 3;
 			rect.Width = hatchWidth;
@@ -853,7 +862,7 @@ namespace System.Drawing.Drawing2D
 			float halfWidth = hatchWidth / 2.0f;
 			float halfHeight = hatchHeight / 2.0f;
 			
-			RectangleF rect = new RectangleF(0,0,1,1);
+			System.Drawing.RectangleF rect = new System.Drawing.RectangleF(0,0,1,1);
 			
 			
 			// Add upward diagonals
@@ -892,7 +901,7 @@ namespace System.Drawing.Drawing2D
 			
 			context.SetFillColor(backColor.ToCGColor());
 
-			RectangleF rect = new RectangleF(0,0,2,1);
+			System.Drawing.RectangleF rect = new System.Drawing.RectangleF(0,0,2,1);
 			setPixels(context, rect);
 
 			rect.X = hatchWidth / 2.0f;
@@ -913,7 +922,7 @@ namespace System.Drawing.Drawing2D
 			
 			context.SetFillColor(foreColor.ToCGColor());
 			
-			RectangleF rect = new RectangleF(0,0,hatchWidth / 2.0f,hatchHeight / 2.0f);
+			System.Drawing.RectangleF rect = new System.Drawing.RectangleF(0,0,hatchWidth / 2.0f,hatchHeight / 2.0f);
 			setPixels(context, rect);
 			
 			rect.X = hatchWidth / 2.0f;
@@ -1006,7 +1015,7 @@ namespace System.Drawing.Drawing2D
 
 			// this is really just 6 dots that when tiled will 
 			// create the effect we are looking for
-			RectangleF rect = new RectangleF(0,0,1,1);
+			System.Drawing.RectangleF rect = new System.Drawing.RectangleF(0,0,1,1);
 			setPixels(context, rect);
 
 			rect.Y = halfMe;
@@ -1061,7 +1070,7 @@ namespace System.Drawing.Drawing2D
 			context.StrokePath();
 
 			// now the last curl on the tail
-			RectangleF rect = new RectangleF(1,hatchHeight-1,1,1);
+			System.Drawing.RectangleF rect = new System.Drawing.RectangleF(1,hatchHeight-1,1,1);
 			setPixels(context, rect);
 			
 			rect.X += 1;
@@ -1093,7 +1102,7 @@ namespace System.Drawing.Drawing2D
 			float halfMe = hatchWidth / 2.0f;
 			
 			// draw a little wirly thingy
-			RectangleF rect = new RectangleF(0,0,1,1);
+			System.Drawing.RectangleF rect = new System.Drawing.RectangleF(0,0,1,1);
 			setPixels(context, rect);
 			
 			rect.X += 1;
@@ -1137,7 +1146,7 @@ namespace System.Drawing.Drawing2D
 			context.SetLineCap(CGLineCap.Square);
 			
 			float halfMe = hatchWidth / 2.0f;
-			RectangleF rect = new RectangleF(0,0,1,1);
+			System.Drawing.RectangleF rect = new System.Drawing.RectangleF(0,0,1,1);
 
 			// fraw the alternating pattern for half of area
 			int x = 0;
@@ -1172,11 +1181,11 @@ namespace System.Drawing.Drawing2D
 
 		void setPixels (CGContext context, float x, float y, float size = 1.0f) 
 		{
-			setPixels(context, new RectangleF((int)x, (int)y, size,size));
+			setPixels(context, new System.Drawing.RectangleF((int)x, (int)y, size,size));
 
 		}
 
-		void setPixels (CGContext context, RectangleF rect) 
+		void setPixels (CGContext context, System.Drawing.RectangleF rect) 
 		{
 			context.FillRect(rect);
 
@@ -1186,7 +1195,7 @@ namespace System.Drawing.Drawing2D
 		protected void DrawPolkaDotPattern (CGContext context)
 		{
 			context.SetFillColor(Color.Purple.ToCGColor());
-			context.FillEllipseInRect (new RectangleF (4, 4, 8, 8));
+			context.FillEllipseInRect (new System.Drawing.RectangleF (4, 4, 8, 8));
 		}
 
 		// https://developer.apple.com/library/mac/#documentation/graphicsimaging/conceptual/drawingwithquartz2d/dq_patterns/dq_patterns.html#//apple_ref/doc/uid/TP30001066-CH206-TPXREF101
@@ -1207,7 +1216,7 @@ namespace System.Drawing.Drawing2D
 			patternSpace.Dispose();
 
 			// Pattern default work variables
-			var patternRect = new RectangleF(HALF_PIXEL_X,HALF_PIXEL_Y,hatch_width+HALF_PIXEL_X,hatch_height+HALF_PIXEL_Y);
+			var patternRect = new System.Drawing.RectangleF(HALF_PIXEL_X,HALF_PIXEL_Y,hatch_width+HALF_PIXEL_X,hatch_height+HALF_PIXEL_Y);
 			var patternTransform = CGAffineTransform.MakeIdentity();
 
 			// Since all the patterns were developed with MonoMac on Mac OS the coordinate system is

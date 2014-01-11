@@ -28,7 +28,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if MONOMAC
+namespace System.DrawingNative {
+#else
 namespace System.Drawing {
+#endif
 
 	internal static class KnownColors {
 		static internal uint[] ArgbValues = new uint[] {

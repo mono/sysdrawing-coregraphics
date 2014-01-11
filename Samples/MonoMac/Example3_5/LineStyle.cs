@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
+using System.DrawingNative;
+using System.DrawingNative.Drawing2D;
 using System.Text;
 
 namespace Example3_5

@@ -9,7 +9,9 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-using System.Drawing;
+using System.DrawingNative;
+using SizeF = System.Drawing.SizeF;
+using PointF = System.Drawing.PointF;
 
 #if MONOMAC
 using MonoMac.AppKit;
@@ -21,7 +23,11 @@ using MonoTouch.Foundation;
 using MonoTouch.CoreGraphics;
 #endif
 
+#if MONOMAC
+namespace System.DrawingNative.Drawing2D 
+#else
 namespace System.Drawing.Drawing2D 
+#endif
 {
 	/// <summary>
 	/// Summary description for LinearGradientBrush.
@@ -35,12 +41,12 @@ namespace System.Drawing.Drawing2D
 		//bool changed;
 		Matrix gradientTransform = new Matrix();
 
-		PointF startPoint;
-		PointF endPoint;
+		System.Drawing.PointF startPoint;
+		System.Drawing.PointF endPoint;
 		Color[] colors = new Color[2];
 		Blend blend;
 		ColorBlend colorBlend;
-		RectangleF rectangle = RectangleF.Empty;
+		System.Drawing.RectangleF rectangle = System.Drawing.RectangleF.Empty;
 		float angle = 0;
 		bool angleIsScalable = false;
 
@@ -57,13 +63,13 @@ namespace System.Drawing.Drawing2D
 		// When stroking with a gradient we have to use Transparency Layers.
 		bool hasTransparencyLayer = false;
 		
-		public LinearGradientBrush(Point point1, Point point2, Color color1, Color color2)
-			: this(new PointF(point1.X, point1.Y),new PointF(point2.X, point2.Y), color1, color2)
+		public LinearGradientBrush(System.Drawing.Point point1, System.Drawing.Point point2, Color color1, Color color2)
+			: this(new System.Drawing.PointF(point1.X, point1.Y),new System.Drawing.PointF(point2.X, point2.Y), color1, color2)
 		{
 
 		}
 		
-		public LinearGradientBrush(PointF point1, PointF point2, Color color1, Color color2)
+		public LinearGradientBrush(System.Drawing.PointF point1, System.Drawing.PointF point2, Color color1, Color color2)
 		{
 			startPoint = point1;
 			endPoint = point2;
@@ -71,7 +77,7 @@ namespace System.Drawing.Drawing2D
 			colors[0] = color1;
 			colors[1] = color2;
 
-			rectangle.Size = new SizeF(endPoint.X - startPoint.X, endPoint.Y - startPoint.Y);
+			rectangle.Size   = new System.Drawing.SizeF(endPoint.X - startPoint.X, endPoint.Y - startPoint.Y);
 			rectangle.X = (rectangle.Width < 0) ? endPoint.X : startPoint.X;
 			rectangle.Y = (rectangle.Height < 0) ? endPoint.Y : startPoint.Y;
 
@@ -102,34 +108,34 @@ namespace System.Drawing.Drawing2D
 			blend.Positions = new float[] { 1.0f };
 		}
 		
-		public LinearGradientBrush(Rectangle rect, Color color1, Color color2, LinearGradientMode linearGradientMode)
-			: this(new RectangleF(rect.X, rect.Y, rect.Width, rect.Height), color1, color2, linearGradientMode)
+		public LinearGradientBrush(System.Drawing.Rectangle rect, Color color1, Color color2, LinearGradientMode linearGradientMode)
+			: this(new System.Drawing.RectangleF(rect.X, rect.Y, rect.Width, rect.Height), color1, color2, linearGradientMode)
 		{
 		}
 		
-		public LinearGradientBrush(Rectangle rect, Color color1, Color color2, float angle) 
+		public LinearGradientBrush(System.Drawing.Rectangle rect, Color color1, Color color2, float angle) 
 			: this(rect, color1, color2, angle, false)
 		{
 		}
 		
-		public LinearGradientBrush(RectangleF rect, Color color1, Color color2, LinearGradientMode linearGradientMode)
+		public LinearGradientBrush(System.Drawing.RectangleF rect, Color color1, Color color2, LinearGradientMode linearGradientMode)
 			: this(rect, color1, color2, linearGradientMode.ToAngle(), true)
 		{
 			mode = linearGradientMode;
 		}
 		
-		public LinearGradientBrush(RectangleF rect, Color color1, Color color2, float angle) 
+		public LinearGradientBrush(System.Drawing.RectangleF rect, Color color1, Color color2, float angle) 
 			: this(rect, color1, color2, angle, true)
 		{
 
 		}
 		
-		public LinearGradientBrush(Rectangle rect, Color color1, Color color2, float angle, bool isAngleScaleable)
-			: this(new RectangleF(rect.X, rect.Y, rect.Width, rect.Height), color1, color2, angle, isAngleScaleable)
+		public LinearGradientBrush(System.Drawing.Rectangle rect, Color color1, Color color2, float angle, bool isAngleScaleable)
+			: this(new System.Drawing.RectangleF(rect.X, rect.Y, rect.Width, rect.Height), color1, color2, angle, isAngleScaleable)
 		{
 		}
 		
-		public LinearGradientBrush(RectangleF rect, Color color1, Color color2, float angle, bool isAngleScaleable)
+		public LinearGradientBrush(System.Drawing.RectangleF rect, Color color1, Color color2, float angle, bool isAngleScaleable)
 		{
 
 			GeomUtilities.ComputeOrientationLine (rect, angle, out startPoint, out endPoint);	
@@ -318,7 +324,7 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 		
-		public RectangleF Rectangle
+		public System.Drawing.RectangleF Rectangle
 		{
 			get
 			{
@@ -566,7 +572,7 @@ namespace System.Drawing.Drawing2D
 		internal override void Setup (Graphics graphics, bool fill)
 		{
 
-			CGContext context = graphics.context;
+			var context = graphics.context;
 
 			// if fill is false then we are being called from a Pen stroke so
 			// we need to setup a transparency layer
@@ -645,8 +651,8 @@ namespace System.Drawing.Drawing2D
 		}
 
 		// Based on CreateRepetingGradientFunction from cairo-quartz-surface.c
-		CGFunction CyclicGradientFunction(SizeF regionSize,
-		                                     ref PointF start, ref PointF end)
+		CGFunction CyclicGradientFunction(System.Drawing.SizeF regionSize,
+		                                     ref System.Drawing.PointF start, ref System.Drawing.PointF end)
 		{
 			
 			PointF mstart, mend;
