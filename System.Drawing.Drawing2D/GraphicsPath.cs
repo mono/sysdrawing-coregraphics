@@ -10,7 +10,7 @@
 //		Kenneth J. Pouncey ( kjpou@pt.lu )
 //
 //     
-// Copyright 2011-2013 Xamarin Inc.
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,9 +33,13 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.DrawingNative;
 using System.Diagnostics;
 using System.Linq;
+
+using Point = System.Drawing.Point;
+using PointF = System.Drawing.PointF;
+
 #if MONOMAC
 using MonoMac.CoreGraphics;
 #else
@@ -43,7 +47,11 @@ using MonoTouch.CoreGraphics;
 #endif
 using ClipperLib;
 
+#if MONOMAC
+namespace System.DrawingNative.Drawing2D {
+#else
 namespace System.Drawing.Drawing2D {
+#endif 
 
 	// Clipper lib definitions
 	using Path = List<IntPoint>;
@@ -53,7 +61,7 @@ namespace System.Drawing.Drawing2D {
 	
 	public sealed partial class GraphicsPath : ICloneable, IDisposable 
 	{
-		internal List<PointF> points;
+		internal List<System.Drawing.PointF> points;
 		internal List<byte> types;
 		FillMode fillMode;
 		bool start_new_fig = true;
@@ -71,14 +79,14 @@ namespace System.Drawing.Drawing2D {
 		public GraphicsPath (FillMode fillMode)
 		{
 			this.fillMode = fillMode;
-			points = new List<PointF> ();
+			points = new List<System.Drawing.PointF> ();
 			types = new List<byte> ();
 		}
 
-		public GraphicsPath (PointF [] pts, byte [] types) : this (pts, types, FillMode.Alternate) { }
-		public GraphicsPath (Point [] pts, byte [] types) : this (pts, types, FillMode.Alternate) { }
+		public GraphicsPath (System.Drawing.PointF [] pts, byte [] types) : this (pts, types, FillMode.Alternate) { }
+		public GraphicsPath (System.Drawing.Point [] pts, byte [] types) : this (pts, types, FillMode.Alternate) { }
 
-		public GraphicsPath (PointF [] pts, byte [] types, FillMode fillMode)
+		public GraphicsPath (System.Drawing.PointF [] pts, byte [] types, FillMode fillMode)
 		{
 			if (pts == null)
 				throw new ArgumentNullException ("pts");
@@ -95,11 +103,11 @@ namespace System.Drawing.Drawing2D {
 				throw new ArgumentException ("The pts array contains an invalid value for PathPointType: " + type);
 			}
 			
-			this.points = new List<PointF> (pts);
+			this.points = new List<System.Drawing.PointF> (pts);
 			this.types = new List<byte> (types);
 		}
 
-		public GraphicsPath (Point [] pts, byte [] types, FillMode fillMode)
+		public GraphicsPath (System.Drawing.Point [] pts, byte [] types, FillMode fillMode)
 		{
 			if (pts == null)
 				throw new ArgumentNullException ("pts");
@@ -271,12 +279,12 @@ namespace System.Drawing.Drawing2D {
 			}
 		}
 
-		void AppendPoint (PointF point, PathPointType type, bool compress)
+		void AppendPoint (System.Drawing.PointF point, PathPointType type, bool compress)
 		{
 			Append (point.X, point.Y, type, compress);
 		}
 		
-		void AppendCurve (PointF [] points, PointF [] tangents, int offset, int length, CurveType type)
+		void AppendCurve (System.Drawing.PointF [] points, System.Drawing.PointF [] tangents, int offset, int length, CurveType type)
 		{
 			PathPointType ptype = ((type == CurveType.Close) || (points.Length == 0)) ? PathPointType.Start : PathPointType.Line;
 			int i;
@@ -313,7 +321,7 @@ namespace System.Drawing.Drawing2D {
 			}
 		}
 
-		public void AddClosedCurve(Point[] points)
+		public void AddClosedCurve(System.Drawing.Point[] points)
 		{
 
 			if (points == null)
@@ -324,7 +332,7 @@ namespace System.Drawing.Drawing2D {
 			AddClosedCurve (points.ToFloat (), 0.5f);
 		}
 
-		public void AddClosedCurve(PointF[] points)
+		public void AddClosedCurve(System.Drawing.PointF[] points)
 		{
 
 			if (points == null)
@@ -335,7 +343,7 @@ namespace System.Drawing.Drawing2D {
 			AddClosedCurve (points, 0.5f);
 		}
 
-		public void AddClosedCurve(Point[] points, float tension)
+		public void AddClosedCurve(System.Drawing.Point[] points, float tension)
 		{
 			if (points == null)
 				throw new ArgumentNullException ("points");
@@ -345,7 +353,7 @@ namespace System.Drawing.Drawing2D {
 			AddClosedCurve (points.ToFloat (), tension);
 		}
 
-		public void AddClosedCurve(PointF[] points, float tension)
+		public void AddClosedCurve(System.Drawing.PointF[] points, float tension)
 		{
 			if (points == null)
 				throw new ArgumentNullException ("points");
@@ -357,22 +365,22 @@ namespace System.Drawing.Drawing2D {
 			AppendCurve (points, tangents, 0, points.Length - 1, CurveType.Close);
 		}
 
-		public void AddCurve (Point [] points)
+		public void AddCurve (System.Drawing.Point [] points)
 		{
 			AddCurve (points.ToFloat(), 0.5f);
 		}
 
-		public void AddCurve (PointF [] points)
+		public void AddCurve (System.Drawing.PointF [] points)
 		{
 			AddCurve (points, 0.5f);
 		}
 
-		public void AddCurve (Point [] points, float tension)
+		public void AddCurve (System.Drawing.Point [] points, float tension)
 		{
 			AddCurve (points.ToFloat (), tension);
 		}
 
-		public void AddCurve (PointF [] points, float tension)
+		public void AddCurve (System.Drawing.PointF [] points, float tension)
 		{
 			if (points == null)
 				throw new ArgumentNullException ("points");
@@ -383,12 +391,12 @@ namespace System.Drawing.Drawing2D {
 			AppendCurve (points, tangents, 0, points.Length-1, CurveType.Open);
 		}
 			
-		public void AddCurve (Point[] points, int offset, int numberOfSegments, float tension)
+		public void AddCurve (System.Drawing.Point[] points, int offset, int numberOfSegments, float tension)
 		{
 			AddCurve (points.ToFloat(), offset, numberOfSegments, tension);
 		}
 
-		public void AddCurve (PointF[] points, int offset, int numberOfSegments, float tension)
+		public void AddCurve (System.Drawing.PointF[] points, int offset, int numberOfSegments, float tension)
 		{
 			if (points == null)
 				throw new ArgumentNullException ("points");
@@ -407,12 +415,12 @@ namespace System.Drawing.Drawing2D {
 			AppendCurve (points, tangents, offset, numberOfSegments, CurveType.Open);
 		}
 			      
-		public void AddPolygon (Point [] points)
+		public void AddPolygon (System.Drawing.Point [] points)
 		{
 			AddPolygon (points.ToFloat());
 		}
 		
-		public void AddPolygon (PointF [] points)
+		public void AddPolygon (System.Drawing.PointF [] points)
 		{
 			if (points == null)
 				throw new ArgumentNullException ("points");
@@ -444,7 +452,7 @@ namespace System.Drawing.Drawing2D {
 			start_new_fig = true;
 		}
 
-		public void AddEllipse (RectangleF rect)
+		public void AddEllipse (System.Drawing.RectangleF rect)
 		{
 			const float C1 = 0.552285f;
 			const float C2 = 0.552285f;
@@ -514,17 +522,17 @@ namespace System.Drawing.Drawing2D {
 			
 		public void AddEllipse (float x, float y, float width, float height)
 		{
-			AddEllipse (new RectangleF (x, y, width, height));
+			AddEllipse (new System.Drawing.RectangleF (x, y, width, height));
 		}
 
 		public void AddEllipse (int x, int y, int width, int height)
 		{
-			AddEllipse (new RectangleF (x, y, width, height));
+			AddEllipse (new System.Drawing.RectangleF (x, y, width, height));
 		}
 
-		public void AddEllipse (Rectangle rect)
+		public void AddEllipse (System.Drawing.Rectangle rect)
 		{
-			AddEllipse (new RectangleF (rect.X, rect.Y, rect.Width, rect.Height));
+			AddEllipse (new System.Drawing.RectangleF (rect.X, rect.Y, rect.Width, rect.Height));
 		}
 
 		public void AddLine (float x1, float y1, float x2, float y2)
@@ -539,19 +547,19 @@ namespace System.Drawing.Drawing2D {
 			Append (x2, y2, PathPointType.Line, false);
 		}
 
-		public void AddLine (Point pt1, Point pt2)
+		public void AddLine (System.Drawing.Point pt1, System.Drawing.Point pt2)
 		{
 			Append (pt1.X, pt1.Y, PathPointType.Line, true);
 			Append (pt2.X, pt2.Y, PathPointType.Line, false);
 		}
 
-		public void AddLine (PointF pt1, PointF pt2)
+		public void AddLine (System.Drawing.PointF pt1, System.Drawing.PointF pt2)
 		{
 			Append (pt1.X, pt1.Y, PathPointType.Line, true);
 			Append (pt2.X, pt2.Y, PathPointType.Line, false);
 		}
 		
-		public void AddLines (Point [] points)
+		public void AddLines (System.Drawing.Point [] points)
 		{
 			if (points == null)
 				throw new ArgumentNullException ("points");
@@ -563,7 +571,7 @@ namespace System.Drawing.Drawing2D {
 				Append (points [i].X, points [i].Y, PathPointType.Line, (i == 0));
 		}
 		
-		public void AddLines (PointF [] points)
+		public void AddLines (System.Drawing.PointF [] points)
 		{
 			if (points == null)
 				throw new ArgumentNullException ("points");
@@ -575,7 +583,7 @@ namespace System.Drawing.Drawing2D {
 				Append (points [i].X, points [i].Y, PathPointType.Line, (i == 0));
 		}
 		
-		public void AddRectangle (Rectangle rect)
+		public void AddRectangle (System.Drawing.Rectangle rect)
 		{
 			if (rect.Width == 0 || rect.Height == 0)
 				return;
@@ -586,7 +594,7 @@ namespace System.Drawing.Drawing2D {
 			Append (rect.X, rect.Bottom, PathPointType.Line | PathPointType.CloseSubpath, false);
 		}
 		
-		public void AddRectangle (RectangleF rect)
+		public void AddRectangle (System.Drawing.RectangleF rect)
 		{
 			if (rect.Width == 0 || rect.Height == 0)
 				return;
@@ -597,7 +605,7 @@ namespace System.Drawing.Drawing2D {
 			Append (rect.X, rect.Bottom, PathPointType.Line | PathPointType.CloseSubpath, false);
 		}
 
-		public void AddRectangles (Rectangle[] rects)
+		public void AddRectangles (System.Drawing.Rectangle[] rects)
 		{
 			if (rects == null)
 				throw new ArgumentNullException ("rects");
@@ -606,7 +614,7 @@ namespace System.Drawing.Drawing2D {
 				AddRectangle (rect);
 		}
 
-		public void AddRectangles (RectangleF[] rects)
+		public void AddRectangles (System.Drawing.RectangleF[] rects)
 		{
 			if (rects == null)
 				throw new ArgumentNullException ("rects");
@@ -652,7 +660,7 @@ namespace System.Drawing.Drawing2D {
 			CloseFigure ();
 		}
 
-		public void AddPie(Rectangle rect, float startAngle, float sweepAngle)
+		public void AddPie(System.Drawing.Rectangle rect, float startAngle, float sweepAngle)
 		{
 			AddPie ((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height, startAngle, sweepAngle);
 		}
@@ -662,12 +670,12 @@ namespace System.Drawing.Drawing2D {
 			AddPie ((float)x, (float)y, (float)width, (float)height, startAngle, sweepAngle);
 		}
 		
-        public void AddArc (Rectangle rect, float start_angle, float sweep_angle)
+        public void AddArc (System.Drawing.Rectangle rect, float start_angle, float sweep_angle)
         {
 			AppendArcs (rect.X, rect.Y, rect.Width, rect.Height, start_angle, sweep_angle);
         }
 
-        public void AddArc (RectangleF rect, float start_angle, float sweep_angle)
+        public void AddArc (System.Drawing.RectangleF rect, float start_angle, float sweep_angle)
         {
 			AppendArcs (rect.X, rect.Y, rect.Width, rect.Height, start_angle, sweep_angle);
         }
@@ -682,13 +690,13 @@ namespace System.Drawing.Drawing2D {
 			AppendArcs (x, y, width, height, start_angle, sweep_angle);
         }
 
-		public void AddBezier(Point pt1, Point pt2,	Point pt3, Point pt4)
+		public void AddBezier(System.Drawing.Point pt1, System.Drawing.Point pt2,	System.Drawing.Point pt3, System.Drawing.Point pt4)
 		{
 			Append (pt1.X, pt1.Y, PathPointType.Line, true);
 			AppendBezier (pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
 		}
 
-		public void AddBezier(PointF pt1, PointF pt2, PointF pt3, PointF pt4)
+		public void AddBezier(System.Drawing.PointF pt1, System.Drawing.PointF pt2, System.Drawing.PointF pt3, System.Drawing.PointF pt4)
 		{
 			Append (pt1.X, pt1.Y, PathPointType.Line, true);
 			AppendBezier (pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
@@ -706,7 +714,7 @@ namespace System.Drawing.Drawing2D {
 			AppendBezier (x2, y2, x3, y3, x4, y4);
 		}
 
-		public void AddBeziers(params Point[] points)
+		public void AddBeziers(params System.Drawing.Point[] points)
 		{
 
 			if (points == null)
@@ -722,7 +730,7 @@ namespace System.Drawing.Drawing2D {
 
 		}
 
-		public void AddBeziers(params PointF[] points)
+		public void AddBeziers(params System.Drawing.PointF[] points)
 		{
 
 			if (points == null)
@@ -805,7 +813,7 @@ namespace System.Drawing.Drawing2D {
 			start_new_fig = true;
 		}
 
-		public PointF GetLastPoint()
+		public System.Drawing.PointF GetLastPoint()
 		{
 			if (points.Count <= 0)
 				throw new ArgumentException("Parameter is not valid");
@@ -815,12 +823,12 @@ namespace System.Drawing.Drawing2D {
 
 		}
 
-		public RectangleF GetBounds()
+		public System.Drawing.RectangleF GetBounds()
 		{
 			return GetBounds (null);
 		}
 
-		public RectangleF GetBounds(Matrix matrix)
+		public System.Drawing.RectangleF GetBounds(Matrix matrix)
 		{
 			return GetBounds (matrix, null);
 		}
@@ -843,7 +851,7 @@ namespace System.Drawing.Drawing2D {
 
 		// nr_curve_flatten comes from Sodipodi's libnr (public domain) available from http://www.sodipodi.com/ 
 		// Mono changes: converted to float (from double), added recursion limit, use List<PointF> 
-		static bool	nr_curve_flatten (float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, float flatness, int level, List<PointF> points)
+		static bool	nr_curve_flatten (float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, float flatness, int level, List<System.Drawing.PointF> points)
 		{
 			float dx1_0, dy1_0, dx2_0, dy2_0, dx3_0, dy3_0, dx2_3, dy2_3, d3_0_2;
 			float s1_q, t1_q, s2_q, t2_q, v2_q;
@@ -908,9 +916,9 @@ namespace System.Drawing.Drawing2D {
 			return true;
 		}
 
-		static bool ConvertBezierToLines (GraphicsPath path, int index, float flatness, List<PointF> flat_points, List<byte> flat_types)
+		static bool ConvertBezierToLines (GraphicsPath path, int index, float flatness, List<System.Drawing.PointF> flat_points, List<byte> flat_types)
 		{
-			PointF pt;
+			System.Drawing.PointF pt;
 
 			// always PathPointTypeLine 
 			byte type = (byte)PathPointType.Line;;
@@ -924,7 +932,7 @@ namespace System.Drawing.Drawing2D {
 			var end = path.points [index + 2];
 
 			// we can't add points directly to the original list as we could end up with too much recursion 
-			var points = new List<PointF> ();
+			var points = new List<System.Drawing.PointF> ();
 			if (!nr_curve_flatten (start.X, start.Y, first.X, first.Y, second.X, second.Y, end.X, end.Y, flatness, 0, points)) 
 			{
 				// curved path is too complex (i.e. would result in too many points) to render as a polygon 
@@ -966,7 +974,7 @@ namespace System.Drawing.Drawing2D {
 			if (!PathHasCurve (path))
 				return status;
 
-			var points = new List<PointF> ();
+			var points = new List<System.Drawing.PointF> ();
 			var types = new List<byte> ();
 
 			// Iterate the current path and replace each bezier with multiple lines 
@@ -980,7 +988,7 @@ namespace System.Drawing.Drawing2D {
 					if (!ConvertBezierToLines (path, i, Math.Abs (flatness), points, types)) 
 					{
 						// uho, too much recursion - do not pass go, do not collect 200$ 
-						PointF pt = PointF.Empty;
+						System.Drawing.PointF pt = System.Drawing.PointF.Empty;
 
 						// mimic MS behaviour when recursion becomes a problem */
 						// note: it's not really an empty rectangle as the last point isn't closing 
@@ -1018,10 +1026,10 @@ namespace System.Drawing.Drawing2D {
 
 
 
-		public RectangleF GetBounds(Matrix matrix,Pen pen)
+		public System.Drawing.RectangleF GetBounds(Matrix matrix,Pen pen)
 		{
 
-			var bounds = RectangleF.Empty;
+			var bounds = System.Drawing.RectangleF.Empty;
 
 			if (points.Count < 1) {
 				return bounds;
@@ -1084,69 +1092,69 @@ namespace System.Drawing.Drawing2D {
 			return bounds;
 		}
 
-		public bool IsVisible(Point point)
+		public bool IsVisible(System.Drawing.Point point)
 		{
 			return IsVisible (point, null);
 		}
 
-		public bool IsVisible(PointF point)
+		public bool IsVisible(System.Drawing.PointF point)
 		{
 			return IsVisible (point, null);
 		}
 
 		public bool IsVisible(int x, int y)
 		{
-			return IsVisible (new Point(x,y), null);
+			return IsVisible (new System.Drawing.Point(x,y), null);
 		}
 
 		public bool IsVisible(float x, float y)
 		{
-			return IsVisible (new PointF(x,y), null);
+			return IsVisible (new System.Drawing.PointF(x,y), null);
 		}
 
 		public bool IsVisible(int x, int y, Graphics graphics)
 		{
-			return IsVisible (new Point(x,y), graphics);
+			return IsVisible (new System.Drawing.Point(x,y), graphics);
 		}
 
 		public bool IsVisible(float x, float y, Graphics graphics)
 		{
-			return IsVisible (new PointF(x,y), graphics);
+			return IsVisible (new System.Drawing.PointF(x,y), graphics);
 		}
 
-		public bool IsVisible(Point point, Graphics graphics)
+		public bool IsVisible(System.Drawing.Point point, Graphics graphics)
 		{
 			var region = new Region (this);
 			return region.IsVisible (point);
 		}
 
-		public bool IsVisible(PointF point, Graphics graphics)
+		public bool IsVisible(System.Drawing.PointF point, Graphics graphics)
 		{
 			var region = new Region (this);
 			return region.IsVisible (point);
 		}
 
-		public bool IsOutlineVisible(Point point, Pen pen)
+		public bool IsOutlineVisible(System.Drawing.Point point, Pen pen)
 		{
 			return IsOutlineVisible (point, pen, null);
 		}
 
-		public bool IsOutlineVisible(PointF point, Pen pen)
+		public bool IsOutlineVisible(System.Drawing.PointF point, Pen pen)
 		{
 			return IsOutlineVisible (point, pen, null);
 		}
 
 		public bool IsOutlineVisible(int x, int y, Pen pen)
 		{
-			return IsOutlineVisible (new Point(x,y), pen, null);
+			return IsOutlineVisible (new System.Drawing.Point(x,y), pen, null);
 		}
 
-		public bool IsOutlineVisible(Point pt, Pen pen, Graphics graphics)
+		public bool IsOutlineVisible(System.Drawing.Point pt, Pen pen, Graphics graphics)
 		{
-			return IsOutlineVisible ((PointF)pt, pen, graphics);
+			return IsOutlineVisible ((System.Drawing.PointF)pt, pen, graphics);
 		}
 
-		public bool IsOutlineVisible(PointF pt, Pen pen, Graphics graphics)
+		public bool IsOutlineVisible(System.Drawing.PointF pt, Pen pen, Graphics graphics)
 		{
 			var outlinePath = (GraphicsPath)Clone ();
 			if (graphics != null)
@@ -1404,10 +1412,10 @@ namespace System.Drawing.Drawing2D {
 
 		const int scale = 10000;
 
-		static void WidenPath (GraphicsPath path, Pen pen, out List<PointF> widePoints, out List<byte> wideTypes)
+		static void WidenPath (GraphicsPath path, Pen pen, out List<System.Drawing.PointF> widePoints, out List<byte> wideTypes)
 		{
 
-			widePoints = new List<PointF> ();
+			widePoints = new List<System.Drawing.PointF> ();
 			wideTypes = new List<byte> ();
 
 			var pathData = path.PathData;
@@ -1495,35 +1503,35 @@ namespace System.Drawing.Drawing2D {
 
 		}
 
-		public void Warp(PointF[] destPoints, RectangleF srcRect)
+		public void Warp(System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect)
 		{
 			Warp (destPoints, srcRect, null);
 		}
 
-		public void Warp(PointF[] destPoints, RectangleF srcRect, Matrix matrix)
+		public void Warp(System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, Matrix matrix)
 		{
 			Warp (destPoints, srcRect, matrix, WarpMode.Perspective);
 		}
 
-		public void Warp(PointF[] destPoints, RectangleF srcRect, Matrix matrix, WarpMode warpMode)
+		public void Warp(System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, Matrix matrix, WarpMode warpMode)
 		{
 
 			Warp (destPoints, srcRect, matrix, WarpMode.Perspective, 0.25f);
 
 		}
 
-		public void Warp(PointF[] destPoints, RectangleF srcRect, Matrix matrix, WarpMode warpMode, float flatness)
+		public void Warp(System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, Matrix matrix, WarpMode warpMode, float flatness)
 		{
 			if (destPoints.Length < 3)
 				throw new ArgumentOutOfRangeException ("destPoints must contain 3 or 4 points");
 
 			if (destPoints.Length == 3) 
 			{
-				var destPoints1 = new PointF[4];
+				var destPoints1 = new System.Drawing.PointF[4];
 				destPoints1 [0] = destPoints [0];
 				destPoints1 [1] = destPoints [1];
 				destPoints1 [2] = destPoints [2];
-				destPoints1 [3] = new PointF ((destPoints [1].X - destPoints [0].X) + destPoints [2].X,
+				destPoints1 [3] = new System.Drawing.PointF ((destPoints [1].X - destPoints [0].X) + destPoints [2].X,
 				                              (destPoints [1].Y - destPoints [0].Y) + destPoints [2].Y);
 				GeomTransformUtils.WarpPath (this, destPoints1, srcRect, matrix, warpMode, flatness);
 			} 
@@ -1540,14 +1548,14 @@ namespace System.Drawing.Drawing2D {
 		public object Clone ()
 		{
 			var copy = new GraphicsPath (fillMode);
-			copy.points = new List<PointF> (points);
+			copy.points = new List<System.Drawing.PointF> (points);
 			copy.types = new List<byte> (types);
 			copy.start_new_fig = start_new_fig;
 
 			return copy;
 		}
 
-		public PointF [] PathPoints {
+		public System.Drawing.PointF [] PathPoints {
 			get {
 				return points.ToArray ();
 			}

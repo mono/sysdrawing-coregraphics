@@ -1,6 +1,13 @@
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
+using System.DrawingNative;
+using System.DrawingNative.Drawing2D;
+
+using Point = System.Drawing.Point;
+using Size = System.Drawing.Size;
+using Rectangle = System.Drawing.Rectangle;
+using SizeF = System.Drawing.SizeF;
+using PointF = System.Drawing.PointF;
+using RectangleF = System.Drawing.RectangleF;
 
 namespace Example3_2
 

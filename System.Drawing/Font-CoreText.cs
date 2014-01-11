@@ -4,7 +4,7 @@
 // Author:
 //   Kenneth J. Pouncey (kjpou@pt.lu)
 //
-// Copyright 2011-2013 Xamarin Inc.
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,8 +35,11 @@ using MonoTouch.CoreGraphics;
 using MonoTouch.CoreText;
 #endif
 
-namespace System.Drawing
-{
+#if MONOMAC
+namespace System.DrawingNative {
+#else
+namespace System.Drawing {
+	#endif
 	public partial class Font
 	{
 		internal CTFont nativeFont;

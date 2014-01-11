@@ -9,6 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>sysdrawingcoregraphicsMac</RootNamespace>
     <AssemblyName>sysdrawing-coregraphics-Mac</AssemblyName>
+    <UseMSBuildEngine>False</UseMSBuildEngine>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -34,8 +35,12 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
-    <Reference Include="MonoMac">
-      <HintPath>..\..\monomac\src\MonoMac.dll</HintPath>
+    <Reference Include="System.Drawing" />
+    <Reference Include="XamMac, Version=0.0.0.0, Culture=neutral, PublicKeyToken=84e04ff9cfb79065">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="FSharp.Core">
+      <HintPath>..\..\..\..\..\..\..\..\Library\Frameworks\Mono.framework\Versions\Current\lib\mono\gac\FSharp.Core\4.3.0.0__b03f5f7f11d50a3a\FSharp.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -347,5 +352,12 @@
     <Folder Include="System.Drawing\" />
     <Folder Include="Utilities\ClipperLib\" />
     <Folder Include="System.Drawing.Text\" />
+    <Folder Include="Expressions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\sharpvectors\Main\Source\System.Drawing.Quotations\System.Drawing.Quotations.fsproj">
+      <Project>{5D4044DA-B6A3-4BDB-BC93-4EE3E9A419B0}</Project>
+      <Name>System.Drawing.Quotations</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

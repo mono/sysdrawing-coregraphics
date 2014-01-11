@@ -9,7 +9,7 @@
 //
 // (C) 2002 Ximian, Inc
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-// Copyright 2011-2013 Xamarin Inc.
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,7 +33,11 @@
 
 using System.ComponentModel;
 
-namespace System.Drawing.Printing {
+#if MONOMAC
+namespace System.DrawingNative {
+#else
+namespace System.Drawing {
+#endif
 	
 	[DefaultEvent ("PrintPage"), DefaultProperty ("DocumentName")]
 	[ToolboxItemFilter ("System.Drawing.Printing", ToolboxItemFilterType.Allow)]

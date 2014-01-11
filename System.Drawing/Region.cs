@@ -9,7 +9,7 @@
 //
 // Copyright (C) 2003 Ximian, Inc. http://www.ximian.com
 // Copyright (C) 2004,2006 Novell, Inc. http://www.novell.com
-// Copyright 2011-2013 Xamarin Inc.
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,22 +30,28 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using Rectangle = System.Drawing.Rectangle;
 
-using System.Drawing.Drawing2D;
 using System.Collections.Generic;
+using System.DrawingNative;
 
 #if MONOMAC
 using MonoMac.CoreGraphics;
+using System.DrawingNative.Drawing2D;
 #else
 using MonoTouch.CoreGraphics;
+using System.Drawing.Drawing2D;
 #endif
 
 // Polygon Clipping Library
 using ClipperLib;
 
 
-namespace System.Drawing 
-{
+#if MONOMAC
+namespace System.DrawingNative  {
+#else
+namespace System.Drawing {
+#endif 
 
 	// Clipper lib definitions
 	using Path = List<IntPoint>;
@@ -58,11 +64,11 @@ namespace System.Drawing
 		const PolyFillType CLIP_FILL_TYPE = PolyFillType.pftNonZero;
 		const bool EVEN_ODD_FILL = false;
 
-		internal static RectangleF infinite = new RectangleF(-4194304, -4194304, 8388608, 8388608);
+		internal static System.Drawing.RectangleF infinite = new System.Drawing.RectangleF(-4194304, -4194304, 8388608, 8388608);
 		internal object regionObject; 
 		internal List<RegionEntry> regionList = new List<RegionEntry>();
-		internal CGPath regionPath;
-		internal RectangleF regionBounds;
+		public CGPath regionPath;
+		internal System.Drawing.RectangleF regionBounds;
 
 
 		//Here we are scaling all coordinates up by 100 when they're passed to Clipper 
@@ -161,11 +167,11 @@ namespace System.Drawing
 			regionBounds = infinite;
 		}
 		
-		public Region (Rectangle rect) : 
-			this ((RectangleF)rect)
+		public Region (System.Drawing.Rectangle rect) : 
+			this ((System.Drawing.RectangleF)rect)
 		{ }
 		
-		public Region (RectangleF rect)
+		public Region (System.Drawing.RectangleF rect)
 		{
 			regionObject = rect;
 			var path = RectangleToPath (rect);
@@ -195,7 +201,7 @@ namespace System.Drawing
 			regionBounds = regionPath.BoundingBox;
 		}
 
-		internal static Path PointFArrayToIntArray(PointF[] points, float scale)
+		internal static Path PointFArrayToIntArray(System.Drawing.PointF[] points, float scale)
 		{
 			Path result = new Path();
 			for (int i = 0; i < points.Length; ++i)
@@ -206,9 +212,9 @@ namespace System.Drawing
 		}
 
 		
-		internal static PointF[] PathToPointFArray(Path pg, float scale)
+		internal static System.Drawing.PointF[] PathToPointFArray(Path pg, float scale)
 		{
-			PointF[] result = new PointF[pg.Count];
+			System.Drawing.PointF[] result = new System.Drawing.PointF[pg.Count];
 			for (int i = 0; i < pg.Count; ++i)
 			{
 				result[i].X = (float)pg[i].X / scale;
@@ -306,7 +312,7 @@ namespace System.Drawing
 		{
 		}
 		
-		public RectangleF GetBounds (Graphics g)
+		public System.Drawing.RectangleF GetBounds (Graphics g)
 		{
 			if (g == null)
 				throw new ArgumentNullException ();
@@ -341,16 +347,16 @@ namespace System.Drawing
 
 		public void MakeEmpty() 
 		{
-			regionObject = RectangleF.Empty;
+			regionObject = System.Drawing.RectangleF.Empty;
 
-			var path = RectangleToPath (RectangleF.Empty);
+			var path = RectangleToPath (System.Drawing.RectangleF.Empty);
 
 			// clear out our containers.
 			regionList.Clear ();
 			solution.Clear ();
 
 			solution.Add (path);
-			regionList.Add (new RegionEntry (RegionType.Empty, RectangleF.Empty, path));
+			regionList.Add (new RegionEntry (RegionType.Empty, System.Drawing.RectangleF.Empty, path));
 
 			regionPath = new CGPath ();
 
@@ -404,12 +410,12 @@ namespace System.Drawing
 			Transform (translateMatrix);
 		}
 
-		public void Intersect(Rectangle rect)
+		public void Intersect(System.Drawing.Rectangle rect)
 		{
-			Intersect ((RectangleF)rect);
+			Intersect ((System.Drawing.RectangleF)rect);
 		}
 
-		public void Intersect(RectangleF rect)
+		public void Intersect(System.Drawing.RectangleF rect)
 		{
 
 			regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Intersection));
@@ -424,12 +430,12 @@ namespace System.Drawing
 		}
 
 
-		public void Union(Rectangle rect)
+		public void Union(System.Drawing.Rectangle rect)
 		{
-			Union ((RectangleF)rect);
+			Union ((System.Drawing.RectangleF)rect);
 		}
 
-		public void Union(RectangleF rect)
+		public void Union(System.Drawing.RectangleF rect)
 		{
 			regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Union));
 			calculateRegionPath (ClipType.ctUnion);
@@ -442,12 +448,12 @@ namespace System.Drawing
 			calculateRegionPath (ClipType.ctUnion);
 		}
 
-		public void Xor(Rectangle rect)
+		public void Xor(System.Drawing.Rectangle rect)
 		{
-			Xor ((RectangleF)rect);
+			Xor ((System.Drawing.RectangleF)rect);
 		}
 
-		public void Xor(RectangleF rect)
+		public void Xor(System.Drawing.RectangleF rect)
 		{
 			regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Xor));
 			calculateRegionPath (ClipType.ctXor);
@@ -460,12 +466,12 @@ namespace System.Drawing
 			calculateRegionPath (ClipType.ctXor);
 		}
 
-		public void Exclude(Rectangle rect)
+		public void Exclude(System.Drawing.Rectangle rect)
 		{
-			Exclude ((RectangleF)rect);
+			Exclude ((System.Drawing.RectangleF)rect);
 		}
 
-		public void Exclude(RectangleF rect)
+		public void Exclude(System.Drawing.RectangleF rect)
 		{
 			regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Difference));
 			calculateRegionPath (ClipType.ctDifference);
@@ -510,7 +516,7 @@ namespace System.Drawing
 //				regionBounds.Height = (bounds.bottom - bounds.top) / scale;
 
 				if (regionPath.IsEmpty)
-					regionBounds = RectangleF.Empty;
+					regionBounds = System.Drawing.RectangleF.Empty;
 				else
 					regionBounds = regionPath.BoundingBox;
 
@@ -535,7 +541,7 @@ namespace System.Drawing
 
 		}
 
-		internal RectangleF GetBounds()
+		internal System.Drawing.RectangleF GetBounds()
 		{
 
 			return regionBounds;
@@ -549,31 +555,31 @@ namespace System.Drawing
 			}
 		}
 
-		public bool IsVisible(Point point)
+		public bool IsVisible(System.Drawing.Point point)
 		{
-			return IsVisible ((PointF)point);
+			return IsVisible ((System.Drawing.PointF)point);
 		}
 
-		public bool IsVisible(PointF point)
+		public bool IsVisible(System.Drawing.PointF point)
 		{
 			// eoFill - A Boolean value that, if true, specifies to use the even-odd fill rule to evaluate 
 			// the painted region of the path. If false, the winding fill rule is used.
 			return regionPath.ContainsPoint (point, EVEN_ODD_FILL);
 		}
 
-		public bool IsVisible(Rectangle rectangle)
+		public bool IsVisible(System.Drawing.Rectangle rectangle)
 		{
-			return IsVisible ((RectangleF)rectangle);
+			return IsVisible ((System.Drawing.RectangleF)rectangle);
 		}
 
-		public bool IsVisible(RectangleF rectangle)
+		public bool IsVisible(System.Drawing.RectangleF rectangle)
 		{
 			// eoFill - A Boolean value that, if true, specifies to use the even-odd fill rule to evaluate 
 			// the painted region of the path. If false, the winding fill rule is used.
-			var topLeft = new PointF (rectangle.Left, rectangle.Top);
-			var topRight = new PointF (rectangle.Right, rectangle.Top);
-			var bottomRight = new PointF (rectangle.Right, rectangle.Bottom);
-			var bottomLeft = new PointF (rectangle.Left, rectangle.Bottom);
+			var topLeft = new System.Drawing.PointF (rectangle.Left, rectangle.Top);
+			var topRight = new System.Drawing.PointF (rectangle.Right, rectangle.Top);
+			var bottomRight = new System.Drawing.PointF (rectangle.Right, rectangle.Bottom);
+			var bottomLeft = new System.Drawing.PointF (rectangle.Left, rectangle.Bottom);
 
 			return regionPath.ContainsPoint (topLeft, EVEN_ODD_FILL) || regionPath.ContainsPoint (topRight, EVEN_ODD_FILL)
 				|| regionPath.ContainsPoint (bottomRight, EVEN_ODD_FILL) || regionPath.ContainsPoint (bottomLeft, EVEN_ODD_FILL);
@@ -584,25 +590,25 @@ namespace System.Drawing
 		{
 			// eoFill - A Boolean value that, if true, specifies to use the even-odd fill rule to evaluate 
 			// the painted region of the path. If false, the winding fill rule is used.
-			return regionPath.ContainsPoint (new PointF(x,y), EVEN_ODD_FILL);
+			return regionPath.ContainsPoint (new System.Drawing.PointF(x,y), EVEN_ODD_FILL);
 		}
 
 		public bool IsVisible(int x, int y)
 		{
 			// eoFill - A Boolean value that, if true, specifies to use the even-odd fill rule to evaluate 
 			// the painted region of the path. If false, the winding fill rule is used.
-			return regionPath.ContainsPoint (new PointF(x,y), EVEN_ODD_FILL);
+			return regionPath.ContainsPoint (new System.Drawing.PointF(x,y), EVEN_ODD_FILL);
 		}
 
 		internal bool IsEmpty
 		{
 			get 
 			{
-				return regionBounds.Equals (RectangleF.Empty);
+				return regionBounds.Equals (System.Drawing.RectangleF.Empty);
 			}
 		}
 
-		static Path RectangleToPath (RectangleF rect)
+		static Path RectangleToPath (System.Drawing.RectangleF rect)
 		{
 			Path path = new Path ();
 
@@ -615,9 +621,9 @@ namespace System.Drawing
 			return path;
 		}
 						
-		static PointF IntPointToPointF (IntPoint point)
+		static System.Drawing.PointF IntPointToPointF (IntPoint point)
 		{
-			return new PointF (point.X / scale, point.Y / scale);
+			return new System.Drawing.PointF (point.X / scale, point.Y / scale);
 		}
 	}
 

@@ -118,12 +118,6 @@
     <Folder Include="Helper\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\sysdrawing-coregraphics.csproj">
-      <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
-      <Name>sysdrawing-coregraphics</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BundleResource Include="bitmap25.png" />
     <BundleResource Include="bitmap50.png" />
   </ItemGroup>

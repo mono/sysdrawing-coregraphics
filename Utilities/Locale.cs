@@ -1,6 +1,6 @@
 using System;
 
-namespace System.Drawing
+namespace System.DrawingNative
 {
 	public class Locale
 	{

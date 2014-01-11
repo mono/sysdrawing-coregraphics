@@ -8,34 +8,45 @@
 //   Miguel de Icaza (miguel@xamarin.com)
 //   Kenneth J. Pouncey (kjpou@pt.lu)
 //
-// Copyright 2011-2013 Xamarin Inc
+// Copyright 2011 Xamarin Inc
 // Copyright 2003-2009 Novell, Inc.
 //
 using System;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Drawing.Text;
+
+
 
 #if MONOMAC
+using System.DrawingNative;
+using System.DrawingNative.Drawing2D;
+
 using MonoMac.CoreGraphics;
 using MonoMac.AppKit;
 using MonoMac.Foundation;
 using MonoMac.CoreText;
+
+
 #else
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using MonoTouch.CoreGraphics;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using MonoTouch.CoreText;
 #endif
 
+
+#if MONOMAC
+namespace System.DrawingNative {
+#else
 namespace System.Drawing {
+#endif
 
 	public sealed partial class Graphics : MarshalByRefObject, IDisposable {
 		internal CGContext context;
 		internal Pen LastPen;
 		internal Brush LastBrush;
-		internal SizeF contextUserSpace;
-		internal RectangleF boundingBox;
+		internal System.Drawing.SizeF contextUserSpace;
+		internal System.Drawing.RectangleF boundingBox;
 		internal GraphicsUnit quartzUnit = GraphicsUnit.Point;
 		internal object nativeObject;
 		internal bool isFlipped;
@@ -58,10 +69,11 @@ namespace System.Drawing {
 		float userspaceScaleX = 1, userspaceScaleY = 1;
 		private GraphicsUnit graphicsUnit = GraphicsUnit.Display;
 		private float pageScale = 1;
-		private PointF renderingOrigin = PointF.Empty;
-		private RectangleF subviewClipOffset = RectangleF.Empty;
+		private System.Drawing.PointF renderingOrigin = System.Drawing.PointF.Empty;
+		private System.Drawing.RectangleF subviewClipOffset = System.Drawing.RectangleF.Empty;
 		private Region clipRegion;
 		private float screenScale;
+
 
 		public Graphics (CGContext context, bool flipped = true)
 		{
@@ -140,8 +152,12 @@ namespace System.Drawing {
 			return new Graphics ();
 		}
 
+
+
 		private void InitializeContext(CGContext context) 
 		{
+
+
 			this.context = context;
 
 			modelMatrix = new Matrix();
@@ -226,15 +242,16 @@ namespace System.Drawing {
 		// from: gdip_cairo_move_to, inlined to assume converts_unit=true, antialias=true
 		void MoveTo (float x, float y)
 		{
+			//	expressions.MoveTo (x, y);
 			context.MoveTo (x, y);
 		}
 		
-		void MoveTo (PointF point)
+		void MoveTo (System.Drawing.PointF point)
 		{
 			context.MoveTo (point.X, point.Y);
 		}
 
-		void LineTo (PointF point)
+		void LineTo (System.Drawing.PointF point)
 		{
 			context.AddLineToPoint (point.X, point.Y);
 		}
@@ -277,13 +294,13 @@ namespace System.Drawing {
 				context.FillPath ();
 		}
 		
-		public void DrawArc (Pen pen, Rectangle rect, float startAngle, float sweepAngle)
+		public void DrawArc (Pen pen, System.Drawing.Rectangle rect, float startAngle, float sweepAngle)
 		{
 			DrawArc (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 		}
 
 		
-		public void DrawArc (Pen pen, RectangleF rect, float startAngle, float sweepAngle)
+		public void DrawArc (Pen pen, System.Drawing.RectangleF rect, float startAngle, float sweepAngle)
 		{
 			DrawArc (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 		}
@@ -308,7 +325,7 @@ namespace System.Drawing {
 			StrokePen (pen);
 		}
 
-		public void DrawLine (Pen pen, Point pt1, Point pt2)
+		public void DrawLine (Pen pen, System.Drawing.Point pt1, System.Drawing.Point pt2)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
@@ -326,7 +343,7 @@ namespace System.Drawing {
 			}
 		}
 		
-		public void DrawBezier (Pen pen, PointF pt1, PointF pt2, PointF pt3, PointF pt4)
+		public void DrawBezier (Pen pen, System.Drawing.PointF pt1, System.Drawing.PointF pt2, System.Drawing.PointF pt3, System.Drawing.PointF pt4)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
@@ -335,7 +352,7 @@ namespace System.Drawing {
 			StrokePen (pen);
 		}
 
-		public void DrawBezier (Pen pen, Point pt1, Point pt2, Point pt3, Point pt4)
+		public void DrawBezier (Pen pen, System.Drawing.Point pt1, System.Drawing.Point pt2, System.Drawing.Point pt3, System.Drawing.Point pt4)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
@@ -353,7 +370,7 @@ namespace System.Drawing {
 			StrokePen (pen);
 		}
 		
-		public void DrawBeziers (Pen pen, Point [] points)
+		public void DrawBeziers (Pen pen, System.Drawing.Point [] points)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
@@ -365,16 +382,16 @@ namespace System.Drawing {
 	            return;
 
 			for (int i = 0; i < length - 1; i += 3) {
-	            Point p1 = points [i];
-	            Point p2 = points [i + 1];
-	            Point p3 = points [i + 2];
-	            Point p4 = points [i + 3];
+	            System.Drawing.Point p1 = points [i];
+	            System.Drawing.Point p2 = points [i + 1];
+	            System.Drawing.Point p3 = points [i + 2];
+	            System.Drawing.Point p4 = points [i + 3];
 
 				DrawBezier (pen, p1, p2, p3, p4);
 			}
 		}
 
-		public void DrawBeziers (Pen pen, PointF [] points)
+		public void DrawBeziers (Pen pen, System.Drawing.PointF [] points)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
@@ -394,7 +411,7 @@ namespace System.Drawing {
 			}
 		}
 		
-		public void DrawLine (Pen pen, PointF pt1, PointF pt2)
+		public void DrawLine (Pen pen, System.Drawing.PointF pt1, System.Drawing.PointF pt2)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
@@ -434,7 +451,7 @@ namespace System.Drawing {
 
 		}
 		
-		public void DrawLines (Pen pen, Point [] points)
+		public void DrawLines (Pen pen, System.Drawing.Point [] points)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
@@ -451,7 +468,7 @@ namespace System.Drawing {
 			StrokePen (pen);
 		}
 		
-		public void DrawLines (Pen pen, PointF [] points)
+		public void DrawLines (Pen pen, System.Drawing.PointF [] points)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
@@ -478,7 +495,7 @@ namespace System.Drawing {
 			context.ClosePath ();
 		}
 			
-		void RectanglePath (RectangleF rectangle) 
+		void RectanglePath (System.Drawing.RectangleF rectangle) 
 		{
 			MoveTo (rectangle.Location);
 			context.AddRect(rectangle);
@@ -490,7 +507,7 @@ namespace System.Drawing {
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
 
-			RectanglePath (new RectangleF(x1, y1, x2, y2));
+			RectanglePath (new System.Drawing.RectangleF(x1, y1, x2, y2));
 			StrokePen (pen);
 		}
 		
@@ -498,11 +515,11 @@ namespace System.Drawing {
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			RectanglePath (new RectangleF(x1, y1, x2, y2));
+			RectanglePath (new System.Drawing.RectangleF(x1, y1, x2, y2));
 			StrokePen (pen);
 		}
 		
-		public void DrawRectangle (Pen pen, RectangleF rect)
+		public void DrawRectangle (Pen pen, System.Drawing.RectangleF rect)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
@@ -511,12 +528,12 @@ namespace System.Drawing {
 
 		}
 
-		public void DrawRectangle (Pen pen, Rectangle rect)
+		public void DrawRectangle (Pen pen, System.Drawing.Rectangle rect)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
 
-			RectanglePath (new RectangleF(rect.X, rect.Y, rect.Width, rect.Height));
+			RectanglePath (new System.Drawing.RectangleF(rect.X, rect.Y, rect.Width, rect.Height));
 			StrokePen (pen);
 
 		}
@@ -525,25 +542,25 @@ namespace System.Drawing {
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
-			RectanglePath (new RectangleF(x1, y1, x2, y2));
+			RectanglePath (new System.Drawing.RectangleF(x1, y1, x2, y2));
 			FillBrush (brush);
 
 		}
 
-		public void FillRectangle (Brush brush, Rectangle rect)
+		public void FillRectangle (Brush brush, System.Drawing.Rectangle rect)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
-			RectanglePath (new RectangleF(rect.X, rect.Y, rect.Width, rect.Height));
+			RectanglePath (new System.Drawing.RectangleF(rect.X, rect.Y, rect.Width, rect.Height));
 			FillBrush (brush);
 
 		}
 		
-		public void FillRectangle (Brush brush, RectangleF rect)
+		public void FillRectangle (Brush brush, System.Drawing.RectangleF rect)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
-			RectanglePath (new RectangleF(rect.X, rect.Y, rect.Width, rect.Height));
+			RectanglePath (new System.Drawing.RectangleF(rect.X, rect.Y, rect.Width, rect.Height));
 			FillBrush (brush);
 
 		}
@@ -553,7 +570,7 @@ namespace System.Drawing {
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
 
-			RectanglePath (new RectangleF(x1, y1, x2, y2));
+			RectanglePath (new System.Drawing.RectangleF(x1, y1, x2, y2));
 			FillBrush (brush);
 
 		}
@@ -579,7 +596,7 @@ namespace System.Drawing {
 			FillBrush (brush);
 		}
 
-		public void DrawEllipse (Pen pen, RectangleF rect)
+		public void DrawEllipse (Pen pen, System.Drawing.RectangleF rect)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
@@ -590,15 +607,15 @@ namespace System.Drawing {
 
 		public void DrawEllipse (Pen pen, int x1, int y1, int x2, int y2)
 		{
-			DrawEllipse (pen, new RectangleF (x1, y1, x2, y2));
+			DrawEllipse (pen, new System.Drawing.RectangleF (x1, y1, x2, y2));
 		}
 
-		public void DrawEllipse (Pen pen, Rectangle rect)
+		public void DrawEllipse (Pen pen, System.Drawing.Rectangle rect)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
 			
-			DrawEllipse (pen, new RectangleF (rect.X, rect.Y, rect.Width, rect.Height));
+			DrawEllipse (pen, new System.Drawing.RectangleF (rect.X, rect.Y, rect.Width, rect.Height));
 		}
 
 		public void DrawEllipse (Pen pen, float x, float y, float width, float height)
@@ -606,11 +623,11 @@ namespace System.Drawing {
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
 
-			DrawEllipse (pen, new RectangleF (x, y, width, height));
+			DrawEllipse (pen, new System.Drawing.RectangleF (x, y, width, height));
 
 		}
 
-		public void FillEllipse (Brush brush, RectangleF rect)
+		public void FillEllipse (Brush brush, System.Drawing.RectangleF rect)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
@@ -621,12 +638,12 @@ namespace System.Drawing {
 
 		public void FillEllipse (Brush brush, int x1, int y1, int x2, int y2)
 		{
-			FillEllipse (brush, new RectangleF (x1, y1, x2, y2));
+			FillEllipse (brush, new System.Drawing.RectangleF (x1, y1, x2, y2));
 		}
 		
 		public void FillEllipse (Brush brush, float x1, float y1, float x2, float y2)
 		{
-			FillEllipse (brush, new RectangleF (x1, y1, x2, y2));
+			FillEllipse (brush, new System.Drawing.RectangleF (x1, y1, x2, y2));
 		}
 
 		private void applyModelView() {
@@ -698,7 +715,7 @@ namespace System.Drawing {
 			applyModelView();
 		}
 		
-		void MakeCurve (PointF [] points, PointF [] tangents, int offset, int length, CurveType type)
+		void MakeCurve (System.Drawing.PointF [] points, System.Drawing.PointF [] tangents, int offset, int length, CurveType type)
 		{
 			MoveTo (points [offset].X, points [offset].Y);
 			int i = offset;
@@ -735,19 +752,19 @@ namespace System.Drawing {
 			}
 		}
 		
-		internal PointF [] ConvertPoints (Point [] points)
+		internal System.Drawing.PointF [] ConvertPoints (System.Drawing.Point [] points)
 		{
 			if (points == null)
 				return null;
 			int len = points.Length;
-			var result = new PointF [len];
+			var result = new System.Drawing.PointF [len];
 			for (int i = 0; i < len; i++)
-				result [i] = new PointF (points [i].X, points [i].Y);
+				result [i] = new System.Drawing.PointF (points [i].X, points [i].Y);
 			return result;
 		}
 		
 		
-		public void DrawCurve (Pen pen, PointF[] points, int offset, int numberOfSegments, float tension = 0.5f)
+		public void DrawCurve (Pen pen, System.Drawing.PointF[] points, int offset, int numberOfSegments, float tension = 0.5f)
 		{
 			if (points == null)
 				throw new ArgumentNullException ("points");
@@ -769,17 +786,17 @@ namespace System.Drawing {
 			StrokePen (pen);
 		}
 
-		public void DrawCurve (Pen pen, Point[] points, int offset, int numberOfSegments, float tension = 0.5f)
+		public void DrawCurve (Pen pen, System.Drawing.Point[] points, int offset, int numberOfSegments, float tension = 0.5f)
 		{
 			DrawCurve (pen, ConvertPoints (points), offset, numberOfSegments, tension);
 		}
 		
-		public void DrawCurve (Pen pen, Point [] points, float tension = 0.5f)
+		public void DrawCurve (Pen pen, System.Drawing.Point [] points, float tension = 0.5f)
 		{
 			DrawCurve (pen, ConvertPoints (points), tension);
 		}
 
-		public void DrawCurve (Pen pen, PointF [] points, float tension = 0.5f)
+		public void DrawCurve (Pen pen, System.Drawing.PointF [] points, float tension = 0.5f)
 		{
 			if (points == null)
 				throw new ArgumentNullException ("points");
@@ -953,12 +970,12 @@ namespace System.Drawing {
 			return new Graphics (bitmapContext, false);
 		}
 		
-		public void SetClip (RectangleF rect)
+		public void SetClip (System.Drawing.RectangleF rect)
 		{
 			SetClip (rect, CombineMode.Replace);
 		}
 
-		public void SetClip (Rectangle rect)
+		public void SetClip (System.Drawing.Rectangle rect)
 		{
 			SetClip (rect, CombineMode.Replace);
 		}
@@ -973,14 +990,14 @@ namespace System.Drawing {
 			SetClip (g, CombineMode.Replace);	
 		}
 
-		public void SetClip (RectangleF rect, CombineMode combineMode)
+		public void SetClip (System.Drawing.RectangleF rect, CombineMode combineMode)
 		{
 			SetClip (new Region (rect), combineMode);
 		}
 
-		public void SetClip (Rectangle rect, CombineMode combineMode)
+		public void SetClip (System.Drawing.Rectangle rect, CombineMode combineMode)
 		{
-			SetClip ((RectangleF)rect, combineMode);
+			SetClip ((System.Drawing.RectangleF)rect, combineMode);
 		}
 
 		public void SetClip (GraphicsPath graphicsPath, CombineMode combineMode)
@@ -1035,9 +1052,9 @@ namespace System.Drawing {
 			//state after you’ve completed any clipped drawing.
 			context.SaveState ();
 			if (clipRegion.IsEmpty) {
-				context.ClipToRect (RectangleF.Empty);
+				context.ClipToRect (System.Drawing.RectangleF.Empty);
 			} else {
-				//context.ClipToRect ((RectangleF)clipRegion.regionObject);
+				//context.ClipToRect ((System.Drawing.RectangleF)clipRegion.regionObject);
 				context.AddPath (clipRegion.regionPath);
 				context.ClosePath ();
 				context.Clip ();
@@ -1051,12 +1068,12 @@ namespace System.Drawing {
 			throw new NotImplementedException ();		
 		}
 		
-		public GraphicsContainer BeginContainer (Rectangle dstRect, Rectangle srcRect, GraphicsUnit unit)
+		public GraphicsContainer BeginContainer (System.Drawing.Rectangle dstRect, System.Drawing.Rectangle srcRect, GraphicsUnit unit)
 		{
 			throw new NotImplementedException ();		
 		}
 
-		public GraphicsContainer BeginContainer (RectangleF dstRect, RectangleF srcRect, GraphicsUnit unit)
+		public GraphicsContainer BeginContainer (System.Drawing.RectangleF dstRect, System.Drawing.RectangleF srcRect, GraphicsUnit unit)
 		{
 			throw new NotImplementedException ();		
 		}
@@ -1119,7 +1136,7 @@ namespace System.Drawing {
 			}
 		}
 		
-		public RectangleF ClipBounds {
+		public System.Drawing.RectangleF ClipBounds {
 			get {
 				return clipRegion.GetBounds ();
 				//return context.GetClipBoundingBox ();
@@ -1129,7 +1146,7 @@ namespace System.Drawing {
 			}
 		}
 		
-		public RectangleF VisibleClipBounds {
+		public System.Drawing.RectangleF VisibleClipBounds {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -1174,7 +1191,7 @@ namespace System.Drawing {
 			}
 		}
 
-		public PointF RenderingOrigin {
+		public System.Drawing.PointF RenderingOrigin {
 			get {
 				return renderingOrigin;
 			}
@@ -1261,12 +1278,12 @@ namespace System.Drawing {
 			}
 		}
 		
-		public void ExcludeClip (Rectangle rect)
+		public void ExcludeClip (System.Drawing.Rectangle rect)
 		{
-			SetClip ((RectangleF)rect, CombineMode.Exclude);
+			SetClip ((System.Drawing.RectangleF)rect, CombineMode.Exclude);
 		}
 		
-		public void ExcludeClip (RectangleF rect)
+		public void ExcludeClip (System.Drawing.RectangleF rect)
 		{
 			SetClip (rect, CombineMode.Exclude);
 		}
@@ -1276,12 +1293,12 @@ namespace System.Drawing {
 			SetClip (region, CombineMode.Exclude);
 		}
 
-		public void IntersectClip (Rectangle rect)
+		public void IntersectClip (System.Drawing.Rectangle rect)
 		{
-			SetClip ((RectangleF)rect, CombineMode.Intersect);
+			SetClip ((System.Drawing.RectangleF)rect, CombineMode.Intersect);
 		}
 		
-		public void IntersectClip (RectangleF rect)
+		public void IntersectClip (System.Drawing.RectangleF rect)
 		{
 			SetClip (rect, CombineMode.Intersect);
 		}
@@ -1336,7 +1353,7 @@ namespace System.Drawing {
 			return currentState;
 		}
 		
-		public void DrawClosedCurve (Pen pen, PointF [] points)
+		public void DrawClosedCurve (Pen pen, System.Drawing.PointF [] points)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
@@ -1346,7 +1363,7 @@ namespace System.Drawing {
 			DrawClosedCurve (pen, points, 0.5f, FillMode.Winding);
 		}
 		
-		public void DrawClosedCurve (Pen pen, Point [] points)
+		public void DrawClosedCurve (Pen pen, System.Drawing.Point [] points)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
@@ -1358,7 +1375,7 @@ namespace System.Drawing {
  			
 		// according to MSDN fillmode "is required but ignored" which makes _some_ sense since the unmanaged 
 		// GDI+ call doesn't support it (issue spotted using Gendarme's AvoidUnusedParametersRule)
-		public void DrawClosedCurve (Pen pen, Point [] points, float tension, FillMode fillmode)
+		public void DrawClosedCurve (Pen pen, System.Drawing.Point [] points, float tension, FillMode fillmode)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
@@ -1370,7 +1387,7 @@ namespace System.Drawing {
 
 		// according to MSDN fillmode "is required but ignored" which makes _some_ sense since the unmanaged 
 		// GDI+ call doesn't support it (issue spotted using Gendarme's AvoidUnusedParametersRule)
-		public void DrawClosedCurve (Pen pen, PointF [] points, float tension, FillMode fillmode)
+		public void DrawClosedCurve (Pen pen, System.Drawing.PointF [] points, float tension, FillMode fillmode)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
@@ -1389,7 +1406,7 @@ namespace System.Drawing {
 			}
 		}
 		
-		public void FillClosedCurve (Brush brush, PointF [] points)
+		public void FillClosedCurve (Brush brush, System.Drawing.PointF [] points)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
@@ -1399,7 +1416,7 @@ namespace System.Drawing {
 			FillClosedCurve(brush,points,FillMode.Alternate);
 		}
 		
-		public void FillClosedCurve (Brush brush, Point [] points)
+		public void FillClosedCurve (Brush brush, System.Drawing.Point [] points)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
@@ -1411,7 +1428,7 @@ namespace System.Drawing {
  			
 		// according to MSDN fillmode "is required but ignored" which makes _some_ sense since the unmanaged 
 		// GDI+ call doesn't support it (issue spotted using Gendarme's AvoidUnusedParametersRule)
-		public void FillClosedCurve (Brush brush, Point [] points, FillMode fillmode, float tension = 0.5f)
+		public void FillClosedCurve (Brush brush, System.Drawing.Point [] points, FillMode fillmode, float tension = 0.5f)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
@@ -1423,7 +1440,7 @@ namespace System.Drawing {
 
 		// according to MSDN fillmode "is required but ignored" which makes _some_ sense since the unmanaged 
 		// GDI+ call doesn't support it (issue spotted using Gendarme's AvoidUnusedParametersRule)
-		public void FillClosedCurve (Brush brush, PointF [] points, FillMode fillmode, float tension = 0.5f)
+		public void FillClosedCurve (Brush brush, System.Drawing.PointF [] points, FillMode fillmode, float tension = 0.5f)
 		{
 
 			if (brush == null)
@@ -1470,14 +1487,14 @@ namespace System.Drawing {
 			throw new NotImplementedException ();
 		}
 #endif		
-		public void DrawPie (Pen pen, Rectangle rect, float startAngle, float sweepAngle)
+		public void DrawPie (Pen pen, System.Drawing.Rectangle rect, float startAngle, float sweepAngle)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
 			DrawPie (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 		}
 		
-		public void DrawPie (Pen pen, RectangleF rect, float startAngle, float sweepAngle)
+		public void DrawPie (Pen pen, System.Drawing.RectangleF rect, float startAngle, float sweepAngle)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
@@ -1497,7 +1514,7 @@ namespace System.Drawing {
 			StrokePen(pen);
 
 		}
-		public void FillPie (Brush brush, Rectangle rect, float startAngle, float sweepAngle)
+		public void FillPie (Brush brush, System.Drawing.Rectangle rect, float startAngle, float sweepAngle)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
@@ -1521,7 +1538,7 @@ namespace System.Drawing {
 			FillBrush(brush);
 		}
 
-		void PolygonSetup (PointF [] points)
+		void PolygonSetup (System.Drawing.PointF [] points)
 		{
 			if (points == null)
 				throw new ArgumentNullException ("points");
@@ -1532,12 +1549,12 @@ namespace System.Drawing {
 				LineTo (points [i]);
 		}
 		
-		public void DrawPolygon (Pen pen, Point [] points)
+		public void DrawPolygon (Pen pen, System.Drawing.Point [] points)
 		{
 			DrawPolygon (pen, ConvertPoints (points));
 		}
 
-		public void DrawPolygon (Pen pen, PointF [] points)
+		public void DrawPolygon (Pen pen, System.Drawing.PointF [] points)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
@@ -1546,12 +1563,12 @@ namespace System.Drawing {
 			StrokePen (pen);
 		}	
 
-		public void FillPolygon (Brush brush, Point [] points, FillMode fillMode = FillMode.Alternate)
+		public void FillPolygon (Brush brush, System.Drawing.Point [] points, FillMode fillMode = FillMode.Alternate)
 		{
 			FillPolygon (brush, ConvertPoints (points), fillMode);
 		}
 
-		public void FillPolygon (Brush brush, PointF [] points, FillMode fillMode = FillMode.Alternate)
+		public void FillPolygon (Brush brush, System.Drawing.PointF [] points, FillMode fillMode = FillMode.Alternate)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
@@ -1562,7 +1579,7 @@ namespace System.Drawing {
 			FillBrush (brush, fillMode);
 		}
 		
-		public void DrawRectangles (Pen pen, RectangleF [] rects)
+		public void DrawRectangles (Pen pen, System.Drawing.RectangleF [] rects)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("image");
@@ -1574,7 +1591,7 @@ namespace System.Drawing {
 			StrokePen (pen);
 		}
 
-		public void DrawRectangles (Pen pen, Rectangle [] rects)
+		public void DrawRectangles (Pen pen, System.Drawing.Rectangle [] rects)
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("image");
@@ -1586,7 +1603,7 @@ namespace System.Drawing {
 			StrokePen (pen);
 		}
 
-		public void FillRectangles (Brush brush, Rectangle [] rects)
+		public void FillRectangles (Brush brush, System.Drawing.Rectangle [] rects)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
@@ -1598,7 +1615,7 @@ namespace System.Drawing {
 			FillBrush (brush);
 		}
 
-		public void FillRectangles (Brush brush, RectangleF [] rects)
+		public void FillRectangles (Brush brush, System.Drawing.RectangleF [] rects)
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
@@ -1626,23 +1643,23 @@ namespace System.Drawing {
 			throw new NotImplementedException ();
 		}
 		
-		public bool IsVisible (Point point)
+		public bool IsVisible (System.Drawing.Point point)
 		{
 			return clipRegion.IsVisible (point);
 		}
 
 		
-		public bool IsVisible (RectangleF rect)
+		public bool IsVisible (System.Drawing.RectangleF rect)
 		{
 			return clipRegion.IsVisible (rect);
 		}
 
-		public bool IsVisible (PointF point)
+		public bool IsVisible (System.Drawing.PointF point)
 		{
 			return clipRegion.IsVisible (point);
 		}
 		
-		public bool IsVisible (Rectangle rect)
+		public bool IsVisible (System.Drawing.Rectangle rect)
 		{
 			return clipRegion.IsVisible (rect);
 		}
@@ -1659,12 +1676,12 @@ namespace System.Drawing {
 		
 		public bool IsVisible (float x, float y, float width, float height)
 		{
-			return IsVisible (new RectangleF (x, y, width, height));
+			return IsVisible (new System.Drawing.RectangleF (x, y, width, height));
 		}
 
 		public bool IsVisible (int x, int y, int width, int height)
 		{
-			return IsVisible (new RectangleF (x, y, width, height));
+			return IsVisible (new System.Drawing.RectangleF (x, y, width, height));
 		}
 		
 		public void MultiplyTransform (Matrix matrix)
@@ -1683,7 +1700,7 @@ namespace System.Drawing {
 				context.ConcatCTM (matrix.transform);
 		}
 		
-		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, PointF [] pts)
+		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, System.Drawing.PointF [] pts)
 		{
 			if (pts == null)
 				throw new ArgumentNullException ("pts");
@@ -1694,7 +1711,7 @@ namespace System.Drawing {
 		}
 
 
-		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, Point [] pts)
+		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, System.Drawing.Point [] pts)
 		{						
 			if (pts == null)
 				throw new ArgumentNullException ("pts");

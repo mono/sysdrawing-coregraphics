@@ -29,8 +29,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Drawing.Text 
-{
+#if MONOMAC
+using System.DrawingNative;
+namespace System.DrawingNative.Text {
+#else
+using System.Drawing;
+namespace System.Drawing.Text {
+#endif
 
 	public sealed class InstalledFontCollection : FontCollection 
 	{

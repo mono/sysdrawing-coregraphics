@@ -1,5 +1,5 @@
 using System;
-using System.Drawing;
+using System.DrawingNative;
 using MonoMac.Foundation;
 using MonoMac.AppKit;
 using MonoMac.ObjCRuntime;

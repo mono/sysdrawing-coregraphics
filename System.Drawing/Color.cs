@@ -36,8 +36,11 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace System.Drawing 
-{
+#if MONOMAC
+namespace System.DrawingNative {
+#else
+namespace System.Drawing {
+#endif
 	[Serializable]
 	public struct Color {
 		int value;

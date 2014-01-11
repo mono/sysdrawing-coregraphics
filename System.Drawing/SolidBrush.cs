@@ -4,17 +4,23 @@
 // Authors:
 //   Miguel de Icaza (miguel@xamarin.com)
 //
-// Copyright 2011-2013 Xamarin Inc
+// Copyright 2011 Xamarin Inc
 //
 using System;
-using System.Drawing.Drawing2D;
+
 #if MONOMAC
 using MonoMac.CoreGraphics;
+using System.DrawingNative.Drawing2D;
 #else
 using MonoTouch.CoreGraphics;
+using System.Drawing.Drawing2D;
 #endif
 
+#if MONOMAC
+namespace System.DrawingNative {
+#else
 namespace System.Drawing {
+#endif
 
 	public partial class SolidBrush : Brush {
 		Color color;

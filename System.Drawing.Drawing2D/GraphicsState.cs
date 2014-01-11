@@ -1,7 +1,11 @@
 using System;
-using System.Drawing;
 
-namespace System.Drawing.Drawing2D
+
+#if MONOMAC
+namespace System.DrawingNative.Drawing2D 
+#else
+namespace System.Drawing.Drawing2D 
+#endif
 {
 	public class GraphicsState {
 
@@ -12,7 +16,7 @@ namespace System.Drawing.Drawing2D
 		internal Brush lastBrush { get; set; }
 		internal Matrix model { get; set; }
 		internal Matrix view { get; set; }
-		internal PointF renderingOrigin { get; set; }
+		internal System.Drawing.PointF renderingOrigin { get; set; }
 		internal GraphicsUnit pageUnit {get;set;}
 		internal float pageScale { get; set; }
 		internal SmoothingMode smoothingMode { get; set; }

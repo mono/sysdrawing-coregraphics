@@ -1,6 +1,7 @@
 using System;
-using System.Drawing.Imaging;
 
+
+using PointF = System.Drawing.PointF;
 
 #if MONOMAC
 using MonoMac.CoreGraphics;
@@ -16,14 +17,22 @@ using MonoTouch.ImageIO;
 using MonoTouch.CoreImage;
 #endif
 
-namespace System.Drawing
-{
+#if MONOMAC
+using System.DrawingNative.Imaging;
+
+
+namespace System.DrawingNative {
+#else
+using System.Drawing.Imaging;
+namespace System.Drawing {
+#endif
+
 	public partial class Graphics {
 		public delegate bool DrawImageAbort (IntPtr callbackData);
 
 		private CIContext ciContext;
 
-		private void DrawImage(RectangleF rect, CGImage image, CGAffineTransform transform)
+		private void DrawImage(System.Drawing.RectangleF rect, CGImage image, CGAffineTransform transform)
 		{
 			var trans = transform;
 			// Do our translation on the image transform
@@ -34,12 +43,13 @@ namespace System.Drawing
 			rect.X = 0;
 
 			// Apply our transform to the context
+
 			context.ConcatCTM (trans);
 
 			// we are getting an error somewhere and not sure where
 			// I think the image bitmapBlock is being corrupted somewhere
 			try {
-				context.DrawImage(rect, image);
+				context.DrawImage (rect, image);
 			}
 			catch (Exception exc)
 			{
@@ -48,7 +58,7 @@ namespace System.Drawing
 
 			// Now we revert our image transform from the context 
 			var revert = CGAffineTransform.CGAffineTransformInvert (trans);
-			context.ConcatCTM (revert);
+			context.ConcatCTM(revert);
 		}
 
 
@@ -57,7 +67,7 @@ namespace System.Drawing
 		/// </summary>
 		/// <param name="image">Image.</param>
 		/// <param name="rect">Rect.</param>
-		public void DrawImage (Image image, RectangleF rect)
+		public void DrawImage (Image image, System.Drawing.RectangleF rect)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -71,7 +81,7 @@ namespace System.Drawing
 		/// </summary>
 		/// <param name="image">Image.</param>
 		/// <param name="point">Point.</param>
-		public void DrawImage (Image image, PointF point)
+		public void DrawImage (Image image, System.Drawing.PointF point)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -91,7 +101,7 @@ namespace System.Drawing
 		/// </summary>
 		/// <param name="image">Image.</param>
 		/// <param name="destPoints">Destination points.</param>
-		public void DrawImage (Image image, Point [] destPoints)
+		public void DrawImage (Image image, System.Drawing.Point [] destPoints)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -120,7 +130,7 @@ namespace System.Drawing
 		/// </summary>
 		/// <param name="image">Image.</param>
 		/// <param name="point">Point.</param>
-		public void DrawImage (Image image, Point point)
+		public void DrawImage (Image image, System.Drawing.Point point)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -134,11 +144,11 @@ namespace System.Drawing
 		/// </summary>
 		/// <param name="image">Image.</param>
 		/// <param name="rect">Rect.</param>
-		public void DrawImage (Image image, Rectangle rect)
+		public void DrawImage (Image image, System.Drawing.Rectangle rect)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
-			DrawImage (image, (RectangleF)rect);
+			DrawImage (image, (System.Drawing.RectangleF)rect);
 		}
 
 		/// <summary>
@@ -153,7 +163,7 @@ namespace System.Drawing
 		/// </summary>
 		/// <param name="image">Image.</param>
 		/// <param name="destPoints">Destination points.</param>
-		public void DrawImage (Image image, PointF [] destPoints)
+		public void DrawImage (Image image, System.Drawing.PointF [] destPoints)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -170,7 +180,7 @@ namespace System.Drawing
 				throw new NotImplementedException ();
 
 			// create our rectangle.  Offset is 0 because the CreateGeometricTransform bakes our x,y offset in there.
-			var rect = new RectangleF (0,0, destPoints [1].X - destPoints [0].X, destPoints [2].Y - destPoints [0].Y);
+			var rect = new System.Drawing.RectangleF (0,0, destPoints [1].X - destPoints [0].X, destPoints [2].Y - destPoints [0].Y);
 
 			// We need to flip our Y axis so the image appears right side up
 			var geoTransform = new CGAffineTransform (1, 0, 0, -1, 0, rect.Height);
@@ -206,7 +216,7 @@ namespace System.Drawing
 				height = ConversionHelpers.GraphicsUnitConversion (GraphicsUnit.Pixel, graphicsUnit, image.VerticalResolution, height);
 			}
 
-			DrawImage (image, new RectangleF(x,y,width,height));
+			DrawImage (image, new System.Drawing.RectangleF(x,y,width,height));
 		}
 
 		/// <summary>
@@ -225,7 +235,7 @@ namespace System.Drawing
 				width = ConversionHelpers.GraphicsUnitConversion (GraphicsUnit.Pixel, graphicsUnit, image.HorizontalResolution, width);
 				height = ConversionHelpers.GraphicsUnitConversion (GraphicsUnit.Pixel, graphicsUnit, image.VerticalResolution, height);
 			}
-			DrawImage (image, new RectangleF(x,y,width,height));
+			DrawImage (image, new System.Drawing.RectangleF(x,y,width,height));
 		}
 
 		/// <summary>
@@ -238,12 +248,12 @@ namespace System.Drawing
 		/// <param name="destRect">Destination rect.</param>
 		/// <param name="srcRect">Source rect.</param>
 		/// <param name="srcUnit">Source unit.</param>
-		public void DrawImage (Image image, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit)
+		public void DrawImage (Image image, System.Drawing.Rectangle destRect, System.Drawing.Rectangle srcRect, GraphicsUnit srcUnit)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
 
-			DrawImage (image, (RectangleF)destRect, (RectangleF)srcRect, srcUnit);
+			DrawImage (image, (System.Drawing.RectangleF)destRect, (System.Drawing.RectangleF)srcRect, srcUnit);
 
 		}
 
@@ -258,7 +268,7 @@ namespace System.Drawing
 		/// <param name="destRect">Destination rect.</param>
 		/// <param name="srcRect">Source rect.</param>
 		/// <param name="srcUnit">Source unit.</param>
-		public void DrawImage (Image image, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit)
+		public void DrawImage (Image image, System.Drawing.RectangleF destRect, System.Drawing.RectangleF srcRect, GraphicsUnit srcUnit)
 		{			
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -309,7 +319,7 @@ namespace System.Drawing
 		/// <param name="destPoints">Destination points.</param>
 		/// <param name="srcRect">Source rect.</param>
 		/// <param name="srcUnit">Source unit.</param>
-		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit)
+		public void DrawImage (Image image, System.Drawing.Point [] destPoints, System.Drawing.Rectangle srcRect, GraphicsUnit srcUnit)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -320,7 +330,7 @@ namespace System.Drawing
 			for (var p = 0; p < pointfs.Length; p++)
 				pointfs [p] = destPoints [p];
 
-			DrawImage (image, pointfs, (RectangleF)srcRect, srcUnit);
+			DrawImage (image, pointfs, (System.Drawing.RectangleF)srcRect, srcUnit);
 
 		}
 
@@ -338,7 +348,7 @@ namespace System.Drawing
 		/// <param name="destPoints">Destination points.</param>
 		/// <param name="srcRect">Source rect.</param>
 		/// <param name="srcUnit">Source unit.</param>
-		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit)
+		public void DrawImage (Image image, System.Drawing.PointF [] destPoints, System.Drawing.RectangleF srcRect, GraphicsUnit srcUnit)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -372,7 +382,7 @@ namespace System.Drawing
 				return;
 
 			// create our rectangle.  Offset is 0 because the CreateGeometricTransform bakes our x,y offset in there.
-			var rect = new RectangleF (0,0, destPoints [1].X - destPoints [0].X, destPoints [2].Y - destPoints [0].Y);
+			var rect = new System.Drawing.RectangleF (0,0, destPoints [1].X - destPoints [0].X, destPoints [2].Y - destPoints [0].Y);
 
 			// We need to flip our Y axis so the image appears right side up
 			var geoTransform = new CGAffineTransform (1, 0, 0, -1, 0, rect.Height);
@@ -399,7 +409,7 @@ namespace System.Drawing
 
 		}
 
-		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, 
+		public void DrawImage (Image image, System.Drawing.Point [] destPoints, System.Drawing.Rectangle srcRect, GraphicsUnit srcUnit, 
                                 ImageAttributes imageAttr)
 		{
 			if (image == null)
@@ -416,10 +426,10 @@ namespace System.Drawing
 		
 		public void DrawImage (Image image, float x, float y, float width, float height)
 		{
-			DrawImage (image, new RectangleF (x, y, width, height));
+			DrawImage (image, new System.Drawing.RectangleF (x, y, width, height));
 		}
 
-		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, 
+		public void DrawImage (Image image, System.Drawing.PointF [] destPoints, System.Drawing.RectangleF srcRect, GraphicsUnit srcUnit, 
                                 ImageAttributes imageAttr)
 		{
 			if (image == null)
@@ -442,7 +452,7 @@ namespace System.Drawing
 		/// <param name="y">The y coordinate.</param>
 		/// <param name="srcRect">Source rect.</param>
 		/// <param name="srcUnit">Source unit.</param>
-		public void DrawImage (Image image, int x, int y, Rectangle srcRect, GraphicsUnit srcUnit)
+		public void DrawImage (Image image, int x, int y, System.Drawing.Rectangle srcRect, GraphicsUnit srcUnit)
 		{			
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -456,7 +466,7 @@ namespace System.Drawing
 				height = ConversionHelpers.GraphicsUnitConversion (GraphicsUnit.Pixel, graphicsUnit, image.VerticalResolution, height);
 			}
 
-			DrawImage (image, new RectangleF (x, y, width, height), srcRect, srcUnit);
+			DrawImage (image, new System.Drawing.RectangleF (x, y, width, height), srcRect, srcUnit);
 		}
 
 		/// <summary>
@@ -472,7 +482,7 @@ namespace System.Drawing
 			if (image == null)
 				throw new ArgumentNullException ("image");
 
-			DrawImage(image, new RectangleF(x,y,width, height));
+			DrawImage(image, new System.Drawing.RectangleF(x,y,width, height));
 		}
 
 		/// <summary>
@@ -483,7 +493,7 @@ namespace System.Drawing
 		/// <param name="y">The y coordinate.</param>
 		/// <param name="srcRect">Source rect.</param>
 		/// <param name="srcUnit">Source unit.</param>
-		public void DrawImage (Image image, float x, float y, RectangleF srcRect, GraphicsUnit srcUnit)
+		public void DrawImage (Image image, float x, float y, System.Drawing.RectangleF srcRect, GraphicsUnit srcUnit)
 		{			
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -497,10 +507,10 @@ namespace System.Drawing
 				ConversionHelpers.GraphicsUnitConversion (srcUnit, graphicsUnit, image.VerticalResolution, image.HorizontalResolution, ref srcRect1);
 			}
 
-			DrawImage (image, new RectangleF (x, y, srcRect1.Width, srcRect1.Height), srcRect1, graphicsUnit);		
+			DrawImage (image, new System.Drawing.RectangleF (x, y, srcRect1.Width, srcRect1.Height), srcRect1, graphicsUnit);		
 		}
 
-		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
+		public void DrawImage (Image image, System.Drawing.PointF [] destPoints, System.Drawing.RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -514,7 +524,7 @@ namespace System.Drawing
 			//GDIPlus.CheckStatus (status);
 		}
 
-		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
+		public void DrawImage (Image image, System.Drawing.Point [] destPoints, System.Drawing.Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -529,7 +539,7 @@ namespace System.Drawing
 			//GDIPlus.CheckStatus (status);
 		}
 
-		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
+		public void DrawImage (Image image, System.Drawing.Point [] destPoints, System.Drawing.Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -558,15 +568,15 @@ namespace System.Drawing
 		/// <param name="srcWidth">Source width.</param>
 		/// <param name="srcHeight">Source height.</param>
 		/// <param name="srcUnit">Source unit.</param>
-		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit)
+		public void DrawImage (Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
 
-			DrawImage (image, (RectangleF)destRect, new RectangleF (srcX, srcY, srcWidth, srcHeight), srcUnit);
+			DrawImage (image, (System.Drawing.RectangleF)destRect, new System.Drawing.RectangleF (srcX, srcY, srcWidth, srcHeight), srcUnit);
 		}
 		
-		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
+		public void DrawImage (Image image, System.Drawing.PointF [] destPoints, System.Drawing.RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
 		{
 			//Status status = GDIPlus.GdipDrawImagePointsRect (nativeObject, image.NativeObject,
 			//	destPoints, destPoints.Length , srcRect.X, srcRect.Y,
@@ -590,20 +600,20 @@ namespace System.Drawing
 		/// <param name="srcWidth">Source width.</param>
 		/// <param name="srcHeight">Source height.</param>
 		/// <param name="srcUnit">Source unit.</param>
-		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit)
+		public void DrawImage (Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
 
-			DrawImage (image, destRect, new Rectangle (srcX, srcY, srcWidth, srcHeight), srcUnit);
+			DrawImage (image, destRect, new System.Drawing.Rectangle (srcX, srcY, srcWidth, srcHeight), srcUnit);
 		}
 
-		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs)
+		public void DrawImage (Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
 
-			var srcRect1 = new RectangleF(srcX, srcY,srcWidth,srcHeight);
+			var srcRect1 = new System.Drawing.RectangleF(srcX, srcY,srcWidth,srcHeight);
 
 			// If the source units are not the same we need to convert them
 			// The reason we check for Pixel here is that our graphics already has the Pixel's baked into the model view transform
@@ -682,7 +692,7 @@ namespace System.Drawing
 
 		}
 
-		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr)
+		public void DrawImage (Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr)
 		{			
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -690,7 +700,7 @@ namespace System.Drawing
 			DrawImage (image, destRect, (float)srcX, (float)srcY, (float)srcWidth, (float)srcHeight, srcUnit, imageAttr);
 		}
 		
-		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
+		public void DrawImage (Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -703,7 +713,7 @@ namespace System.Drawing
 			//GDIPlus.CheckStatus (status);
 		}
 		
-		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback)
+		public void DrawImage (Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -716,7 +726,7 @@ namespace System.Drawing
 			//GDIPlus.CheckStatus (status);
 		}
 
-		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback, IntPtr callbackData)
+		public void DrawImage (Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback, IntPtr callbackData)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -728,7 +738,7 @@ namespace System.Drawing
 			//GDIPlus.CheckStatus (status);
 		}
 
-		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback, IntPtr callbackData)
+		public void DrawImage (Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback, IntPtr callbackData)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
@@ -739,12 +749,12 @@ namespace System.Drawing
 			//	imageAttrs != null ? imageAttrs.NativeObject : IntPtr.Zero, callback, callbackData);
 			//GDIPlus.CheckStatus (status);
 		}		
-		public void DrawImageUnscaled (Image image, Point point)
+		public void DrawImageUnscaled (Image image, System.Drawing.Point point)
 		{
 			DrawImageUnscaled (image, point.X, point.Y);
 		}
 		
-		public void DrawImageUnscaled (Image image, Rectangle rect)
+		public void DrawImageUnscaled (Image image, System.Drawing.Rectangle rect)
 		{
 			DrawImageUnscaled (image, rect.X, rect.Y, rect.Width, rect.Height);
 		}
@@ -773,7 +783,7 @@ namespace System.Drawing
 			}
 		}
 
-		public void DrawImageUnscaledAndClipped (Image image, Rectangle rect)
+		public void DrawImageUnscaledAndClipped (Image image, System.Drawing.Rectangle rect)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");

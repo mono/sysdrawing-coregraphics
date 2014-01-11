@@ -1,15 +1,22 @@
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
+
+
 
 #if MONOMAC
 using MonoMac.CoreGraphics;
+using System.DrawingNative.Drawing2D;
+using System.DrawingNative;
 #else
 using MonoTouch.CoreGraphics;
+using System.Drawing.Drawing2D;
+using System.Drawing;
 #endif
 
-namespace System.Drawing
-{
+#if MONOMAC
+namespace System.DrawingNative {
+#else
+namespace System.Drawing {
+	#endif
 	internal static class ConversionHelpers
 	{
 
@@ -126,7 +133,7 @@ namespace System.Drawing
 			}
 		}
 
-		internal static void GraphicsUnitConversion (GraphicsUnit from, GraphicsUnit to, float dpiX, float dpiY, ref RectangleF srcRect)
+		internal static void GraphicsUnitConversion (GraphicsUnit from, GraphicsUnit to, float dpiX, float dpiY, ref System.Drawing.RectangleF srcRect)
 		{
 			srcRect.X = GraphicsUnitConversion (from, to, dpiX, srcRect.X);
 			srcRect.Y = GraphicsUnitConversion (from, to, dpiY, srcRect.Y);
@@ -209,15 +216,15 @@ namespace System.Drawing
 			return elements;
 		}
 
-		internal static PointF[] ToFloat (this Point[] points)
+		internal static System.Drawing.PointF[] ToFloat (this System.Drawing.Point[] points)
 		{
 			if (points == null)
 				throw new ArgumentNullException ("points");
 
-			var pointfs = new PointF[points.Length];
+			var pointfs = new System.Drawing.PointF[points.Length];
 			for (int p = 0; p < points.Length; p++) 
 			{
-				pointfs [p] = new PointF (points [p].X, points [p].Y);
+				pointfs [p] = new System.Drawing.PointF (points [p].X, points [p].Y);
 			}
 
 			return pointfs;

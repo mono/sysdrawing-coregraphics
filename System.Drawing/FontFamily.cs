@@ -10,7 +10,7 @@
 //
 // Copyright (C) 2002/2004 Ximian, Inc http://www.ximian.com
 // Copyright (C) 2004 - 2006 Novell, Inc (http://www.novell.com)
-// Copyright 2011-2013 Xamarin Inc.
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,10 +32,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Drawing.Text;
+//
 
-namespace System.Drawing 
-{
+
+	#if MONOMAC
+	using System.DrawingNative.Text;
+	namespace System.DrawingNative {
+	#else
+	using System.Drawing.Text;
+namespace System.Drawing {
+	#endif
 
 	public sealed partial class FontFamily : MarshalByRefObject, IDisposable 
 	{

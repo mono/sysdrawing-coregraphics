@@ -2,11 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Drawing.Drawing2D;
+using System.DrawingNative.Drawing2D;
 
 using MonoMac.Foundation;
 using MonoMac.AppKit;
-using System.Drawing;
+using System.DrawingNative;
+
+using Point = System.Drawing.Point;
+using Size = System.Drawing.Size;
+using Rectangle = System.Drawing.Rectangle;
+using SizeF = System.Drawing.SizeF;
+using PointF = System.Drawing.PointF;
+using RectangleF = System.Drawing.RectangleF;
 
 namespace Example1_7
 {

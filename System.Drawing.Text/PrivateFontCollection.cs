@@ -33,8 +33,13 @@ using System.IO;
 using System.Security.Permissions;
 using System.Runtime.InteropServices;
 
-namespace System.Drawing.Text 
-{
+#if MONOMAC
+using System.DrawingNative;
+namespace System.DrawingNative.Text {
+#else
+using System.Drawing;
+namespace System.Drawing.Text {
+#endif
 
 #if !NET_2_0
 	[ComVisible(false)]

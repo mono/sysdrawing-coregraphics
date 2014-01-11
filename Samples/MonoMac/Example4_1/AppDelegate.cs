@@ -1,8 +1,15 @@
 using System;
-using System.Drawing;
+using System.DrawingNative;
 using MonoMac.Foundation;
 using MonoMac.AppKit;
 using MonoMac.ObjCRuntime;
+
+using Point = System.Drawing.Point;
+using Size = System.Drawing.Size;
+using Rectangle = System.Drawing.Rectangle;
+using SizeF = System.Drawing.SizeF;
+using PointF = System.Drawing.PointF;
+using RectangleF = System.Drawing.RectangleF;
 
 namespace Example4_1
 {

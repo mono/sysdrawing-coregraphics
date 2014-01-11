@@ -1,14 +1,22 @@
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 
 #if MONOMAC
 using MonoMac.CoreGraphics;
+using System.DrawingNative;
+using System.DrawingNative.Drawing2D;
+
 #else
 using MonoTouch.CoreGraphics;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+
 #endif
 
+#if MONOMAC
+namespace System.DrawingNative 
+#else
 namespace System.Drawing
+#endif
 {
 	internal static class GeomUtilities
 	{
@@ -41,12 +49,12 @@ namespace System.Drawing
 		 * ending line are the ending color.
 		 * 
 		 */
-		internal static void ComputeOrientationLine (RectangleF rect, float angle, out PointF start, out PointF end)
+		internal static void ComputeOrientationLine (System.Drawing.RectangleF rect, float angle, out System.Drawing.PointF start, out System.Drawing.PointF end)
 		{
-			start = PointF.Empty;
-			end = PointF.Empty;
+			start = System.Drawing.PointF.Empty;
+			end = System.Drawing.PointF.Empty;
 			
-			SizeF tanSize = SizeF.Empty;
+			System.Drawing.SizeF tanSize = System.Drawing.SizeF.Empty;
 
 			// Clamp to 360 degrees
 			angle = angle % 360;
@@ -378,7 +386,7 @@ namespace System.Drawing
 		/// <returns>The affine transform.</returns>
 		/// <param name="rect">Rectangle.</param>
 		/// <param name="points">Points.</param>
-		internal static CGAffineTransform CreateGeometricTransform(RectangleF rect, PointF[] points)
+		internal static CGAffineTransform CreateGeometricTransform(System.Drawing.RectangleF rect, System.Drawing.PointF[] points)
 		{
 			var p0 = points [0];
 			var p1 = points [1];
@@ -407,7 +415,7 @@ namespace System.Drawing
 		/// <returns>The affine transform.</returns>
 		/// <param name="rect">Rectangle.</param>
 		/// <param name="points">Points.</param>
-		internal static CGAffineTransform CreateGeometricTransform(RectangleF rect, Point[] points)
+		internal static CGAffineTransform CreateGeometricTransform(System.Drawing.RectangleF rect, System.Drawing.Point[] points)
 		{
 			var p0 = points [0];
 			var p1 = points [1];
@@ -461,7 +469,7 @@ namespace System.Drawing
 		}
 
 
-		internal static void TransformRectangle (ref RectangleF rectangle, Matrix matrix)
+		internal static void TransformRectangle (ref System.Drawing.RectangleF rectangle, Matrix matrix)
 		{
 			var transform = matrix.transform;
 			var x = rectangle.X;
@@ -483,7 +491,7 @@ namespace System.Drawing
 		/// Transform the specified Rectangle by the matrix that is passed.
 		/// </summary>
 		/// <param name="matrix">Matrix.</param>
-		internal static RectangleF Transform (this RectangleF rectangle, Matrix matrix) 
+		internal static System.Drawing.RectangleF Transform (this System.Drawing.RectangleF rectangle, Matrix matrix) 
 		{
 			var transform = matrix.transform;
 			var x = rectangle.X;
@@ -498,13 +506,13 @@ namespace System.Drawing
 			rectangle.Width = transform.xx * x + transform.xy * y + transform.x0;
 			rectangle.Height = transform.yx * x + transform.yy * y + transform.y0;
 
-			return new RectangleF (rectangle.Location, rectangle.Size);;
+			return new System.Drawing.RectangleF (rectangle.Location, rectangle.Size);;
 		}
 
-		internal static PointF [] GetCurveTangents (int terms, PointF [] points, int count, float tension, CurveType type)
+		internal static System.Drawing.PointF [] GetCurveTangents (int terms, System.Drawing.PointF [] points, int count, float tension, CurveType type)
 		{
 			float coefficient = tension / 3f;
-			PointF [] tangents = new PointF [count];
+			System.Drawing.PointF [] tangents = new System.Drawing.PointF [count];
 
 			if (count <= 2)
 				return tangents;
@@ -546,10 +554,10 @@ namespace System.Drawing
 		//
 		// CP1 = QP0 + 2/3 *(QP1-QP0)
 		// CP2 = QP2 + 2/3 *(QP1-QP2)
-		internal static void QuadraticToCubic(PointF start, PointF controlPoint, PointF end, out PointF controlPoint1, out PointF controlPoint2)
+		internal static void QuadraticToCubic(System.Drawing.PointF start, System.Drawing.PointF controlPoint, System.Drawing.PointF end, out System.Drawing.PointF controlPoint1, out System.Drawing.PointF controlPoint2)
 		{
-			controlPoint1 = PointF.Empty;
-			controlPoint2 = PointF.Empty;
+			controlPoint1 = System.Drawing.PointF.Empty;
+			controlPoint2 = System.Drawing.PointF.Empty;
 
 			controlPoint1.X = start.X + (quadCubeCoeff * (controlPoint.X - start.X));
 			controlPoint2.X = end.X + (quadCubeCoeff * (controlPoint.X - end.X));
@@ -561,12 +569,12 @@ namespace System.Drawing
 
 		#region PathGradientBrush 
 		
-		internal static float DotProduct(PointF u, PointF v)
+		internal static float DotProduct(System.Drawing.PointF u, System.Drawing.PointF v)
 		{
 			return (u.X * v.X + u.Y * v.Y);  // + (u).z * (v).z)
 		}
 
-		internal static float Normal(Point v)
+		internal static float Normal(System.Drawing.Point v)
 		{
 			return (float)Math.Sqrt(DotProduct(v, v));  // normal = length of  vector
 		}
@@ -578,14 +586,14 @@ namespace System.Drawing
          * @param p2 second point used as vector
          * @return crossProduct of vectors
          */
-		internal static float CrossProduct(PointF v1, PointF v2)
+		internal static float CrossProduct(System.Drawing.PointF v1, System.Drawing.PointF v2)
 		{
 			return v1.X * v2.Y - v1.Y * v2.X;
 		}
 
 		// Basic bounding box implementation getting min X, min Y, max X and max Y
 		// from the array of PointF's only the first three will be used.
-		internal static RectangleF TriangleBoundingBox(PointF[] points)
+		internal static System.Drawing.RectangleF TriangleBoundingBox(System.Drawing.PointF[] points)
 		{
 
 			/* get the bounding box of the triangle */
@@ -594,7 +602,7 @@ namespace System.Drawing
 			int maxY = (int)Math.Max(points[0].Y, Math.Max(points[1].Y, points[2].Y));
 			int minY = (int)Math.Min(points[0].Y, Math.Min(points[1].Y, points[2].Y));
 
-			var bb = new RectangleF(minX, minY, maxX - minX, maxY - minY);
+			var bb = new System.Drawing.RectangleF(minX, minY, maxX - minX, maxY - minY);
 
 			return bb; 
 		}
@@ -602,7 +610,7 @@ namespace System.Drawing
 
 		// Basic bounding box implementation getting min X, min Y, max X and max Y
 		// from the array of PointF's
-		internal static RectangleF PolygonBoundingBox(PointF[] points)
+		internal static System.Drawing.RectangleF PolygonBoundingBox(System.Drawing.PointF[] points)
 		{
 
 			var minX = float.MaxValue;
@@ -621,7 +629,7 @@ namespace System.Drawing
 
 			}
 
-			var bb = new RectangleF(minX, minY, maxX - minX, maxY - minY);
+			var bb = new System.Drawing.RectangleF(minX, minY, maxX - minX, maxY - minY);
 
 			return bb;
 		}
@@ -631,9 +639,9 @@ namespace System.Drawing
 		// 
 		// NOTE: this algorithm doesn`t apply to complex polygons. If this is causing problems
 		// we may have to change this.  
-		internal static PointF PolygonCentroid(PointF[] points)
+		internal static System.Drawing.PointF PolygonCentroid(System.Drawing.PointF[] points)
 		{
-			var C = PointF.Empty;
+			var C = System.Drawing.PointF.Empty;
 			var area = 0f;
 
 			//var A6 = 6.0f * (float)PolygonArea(points);
@@ -689,7 +697,7 @@ namespace System.Drawing
 		// which increasing Y goes downward. 
 		// Positive - clockwise
 		// Negative - counterclockwise
-		internal static double PolygonArea (PointF[] points)
+		internal static double PolygonArea (System.Drawing.PointF[] points)
 		{
 			var first = points[0];
 			var last = points[points.Length -1];

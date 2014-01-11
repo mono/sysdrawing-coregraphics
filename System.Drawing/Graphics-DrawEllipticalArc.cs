@@ -1,18 +1,25 @@
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
+
+
 
 #if MONOMAC
 using MonoMac.CoreGraphics;
+using System.DrawingNative;
+using System.DrawingNative.Drawing2D;
 using MonoMac.AppKit;
 using MonoMac.Foundation;
 #else
 using MonoTouch.CoreGraphics;
 using MonoTouch.UIKit;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 #endif
 
-namespace System.Drawing
-{
+#if MONOMAC
+namespace System.DrawingNative {
+#else
+namespace System.Drawing {
+#endif
 
 	/**
 	 * There are two Elliptical Arc routines included here that are controlled by the
@@ -198,7 +205,7 @@ namespace System.Drawing
 		* @param isPieSlice if true, the lines between the center of the ellipse
 		* and the endpoints are part of the shape (it is pie slice like)
 		*/
-		public void DrawEllipticalArc(PointF center, double a, double b,
+		public void DrawEllipticalArc(System.Drawing.PointF center, double a, double b,
 		                     double theta, double lambda1, double lambda2,
 		                     bool isPieSlice)
 		{
@@ -206,7 +213,7 @@ namespace System.Drawing
 
 		}
 #endif		
-		internal void DrawEllipticalArc(Rectangle arcRect, double lambda1, double lambda2,
+		internal void DrawEllipticalArc(System.Drawing.Rectangle arcRect, double lambda1, double lambda2,
 		                     bool isPieSlice)
 		{
 #if MAISONABE
@@ -223,7 +230,7 @@ namespace System.Drawing
 #endif
 		}
 
-		internal void DrawEllipticalArc(RectangleF arcRect, double lambda1, double lambda2,
+		internal void DrawEllipticalArc(System.Drawing.RectangleF arcRect, double lambda1, double lambda2,
 		                              bool isPieSlice)
 		{
 #if MAISONABE
@@ -611,7 +618,7 @@ namespace System.Drawing
 			
 			if (Math.Abs(sweepAngle) >= 360)
 			{
-				graphics.AddEllipseInRect(new RectangleF(x,y,width,height));
+				graphics.AddEllipseInRect(new System.Drawing.RectangleF(x,y,width,height));
 				return;
 			}
 			

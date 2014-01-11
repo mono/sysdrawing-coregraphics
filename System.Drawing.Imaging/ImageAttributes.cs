@@ -1,8 +1,11 @@
-using System.Drawing.Drawing2D;
+
 using System.Runtime.InteropServices;
 
-namespace System.Drawing.Imaging 
-{
+#if MONOMAC
+namespace System.DrawingNative.Imaging {
+#else
+namespace System.Drawing.Imaging {
+	#endif
 
 	[StructLayout(LayoutKind.Sequential)]
 	public sealed class ImageAttributes : ICloneable, IDisposable 
@@ -96,7 +99,7 @@ namespace System.Drawing.Imaging
 		#region IDisposable implementation
 		public void Dispose ()
 		{
-			throw new NotImplementedException ();
+
 		}
 		#endregion
 	}

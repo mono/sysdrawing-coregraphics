@@ -1,4 +1,5 @@
 using System;
+using System.DrawingNative;
 
 #if MONOMAC
 using MonoMac.CoreGraphics;
@@ -12,12 +13,15 @@ using MonoTouch.Foundation;
 using MonoTouch.CoreText;
 #endif
 
-namespace System.Drawing
-{
+#if MONOMAC
+namespace System.DrawingNative {
+#else
+namespace System.Drawing {
+	#endif
 	public partial class Graphics 
 	{
 
-		public Region[] MeasureCharacterRanges (string text, Font font, RectangleF layoutRect, StringFormat stringFormat)
+		public Region[] MeasureCharacterRanges (string text, Font font, System.Drawing.RectangleF layoutRect, StringFormat stringFormat)
 		{
 			if ((text == null) || (text.Length == 0))
 				return new Region [0];
@@ -31,27 +35,27 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		public SizeF MeasureString (string text, Font font)
+		public System.Drawing.SizeF MeasureString (string text, Font font)
 		{
-			return MeasureString (text, font, SizeF.Empty);
+			return MeasureString (text, font, System.Drawing.SizeF.Empty);
 		}
 
-		public SizeF MeasureString (string textg, Font font, int width)
+		public System.Drawing.SizeF MeasureString (string textg, Font font, int width)
 		{
-			return MeasureString (textg, font, new RectangleF (0, 0, width, Int32.MaxValue));
+			return MeasureString (textg, font, new System.Drawing.RectangleF (0, 0, width, Int32.MaxValue));
 		}
 
-		public SizeF MeasureString (string textg, Font font, SizeF layoutArea)
+		public System.Drawing.SizeF MeasureString (string textg, Font font, System.Drawing.SizeF layoutArea)
 		{
-			return MeasureString (textg, font, new RectangleF (new PointF (0, 0), layoutArea));
+			return MeasureString (textg, font, new System.Drawing.RectangleF (new System.Drawing.PointF (0, 0), layoutArea));
 		}
 
-		public SizeF MeasureString (string text, Font font, PointF point, StringFormat stringFormat)
+		public System.Drawing.SizeF MeasureString (string text, Font font, System.Drawing.PointF point, StringFormat stringFormat)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public SizeF MeasureString (string textg, Font font, RectangleF rect)
+		public System.Drawing.SizeF MeasureString (string textg, Font font, System.Drawing.RectangleF rect)
 		{
 
 			// As per documentation 
@@ -86,29 +90,29 @@ namespace System.Drawing
 			float leading;
 			double lineWidth = line.GetTypographicBounds(out ascent, out descent, out leading);
 
-			var measure = new SizeF((float)lineWidth, ascent + descent);
+			var measure = new System.Drawing.SizeF((float)lineWidth, ascent + descent);
 
 			return measure;
 		}
 
-		public SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat)
+		public System.Drawing.SizeF MeasureString (string text, Font font, System.Drawing.SizeF layoutArea, StringFormat stringFormat)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public SizeF MeasureString (string text, Font font, int width, StringFormat format)
+		public System.Drawing.SizeF MeasureString (string text, Font font, int width, StringFormat format)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat, 
+		public System.Drawing.SizeF MeasureString (string text, Font font, System.Drawing.SizeF layoutArea, StringFormat stringFormat, 
 		                            out int charactersFitted, out int linesFilled)
 		{	
 			charactersFitted = 0;
 			linesFilled = 0;
 
 			if ((text == null) || (text.Length == 0))
-				return SizeF.Empty;
+				return System.Drawing.SizeF.Empty;
 
 			if (font == null)
 				throw new ArgumentNullException ("font");
@@ -118,17 +122,17 @@ namespace System.Drawing
 
 
 
-		public void DrawString (string s, Font font, Brush brush, PointF point, StringFormat format = null)
+		public void DrawString (string s, Font font, Brush brush, System.Drawing.PointF point, StringFormat format = null)
 		{
-			DrawString(s, font, brush, new RectangleF(point.X, point.Y, 0, 0), format);
+			DrawString(s, font, brush, new System.Drawing.RectangleF(point.X, point.Y, 0, 0), format);
 		}
 
 		public void DrawString (string s, Font font, Brush brush, float x, float y, StringFormat format = null)
 		{
-			DrawString (s, font, brush, new RectangleF(x, y, 0, 0), format);
+			DrawString (s, font, brush, new System.Drawing.RectangleF(x, y, 0, 0), format);
 		}
 
-		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format = null)
+		public void DrawString (string s, Font font, Brush brush, System.Drawing.RectangleF layoutRectangle, StringFormat format = null)
 		{
 			if (font == null)
 				throw new ArgumentNullException ("font");
@@ -183,15 +187,15 @@ namespace System.Drawing
 			var attributedString = buildAttributedString(s, font, format, lastBrushColor);
 
 			// Work out the geometry
-			RectangleF insetBounds = layoutRectangle;
-			if (insetBounds.Size == SizeF.Empty)
+			System.Drawing.RectangleF insetBounds = layoutRectangle;
+			if (insetBounds.Size   == System.Drawing.SizeF.Empty)
 			{
 				insetBounds.Width = boundingBox.Width;
 				insetBounds.Height = boundingBox.Height;
 				layoutAvailable = false;
 			}
 
-			PointF textPosition = new PointF(insetBounds.X,
+			System.Drawing.PointF textPosition = new System.Drawing.PointF(insetBounds.X,
 			                                 insetBounds.Y);
 
 			float boundsWidth = insetBounds.Width;

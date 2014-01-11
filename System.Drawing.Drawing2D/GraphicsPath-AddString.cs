@@ -4,7 +4,7 @@
 // Author:
 //   Kenneth J. Pouncey (kjpou@pt.lu)
 //
-// Copyright 2011-2013 Xamarin Inc.
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,7 +28,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.DrawingNative;
+using SizeF = System.Drawing.SizeF;
+using PointF = System.Drawing.PointF;
 
 #if MONOMAC
 using MonoMac.CoreGraphics;
@@ -42,45 +44,49 @@ using MonoTouch.Foundation;
 using MonoTouch.CoreText;
 #endif
 
+#if MONOMAC
+namespace System.DrawingNative.Drawing2D 
+#else
 namespace System.Drawing.Drawing2D 
+#endif
 {
 
 	public partial class GraphicsPath
 	{
 
-		public void AddString(string s,	FontFamily family,	int style, float emSize, Point origin, StringFormat format)
+		public void AddString(string s,	FontFamily family,	int style, float emSize, System.Drawing.Point origin, StringFormat format)
 		{
 			var font = new Font (family.Name, emSize, (FontStyle)style);
-			var layoutRect = RectangleF.Empty;
+			var layoutRect = System.Drawing.RectangleF.Empty;
 			layoutRect.Location = origin;
 			NativeDrawString (s, font, Color.Red, layoutRect, format);
 
 		}
 
-		public void AddString(string s,	FontFamily family,	int style, float emSize, PointF origin, StringFormat format)
+		public void AddString(string s,	FontFamily family,	int style, float emSize, System.Drawing.PointF origin, StringFormat format)
 		{
 			var font = new Font (family.Name, emSize, (FontStyle)style);
-			var layoutRect = RectangleF.Empty;
+			var layoutRect = System.Drawing.RectangleF.Empty;
 			layoutRect.Location = origin;
 			NativeDrawString (s, font, Color.Red, layoutRect, format);
 
 		}
 
-		public void AddString(string s,	FontFamily family,	int style, float emSize, Rectangle layoutRect, StringFormat format)
+		public void AddString(string s,	FontFamily family,	int style, float emSize, System.Drawing.Rectangle layoutRect, StringFormat format)
 		{
 			var font = new Font (family.Name, emSize, (FontStyle)style);
 			NativeDrawString (s, font, Color.Red, layoutRect, format);
 
 		}
 
-		public void AddString(string s,	FontFamily family,	int style, float emSize, RectangleF layoutRect, StringFormat format)
+		public void AddString(string s,	FontFamily family,	int style, float emSize, System.Drawing.RectangleF layoutRect, StringFormat format)
 		{
 			var font = new Font (family.Name, emSize, (FontStyle)style);
 			NativeDrawString (s, font, Color.Red, layoutRect, format);
 
 		}
 
-		internal void NativeDrawString (string s, Font font, Color brush, RectangleF layoutRectangle, StringFormat stringFormat)
+		internal void NativeDrawString (string s, Font font, Color brush, System.Drawing.RectangleF layoutRectangle, StringFormat stringFormat)
 		{
 			if (font == null)
 				throw new ArgumentNullException ("font");
@@ -91,12 +97,12 @@ namespace System.Drawing.Drawing2D
 			var attributedString = buildAttributedString(s, font, brush);
 
 			// Work out the geometry
-			RectangleF insetBounds = layoutRectangle;
+			System.Drawing.RectangleF insetBounds = layoutRectangle;
 			bool layoutAvailable = true;
 
-			if (insetBounds.Size == SizeF.Empty) 
+			if (insetBounds.Size   == SizeF.Empty) 
 			{
-				insetBounds.Size = new SizeF (8388608, 8388608);
+				insetBounds.Size   = new System.Drawing.SizeF  (8388608, 8388608);
 				layoutAvailable = false;
 			}
 

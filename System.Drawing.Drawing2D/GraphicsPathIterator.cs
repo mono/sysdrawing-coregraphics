@@ -4,7 +4,7 @@
 // Author:
 //   Kenneth J. Pouncey (kjpou@pt.lu)
 //
-// Copyright 2011-2013 Xamarin Inc.
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,11 +27,17 @@
 //
 
 using System;
-using System.Drawing;
+using System.DrawingNative;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace System.Drawing.Drawing2D
+using PointF = System.Drawing.PointF;
+
+#if MONOMAC
+namespace System.DrawingNative.Drawing2D 
+#else
+namespace System.Drawing.Drawing2D 
+#endif
 {
 	public sealed class GraphicsPathIterator : MarshalByRefObject, IDisposable
 	{
@@ -87,7 +93,7 @@ namespace System.Drawing.Drawing2D
 
 		// Public Methods.
 
-		public int CopyData (ref PointF [] points, ref byte [] types, int startIndex, int endIndex)
+		public int CopyData (ref System.Drawing.PointF [] points, ref byte [] types, int startIndex, int endIndex)
 		{
 
 			// no null checks, MS throws a NullReferenceException here
@@ -119,7 +125,7 @@ namespace System.Drawing.Drawing2D
 			Dispose (false);
 		}
 
-		public int Enumerate (ref PointF [] points, ref byte [] types)
+		public int Enumerate (ref System.Drawing.PointF [] points, ref byte [] types)
 		{
 			return CopyData (ref points, ref types, 0, Count - 1);
 		}
