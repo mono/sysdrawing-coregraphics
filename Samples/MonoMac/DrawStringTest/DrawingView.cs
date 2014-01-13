@@ -91,7 +91,7 @@ namespace DrawStringTest
 		Font clipFont = new Font(FontFamily.GenericSansSerif,12, FontStyle.Bold);
 
 
-		int currentView = 13;
+		int currentView = 0;
 		int totalViews = 20;
 
 		public override bool AcceptsFirstResponder ()

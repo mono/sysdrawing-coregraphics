@@ -32,7 +32,7 @@ namespace MTExample5_6
 		{
 			Graphics g = e.Graphics;
 			var borderPen = new Pen(Brushes.Black,1);
-			g.DrawRectangle(borderPen,panel1.Bounds);
+			g.DrawRectangle(borderPen,panel1.Bounds.X, panel1.Bounds.Y, panel1.Bounds.Width, panel1.Bounds.Height);
 			borderPen.Dispose();
 
 			g.SmoothingMode = SmoothingMode.AntiAlias;

@@ -86,7 +86,7 @@ namespace System.Drawing
 			float leading;
 			double lineWidth = line.GetTypographicBounds(out ascent, out descent, out leading);
 
-			var measure = new SizeF((float)lineWidth, ascent + descent);
+			var measure = new SizeF((float)lineWidth, ascent + descent + leading);
 
 			return measure;
 		}

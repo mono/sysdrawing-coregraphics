@@ -38,7 +38,7 @@ namespace MTTextureBrushTest
 			//textureBrush.WrapMode = WrapMode.TileFlipXY;
 			
 			g.FillRectangle(textureBrush, rect2);
-			g.DrawRectangle(blackPen, rect2);
+			g.DrawRectangle(blackPen, rect2.X, rect2.Y, rect2.Width, rect2.Height);
 			
 			var cocoaMonoTexture = new Bitmap(bitmap, texture.Size);
 			
@@ -51,7 +51,7 @@ namespace MTTextureBrushTest
 			textureBrush2.WrapMode = WrapMode.TileFlipXY;
 			
 			g.FillRectangle(textureBrush2, rectt);
-			g.DrawRectangle(bluePen, rectt);
+			g.DrawRectangle(bluePen, rectt.X, rectt.Y, rectt.Width, rectt.Height);
 
 			// Scale the large image down to 75 x 75 before tiling
 			TextureBrush tBrush = new TextureBrush(bitmap);

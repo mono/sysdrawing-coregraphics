@@ -52,7 +52,7 @@ namespace MTExample1_2
 			g.PageUnit = GraphicsUnit.Inch;
 			ClientRectangle = new RectangleF(0.5f,0.5f, 1.5f, 1.5f);
 			aPen.Width = 1 / g.DpiX;
-			g.DrawRectangle(aPen, ClientRectangle);
+			g.DrawRectangle(aPen, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
 			
 			aPen.Dispose();
 			
