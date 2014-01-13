@@ -4,7 +4,7 @@
 // Authors:
 //   Miguel de Icaza (miguel@xamarin.com)
 //
-// Copyright 2011 Xamarin Inc
+// Copyright 2011-2013 Xamarin Inc
 //
 using System;
 using System.Drawing.Drawing2D;

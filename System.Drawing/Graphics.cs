@@ -8,7 +8,7 @@
 //   Miguel de Icaza (miguel@xamarin.com)
 //   Kenneth J. Pouncey (kjpou@pt.lu)
 //
-// Copyright 2011 Xamarin Inc
+// Copyright 2011-2013 Xamarin Inc
 // Copyright 2003-2009 Novell, Inc.
 //
 using System;
