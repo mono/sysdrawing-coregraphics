@@ -502,15 +502,6 @@ namespace System.Drawing {
 			StrokePen (pen);
 		}
 		
-		public void DrawRectangle (Pen pen, RectangleF rect)
-		{
-			if (pen == null)
-				throw new ArgumentNullException ("pen");
-			RectanglePath (rect);
-			StrokePen (pen);
-
-		}
-
 		public void DrawRectangle (Pen pen, Rectangle rect)
 		{
 			if (pen == null)

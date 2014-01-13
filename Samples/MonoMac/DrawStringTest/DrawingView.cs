@@ -91,7 +91,7 @@ namespace DrawStringTest
 		Font clipFont = new Font(FontFamily.GenericSansSerif,12, FontStyle.Bold);
 
 
-		int currentView = 0;
+		int currentView = 13;
 		int totalViews = 20;
 
 		public override bool AcceptsFirstResponder ()
@@ -242,11 +242,11 @@ namespace DrawStringTest
 			SolidBrush drawBrush = new SolidBrush(Color.Black);
 
 			// Create point for upper-left corner of drawing.
-			PointF drawPoint = new PointF(150.0F, 150.0F);
+			Point drawPoint = new Point(150, 150);
 
 			var outline = g.MeasureString (drawString, drawFont);
 
-			g.DrawRectangle (Pens.Blue, new RectangleF (drawPoint, outline));
+			g.DrawRectangle (Pens.Blue, new Rectangle (drawPoint, new Size((int)outline.Width, (int)outline.Height)));
 
 			// Draw string to screen.
 			g.DrawString(drawString, drawFont, drawBrush, drawPoint);
@@ -347,12 +347,12 @@ namespace DrawStringTest
 			SolidBrush drawBrush = new SolidBrush(Color.Black);
 
 			// Create point for upper-left corner of drawing. 
-			float x = 150.0F;
-			float y = 150.0F;
+			var x = 150;
+			var y = 150;
 
 			var outline = g.MeasureString (drawString, drawFont);
 
-			g.DrawRectangle (Pens.Blue, new RectangleF (x,y, outline.Width, outline.Height));
+			g.DrawRectangle (Pens.Blue, new Rectangle (x,y, (int)outline.Width, (int)outline.Height));
 
 			// Draw string to screen.
 			g.DrawString(drawString, drawFont, drawBrush, x, y);
@@ -614,8 +614,8 @@ namespace DrawStringTest
 
 			// Set format of string.
 			StringFormat drawFormat = new StringFormat();
-			drawFormat.Alignment = StringAlignment.Near;
-			drawFormat.LineAlignment = StringAlignment.Far;
+			drawFormat.Alignment = StringAlignment.Far;
+			drawFormat.LineAlignment = StringAlignment.Center;
 			g.FillRectangle(Brushes.Red, new RectangleF(drawPoint.X - 1, drawPoint.Y - 1, 2, 2));
 
 			// Draw string to screen.
