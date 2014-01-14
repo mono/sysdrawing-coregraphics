@@ -317,10 +317,21 @@ namespace System.Drawing
 
 				if (format.LineAlignment == StringAlignment.Near)
 					textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y); 
-				if (format.LineAlignment == StringAlignment.Center)
-					textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y - ((insetBounds.Height / 2) - (baselineOffset / 2)) );
-				if (format.LineAlignment == StringAlignment.Far)
-					textMatrix.Translate(penFlushness + textPosition.X,  textPosition.Y + ((insetBounds.Height) - (baselineOffset)));
+				if (format.LineAlignment == StringAlignment.Center) 
+				{
+					if (layoutAvailable)
+						textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y + ((insetBounds.Height / 2) - (baselineOffset / 2)));
+					else
+						textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y - ((insetBounds.Height / 2) - (baselineOffset / 2)));
+				}
+
+				if (format.LineAlignment == StringAlignment.Far) 
+				{
+					if (layoutAvailable)
+						textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y + ((insetBounds.Height) - (baselineOffset)));
+					else
+						textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y - ((insetBounds.Height) - (baselineOffset)));
+				}
 
 				context.TextMatrix = textMatrix;
 
