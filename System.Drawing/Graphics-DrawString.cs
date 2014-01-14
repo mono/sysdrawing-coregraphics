@@ -77,16 +77,30 @@ namespace System.Drawing
 
 			var atts = buildAttributedString(textg, font);
 
-			// for now just a line not sure if this is going to work
-			CTLine line = new CTLine(atts);
-			var lineBounds = line.GetImageBounds(context);
-			// Create and initialize some values from the bounds.
-			float ascent;
-			float descent;
-			float leading;
-			double lineWidth = line.GetTypographicBounds(out ascent, out descent, out leading);
+			var measure = SizeF.Empty;
+			// Calculate the lines
+			int start = 0;
+			int length = atts.Length;
 
-			var measure = new SizeF((float)lineWidth, ascent + descent + leading);
+			var typesetter = new CTTypesetter(atts);
+
+			while (start < length) {
+				int count = typesetter.SuggestLineBreak (start, 8388608);
+				var line = typesetter.GetLine (new NSRange(start, count));
+
+				// Create and initialize some values from the bounds.
+				float ascent;
+				float descent;
+				float leading;
+				var lineWidth = line.GetTypographicBounds (out ascent, out descent, out leading);
+
+				measure.Height += (float)Math.Ceiling (ascent + descent + leading + 1); // +1 matches best to CTFramesetter's behavior  
+				if (lineWidth > measure.Width)
+					measure.Width = (float)lineWidth;
+
+				line.Dispose ();
+				start += count;
+			}
 
 			return measure;
 		}
@@ -189,6 +203,13 @@ namespace System.Drawing
 				insetBounds.Width = boundingBox.Width;
 				insetBounds.Height = boundingBox.Height;
 				layoutAvailable = false;
+
+				if (format.LineAlignment != StringAlignment.Near) 
+				{
+					insetBounds.Size = MeasureString (s, font);
+				}
+
+
 			}
 
 			PointF textPosition = new PointF(insetBounds.X,
@@ -297,7 +318,7 @@ namespace System.Drawing
 				if (format.LineAlignment == StringAlignment.Near)
 					textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y); 
 				if (format.LineAlignment == StringAlignment.Center)
-					textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y + ((insetBounds.Height / 2) - (baselineOffset / 2)) );
+					textMatrix.Translate (penFlushness + textPosition.X, textPosition.Y - ((insetBounds.Height / 2) - (baselineOffset / 2)) );
 				if (format.LineAlignment == StringAlignment.Far)
 					textMatrix.Translate(penFlushness + textPosition.X,  textPosition.Y + ((insetBounds.Height) - (baselineOffset)));
 
