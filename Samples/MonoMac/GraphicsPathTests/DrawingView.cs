@@ -2638,7 +2638,7 @@ namespace GraphicsPathTests
 			var sSize = g.MeasureString (s, font);
 			var location = new PointF (50,100);
 			var srcRect = new RectangleF (location, sSize);
-			g.DrawRectangle (Pens.Blue, srcRect);
+			g.DrawRectangle (Pens.Blue, srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height);
 			//Add the text string
 			myPath.AddString(s, ff, 0, emSize, srcRect.Location, StringFormat.GenericTypographic);
 
@@ -2685,7 +2685,7 @@ namespace GraphicsPathTests
 			var sSize = g.MeasureString (s, font);
 			var location = new PointF (50,100);
 			var srcRect = new RectangleF (location, sSize);
-			g.DrawRectangle (Pens.Blue, srcRect);
+			g.DrawRectangle (Pens.Blue, srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height);
 			//Add the text string
 			myPath.AddString(s, ff, 0, emSize, srcRect.Location, StringFormat.GenericTypographic);
 
