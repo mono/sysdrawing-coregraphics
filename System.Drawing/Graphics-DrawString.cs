@@ -241,7 +241,7 @@ namespace System.Drawing
 					start += count;
 				}
 
-				//textPosition.Y += baselineOffset;
+				start = 0;
 			}
 
 			// If we are drawing vertial direction then we need to rotate our context transform by 90 degrees
