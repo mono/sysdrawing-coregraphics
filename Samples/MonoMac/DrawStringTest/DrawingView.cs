@@ -91,7 +91,7 @@ namespace DrawStringTest
 		Font clipFont = new Font(FontFamily.GenericSansSerif,12, FontStyle.Bold);
 
 
-		int currentView = 0;
+		int currentView = 13;
 		int totalViews = 20;
 
 		public override bool AcceptsFirstResponder ()
@@ -195,6 +195,9 @@ namespace DrawStringTest
 				break;
 			case 13:
 				DrawStringPointFFormat3 (g);
+				break;
+			case 14:
+				DrawStringPointFFormat4 (g);
 				break;
 
 			}
@@ -560,7 +563,7 @@ namespace DrawStringTest
 			SolidBrush drawBrush = new SolidBrush(Color.Black);
 
 			// Create point for upper-left corner of drawing.
-			PointF drawPoint = new PointF(150.0F, 50.0F);
+			PointF drawPoint = new PointF(150.0F, 150.0F);
 
 			// Set format of string.
 			StringFormat drawFormat = new StringFormat();
@@ -585,7 +588,7 @@ namespace DrawStringTest
 			SolidBrush drawBrush = new SolidBrush(Color.Black);
 
 			// Create point for upper-left corner of drawing.
-			PointF drawPoint = new PointF(150.0F, 50.0F);
+			PointF drawPoint = new PointF(150.0F, 150.0F);
 
 			// Set format of string.
 			StringFormat drawFormat = new StringFormat();
@@ -610,7 +613,7 @@ namespace DrawStringTest
 			SolidBrush drawBrush = new SolidBrush(Color.Black);
 
 			// Create point for upper-left corner of drawing.
-			PointF drawPoint = new PointF(150.0F, 50.0F);
+			PointF drawPoint = new PointF(150.0F, 150.0F);
 
 			// Set format of string.
 			StringFormat drawFormat = new StringFormat();
@@ -624,6 +627,31 @@ namespace DrawStringTest
 			title = "DrawStringPointFFormat3";
 		}
 
+
+		public void DrawStringPointFFormat4(Graphics g)
+		{
+
+			// Create string to draw.
+			String drawString = "Sample\n Text";
+
+			// Create font and brush.
+			Font drawFont = new Font("Arial", 16);
+			SolidBrush drawBrush = new SolidBrush(Color.Black);
+
+			// Create point for upper-left corner of drawing.
+			PointF drawPoint = new PointF(150.0F, 150.0F);
+
+			// Set format of string.
+			StringFormat drawFormat = new StringFormat();
+			drawFormat.Alignment = StringAlignment.Far;
+			drawFormat.LineAlignment = StringAlignment.Far;
+			g.FillRectangle(Brushes.Red, new RectangleF(drawPoint.X - 1, drawPoint.Y - 1, 2, 2));
+
+			// Draw string to screen.
+			g.DrawString(drawString, drawFont, drawBrush, drawPoint, drawFormat);
+
+			title = "DrawStringPointFFormat4";
+		}
 
 
 
