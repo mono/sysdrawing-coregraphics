@@ -12,13 +12,13 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 
 #if MONOMAC
-using MonoMac.AppKit;
-using MonoMac.Foundation;
-using MonoMac.CoreGraphics;
+using AppKit;
+using Foundation;
+using CoreGraphics;
 #else
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using MonoTouch.CoreGraphics;
+using UIKit;
+using Foundation;
+using CoreGraphics;
 #endif
 
 namespace System.Drawing.Drawing2D 

@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Drawing.Drawing2D;
 
-using MonoMac.Foundation;
-using MonoMac.AppKit;
-using MonoMac.CoreGraphics;
-using MonoMac.CoreText;
+using Foundation;
+using AppKit;
+using CoreGraphics;
+using CoreText;
 using System.Drawing;
 
 namespace Example3_7

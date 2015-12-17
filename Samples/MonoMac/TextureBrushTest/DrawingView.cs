@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Drawing.Drawing2D;
 
-using MonoMac.Foundation;
-using MonoMac.AppKit;
+using Foundation;
+using AppKit;
 using System.Drawing;
 
 namespace TextureBrushTest

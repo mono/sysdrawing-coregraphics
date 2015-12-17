@@ -29,15 +29,15 @@ using System;
 using System.Drawing.Text;
 
 #if MONOMAC
-using MonoMac.AppKit;
-using MonoMac.Foundation;
-using MonoMac.CoreGraphics;
-using MonoMac.CoreText;
+using AppKit;
+using Foundation;
+using CoreGraphics;
+using CoreText;
 #else
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using MonoTouch.CoreGraphics;
-using MonoTouch.CoreText;
+using UIKit;
+using Foundation;
+using CoreGraphics;
+using CoreText;
 #endif
 
 namespace System.Drawing

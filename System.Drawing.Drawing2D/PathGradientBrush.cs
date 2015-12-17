@@ -11,13 +11,13 @@ using System.Drawing;
 using System.ComponentModel;
 
 #if MONOMAC
-using MonoMac.AppKit;
-using MonoMac.Foundation;
-using MonoMac.CoreGraphics;
+using AppKit;
+using Foundation;
+using CoreGraphics;
 #else
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using MonoTouch.CoreGraphics;
+using UIKit;
+using Foundation;
+using CoreGraphics;
 #endif
 
 

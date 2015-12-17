@@ -36,9 +36,9 @@
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 #if MONOMAC
-using MonoMac.CoreGraphics;
+using CoreGraphics;
 #else
-using MonoTouch.CoreGraphics;
+using CoreGraphics;
 #endif
 
 namespace System.Drawing.Drawing2D

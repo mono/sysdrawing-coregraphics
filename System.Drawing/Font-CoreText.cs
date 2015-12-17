@@ -28,11 +28,11 @@
 using System;
 
 #if MONOMAC
-using MonoMac.CoreGraphics;
-using MonoMac.CoreText;
+using CoreGraphics;
+using CoreText;
 #else
-using MonoTouch.CoreGraphics;
-using MonoTouch.CoreText;
+using CoreGraphics;
+using CoreText;
 #endif
 
 namespace System.Drawing

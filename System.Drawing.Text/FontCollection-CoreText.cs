@@ -29,9 +29,9 @@ using System;
 using System.Collections.Generic;
 
 #if MONOMAC
-using MonoMac.CoreText;
+using CoreText;
 #else
-using MonoTouch.CoreText;
+using CoreText;
 #endif
 
 namespace System.Drawing.Text 

@@ -8,9 +8,9 @@
 //
 using System;
 #if MONOMAC
-using MonoMac.CoreGraphics;
+using CoreGraphics;
 #else
-using MonoTouch.CoreGraphics;
+using CoreGraphics;
 #endif
 
 namespace System.Drawing {

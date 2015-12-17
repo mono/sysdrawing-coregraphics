@@ -17,15 +17,15 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 
 #if MONOMAC
-using MonoMac.CoreGraphics;
-using MonoMac.AppKit;
-using MonoMac.Foundation;
-using MonoMac.CoreText;
+using CoreGraphics;
+using AppKit;
+using Foundation;
+using CoreText;
 #else
-using MonoTouch.CoreGraphics;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using MonoTouch.CoreText;
+using CoreGraphics;
+using UIKit;
+using Foundation;
+using CoreText;
 #endif
 
 namespace System.Drawing {

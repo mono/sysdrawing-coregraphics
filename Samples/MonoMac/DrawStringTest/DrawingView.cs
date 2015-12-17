@@ -6,10 +6,10 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 
-using MonoMac.Foundation;
-using MonoMac.AppKit;
-using MonoMac.CoreGraphics;
-using MonoMac.CoreText;
+using Foundation;
+using AppKit;
+using CoreGraphics;
+using CoreText;
 
 namespace DrawStringTest
 {

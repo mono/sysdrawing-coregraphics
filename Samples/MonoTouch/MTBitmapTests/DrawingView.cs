@@ -2,8 +2,8 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
+using UIKit;
+using Foundation;
 
 namespace MTBitmapTests
 {

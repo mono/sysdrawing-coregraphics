@@ -3,17 +3,17 @@ using System.Drawing.Imaging;
 
 
 #if MONOMAC
-using MonoMac.CoreGraphics;
-using MonoMac.Foundation;
-using MonoMac.AppKit;
-using MonoMac.ImageIO;
-using MonoMac.CoreImage;
+using CoreGraphics;
+using Foundation;
+using AppKit;
+using ImageIO;
+using CoreImage;
 #else
-using MonoTouch.CoreGraphics;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using MonoTouch.ImageIO;
-using MonoTouch.CoreImage;
+using CoreGraphics;
+using UIKit;
+using Foundation;
+using ImageIO;
+using CoreImage;
 #endif
 
 namespace System.Drawing

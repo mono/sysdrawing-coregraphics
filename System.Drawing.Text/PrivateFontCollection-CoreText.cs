@@ -30,13 +30,13 @@ using System.Collections.Generic;
 using System.IO;
 
 #if MONOMAC
-using MonoMac.CoreText;
-using MonoMac.Foundation;
-using MonoMac.CoreGraphics;
+using CoreText;
+using Foundation;
+using CoreGraphics;
 #else
-using MonoTouch.CoreText;
-using MonoTouch.Foundation;
-using MonoTouch.CoreGraphics;
+using CoreText;
+using Foundation;
+using CoreGraphics;
 #endif
 
 namespace System.Drawing.Text

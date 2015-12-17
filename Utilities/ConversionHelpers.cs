@@ -3,9 +3,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 
 #if MONOMAC
-using MonoMac.CoreGraphics;
+using CoreGraphics;
 #else
-using MonoTouch.CoreGraphics;
+using CoreGraphics;
 #endif
 
 namespace System.Drawing

@@ -42,13 +42,13 @@ using System.IO;
 using System.Reflection;
 
 #if MONOMAC
-using MonoMac.CoreGraphics;
-using MonoMac.Foundation;
-using MonoMac.AppKit;
+using CoreGraphics;
+using Foundation;
+using AppKit;
 #else
-using MonoTouch.CoreGraphics;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
+using CoreGraphics;
+using UIKit;
+using Foundation;
 #endif
 
 namespace System.Drawing {

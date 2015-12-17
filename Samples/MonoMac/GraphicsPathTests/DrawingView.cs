@@ -7,9 +7,9 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 
-using MonoMac.Foundation;
-using MonoMac.AppKit;
-using MonoMac.CoreGraphics;
+using Foundation;
+using AppKit;
+using CoreGraphics;
 
 using Plasmoid.Extensions;
 

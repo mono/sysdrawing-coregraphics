@@ -43,16 +43,16 @@ using System.ComponentModel;
 using System.Collections.Generic;
 
 #if MONOMAC
-using MonoMac.CoreGraphics;
-using MonoMac.Foundation;
-using MonoMac.AppKit;
-using MonoMac.ImageIO;
+using CoreGraphics;
+using Foundation;
+using AppKit;
+using ImageIO;
 #else
-using MonoTouch.CoreGraphics;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using MonoTouch.ImageIO;
-using MonoTouch.MobileCoreServices;
+using CoreGraphics;
+using UIKit;
+using Foundation;
+using ImageIO;
+using MobileCoreServices;
 #endif
 
 namespace System.Drawing {

@@ -35,9 +35,9 @@ using System.Drawing.Drawing2D;
 using System.Collections.Generic;
 
 #if MONOMAC
-using MonoMac.CoreGraphics;
+using CoreGraphics;
 #else
-using MonoTouch.CoreGraphics;
+using CoreGraphics;
 #endif
 
 // Polygon Clipping Library

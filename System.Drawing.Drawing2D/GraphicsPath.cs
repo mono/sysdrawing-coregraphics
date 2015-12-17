@@ -37,9 +37,9 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Linq;
 #if MONOMAC
-using MonoMac.CoreGraphics;
+using CoreGraphics;
 #else
-using MonoTouch.CoreGraphics;
+using CoreGraphics;
 #endif
 using ClipperLib;
 

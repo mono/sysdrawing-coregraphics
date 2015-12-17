@@ -3,12 +3,12 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 
 #if MONOMAC
-using MonoMac.CoreGraphics;
-using MonoMac.AppKit;
-using MonoMac.Foundation;
+using CoreGraphics;
+using AppKit;
+using Foundation;
 #else
-using MonoTouch.CoreGraphics;
-using MonoTouch.UIKit;
+using CoreGraphics;
+using UIKit;
 #endif
 
 namespace System.Drawing
