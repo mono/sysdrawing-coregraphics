@@ -233,7 +233,7 @@ namespace System.Drawing.Drawing2D
 			if (hatchStyle == HatchStyle.DottedGrid)
 			{
 				yoffset = 1;
-				float[] dash = new float[] { 1, 1};
+				nfloat[] dash = new nfloat[] { 1, 1};
 				context.SetLineDash(2,dash);
 
 			}
@@ -1350,7 +1350,7 @@ namespace System.Drawing.Drawing2D
 			                            CGPatternTiling.NoDistortion,
 			                        true, drawPattern);
 			//we dont need to set any color, as the pattern cell itself has chosen its own color
-			graphics.context.SetFillPattern(pattern, new float[] { 1 });
+			graphics.context.SetFillPattern(pattern, new nfloat[] { 1 });
 
 
 			graphics.LastBrush = this;

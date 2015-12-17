@@ -80,18 +80,18 @@ namespace System.Drawing
 			var measure = SizeF.Empty;
 			// Calculate the lines
 			int start = 0;
-			int length = atts.Length;
+			int length = (int)atts.Length;
 
 			var typesetter = new CTTypesetter(atts);
 
 			while (start < length) {
-				int count = typesetter.SuggestLineBreak (start, 8388608);
+				int count = (int)typesetter.SuggestLineBreak (start, 8388608);
 				var line = typesetter.GetLine (new NSRange(start, count));
 
 				// Create and initialize some values from the bounds.
-				float ascent;
-				float descent;
-				float leading;
+				nfloat ascent;
+				nfloat descent;
+				nfloat leading;
 				var lineWidth = line.GetTypographicBounds (out ascent, out descent, out leading);
 
 				measure.Height += (float)Math.Ceiling (ascent + descent + leading + 1); // +1 matches best to CTFramesetter's behavior  
@@ -219,7 +219,7 @@ namespace System.Drawing
 
 			// Calculate the lines
 			int start = 0;
-			int length = attributedString.Length;
+			int length = (int)attributedString.Length;
 			float baselineOffset = 0;
 
 			var typesetter = new CTTypesetter(attributedString);
@@ -228,13 +228,13 @@ namespace System.Drawing
 			// are using anything but Top
 			if (layoutAvailable && format.LineAlignment != StringAlignment.Near) {
 				while (start < length) {
-					int count = typesetter.SuggestLineBreak (start, boundsWidth);
+					int count = (int)typesetter.SuggestLineBreak (start, boundsWidth);
 					var line = typesetter.GetLine (new NSRange(start, count));
 
 					// Create and initialize some values from the bounds.
-					float ascent;
-					float descent;
-					float leading;
+					nfloat ascent;
+					nfloat descent;
+					nfloat leading;
 					line.GetTypographicBounds (out ascent, out descent, out leading);
 					baselineOffset += (float)Math.Ceiling (ascent + descent + leading + 1); // +1 matches best to CTFramesetter's behavior  
 					line.Dispose ();
@@ -250,13 +250,13 @@ namespace System.Drawing
 				//textMatrix.Rotate (ConversionHelpers.DegreesToRadians (90));
 				var verticalOffset = 0.0f;
 				while (start < length) {
-					int count = typesetter.SuggestLineBreak (start, boundsWidth);
+					int count = (int)typesetter.SuggestLineBreak (start, boundsWidth);
 					var line = typesetter.GetLine (new NSRange(start, count));
 
 					// Create and initialize some values from the bounds.
-					float ascent;
-					float descent;
-					float leading;
+					nfloat ascent;
+					nfloat descent;
+					nfloat leading;
 					line.GetTypographicBounds (out ascent, out descent, out leading);
 					verticalOffset += (float)Math.Ceiling (ascent + descent + leading + 1); // +1 matches best to CTFramesetter's behavior  
 					line.Dispose ();
@@ -276,13 +276,13 @@ namespace System.Drawing
 				// Now we ask the typesetter to break off a line for us.
 				// This also will take into account line feeds embedded in the text.
 				//  Example: "This is text \n with a line feed embedded inside it"
-				int count = typesetter.SuggestLineBreak(start, boundsWidth);
+				int count = (int)typesetter.SuggestLineBreak(start, boundsWidth);
 				var line = typesetter.GetLine(new NSRange(start, count));
 
 				// Create and initialize some values from the bounds.
-				float ascent;
-				float descent;
-				float leading;
+				nfloat ascent;
+				nfloat descent;
+				nfloat leading;
 				double lineWidth = line.GetTypographicBounds(out ascent, out descent, out leading);
 
 				// Calculate the string format if need be
@@ -392,8 +392,8 @@ namespace System.Drawing
 			if (font.Underline) {
 				// Underline
 #if MONOMAC
-				int single = (int)MonoMac.AppKit.NSUnderlineStyle.Single;
-				int solid = (int)MonoMac.AppKit.NSUnderlinePattern.Solid;
+				int single = (int)AppKit.NSUnderlineStyle.Single;
+				int solid = (int)AppKit.NSUnderlinePattern.Solid;
 				var attss = single | solid;
 				ctAttributes.UnderlineStyleValue = attss;
 #else
@@ -406,8 +406,8 @@ namespace System.Drawing
 			if (font.Strikeout) {
 				// StrikeThrough
 #if MONOMAC
-				int single = (int)MonoMac.AppKit.NSUnderlineStyle.Single;
-				int solid = (int)MonoMac.AppKit.NSUnderlinePattern.Solid;
+				int single = (int)AppKit.NSUnderlineStyle.Single;
+				int solid = (int)AppKit.NSUnderlinePattern.Solid;
 				var attss = single | solid;
 				ctAttributes.UnderlineStyleValue = attss;
 #else

@@ -271,14 +271,14 @@ namespace System.Drawing {
 			alphaInfo = image.AlphaInfo;
 			hasAlpha = ((alphaInfo == CGImageAlphaInfo.PremultipliedLast) || (alphaInfo == CGImageAlphaInfo.PremultipliedFirst) || (alphaInfo == CGImageAlphaInfo.Last) || (alphaInfo == CGImageAlphaInfo.First) ? true : false);
 
-			imageSize.Width = image.Width;
-			imageSize.Height = image.Height;
+			imageSize.Width = (int)image.Width;
+			imageSize.Height = (int)image.Height;
 
 			// Not sure yet if we need to keep the original image information
 			// before we change it internally.  TODO look at what windows does
 			// and follow that.
-			bitsPerComponent = image.BitsPerComponent;
-			bitsPerPixel = image.BitsPerPixel;
+			bitsPerComponent = (int)image.BitsPerComponent;
+			bitsPerPixel = (int)image.BitsPerPixel;
 
 			colorSpace = image.ColorSpace;
 
@@ -337,7 +337,7 @@ namespace System.Drawing {
 		{
 			var imageSource = CGImageSource.FromDataProvider (dataProvider);
 
-			frameCount = imageSource.ImageCount;
+			frameCount = (int)imageSource.ImageCount;
 
 			var properties = imageSource.GetProperties (frame, null);
 
@@ -427,18 +427,18 @@ namespace System.Drawing {
 			alphaInfo = image.AlphaInfo;
 			hasAlpha = ((alphaInfo == CGImageAlphaInfo.PremultipliedLast) || (alphaInfo == CGImageAlphaInfo.PremultipliedFirst) || (alphaInfo == CGImageAlphaInfo.Last) || (alphaInfo == CGImageAlphaInfo.First) ? true : false);
 			
-			imageSize.Width = image.Width;
-			imageSize.Height = image.Height;
+			imageSize.Width = (int)image.Width;
+			imageSize.Height = (int)image.Height;
 			
-			width = image.Width;
-			height = image.Height;
+			width = (int)image.Width;
+			height = (int)image.Height;
 
 			// Not sure yet if we need to keep the original image information
 			// before we change it internally.  TODO look at what windows does
 			// and follow that.
 			bitmapInfo = image.BitmapInfo;
-			bitsPerComponent = image.BitsPerComponent;
-			bitsPerPixel = image.BitsPerPixel;
+			bitsPerComponent = (int)image.BitsPerComponent;
+			bitsPerPixel = (int)image.BitsPerPixel;
 			bytesPerRow = width * bitsPerPixel/bitsPerComponent;
 			int size = bytesPerRow * height;
 			
@@ -515,16 +515,16 @@ namespace System.Drawing {
 				return cachedContext;
 
 			var format = GetBestSupportedFormat (pixelFormat);
-			var bitmapContext = CreateCompatibleBitmapContext (NativeCGImage.Width, NativeCGImage.Height, format);
+			var bitmapContext = CreateCompatibleBitmapContext ((int)NativeCGImage.Width, (int)NativeCGImage.Height, format);
 
 			bitmapContext.DrawImage (new RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
 
-			int size = bitmapContext.BytesPerRow * bitmapContext.Height;
+			int size = (int)(bitmapContext.BytesPerRow * bitmapContext.Height);
 			var provider = new CGDataProvider (bitmapContext.Data, size, true);
 
 			CGColorSpace colorSpace = CGColorSpace.CreateDeviceRGB();
-			NativeCGImage = new CGImage (bitmapContext.Width, bitmapContext.Height, bitmapContext.BitsPerComponent, 
-			                             bitmapContext.BitsPerPixel, bitmapContext.BytesPerRow, 
+			NativeCGImage = new CGImage ((int)bitmapContext.Width, (int)bitmapContext.Height, (int)bitmapContext.BitsPerComponent, 
+			                             (int)bitmapContext.BitsPerPixel, (int)bitmapContext.BytesPerRow, 
 			                             colorSpace,
 			                             bitmapContext.AlphaInfo,
 			                             provider, null, true, CGColorRenderingIntent.Default);
@@ -540,8 +540,8 @@ namespace System.Drawing {
 			CGAffineTransform rotateFlip = CGAffineTransform.MakeIdentity();
 
 			int width, height;
-			width = NativeCGImage.Width;
-			height = NativeCGImage.Height;
+			width = (int)NativeCGImage.Width;
+			height = (int)NativeCGImage.Height;
 
 			switch (rotateFlipType) 
 			{
@@ -586,7 +586,7 @@ namespace System.Drawing {
 
 			bitmapContext.DrawImage (new RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
 
-			int size = bitmapContext.BytesPerRow * bitmapContext.Height;
+			int size = (int)(bitmapContext.BytesPerRow * bitmapContext.Height);
 			var provider = new CGDataProvider (bitmapContext.Data, size, true);
 
 			// If the width or height is not the seme we need to switch the dpiHeight and dpiWidth
@@ -598,8 +598,8 @@ namespace System.Drawing {
 				dpiWidth = temp;
 			}
 
-			NativeCGImage = new CGImage (bitmapContext.Width, bitmapContext.Height, bitmapContext.BitsPerComponent, 
-			                             bitmapContext.BitsPerPixel, bitmapContext.BytesPerRow, 
+			NativeCGImage = new CGImage ((int)bitmapContext.Width, (int)bitmapContext.Height, (int)bitmapContext.BitsPerComponent, 
+			                             (int)bitmapContext.BitsPerPixel, (int)bitmapContext.BytesPerRow, 
 			                             bitmapContext.ColorSpace,
 			                             bitmapContext.AlphaInfo,
 			                             provider, null, true, CGColorRenderingIntent.Default);
@@ -1050,24 +1050,24 @@ namespace System.Drawing {
 			rawFormat = ImageFormat.MemoryBmp;
 
 			//format = GetBestSupportedFormat (pixelFormat);
-			cachedContext = CreateCompatibleBitmapContext (NativeCGImage.Width, NativeCGImage.Height, pixelFormat);
+			cachedContext = CreateCompatibleBitmapContext ((int)NativeCGImage.Width, (int)NativeCGImage.Height, pixelFormat);
 
 			// Fill our pixel data with the actual image information
-			cachedContext.DrawImage (new RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
+			cachedContext.DrawImage (new RectangleF (0, 0, (int)NativeCGImage.Width, (int)NativeCGImage.Height), NativeCGImage);
 
 			// Dispose of the prevous image that is allocated.
 			NativeCGImage.Dispose ();
 
 			// Get a reference to the pixel data
 			bitmapBlock = cachedContext.Data;
-			int size = cachedContext.BytesPerRow * cachedContext.Height;
+			int size = (int)(cachedContext.BytesPerRow * cachedContext.Height);
 			var provider = new CGDataProvider (cachedContext.Data, size, true);
 
 			// Get the image from the bitmap context.
 			//NativeCGImage = bitmapContext.ToImage ();
 			CGColorSpace colorSpace = CGColorSpace.CreateDeviceRGB();
-			NativeCGImage = new CGImage (cachedContext.Width, cachedContext.Height, cachedContext.BitsPerComponent, 
-			                             cachedContext.BitsPerPixel, cachedContext.BytesPerRow, 
+			NativeCGImage = new CGImage ((int)cachedContext.Width, (int)cachedContext.Height, (int)cachedContext.BitsPerComponent, 
+			                             (int)cachedContext.BitsPerPixel, (int)cachedContext.BytesPerRow, 
 			                             colorSpace,
 			                             cachedContext.AlphaInfo,
 			                             provider, null, true, CGColorRenderingIntent.Default);
@@ -1123,10 +1123,10 @@ namespace System.Drawing {
 			// * NOTE * we only support one image for right now.
 
 			// Create an image destination that saves into the path that is passed in
-			CGImageDestination dest = CGImageDestination.FromUrl (url, typeIdentifier, frameCount, null); 
+			CGImageDestination dest = CGImageDestination.Create (url, typeIdentifier, frameCount); 
 
 			// Add an image to the destination
-			dest.AddImage(NativeCGImage, null);
+			dest.AddImage(NativeCGImage, (NSDictionary)null);
 
 			// Finish the export
 			bool success = dest.Close ();
@@ -1165,7 +1165,7 @@ namespace System.Drawing {
 				ConversionHelpers.CalculateTables ();
 
 			// Calculate our strides
-			int srcStride = (int)rect.Width * (NativeCGImage.BitsPerPixel / NativeCGImage.BitsPerComponent);
+			int srcStride = (int)((int)rect.Width * (NativeCGImage.BitsPerPixel / NativeCGImage.BitsPerComponent));
 
 			int numOfComponents = GetPixelFormatComponents(pixelFormat);
 			int stride = (int)rect.Width * numOfComponents;

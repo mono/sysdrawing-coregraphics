@@ -107,9 +107,9 @@ namespace System.Drawing
 			// Documentation for Accessing Font Metrics
 			// http://developer.apple.com/library/ios/#documentation/StringsTextFonts/Conceptual/CoreText_Programming/Operations/Operations.html
 			float lineHeight = 0;
-			lineHeight += nativeFont.AscentMetric;
-			lineHeight += nativeFont.DescentMetric;
-			lineHeight += nativeFont.LeadingMetric;
+			lineHeight += (float)nativeFont.AscentMetric;
+			lineHeight += (float)nativeFont.DescentMetric;
+			lineHeight += (float)nativeFont.LeadingMetric;
 
 
 			// Still have not figured this out yet!!!!

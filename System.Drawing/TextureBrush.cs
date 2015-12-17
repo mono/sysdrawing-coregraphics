@@ -310,7 +310,7 @@ namespace System.Drawing
 			                            CGPatternTiling.NoDistortion,
 			                            true, drawPattern);
 			//we dont need to set any color, as the pattern cell itself has chosen its own color
-			graphics.context.SetFillPattern(pattern, new float[] { 1 });
+			graphics.context.SetFillPattern(pattern, new nfloat[] { 1 });
 			
 			changed = false;
 

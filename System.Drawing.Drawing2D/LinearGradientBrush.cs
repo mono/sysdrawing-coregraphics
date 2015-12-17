@@ -361,7 +361,7 @@ namespace System.Drawing.Drawing2D
 
 		float[] positions;
 		float[] factors;
-		unsafe public void GradientLerp (float *data, float *outData) 
+		unsafe public void GradientLerp (nfloat *data, nfloat *outData) 
 		{
 			float lerpDist = *(float*)data;
 		
@@ -587,7 +587,7 @@ namespace System.Drawing.Drawing2D
 				setupShadingColors();
 			}
 
-			SizeF gradientRegion = context.GetClipBoundingBox().Size;
+			SizeF gradientRegion = (SizeF)context.GetClipBoundingBox().Size;
 //			SizeF gradientRegionPath = context.GetPathBoundingBox().Size;
 			PointF sp = startPoint;
 			PointF ep = endPoint;
@@ -714,13 +714,13 @@ namespace System.Drawing.Drawing2D
 			// set the input range for the function -- the function knows how to
 			// map values outside of 0.0 .. 1.0 to that range for the type of wrap mode.
 			// See the CGFunctionEvaluate funtion for the mapping of values.
-			float[] validDomain = { 0, 1 };
+			nfloat[] validDomain = { 0, 1 };
 			validDomain[0] = 0.0f - 1.0f * rep_start;
 			validDomain[1] = 1.0f + 1.0f * rep_end;
 			
 			//Console.WriteLine("start point [0] : {0} end point [1] : {1}", start, end);
 		
-			float[] validRange = new float[8] 
+			nfloat[] validRange = new nfloat[8] 
 			{ 0, 1.0f, 0, 1.0f, 0, 1.0f, 0, 1.0f };  // R, G, B, A
 			
 			CGFunction.CGFunctionEvaluate eval;

@@ -107,7 +107,7 @@ namespace System.Drawing.Drawing2D
 
 			// Calculate the lines
 			int start = 0;
-			int length = attributedString.Length;
+			int length = (int)attributedString.Length;
 
 			var typesetter = new CTTypesetter(attributedString);
 
@@ -117,13 +117,13 @@ namespace System.Drawing.Drawing2D
 			// are using anything but Top
 			if (layoutAvailable && stringFormat.LineAlignment != StringAlignment.Near) {
 				while (start < length) {
-					int count = typesetter.SuggestLineBreak (start, boundsWidth);
+					int count = (int)typesetter.SuggestLineBreak (start, boundsWidth);
 					var line = typesetter.GetLine (new NSRange(start, count));
 
 					// Create and initialize some values from the bounds.
-					float ascent;
-					float descent;
-					float leading;
+					nfloat ascent;
+					nfloat descent;
+					nfloat leading;
 					line.GetTypographicBounds (out ascent, out descent, out leading);
 					baselineOffset += (float)Math.Ceiling (ascent + descent + leading + 1); // +1 matches best to CTFramesetter's behavior  
 					line.Dispose ();
@@ -139,19 +139,19 @@ namespace System.Drawing.Drawing2D
 				// Now we ask the typesetter to break off a line for us.
 				// This also will take into account line feeds embedded in the text.
 				//  Example: "This is text \n with a line feed embedded inside it"
-				int count = typesetter.SuggestLineBreak(start, boundsWidth);
+				int count = (int)typesetter.SuggestLineBreak(start, boundsWidth);
 				var line = typesetter.GetLine(new NSRange(start, count));
 
 				// Create and initialize some values from the bounds.
-				float ascent;
-				float descent;
-				float leading;
+				nfloat ascent;
+				nfloat descent;
+				nfloat leading;
 				double lineWidth = line.GetTypographicBounds(out ascent, out descent, out leading);
 
 				if (!layoutAvailable)
 				{
 					insetBounds.Width = (float)lineWidth;
-					insetBounds.Height = ascent + descent + leading;
+					insetBounds.Height = (float)(ascent + descent + leading);
 				}
 
 				// Calculate the string format if need be
@@ -188,7 +188,7 @@ namespace System.Drawing.Drawing2D
 					float glyphDescent;
 					float glyphLeading;
 
-					var elementPoints = new PointF[3];
+					var elementPoints = new PointF [3];
 
 					for (int glyphIndex = 0; glyphIndex < glyphs.Length; glyphIndex++) 
 					{
@@ -206,9 +206,9 @@ namespace System.Drawing.Drawing2D
 							glyphPath.Apply (
 								delegate (CGPathElement pathElement) {
 
-										elementPoints[0] = textMatrix.TransformPoint(pathElement.Point1);
-										elementPoints[1] = textMatrix.TransformPoint(pathElement.Point2);
-								        elementPoints[2] = textMatrix.TransformPoint(pathElement.Point3);
+									elementPoints[0] = (PointF)textMatrix.TransformPoint(pathElement.Point1);
+									elementPoints[1] = (PointF)textMatrix.TransformPoint(pathElement.Point2);
+								        elementPoints[2] = (PointF)textMatrix.TransformPoint(pathElement.Point3);
 								//Console.WriteLine ("Applying {0} - {1}, {2}, {3}", pathElement.Type, elementPoints[0], elementPoints[1], elementPoints[2]);
 										
 										
@@ -289,8 +289,8 @@ namespace System.Drawing.Drawing2D
 			if (font.Underline) {
 				// Underline
 #if MONOMAC
-				int single = (int)MonoMac.AppKit.NSUnderlineStyle.Single;
-				int solid = (int)MonoMac.AppKit.NSUnderlinePattern.Solid;
+				int single = (int)AppKit.NSUnderlineStyle.Single;
+				int solid = (int)AppKit.NSUnderlinePattern.Solid;
 				var attss = single | solid;
 				ctAttributes.UnderlineStyleValue = attss;
 #else

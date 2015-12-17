@@ -192,7 +192,7 @@ namespace System.Drawing
 			var flatPath = PointFArrayToIntArray (clonePath.PathPoints, scale);
 			solution.Add (flatPath);
 			regionList.Add (new RegionEntry (RegionType.Path, clonePath, flatPath));
-			regionBounds = regionPath.BoundingBox;
+			regionBounds = (RectangleF)regionPath.BoundingBox;
 		}
 
 		internal static Path PointFArrayToIntArray(PointF[] points, float scale)
@@ -336,7 +336,7 @@ namespace System.Drawing
 			regionPath.AddLineToPoint (infinite.Right, infinite.Bottom);
 			regionPath.AddLineToPoint (infinite.Left, infinite.Bottom);
 
-			regionBounds = regionPath.BoundingBox;
+			regionBounds = (RectangleF)regionPath.BoundingBox;
 		}
 
 		public void MakeEmpty() 
@@ -512,7 +512,7 @@ namespace System.Drawing
 				if (regionPath.IsEmpty)
 					regionBounds = RectangleF.Empty;
 				else
-					regionBounds = regionPath.BoundingBox;
+					regionBounds = (RectangleF)regionPath.BoundingBox;
 
 			}
 

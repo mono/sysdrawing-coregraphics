@@ -149,14 +149,14 @@ namespace System.Drawing {
 
 			ResetTransform();
 
-			boundingBox = context.GetClipBoundingBox();
+			boundingBox = (RectangleF)context.GetClipBoundingBox();
 
 			// We are going to try this here and it may cause problems down the road.
 			// This seems to only happen with Mac and not iOS
 			// What is happening is that sub views are offset by their relative location
 			// within the window.  That means our drawing locations are also offset by this 
 			// value as well.  So what we need to do is translate our view by this offset as well.
-			subviewClipOffset = context.GetClipBoundingBox();
+			subviewClipOffset = (RectangleF)context.GetClipBoundingBox();
 
 			PageUnit = GraphicsUnit.Pixel;
 			PageScale = 1;
@@ -1285,7 +1285,7 @@ namespace System.Drawing {
 		public void Clear (Color color)
 		{
 			context.SaveState ();
-			context.SetFillColorWithColor(new CGColor(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f));
+			context.SetFillColor (new CGColor(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f));
 			context.FillRect(context.GetClipBoundingBox());
 			context.RestoreState ();
 		}
