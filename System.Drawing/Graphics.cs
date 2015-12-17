@@ -81,11 +81,11 @@ namespace System.Drawing {
 			this (context, UIScreen.MainScreen.Scale)
 		{	}
 
-		private Graphics(CGContext context, float screenScale)
+		private Graphics(CGContext context, nfloat screenScale)
 		{
 			var gc = context;
 			nativeObject = gc;
-			this.screenScale = screenScale;
+			this.screenScale = (float)screenScale;
 			InitializeContext(gc);
 
 		}

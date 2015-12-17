@@ -111,7 +111,7 @@ ios: bin/ios/System.Drawing.dll
 
 bin/ios/System.Drawing.dll: $(SOURCES) $(MONO_SOURCES) Makefile
 	mkdir -p bin/ios
-	$(IOS_PREFIX)/bin/smcs -define:MONOTOUCH -unsafe -target:library -out:bin/ios/System.Drawing.dll -debug $(SOURCES) $(MONO_SOURCES) -r:$(IOS_PREFIX)/lib/mono/Xamarin.iOS/Xamarin.iOS.dll
+	$(IOS_PREFIX)/bin/smcs -define:MONOTOUCH -unsafe -target:library -out:bin/ios/System.Drawing.dll -debug $(SOURCES) $(MONO_SOURCES) -r:$(IOS_PREFIX)/lib/mono/Xamarin.iOS/System.Core.dll -r:$(IOS_PREFIX)/lib/mono/Xamarin.iOS/Xamarin.iOS.dll
 
 
 MAC_PREFIX=/Library/Frameworks/Xamarin.Mac.framework/Versions/Current
