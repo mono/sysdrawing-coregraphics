@@ -206,9 +206,9 @@ namespace System.Drawing.Drawing2D
 							glyphPath.Apply (
 								delegate (CGPathElement pathElement) {
 
-									elementPoints[0] = (PointF)textMatrix.TransformPoint(pathElement.Point1);
-									elementPoints[1] = (PointF)textMatrix.TransformPoint(pathElement.Point2);
-								        elementPoints[2] = (PointF)textMatrix.TransformPoint(pathElement.Point3);
+									elementPoints[0] = textMatrix.TransformPoint(pathElement.Point1).ToPointF ();
+									elementPoints[1] = textMatrix.TransformPoint(pathElement.Point2).ToPointF ();
+								        elementPoints[2] = textMatrix.TransformPoint(pathElement.Point3).ToPointF ();
 								//Console.WriteLine ("Applying {0} - {1}, {2}, {3}", pathElement.Type, elementPoints[0], elementPoints[1], elementPoints[2]);
 										
 										

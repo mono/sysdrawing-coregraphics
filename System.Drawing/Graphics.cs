@@ -149,14 +149,14 @@ namespace System.Drawing {
 
 			ResetTransform();
 
-			boundingBox = (RectangleF)context.GetClipBoundingBox();
+			boundingBox = context.GetClipBoundingBox().ToRectangleF ();
 
 			// We are going to try this here and it may cause problems down the road.
 			// This seems to only happen with Mac and not iOS
 			// What is happening is that sub views are offset by their relative location
 			// within the window.  That means our drawing locations are also offset by this 
 			// value as well.  So what we need to do is translate our view by this offset as well.
-			subviewClipOffset = (RectangleF)context.GetClipBoundingBox();
+			subviewClipOffset = context.GetClipBoundingBox().ToRectangleF ();
 
 			PageUnit = GraphicsUnit.Pixel;
 			PageScale = 1;
@@ -481,7 +481,7 @@ namespace System.Drawing {
 		void RectanglePath (RectangleF rectangle) 
 		{
 			MoveTo (rectangle.Location);
-			context.AddRect(rectangle);
+			context.AddRect(rectangle.ToCGRect ());
 			context.ClosePath();
 		}
 
@@ -575,7 +575,7 @@ namespace System.Drawing {
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
 
-			context.AddEllipseInRect(rect);
+			context.AddEllipseInRect (rect.ToCGRect ());
 			StrokePen(pen);
 		}
 
@@ -606,7 +606,7 @@ namespace System.Drawing {
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
 
-			context.AddEllipseInRect(rect);
+			context.AddEllipseInRect(rect.ToCGRect ());
 			FillBrush(brush);
 		}
 
@@ -971,7 +971,7 @@ namespace System.Drawing {
 
 		public void SetClip (Rectangle rect, CombineMode combineMode)
 		{
-			SetClip ((RectangleF)rect, combineMode);
+			SetClip (rect.ToRectangleF (), combineMode);
 		}
 
 		public void SetClip (GraphicsPath graphicsPath, CombineMode combineMode)
@@ -1026,7 +1026,7 @@ namespace System.Drawing {
 			//state after you’ve completed any clipped drawing.
 			context.SaveState ();
 			if (clipRegion.IsEmpty) {
-				context.ClipToRect (RectangleF.Empty);
+				context.ClipToRect (CGRect.Empty);
 			} else {
 				//context.ClipToRect ((RectangleF)clipRegion.regionObject);
 				context.AddPath (clipRegion.regionPath);

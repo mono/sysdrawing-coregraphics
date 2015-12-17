@@ -587,7 +587,7 @@ namespace System.Drawing.Drawing2D
 				setupShadingColors();
 			}
 
-			SizeF gradientRegion = (SizeF)context.GetClipBoundingBox().Size;
+			SizeF gradientRegion = context.GetClipBoundingBox().Size.ToSizeF ();
 //			SizeF gradientRegionPath = context.GetPathBoundingBox().Size;
 			PointF sp = startPoint;
 			PointF ep = endPoint;
@@ -603,7 +603,7 @@ namespace System.Drawing.Drawing2D
 			                             ref sp, ref ep);
 
 			var colorSpace = CGColorSpace.CreateDeviceRGB();
-			var shading = CGShading.CreateAxial(colorSpace, sp, ep, cgf, false, false);
+			var shading = CGShading.CreateAxial (colorSpace, sp.ToCGPoint (), ep.ToCGPoint (), cgf, false, false);
 			
 			colorSpace.Dispose();
 

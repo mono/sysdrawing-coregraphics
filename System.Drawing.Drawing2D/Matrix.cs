@@ -314,7 +314,7 @@ namespace System.Drawing.Drawing2D
 				throw new ArgumentNullException ("pts");
 			
 			for (int i = 0; i < pts.Length; i++)
-				pts [i] = (PointF)transform.TransformPoint (pts [i]);
+				pts [i] = transform.TransformPoint (pts [i].ToCGPoint() ).ToPointF ();
 		}
 		
 		internal void TransformPoints (List<PointF> pts)
@@ -323,7 +323,7 @@ namespace System.Drawing.Drawing2D
 				throw new ArgumentNullException ("pts");
 			
 			for (int i = 0; i < pts.Count; i++)
-				pts [i] = (PointF)transform.TransformPoint (pts [i]);
+				pts [i] = transform.TransformPoint (pts [i].ToCGPoint() ).ToPointF ();
 		}
 		
 		public void TransformVectors (Point[] pts)

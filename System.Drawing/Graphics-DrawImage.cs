@@ -39,7 +39,7 @@ namespace System.Drawing
 			// we are getting an error somewhere and not sure where
 			// I think the image bitmapBlock is being corrupted somewhere
 			try {
-				context.DrawImage(rect, image);
+				context.DrawImage (rect.ToCGRect (), image);
 			}
 			catch (Exception exc)
 			{
@@ -181,7 +181,7 @@ namespace System.Drawing
 			context.ConcatCTM (geoTransform);
 
 			// now we draw our image.
-			context.DrawImage(rect, image.NativeCGImage);
+			context.DrawImage(rect.ToCGRect (), image.NativeCGImage);
 
 			// Now we revert our image transform from the context 
 			var revert = CGAffineTransform.CGAffineTransformInvert (geoTransform);
@@ -273,7 +273,7 @@ namespace System.Drawing
 			} 
 
 			// Obtain the subImage
-			var subImage = image.NativeCGImage.WithImageInRect (srcRect1);
+			var subImage = image.NativeCGImage.WithImageInRect (srcRect1. ToCGRect ());
 
 			// If we do not have anything to draw then we exit here
 			if (subImage.Width == 0 || subImage.Height == 0)
@@ -365,7 +365,7 @@ namespace System.Drawing
 			} 
 
 			// Obtain the subImage
-			var subImage = image.NativeCGImage.WithImageInRect (srcRect1);
+			var subImage = image.NativeCGImage.WithImageInRect (srcRect1.ToCGRect ());
 
 			// If we do not have anything to draw then we exit here
 			if (subImage.Width == 0 || subImage.Height == 0)
@@ -390,7 +390,7 @@ namespace System.Drawing
 			context.ConcatCTM (geoTransform);
 
 			// now we draw our image.
-			context.DrawImage(rect, subImage);
+			context.DrawImage(rect.ToCGRect (), subImage);
 
 			// Now we revert our image transform from the context 
 			var revert = CGAffineTransform.CGAffineTransformInvert (geoTransform);
@@ -613,7 +613,7 @@ namespace System.Drawing
 			} 
 
 			// Obtain the subImage
-			var subImage = image.NativeCGImage.WithImageInRect (srcRect1);
+			var subImage = image.NativeCGImage.WithImageInRect (srcRect1.ToCGRect ());
 
 			// If we do not have anything to draw then we exit here
 			if (subImage.Width == 0 || subImage.Height == 0)

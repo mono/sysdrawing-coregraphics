@@ -208,7 +208,7 @@ namespace System.Drawing {
 			                              bitmapInfo);
 			// This works for now but we need to look into initializing the memory area itself
 			// TODO: Look at what we should do if the image does not have alpha channel
-			bitmap.ClearRect (new RectangleF (0,0,width,height));
+			bitmap.ClearRect (new CGRect (0,0,width,height));
 
 			var provider = new CGDataProvider (bitmapBlock, size, true);
 			NativeCGImage = new CGImage (width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace, bitmapInfo, provider, null, false, CGColorRenderingIntent.Default);
@@ -489,13 +489,13 @@ namespace System.Drawing {
 			                              colorSpace,
 			                              bitmapInfo);
 
-			bitmap.ClearRect (new RectangleF (0,0,width,height));
+			bitmap.ClearRect (new CGRect (0,0,width,height));
 
 			// We need to flip the Y axis to go from right handed to lefted handed coordinate system
 			var transform = new CGAffineTransform(1, 0, 0, -1, 0, image.Height);
 			bitmap.ConcatCTM(transform);
 
-			bitmap.DrawImage(new RectangleF (0, 0, image.Width, image.Height), image);
+			bitmap.DrawImage (new CGRect (0, 0, image.Width, image.Height), image);
 
 			var provider = new CGDataProvider (bitmapBlock, size, true);
 			NativeCGImage = new CGImage (width, height, bitsPerComponent, 
@@ -517,7 +517,7 @@ namespace System.Drawing {
 			var format = GetBestSupportedFormat (pixelFormat);
 			var bitmapContext = CreateCompatibleBitmapContext ((int)NativeCGImage.Width, (int)NativeCGImage.Height, format);
 
-			bitmapContext.DrawImage (new RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
+			bitmapContext.DrawImage (new CGRect (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
 
 			int size = (int)(bitmapContext.BytesPerRow * bitmapContext.Height);
 			var provider = new CGDataProvider (bitmapContext.Data, size, true);
@@ -584,7 +584,7 @@ namespace System.Drawing {
 
 			bitmapContext.ConcatCTM (rotateFlip);
 
-			bitmapContext.DrawImage (new RectangleF (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
+			bitmapContext.DrawImage (new CGRect (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
 
 			int size = (int)(bitmapContext.BytesPerRow * bitmapContext.Height);
 			var provider = new CGDataProvider (bitmapContext.Data, size, true);
@@ -689,9 +689,9 @@ namespace System.Drawing {
 			                                  bitsPerComponent, 
 			                                  bytesPerRow,
 			                                  colorSpace,
-											  alphaInfo);
+							  alphaInfo);
 
-			bitmap.ClearRect (new RectangleF (0,0,width,height));
+			bitmap.ClearRect (new CGRect (0,0,width,height));
 
 			//colorSpace.Dispose ();
 
@@ -910,7 +910,7 @@ namespace System.Drawing {
 			// parsing from there a pixel and converting to a format we will just create 
 			// a 1 x 1 image of the pixel that we want.  I am supposing this should be really
 			// fast.
-			var pixelImage = NativeCGImage.WithImageInRect(new RectangleF(x,y,1,1));
+			var pixelImage = NativeCGImage.WithImageInRect (new CGRect (x,y,1,1));
 
 			var pData = pixelImage.DataProvider;
 			var nData = pData.CopyData ();
@@ -939,7 +939,7 @@ namespace System.Drawing {
 			cachedContext.ConcatCTM (cachedContext.GetCTM ().Invert ());
 			cachedContext.ConcatCTM (imageTransform);
 			cachedContext.SetFillColor(color.ToCGColor());
-			cachedContext.FillRect (new RectangleF(x,y, 1,1));
+			cachedContext.FillRect (new CGRect (x,y,1,1));
 			cachedContext.FillPath ();
 			cachedContext.RestoreState();
 
@@ -1053,7 +1053,7 @@ namespace System.Drawing {
 			cachedContext = CreateCompatibleBitmapContext ((int)NativeCGImage.Width, (int)NativeCGImage.Height, pixelFormat);
 
 			// Fill our pixel data with the actual image information
-			cachedContext.DrawImage (new RectangleF (0, 0, (int)NativeCGImage.Width, (int)NativeCGImage.Height), NativeCGImage);
+			cachedContext.DrawImage (new CGRect (0, 0, (int)NativeCGImage.Width, (int)NativeCGImage.Height), NativeCGImage);
 
 			// Dispose of the prevous image that is allocated.
 			NativeCGImage.Dispose ();

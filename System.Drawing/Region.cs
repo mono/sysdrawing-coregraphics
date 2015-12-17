@@ -192,7 +192,7 @@ namespace System.Drawing
 			var flatPath = PointFArrayToIntArray (clonePath.PathPoints, scale);
 			solution.Add (flatPath);
 			regionList.Add (new RegionEntry (RegionType.Path, clonePath, flatPath));
-			regionBounds = (RectangleF)regionPath.BoundingBox;
+			regionBounds = regionPath.BoundingBox.ToRectangleF ();
 		}
 
 		internal static Path PointFArrayToIntArray(PointF[] points, float scale)
@@ -230,11 +230,11 @@ namespace System.Drawing
 
 				switch (type & PathPointType.PathTypeMask){
 				case PathPointType.Start:
-					regionPath.MoveToPoint (point);
+					regionPath.MoveToPoint (point.ToCGPoint ());
 					break;
 
 				case PathPointType.Line:
-					regionPath.AddLineToPoint (point);
+					regionPath.AddLineToPoint (point.ToCGPoint ());
 					break;
 
 				case PathPointType.Bezier3:
@@ -336,7 +336,7 @@ namespace System.Drawing
 			regionPath.AddLineToPoint (infinite.Right, infinite.Bottom);
 			regionPath.AddLineToPoint (infinite.Left, infinite.Bottom);
 
-			regionBounds = (RectangleF)regionPath.BoundingBox;
+			regionBounds = regionPath.BoundingBox.ToRectangleF ();
 		}
 
 		public void MakeEmpty() 
@@ -512,7 +512,7 @@ namespace System.Drawing
 				if (regionPath.IsEmpty)
 					regionBounds = RectangleF.Empty;
 				else
-					regionBounds = (RectangleF)regionPath.BoundingBox;
+					regionBounds = regionPath.BoundingBox.ToRectangleF ();
 
 			}
 
@@ -525,11 +525,11 @@ namespace System.Drawing
 
 			foreach (var poly in solution)
 			{
-				regionPath.MoveToPoint(IntPointToPointF(poly[0]));
+				regionPath.MoveToPoint(IntPointToPointF(poly[0]).ToCGPoint ());
 
 				for (var p =1; p < poly.Count; p++) 
 				{
-					regionPath.AddLineToPoint (IntPointToPointF (poly [p]));
+					regionPath.AddLineToPoint (IntPointToPointF (poly [p]).ToCGPoint ());
 				}
 			}
 
@@ -558,7 +558,7 @@ namespace System.Drawing
 		{
 			// eoFill - A Boolean value that, if true, specifies to use the even-odd fill rule to evaluate 
 			// the painted region of the path. If false, the winding fill rule is used.
-			return regionPath.ContainsPoint (point, EVEN_ODD_FILL);
+			return regionPath.ContainsPoint (point.ToCGPoint (), EVEN_ODD_FILL);
 		}
 
 		public bool IsVisible(Rectangle rectangle)
@@ -570,10 +570,10 @@ namespace System.Drawing
 		{
 			// eoFill - A Boolean value that, if true, specifies to use the even-odd fill rule to evaluate 
 			// the painted region of the path. If false, the winding fill rule is used.
-			var topLeft = new PointF (rectangle.Left, rectangle.Top);
-			var topRight = new PointF (rectangle.Right, rectangle.Top);
-			var bottomRight = new PointF (rectangle.Right, rectangle.Bottom);
-			var bottomLeft = new PointF (rectangle.Left, rectangle.Bottom);
+			var topLeft = new CGPoint (rectangle.Left, rectangle.Top);
+			var topRight = new CGPoint (rectangle.Right, rectangle.Top);
+			var bottomRight = new CGPoint (rectangle.Right, rectangle.Bottom);
+			var bottomLeft = new CGPoint (rectangle.Left, rectangle.Bottom);
 
 			return regionPath.ContainsPoint (topLeft, EVEN_ODD_FILL) || regionPath.ContainsPoint (topRight, EVEN_ODD_FILL)
 				|| regionPath.ContainsPoint (bottomRight, EVEN_ODD_FILL) || regionPath.ContainsPoint (bottomLeft, EVEN_ODD_FILL);
@@ -584,14 +584,14 @@ namespace System.Drawing
 		{
 			// eoFill - A Boolean value that, if true, specifies to use the even-odd fill rule to evaluate 
 			// the painted region of the path. If false, the winding fill rule is used.
-			return regionPath.ContainsPoint (new PointF(x,y), EVEN_ODD_FILL);
+			return regionPath.ContainsPoint (new CGPoint (x,y), EVEN_ODD_FILL);
 		}
 
 		public bool IsVisible(int x, int y)
 		{
 			// eoFill - A Boolean value that, if true, specifies to use the even-odd fill rule to evaluate 
 			// the painted region of the path. If false, the winding fill rule is used.
-			return regionPath.ContainsPoint (new PointF(x,y), EVEN_ODD_FILL);
+			return regionPath.ContainsPoint (new CGPoint (x,y), EVEN_ODD_FILL);
 		}
 
 		internal bool IsEmpty
