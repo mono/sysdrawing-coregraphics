@@ -6,11 +6,12 @@ using System.Drawing.Drawing2D;
 
 using Foundation;
 using AppKit;
+using CoreGraphics;
 using System.Drawing;
 
 namespace Example1_9
 {
-	public partial class DrawingView : MonoMac.AppKit.NSView
+	public partial class DrawingView : AppKit.NSView
 	{
 
 		#region Constructors
@@ -34,7 +35,7 @@ namespace Example1_9
 			this.AutoresizingMask = NSViewResizingMask.HeightSizable | NSViewResizingMask.WidthSizable;
 		}
 
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			Initialize();
 		}
@@ -43,7 +44,7 @@ namespace Example1_9
 
 		Font Font = new Font("Helvetica",8);
 
-		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
+		public override void DrawRect (CGRect dirtyRect)
 		{
 			Graphics g = Graphics.FromCurrentContext();
 			//g.Clear(Color.White);

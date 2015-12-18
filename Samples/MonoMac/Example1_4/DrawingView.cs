@@ -12,11 +12,11 @@ using System.Drawing;
 
 namespace Example1_4
 {
-	public partial class DrawingView : MonoMac.AppKit.NSView
+	public partial class DrawingView : AppKit.NSView
 	{
 
 		// Define the drawing area
-		private Rectangle drawingRectangle;
+		private CGRect drawingRectangle;
 		// Unit defined in world coordinate system:
 		private float xMin = 4f;
 		private float xMax = 6f;
@@ -46,14 +46,14 @@ namespace Example1_4
 			this.AutoresizingMask = NSViewResizingMask.HeightSizable | NSViewResizingMask.WidthSizable;
 		}
 
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			Initialize();
 		}
 		
 #endregion
 		
-		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
+		public override void DrawRect (CGRect dirtyRect)
 		{
 			// This is here for testing and nothing else
 			// Will take this out after I get things working again
@@ -140,9 +140,9 @@ namespace Example1_4
 			
 			aPen.Dispose();
 			//g.Dispose();
-			
+
 			//Text rotation:
-			RectangleF ClientRectangle = dirtyRect;
+			CGRect ClientRectangle = dirtyRect;
 			string s = "A simple text string";
 
 			Rectangle rect = new Rectangle((int)ClientRectangle.X, (int)ClientRectangle.Y, 

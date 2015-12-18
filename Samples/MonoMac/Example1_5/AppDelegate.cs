@@ -1,5 +1,5 @@
 using System;
-using System.Drawing;
+using CoreGraphics;
 using Foundation;
 using AppKit;
 using ObjCRuntime;
@@ -14,7 +14,7 @@ namespace Example1_5
 		{
 		}
 
-		public override void FinishedLaunching (NSObject notification)
+		public override void DidFinishLaunching (NSNotification notification)
 		{
 			mainWindowController = new MainWindowController ();
 			mainWindowController.Window.MakeKeyAndOrderFront (this);
