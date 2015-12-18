@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Foundation;
 using AppKit;
+using CoreGraphics;
 using System.Drawing;
 
 namespace sampleMac
 {
-	public partial class DrawingView : MonoMac.AppKit.NSView
+	public partial class DrawingView : AppKit.NSView
 	{
 		#region Constructors
 		
@@ -32,7 +33,7 @@ namespace sampleMac
 		
 		#endregion
 
-		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
+		public override void DrawRect (CGRect dirtyRect)
 		{
 			var g = Graphics.FromCurrentContext();
 
@@ -40,7 +41,7 @@ namespace sampleMac
 			g.Clear(Color.White);
 
 			//RectangleF ClientRectangle = this.Bounds;
-			RectangleF ClientRectangle = dirtyRect;
+			CGRect ClientRectangle = dirtyRect;
 
 			// Following codes draw a line from (0, 0) to (1, 1) in unit of inch:
 			/*g.PageUnit = GraphicsUnit.Inch;
@@ -50,8 +51,8 @@ namespace sampleMac
 			// Following code shifts the origin to the center of 
 			// client area, and then draw a line from (0,0) to (1, 1) inch: 
 			g.PageUnit = GraphicsUnit.Inch;
-			g.TranslateTransform((ClientRectangle.Width / g.DpiX) / 2,
-			                     (ClientRectangle.Height / g.DpiY) / 2);
+			g.TranslateTransform(((float)ClientRectangle.Width / g.DpiX) / 2,
+				((float)ClientRectangle.Height / g.DpiY) / 2);
 			Pen greenPen = new Pen(Color.Green, 1 /  g.DpiX);
 			g.DrawLine(greenPen, 0, 0, 1, 1);
 
