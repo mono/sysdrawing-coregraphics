@@ -7,7 +7,7 @@ using AppKit;
 
 namespace Example2_1
 {
-	public partial class MainWindow : MonoMac.AppKit.NSWindow
+	public partial class MainWindow : AppKit.NSWindow
 	{
 		#region Constructors
 		
