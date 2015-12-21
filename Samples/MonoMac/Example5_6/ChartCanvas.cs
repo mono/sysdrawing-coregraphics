@@ -8,11 +8,12 @@ using Foundation;
 using AppKit;
 using CoreGraphics;
 using CoreText;
+using CoreGraphics;
 using System.Drawing;
 
 namespace Example5_6
 {
-	public partial class ChartCanvas : MonoMac.AppKit.NSView
+	public partial class ChartCanvas : AppKit.NSView
 	{
 
 		public PlotPanel panel1;
@@ -38,7 +39,7 @@ namespace Example5_6
 			this.AutoresizingMask = NSViewResizingMask.HeightSizable | NSViewResizingMask.WidthSizable;
 			BackColor = Color.Wheat;
 
-			var panelRect = new RectangleF(Frame.X,Frame.Y,Frame.Width,Frame.Height);
+			var panelRect = new CGRect(Frame.X,Frame.Y,Frame.Width,Frame.Height);
 			panelRect.Inflate(-20,-20);
 			panel1 = new PlotPanel(panelRect);
 			panel1.BackColor = Color.AliceBlue;
@@ -51,7 +52,7 @@ namespace Example5_6
 			
 		}
 		
-		public ChartCanvas (RectangleF rect) : base (rect)
+		public ChartCanvas (CGRect rect) : base (rect)
 		{
 			Initialize ();
 		}
@@ -93,7 +94,7 @@ namespace Example5_6
 		}
 		#endregion
 
-		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
+		public override void DrawRect (CGRect dirtyRect)
 		{
 			var g = Graphics.FromCurrentContext();
 			g.Clear (backColor);
@@ -103,7 +104,7 @@ namespace Example5_6
 		{
 			Graphics g = e.Graphics;
 			var borderPen = new Pen(Brushes.Black,1);
-			g.DrawRectangle(borderPen,panel1.Bounds.X, panel1.Bounds.Y, panel1.Bounds.Width, panel1.Bounds.Height);
+			g.DrawRectangle(borderPen, (float)panel1.Bounds.X, (float)panel1.Bounds.Y, (float)panel1.Bounds.Width, (float)panel1.Bounds.Height);
 			borderPen.Dispose();
 			
 			g.SmoothingMode = SmoothingMode.AntiAlias;

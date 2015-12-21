@@ -6,7 +6,7 @@ using AppKit;
 
 namespace FontTest
 {
-	public partial class MainWindowController : MonoMac.AppKit.NSWindowController
+	public partial class MainWindowController : AppKit.NSWindowController
 	{
 
 		#region Constructors

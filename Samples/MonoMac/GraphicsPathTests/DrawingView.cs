@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Drawing;
+using CoreGraphics;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
@@ -12,11 +12,12 @@ using AppKit;
 using CoreGraphics;
 
 using Plasmoid.Extensions;
+using System.Drawing;
 
 namespace GraphicsPathTests
 {
 
-	public partial class DrawingView : MonoMac.AppKit.NSView
+	public partial class DrawingView : AppKit.NSView
 	{
 
 		#region Constructors
@@ -56,7 +57,7 @@ namespace GraphicsPathTests
 //			bmp2 = Bitmap.FromFile(filePath);
 		}
 
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			Initialize();
 		}
@@ -108,7 +109,7 @@ namespace GraphicsPathTests
 
 		string title = string.Empty;
 
-		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
+		public override void DrawRect (CGRect dirtyRect)
 		{
 			Graphics g = Graphics.FromCurrentContext();
 			g.InterpolationMode = InterpolationMode.NearestNeighbor;
@@ -2186,7 +2187,7 @@ namespace GraphicsPathTests
 
 			var clr = Color.Aquamarine;
 
-			g.ScaleTransform(cx / 300f, cy / 200f);
+			g.ScaleTransform((float)(cx / 300f), (float)(cy / 200f));
 
 			for (int i = 0; i < 6; i++)
 			{

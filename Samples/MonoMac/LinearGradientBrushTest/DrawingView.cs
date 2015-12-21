@@ -8,11 +8,12 @@ using System.Runtime.InteropServices;
 using Foundation;
 using AppKit;
 using CoreGraphics;
+using CoreGraphics;
 using System.Drawing;
 
 namespace LinearGradientBrushTest
 {
-	public partial class DrawingView : MonoMac.AppKit.NSView
+	public partial class DrawingView : AppKit.NSView
 	{
 		
 		public event PaintEventHandler Paint;
@@ -39,7 +40,7 @@ namespace LinearGradientBrushTest
 			BackColor = Color.Wheat;
 		}
 		
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			Initialize();
 		}
@@ -91,8 +92,8 @@ namespace LinearGradientBrushTest
 			}
 			
 			set {
-				var location = new PointF(value, Frame.Y);
-				Frame = new RectangleF(location, Frame.Size);
+				var location = new CGPoint (value, Frame.Y);
+				Frame = new CGRect(location, Frame.Size);
 			}
 			
 		}
@@ -113,8 +114,8 @@ namespace LinearGradientBrushTest
 		{
 			get { return (int)Frame.Top; }
 			set { 
-				var location = new PointF(Frame.X, value);
-				Frame = new RectangleF(location, Frame.Size);
+				var location = new CGPoint (Frame.X, value);
+				Frame = new CGRect(location, Frame.Size);
 				
 			}
 		}
@@ -152,7 +153,7 @@ namespace LinearGradientBrushTest
 			}
 		}
 #endregion
-		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
+		public override void DrawRect (CGRect dirtyRect)
 		{
 			Graphics g = Graphics.FromCurrentContext();
 			g.Clear(backColor);
@@ -493,6 +494,7 @@ namespace LinearGradientBrushTest
 
 		void PaintView5 (Graphics g)
 		{
+			return;
 			LinearGradientBrush br = new LinearGradientBrush(ClientRectangle, Color.Black, Color.Black, 0 , false);
 			ColorBlend cb = new ColorBlend();
 			cb.Positions = new[] {0, 1/6f, 2/6f, 3/6f, 4/6f, 5/6f, 1};
@@ -644,6 +646,7 @@ namespace LinearGradientBrushTest
 
 		void PaintView11 (Graphics g)
 		{
+			return;
 
 			// The emsize is calculated here until it can be fixed.
 			float emsize = 24;
@@ -720,6 +723,7 @@ namespace LinearGradientBrushTest
 
 		void PaintView14 (Graphics g)
 		{
+			return;
 			// Create a LinearGradientBrush object
 			LinearGradientBrush brBrush =
 				new LinearGradientBrush(
