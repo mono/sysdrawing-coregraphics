@@ -8,11 +8,12 @@ using Foundation;
 using AppKit;
 using CoreGraphics;
 using CoreText;
+using CoreGraphics;
 using System.Drawing;
 
 namespace Example4_9
 {
-	public partial class ChartCanvas : MonoMac.AppKit.NSView
+	public partial class ChartCanvas : AppKit.NSView
 	{
 
 		private ChartStyle cs;
@@ -77,7 +78,7 @@ namespace Example4_9
 			dc.Add(ds);         
 		}
 		
-		public ChartCanvas (RectangleF rect) : base (rect)
+		public ChartCanvas (CGRect rect) : base (rect)
 		{
 			Initialize ();
 		}
@@ -119,7 +120,7 @@ namespace Example4_9
 		}
 		#endregion
 
-		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
+		public override void DrawRect (CGRect dirtyRect)
 		{
 
 			var g = Graphics.FromCurrentContext();

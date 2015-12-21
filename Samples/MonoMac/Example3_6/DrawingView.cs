@@ -8,11 +8,12 @@ using Foundation;
 using AppKit;
 using CoreGraphics;
 using CoreText;
+using CoreGraphics;
 using System.Drawing;
 
 namespace Example3_6
 {
-	public partial class DrawingView : MonoMac.AppKit.NSView, Form
+	public partial class DrawingView : AppKit.NSView, Form
 	{
 
 		private DataCollection dc;
@@ -99,7 +100,7 @@ namespace Example3_6
 			dc.Add(ds2);
 		}
 
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			Initialize();
 		}
@@ -143,7 +144,7 @@ namespace Example3_6
 		}
 		#endregion
 
-		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
+		public override void DrawRect (CGRect dirtyRect)
 		{
 
 			var g = Graphics.FromCurrentContext();
