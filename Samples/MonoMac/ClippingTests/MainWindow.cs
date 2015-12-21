@@ -6,7 +6,7 @@ using AppKit;
 
 namespace ClippingTests
 {
-	public partial class MainWindow : MonoMac.AppKit.NSWindow
+	public partial class MainWindow : AppKit.NSWindow
 	{
 		#region Constructors
 		// Called when created from unmanaged code

@@ -6,7 +6,7 @@ using AppKit;
 
 namespace DrawImageTests
 {
-	public partial class MainWindowController : MonoMac.AppKit.NSWindowController
+	public partial class MainWindowController : AppKit.NSWindowController
 	{
 		#region Constructors
 		// Called when created from unmanaged code

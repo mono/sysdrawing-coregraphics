@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Drawing;
+using CoreGraphics;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
@@ -10,10 +10,11 @@ using System.IO;
 using Foundation;
 using AppKit;
 using CoreGraphics;
+using System.Drawing;
 
 namespace RegionTests
 {
-	public partial class DrawingView : MonoMac.AppKit.NSView
+	public partial class DrawingView : AppKit.NSView
 	{
 
 		#region Constructors
@@ -53,7 +54,7 @@ namespace RegionTests
 //			bmp2 = Bitmap.FromFile(filePath);
 		}
 
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			Initialize();
 		}
@@ -101,7 +102,7 @@ namespace RegionTests
 
 		string title = string.Empty;
 
-		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
+		public override void DrawRect (CGRect dirtyRect)
 		{
 			Graphics g = Graphics.FromCurrentContext();
 			g.InterpolationMode = InterpolationMode.NearestNeighbor;
