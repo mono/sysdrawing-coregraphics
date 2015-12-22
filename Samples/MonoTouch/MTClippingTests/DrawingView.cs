@@ -12,12 +12,7 @@ namespace MTClippingTests {
 
 		Font anyKeyFont = new Font("Chalkduster", 18, FontStyle.Bold);
 		Font clipFont = new Font("Helvetica", 12, FontStyle.Bold);
-
-		Image bmp;
-		Image bmp2;
-
 		Rectangle regionRect1 = new Rectangle (50, 50, 100, 100);
-		Rectangle regionRectF1 = new Rectangle (110, 60, 100, 100);
 		Rectangle regionRect2 = new Rectangle (110, 60, 100, 100);
 		Rectangle regionRectF2 = new Rectangle (110, 60, 100, 100);
 
@@ -247,7 +242,6 @@ namespace MTClippingTests {
 		void ClipRegionInfinite (Graphics g)
 		{
 			var myPen = new Pen (Color.FromArgb (196, 0xC3, 0xC9, 0xCF), .6f);
-			var myBrush = new SolidBrush(Color.FromArgb (127, 0xDD, 0xDD, 0xF0));
 
 			// Create the first rectangle and draw it to the screen in myPen color.
 			g.DrawRectangle (myPen, regionRect1);
@@ -264,7 +258,6 @@ namespace MTClippingTests {
 		void ClipRegionEmpty (Graphics g)
 		{
 			var myPen = new Pen (Color.FromArgb (196, 0xC3, 0xC9, 0xCF), .6f);
-			var myBrush = new SolidBrush (Color.FromArgb (127, 0xDD, 0xDD, 0xF0));
 
 			// Create the first rectangle and draw it to the screen in myPen color.
 			g.DrawRectangle (myPen, regionRect1);
