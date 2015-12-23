@@ -1,0 +1,29 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTDrawImageTests", "MTDrawImageTests.csproj", "{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|iPhoneSimulator = Debug|iPhoneSimulator
+		Release|iPhoneSimulator = Release|iPhoneSimulator
+		Debug|iPhone = Debug|iPhone
+		Release|iPhone = Release|iPhone
+		Ad-Hoc|iPhone = Ad-Hoc|iPhone
+		AppStore|iPhone = AppStore|iPhone
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Debug|iPhone.Build.0 = Debug|iPhone
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Release|iPhone.ActiveCfg = Release|iPhone
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Release|iPhone.Build.0 = Release|iPhone
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{6C412B21-DFB9-4BE1-A0AB-F1E6F999E90F}.AppStore|iPhone.Build.0 = AppStore|iPhone
+	EndGlobalSection
+EndGlobal
