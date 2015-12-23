@@ -1,30 +1,22 @@
-using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
+
+using CoreGraphics;
 using UIKit;
 
-namespace MTExample1_7
-{
+namespace MTExample1_7 {
 	public class DrawingView : UIView {
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			ContentMode = UIViewContentMode.Redraw;
-			this.AutoresizingMask = UIViewAutoresizing.All;
+			AutoresizingMask = UIViewAutoresizing.All;
 			var bgc = Color.LightGreen;
-			BackgroundColor = UIColor.FromRGBA(bgc.R,bgc.G,bgc.B, bgc.A);
+			BackgroundColor = UIColor.FromRGBA (bgc.R,bgc.G,bgc.B, bgc.A);
 		}
 
-		float Width = 0;
-
-		public override void Draw (RectangleF rect)
+		public override void Draw (CGRect rect)
 		{
-			Graphics g = Graphics.FromCurrentContext();
-			
-			//g.Clear(Color.LightGreen);
-			// TODO: Fill in the UI Just lazy right now	
-			g.Dispose();
+			Graphics g = Graphics.FromCurrentContext ();
+			g.Dispose ();
 		}
-		
-
 	}
 }
