@@ -1,49 +1,45 @@
-using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
+
+using CoreGraphics;
 using UIKit;
 
-namespace MTExample1_5a
-{
+namespace MTExample1_5a {
 	public class DrawingView : UIView {
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			ContentMode = UIViewContentMode.Redraw;
-			this.AutoresizingMask = UIViewAutoresizing.All;
+			AutoresizingMask = UIViewAutoresizing.All;
 			BackgroundColor = UIColor.White;
 		}
 
-		public override void Draw (RectangleF rect)
+		public override void Draw (CGRect rect)
 		{
-			Graphics g = Graphics.FromCurrentContext();
-			
-			//g.Clear(Color.White);
-			
+			Graphics g = Graphics.FromCurrentContext ();
 			// Create a pen object:
-			Pen aPen = new Pen(Color.Blue, 1 / g.DpiX);
+			var aPen = new Pen (Color.Blue, 1 / g.DpiX);
 			// Create a brush object with a transparent red color:
-			SolidBrush aBrush = new SolidBrush(Color.Red);
+			var aBrush = new SolidBrush (Color.Red);
 			
 			g.PageUnit = GraphicsUnit.Inch;
 			g.PageScale = 2;
-			g.RenderingOrigin = new PointF(0.5f,0.0f);
+			g.RenderingOrigin = new PointF (.5f, .0f);
 
 			// Draw a rectangle:
-			g.DrawRectangle(aPen, .20f, .20f, 1.00f, .50f);
+			g.DrawRectangle (aPen, .2f, .2f, 1f, .5f);
 			// Draw a filled rectangle:
-			g.FillRectangle(aBrush, .20f, .90f, 1.00f, .50f);
+			g.FillRectangle (aBrush, .2f, .9f, 1f, .5f);
 			// Draw ellipse:
-			g.DrawEllipse(aPen, new RectangleF(.20f, 1.60f, 1.00f, .50f));
+			g.DrawEllipse (aPen, new RectangleF (.2f, 1.6f, 1f, .5f));
 			// Draw filled ellipse:
-			g.FillEllipse(aBrush, new RectangleF(1.70f, .20f, 1.00f, .50f));
+			g.FillEllipse (aBrush, new RectangleF (1.7f, .2f, 1f, .5f));
 			// Draw arc:
-			g.DrawArc(aPen, new RectangleF(1.70f, .90f, 1.00f, .50f), -90, 180);
+			g.DrawArc (aPen, new RectangleF (1.7f, .9f, 1f, .5f), -90, 180);
 			
 			// Draw filled pie pieces
-			g.FillPie(aBrush, 1.70f, 1.60f, 1.00f, 1.00f, -90, 90);
-			g.FillPie(Brushes.Green, 1.70f, 1.60f, 1.00f, 1.00f, -90, -90);
+			g.FillPie (aBrush, 1.7f, 1.6f, 1f, 1f, -90, 90);
+			g.FillPie (Brushes.Green, 1.7f, 1.6f, 1f, 1f, -90, -90);
 			
-			g.Dispose();
+			g.Dispose ();
 		}
 
 	}
