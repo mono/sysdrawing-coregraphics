@@ -1,14 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Foundation;
 using UIKit;
 
-namespace MTExample1_9
-{
-	public class Application
-	{
+namespace MTExample1_9 {
+	public class Application {
 		// This is the main entry point of the application.
 		static void Main (string[] args)
 		{

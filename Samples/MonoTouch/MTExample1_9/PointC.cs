@@ -1,12 +1,8 @@
-using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 
-namespace MTExample1_9
-{
-	public class PointC
-	{
-		public PointF pointf = new PointF();
+namespace MTExample1_9 {
+	public class PointC {
+		public PointF pointf = new PointF ();
 		public float C = 0;
 		public int[] ARGBArray = new int[4];
 		
@@ -14,13 +10,13 @@ namespace MTExample1_9
 		{
 		}
 		
-		public PointC(PointF ptf, float c)
+		public PointC (PointF ptf, float c)
 		{
 			pointf = ptf;
 			C = c;
 		}
 		
-		public PointC(PointF ptf, float c, int[] argbArray)
+		public PointC (PointF ptf, float c, int[] argbArray)
 		{
 			pointf = ptf;
 			C = c;
