@@ -1,0 +1,590 @@
+using System;
+using System.Collections.Generic;
+
+using System.Drawing;
+using System.Drawing.Drawing2D;
+
+namespace DrawingShared
+{
+	public partial class DrawingView
+	{
+		
+        void PlatformInitialize()
+        {
+            // Load our painting view methods.
+            paintViewActions = new Action<Graphics>[]
+                {
+                    PaintView0,
+                    PaintView1,
+                    PaintView2,
+                    PaintView3,
+                    PaintView4,
+                    PaintView5,
+                    PaintView6,
+                    PaintView7,
+                    PaintView8,
+                    PaintView9,
+                    PaintView10,
+                    PaintView11,
+                    PaintView12,
+                    PaintView13,
+                    PaintView14,
+                    PaintView15,
+                    PaintView16,
+                    PaintView17,
+                };
+        }
+		
+		void PaintView0 (Graphics g)
+		{
+			// Create a pen object:
+			Pen aPen = new Pen(Color.Blue, 2);
+			var smallRect = new Rectangle(500,20,50,20);
+			
+			
+			Pen gPen = new Pen(Color.Green, 2);
+			var largeRect = new Rectangle(260, 100, 117, 117);
+			
+			var smallGradient = new LinearGradientBrush(
+				smallRect,
+				Color.Blue,
+				Color.Red,
+				0.0f);
+
+			smallGradient.WrapMode = WrapMode.TileFlipXY;
+
+			g.FillRectangle(smallGradient, largeRect);
+			
+			g.DrawRectangle(gPen, largeRect);
+			g.DrawRectangle(aPen, smallRect);
+
+			Point startPoint2 = new Point(10, 110);
+			Point endPoint2 = new Point(140, 110);
+			Rectangle ellipseRect2 = new Rectangle(20, 100, 200, 200);
+			
+			var startPoint = new PointF(ellipseRect2.X + 50, ellipseRect2.Y + ellipseRect2.Height /2);
+			var endPoint = new PointF(ellipseRect2.X + (ellipseRect2.Width / 2) + 50, ellipseRect2.Bottom - 50);
+			
+			float[] myFactors = { .2f, .4f, .8f, .8f, .4f, .2f };
+			float[] myPositions = { 0.0f, .2f, .4f, .6f, .8f, 1.0f };
+			//float[] myFactors = { .2f, .4f, .8f };//, .8f, .4f, .2f };
+			//float[] myPositions = { 0.0f, .2f, 1.0f };//, .6f, .8f, 1.0f };
+			
+			//float[] myFactors = { .2f };
+			//float[] myPositions = { 1 }; 
+			Blend myBlend = new Blend();
+			myBlend.Factors = myFactors;
+			myBlend.Positions = myPositions;
+			LinearGradientBrush lgBrush2 = new LinearGradientBrush(
+				startPoint,
+				endPoint,
+				Color.Blue,
+				Color.Red);
+			
+			//			LinearGradientBrush lgBrush2 = new LinearGradientBrush(
+			//			    ellipseRect2,
+			//			    Color.Blue,
+			//			    Color.Red, 45, true);
+			
+			lgBrush2.WrapMode = WrapMode.TileFlipXY;
+			lgBrush2.Blend = myBlend;
+			g.FillRectangle(lgBrush2, ellipseRect2);
+			g.FillEllipse(lgBrush2, ellipseRect2);
+			
+			//RectangleF boundingRec = lgBrush2.Rectangle;
+			//g.DrawRectangle(Pens.White, boundingRec.X,boundingRec.Y,boundingRec.Width,boundingRec.Height);
+			
+			RectangleF boundingRec = lgBrush2.Rectangle;
+			var pennn = new Pen(Color.Green, 1);
+			g.DrawRectangle(pennn, boundingRec.X, boundingRec.Y, boundingRec.Width, boundingRec.Height);
+			
+			var penl = new Pen(Color.Magenta, 1);
+			g.DrawLine(penl, startPoint, endPoint);
+			
+			
+			Blend blend1 = new Blend(9);
+			
+			// Set the values in the Factors array to be all green,  
+			// go to all blue, and then go back to green.
+			blend1.Factors = new float[]{0.0F, 0.2F, 0.5F, 0.7F, 1.0F, 
+				0.7F, 0.5F, 0.2F, 0.0F};
+			
+			// Set the positions.
+			blend1.Positions =
+			new float[]{0.0F, 0.1F, 0.3F, 0.4F, 0.5F, 0.6F, 
+				0.7F, 0.8F, 1.0F};
+			
+			// Declare a rectangle to draw the Blend in.
+			Rectangle rectangle1 = new Rectangle(10, 10, 120, 100);
+			
+			// Create a new LinearGradientBrush using the rectangle,  
+			// green and blue. and 90-degree angle.
+			//			LinearGradientBrush brush1 =
+			//				new LinearGradientBrush(rectangle1, Color.LightGreen,
+			//				                        Color.Blue, 90, true);
+			
+			LinearGradientBrush brush1 =
+				new LinearGradientBrush(rectangle1, Color.LightGreen,
+				                        Color.Blue, LinearGradientMode.BackwardDiagonal);
+			
+			// Set the Blend property on the brush to the custom blend.
+			brush1.Blend = blend1;
+			
+			// Fill in an ellipse with the brush.
+			g.FillEllipse(brush1, rectangle1);
+
+		}
+
+		void PaintView1 (Graphics g)
+		{
+			Rectangle r = new Rectangle(10, 10, 100, 100);
+			
+			LinearGradientBrush theBrush = null;
+			int yOffSet = 10;
+			
+			Array obj = Enum.GetValues(typeof(LinearGradientMode));
+
+			for (int x = 0; x < obj.Length; x++)
+			{
+				LinearGradientMode temp = (LinearGradientMode)obj.GetValue(x);
+				theBrush = new LinearGradientBrush(r, Color.Red,
+				                                   Color.Blue, temp);
+				
+				theBrush.LinearColors = new Color[] {Color.Red, Color.Blue};
+					g.DrawString(temp.ToString(), new Font("Times New Roman", 11),
+				             new SolidBrush(Color.Black), 0, yOffSet);
+
+				g.FillRectangle(theBrush, 120, yOffSet, 200, 50);
+
+				RectangleF boundingRec4 = theBrush.Rectangle;
+				var pennn4 = new Pen(Color.Green, 1);
+				g.DrawRectangle(pennn4, boundingRec4.X, boundingRec4.Y, boundingRec4.Width, boundingRec4.Height);
+				
+				yOffSet += 80;
+			}
+
+
+		}
+
+		void PaintView2 (Graphics g)
+		{
+			// Create a LinearGradientBrush.
+			Rectangle myRect = new Rectangle(20, 20, 200, 100);
+			LinearGradientBrush myLGBrush = new LinearGradientBrush(
+				myRect, Color.Blue, Color.Red,  0.0f, true);
+			
+			// Draw an ellipse to the screen using the LinearGradientBrush.
+			g.FillEllipse(myLGBrush, myRect);
+			
+			// Rotate the LinearGradientBrush.
+			myLGBrush.RotateTransform(45.0f, MatrixOrder.Prepend);
+			
+			// Rejustify the brush to start at the left edge of the ellipse.
+			myLGBrush.TranslateTransform(-100.0f, 0.0f);
+			
+			// Draw a second ellipse to the screen using 
+			// the transformed brush.
+			g.FillEllipse(myLGBrush, 20, 150, 200, 100);
+			
+		}
+
+		void PaintView3 (Graphics g)
+		{
+			// Create a LinearGradientBrush.
+			Rectangle myRect = new Rectangle(20, 20, 200, 100);
+			LinearGradientBrush myLGBrush = new LinearGradientBrush(
+				myRect, Color.Blue, Color.Red,  0.0f, true);
+			
+			// Draw an ellipse to the screen using the LinearGradientBrush.
+			g.FillEllipse(myLGBrush, myRect);
+			
+			// Transform the LinearGradientBrush.
+			Point[] transformArray = { new Point(20, 150),
+				new Point(400,150), new Point(20, 200) };
+			
+			Matrix myMatrix = new Matrix(myRect, transformArray);
+			myLGBrush.MultiplyTransform(
+				myMatrix,
+				MatrixOrder.Prepend);
+
+			RectangleF boundingRec = myLGBrush.Rectangle;
+			var pennn = new Pen(Color.Green, 1);
+			g.DrawRectangle(pennn, boundingRec.X, boundingRec.Y, boundingRec.Width, boundingRec.Height);
+			// Draw a second ellipse to the screen using 
+			// the transformed brush.
+			g.FillEllipse(myLGBrush, 20, 150, 380, 50);		
+		}
+
+		void PaintView4 (Graphics g)
+		{
+			// Create a blue pen with width of 2
+			Pen bluePen = new Pen(Color.Blue, 2);
+			Point pt1 = new Point(10, 10);
+			Point pt2 = new Point(20, 20);
+			Color[] lnColors = { Color.Black, Color.Red };
+			Rectangle rect1 = new Rectangle(10, 10, 15, 15);
+			// Create two linear gradient brushes
+			LinearGradientBrush lgBrush1 = new LinearGradientBrush
+				(rect1, Color.Blue, Color.Green,
+				 LinearGradientMode.BackwardDiagonal);
+			LinearGradientBrush lgBrush = new LinearGradientBrush
+				(pt1, pt2, Color.Red, Color.Green);
+			// Set linear colors
+			lgBrush.LinearColors = lnColors;
+			// Set gamma correction
+			lgBrush.GammaCorrection = true;
+			// Fill and draw rectangle and ellipses
+			g.FillRectangle(lgBrush, 150, 0, 50, 100);
+			g.DrawEllipse(bluePen, 0, 0, 100, 50);
+			g.FillEllipse(lgBrush1, 300, 0, 100, 100);
+			// Apply scale transformation
+			g.ScaleTransform(1, 0.5f);
+			// Apply translate transformation
+			g.TranslateTransform(50, 0, MatrixOrder.Append);
+			// Apply rotate transformation
+			g.RotateTransform(30.0f, MatrixOrder.Append);
+			// Fill ellipse
+			g.FillEllipse(lgBrush1, 300, 0, 100, 100);
+			// Rotate again
+			g.RotateTransform(15.0f, MatrixOrder.Append);
+			// Fill rectangle
+			g.FillRectangle(lgBrush, 150, 0, 50, 100);
+			// Rotate again
+			g.RotateTransform(15.0f, MatrixOrder.Append);
+			// Draw ellipse
+			g.DrawEllipse(bluePen, 0, 0, 100, 50);
+			// Dispose of objects
+			lgBrush1.Dispose();
+			lgBrush.Dispose();
+			bluePen.Dispose();
+
+		}
+
+		void PaintView5 (Graphics g)
+		{
+			LinearGradientBrush br = new LinearGradientBrush(ClientRectangle, Color.Black, Color.Black, 0 , false);
+			ColorBlend cb = new ColorBlend();
+			cb.Positions = new[] {0, 1/6f, 2/6f, 3/6f, 4/6f, 5/6f, 1};
+			cb.Colors = new[] {Color.Red, Color.Orange, Color.Yellow, Color.Green, Color.Blue, Color.Indigo, Color.Violet};
+			br.InterpolationColors= cb;
+			// rotate
+			br.RotateTransform(45);
+			// paint
+			g.FillRectangle(br, ClientRectangle);
+
+			Pen myPen = new Pen(Color.Blue, 1);
+			Pen myPen2 = new Pen(Color.Red, 1);
+			
+			// Create an array of points.
+			Point[] myArray =
+			{
+				new Point(20, 20),
+				new Point(120, 20),
+				new Point(120, 120),
+				new Point(20, 120),
+				new Point(20,20)
+			};
+			
+			// Draw the Points to the screen before applying the 
+			// transform.
+			g.DrawLines(myPen, myArray);
+			
+			// Create a matrix and scale it.
+			Matrix myMatrix = new Matrix();
+			myMatrix.Scale(3, 2, MatrixOrder.Append);
+			myMatrix.TransformPoints(myArray);
+			
+			// Draw the Points to the screen again after applying the 
+			// transform.
+			g.DrawLines(myPen2, myArray);
+		}
+
+		void PaintView6 (Graphics g)
+		{
+
+			// http://msdn.microsoft.com/en-gb/library/5chww2y4(v=vs.71).aspx
+
+			LinearGradientBrush linGrBrush = new LinearGradientBrush(
+				new Point(0, 10),
+				new Point(200, 10),
+				Color.Red,
+				Color.Blue);
+			
+			g.FillRectangle(linGrBrush, 0, 0, 200, 50);
+			linGrBrush.GammaCorrection = true;
+			g.FillRectangle(linGrBrush, 0, 60, 200, 50);
+
+
+		}
+
+		void PaintView7 (Graphics g)
+		{
+			// Create a LinearGradientBrush.
+			Rectangle myRect = new Rectangle(20, 20, 200, 100);
+			LinearGradientBrush myLGBrush = new LinearGradientBrush(
+				myRect, Color.Blue, Color.Red, 0.0f, true);
+			
+			LinearGradientBrush myLGBrush2 = new LinearGradientBrush(
+				myRect, Color.Blue, Color.Red, 0.0f, true);
+			
+			// Draw an ellipse to the screen using the LinearGradientBrush.
+			g.FillEllipse(myLGBrush, myRect);
+			
+			// Create a bell-shaped brush with the peak at the 
+			// center of the drawing area.
+			myLGBrush.SetSigmaBellShape(.5f, 1.0f);
+			
+			// Use the bell- shaped brush to draw a second 
+			// ellipse.
+			myRect.Y = 150;
+			g.FillEllipse(myLGBrush, myRect);
+
+
+		}
+
+		void PaintView8 (Graphics g)
+		{
+			// Create a LinearGradientBrush.
+			Rectangle myRect = new Rectangle(20, 20, 200, 100);
+			LinearGradientBrush myLGBrush = new LinearGradientBrush(
+				myRect, Color.Blue, Color.Red, 0.0f, true);
+			
+			// Draw an ellipse to the screen using the LinearGradientBrush.
+			g.FillEllipse(myLGBrush, myRect);
+			
+			// Create a triangular shaped brush with the peak at the center 
+			// of the drawing area.
+			myLGBrush.SetBlendTriangularShape(.50f, 1.0f);
+			
+			// Use the triangular brush to draw a second ellipse.
+			myRect.Y = 150;
+			g.FillEllipse(myLGBrush, myRect);
+
+		}
+
+		void PaintView9 (Graphics g)
+		{
+			// Create a LinearGradientBrush.
+			LinearGradientBrush linGrBrush = new LinearGradientBrush(
+				new Point(0, 10),
+				new Point(200, 10),
+				Color.FromArgb(255, 255, 0, 0),   // Opaque red
+				Color.FromArgb(255, 0, 0, 255));  // Opaque blue
+			
+			Pen pen = new Pen(linGrBrush,4);
+			Pen pena = new Pen(Brushes.Blue,4);
+			
+			g.DrawLine(pen, 0, 10, 200, 10);
+			g.FillEllipse(linGrBrush, 0, 30, 200, 100);
+			g.FillRectangle(linGrBrush, 0, 155, 500, 30);
+			g.DrawEllipse(pen, 250, 30, 200, 100);
+			g.DrawRectangle(pen, 0, 200, 500, 30);
+		}
+
+		void PaintView10 (Graphics g)
+		{
+			// Create a LinearGradientBrush.
+			Rectangle myRect = new Rectangle(20, 20, 200, 100);
+			LinearGradientBrush myLGBrush = new LinearGradientBrush(
+				myRect, Color.Blue, Color.Red,  0.0f, true);
+
+			// Draw an ellipse to the screen using the LinearGradientBrush.
+			g.FillEllipse(myLGBrush, myRect);
+
+			// Transform the LinearGradientBrush.
+			Point[] transformArray = { new Point(20, 150),
+				new Point(400,150), new Point(20, 200) };
+			
+			Matrix myMatrix = new Matrix(myRect, transformArray);
+			myLGBrush.MultiplyTransform(
+				myMatrix,
+				MatrixOrder.Prepend);
+
+			RectangleF boundingRec = myLGBrush.Rectangle;
+			var pennn = new Pen(Color.Green, 1);
+			g.DrawRectangle(pennn, boundingRec.X, boundingRec.Y, boundingRec.Width, boundingRec.Height);
+			// Draw a second ellipse to the screen using 
+			// the transformed brush.
+			g.FillEllipse(myLGBrush, 20, 150, 380, 50);
+			Font myFont = new Font("Helvetica", 18, FontStyle.Bold);
+
+			g.DrawString("Now is the time for all good men", myFont, myLGBrush, 20,125);
+		}
+
+		void PaintView11 (Graphics g)
+		{
+
+			// The emsize is calculated here until it can be fixed.
+			float emsize = 24;
+			var myRect = new RectangleF(10, 10, 200, 200);
+			LinearGradientBrush myBrush = new LinearGradientBrush(myRect, Color.Black, Color.Black, 0 , false);
+			ColorBlend cb = new ColorBlend();
+			cb.Positions = new[] {0, 1/6f, 2/6f, 3/6f, 4/6f, 5/6f, 1};
+			cb.Colors = new[] {Color.Red, Color.Orange, Color.Yellow, Color.Green, Color.Blue, Color.Indigo, Color.Violet};
+			myBrush.InterpolationColors= cb;
+			
+			// rotate
+			myBrush.RotateTransform(45);
+			
+			//Font myFont = new Font("Times New Roman", emsize, FontStyle.Bold);
+			Font myFont = new Font("Helvetica", emsize, FontStyle.Bold);
+			
+			
+			g.DrawString("Look at this text!  It is Gradiented!!", myFont, myBrush, myRect);
+			
+			// reset and rotate again
+			myBrush.ResetTransform();
+			myBrush.RotateTransform(-45);
+			
+			g.DrawString("Look at this text!  It is Gradiented!!", myFont, myBrush, 10, 250);
+		}
+
+		void PaintView12 (Graphics g)
+		{
+			// Create a rectangle
+			Rectangle rect = new Rectangle(0, 0, 40, 20);
+			// Create a linear gradient brush
+			LinearGradientBrush rgBrush =
+				new LinearGradientBrush(
+					rect, Color.Black, Color.Blue,
+					0.0f, true);
+			// Fill rectangle
+			g.FillRectangle(rgBrush,
+			                new Rectangle(10, 10, 300, 100));
+			// Set sigma bell shape
+			rgBrush.SetSigmaBellShape(0.5f, 1.0f);
+			// Fill rectangle again
+			g.FillRectangle(rgBrush,
+			                new Rectangle(10, 120, 300, 100));
+			// Set blend triangular shape
+			rgBrush.SetBlendTriangularShape(0.5f, 1.0f);
+			// Fill rectangle again
+			g.FillRectangle(rgBrush,
+			                new Rectangle(10, 240, 300, 100));
+		}
+
+		void PaintView13 (Graphics g)
+		{
+			// Create a rectangle
+			Rectangle rect = new Rectangle(0, 0, 40, 20);
+			// Create a linear gradient brush
+			LinearGradientBrush rgBrush =
+				new LinearGradientBrush(
+					rect, Color.Black, Color.Blue,
+					0.0f, true);
+			// Fill rectangle
+			g.FillRectangle(rgBrush,
+			                new Rectangle(10, 10, 300, 100));
+			// Set sigma bell shape
+			rgBrush.SetSigmaBellShape(0.8f, 1.0f);
+			// Fill rectangle again
+			g.FillRectangle(rgBrush,
+			                new Rectangle(10, 120, 300, 100));
+			// Set blend triangular shape
+			rgBrush.SetBlendTriangularShape(0.2f, 1.0f);
+			// Fill rectangle again
+			g.FillRectangle(rgBrush,
+			                new Rectangle(10, 240, 300, 100));
+		}
+
+		void PaintView14 (Graphics g)
+		{
+
+			// Create a LinearGradientBrush object
+			LinearGradientBrush brBrush =
+				new LinearGradientBrush(
+					new Point(0, 0), new Point(50, 20),
+					Color.Blue, Color.Red);
+			Rectangle rect =
+				new Rectangle(20, 20, 200, 100);
+			// Create color and points arrays
+			Color[] clrArray =
+			{
+				Color.Red, Color.Blue, Color.Green,
+				Color.Pink, Color.Yellow,
+				Color.DarkTurquoise
+			};
+			float[] posArray =
+			{
+				0.0f, 0.2f, 0.4f,
+				0.6f, 0.8f, 1.0f
+			};
+			// Create a ColorBlend object and
+			// set its Colors and Positions properties
+			ColorBlend colorBlend = new ColorBlend();
+			colorBlend.Colors = clrArray;
+			colorBlend.Positions = posArray;
+			// Set InterpolationColors property
+			brBrush.InterpolationColors = colorBlend;
+			// Draw shapes
+			g.FillRectangle(brBrush, rect);
+			rect.Y = 150;
+			rect.Width = 100;
+			rect.Height = 100;
+			g.FillEllipse(brBrush, rect);
+		}
+
+		void PaintView15 (Graphics g)
+		{
+			// Create a linear gradient brush
+			LinearGradientBrush brBrush =
+				new LinearGradientBrush(
+					new Point(0, 0), new Point(50, 20),
+					Color.Blue, Color.Red);
+			// Create a Blend object
+			Blend blend = new Blend();
+			float[] factArray = {0.0f, 0.3f, 0.5f, 1.0f};
+			float[] posArray = {0.0f, 0.2f, 0.6f, 1.0f};
+			// Set Blend's Factors and Positions properties
+			blend.Factors = factArray;
+			blend.Positions = posArray;
+			// Set Blend property of the brush
+			brBrush.Blend = blend;
+			// Fill a rectangle and an ellipse
+			g.FillRectangle(brBrush, 10, 20, 200, 100);
+			g.FillEllipse(brBrush, 10, 150, 120, 120);
+		}
+
+		void PaintView16 (Graphics g)
+		{
+			// Create a rectangle
+			Rectangle rect =
+				new Rectangle(20, 20, 100, 50);
+			// Create a linear gradient brush
+			LinearGradientBrush rgBrush =
+				new LinearGradientBrush(
+					rect, Color.Red, Color.Green,
+					0.0f, true);
+			// Fill rectangle
+			g.FillRectangle(rgBrush, rect);
+			rect.Y = 90;
+			// Set gamma correction of the brush
+			rgBrush.GammaCorrection = true;
+			// Fill rectangle
+			g.FillRectangle(rgBrush, rect);
+		}
+
+		void PaintView17 (Graphics g)
+		{
+			// Create Cock Face
+
+			var faceRect = new RectangleF (120, 120, 173, 173);
+			// Create a linear gradient brush
+
+		//<pds:LinearGradientFill GradientType="TwoColor" Angle="45"<BR>         EndColor="0, 0, 0" StartColor="125, 123, 168" />
+			var rgBrush =
+				new LinearGradientBrush(
+					faceRect, Color.FromArgb(255,125,123,168), Color.FromArgb(255,0,0,0),
+					45.0f, true);
+
+
+			// Fill rectangle
+			g.FillEllipse(rgBrush, faceRect);
+		}
+
+
+	}
+	
+	
+}
+
