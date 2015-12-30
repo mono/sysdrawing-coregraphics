@@ -8,7 +8,6 @@ using System.Runtime.InteropServices;
 using Foundation;
 using AppKit;
 using CoreGraphics;
-using CoreGraphics;
 using System.Drawing;
 
 namespace LinearGradientBrushTest
@@ -17,7 +16,15 @@ namespace LinearGradientBrushTest
 	{
 		
 		public event PaintEventHandler Paint;
-		
+
+
+        Action<Graphics>[] paintViewActions;
+
+        int currentView = 0;
+
+        // When true will save the graphics to a file on the desktop
+        bool saveCurrentView = false;
+
 		#region Constructors
 		
 		// Called when created from unmanaged code
@@ -38,6 +45,29 @@ namespace LinearGradientBrushTest
 		{
 			this.AutoresizingMask = NSViewResizingMask.HeightSizable | NSViewResizingMask.WidthSizable;
 			BackColor = Color.Wheat;
+
+            // Load our painting view methods.
+            paintViewActions = new Action<Graphics>[]
+            {
+                PaintView0,
+                PaintView1,
+                PaintView2,
+                PaintView3,
+                PaintView4,
+                PaintView5,
+                PaintView6,
+                PaintView7,
+                PaintView8,
+                PaintView9,
+                PaintView10,
+                PaintView11,
+                PaintView12,
+                PaintView13,
+                PaintView14,
+                PaintView15,
+                PaintView16,
+                PaintView17,
+            };
 		}
 		
 		public DrawingView (CGRect rect) : base (rect)
@@ -179,80 +209,31 @@ namespace LinearGradientBrushTest
 			return true;
 		}
 
-		int currentView = 17;
-		int totalViews = 18;
-
 		public override void KeyDown (NSEvent theEvent)
 		{
 			currentView++;
-			currentView %= totalViews;
-			//Console.WriteLine("Current View: {0}", currentView);
+			currentView %= paintViewActions.Length;
 			this.NeedsDisplay = true;
 		}
 
+        void SavePaintView(Action<Graphics> paintView)
+        {
+            var imageName = System.IO.Path.Combine(Environment.GetFolderPath (Environment.SpecialFolder.Desktop), paintView.Method.Name + ".png");
+            Bitmap bitmap = new Bitmap(606, 354, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            var g = Graphics.FromImage(bitmap);
+            g.Clear(BackColor);
+            paintView.Invoke(g);
+            bitmap.Save(imageName, System.Drawing.Imaging.ImageFormat.Png);
+        }
 
 		protected void OnPaint(PaintEventArgs e)
 		{
 			Graphics g = e.Graphics;
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 
-			switch (currentView) 
-			{
-			case 0:
-				PaintView0 (g);
-				break;
-			case 1:
-				PaintView1 (g);
-				break;
-			case 2:
-				PaintView2 (g);
-				break;
-			case 3:
-				PaintView3 (g);
-				break;
-			case 4:
-				PaintView4 (g);
-				break;
-			case 5:
-				PaintView5 (g);
-				break;
-			case 6:
-				PaintView6 (g);
-				break;
-			case 7:
-				PaintView7 (g);
-				break;
-			case 8:
-				PaintView8 (g);
-				break;
-			case 9:
-				PaintView9 (g);
-				break;
-			case 10:
-				PaintView10 (g);
-				break;
-			case 11:
-				PaintView11 (g);
-				break;
-			case 12:
-				PaintView12 (g);
-				break;
-			case 13:
-				PaintView13 (g);
-				break;
-			case 14:
-				PaintView14 (g);
-				break;
-			case 15:
-				PaintView15 (g);
-				break;
-			case 16:
-				PaintView16 (g);
-				break;
-			case 17:
-				PaintView17 (g);
-				break;
-			};
+            paintViewActions[currentView].Invoke(g);
+            if (saveCurrentView)
+                SavePaintView(paintViewActions[currentView]);
 
 			g.ResetTransform();
 			Font viewFont = new Font("Helvetica", 18, FontStyle.Bold);
@@ -494,7 +475,6 @@ namespace LinearGradientBrushTest
 
 		void PaintView5 (Graphics g)
 		{
-			return;
 			LinearGradientBrush br = new LinearGradientBrush(ClientRectangle, Color.Black, Color.Black, 0 , false);
 			ColorBlend cb = new ColorBlend();
 			cb.Positions = new[] {0, 1/6f, 2/6f, 3/6f, 4/6f, 5/6f, 1};
@@ -646,7 +626,6 @@ namespace LinearGradientBrushTest
 
 		void PaintView11 (Graphics g)
 		{
-			return;
 
 			// The emsize is calculated here until it can be fixed.
 			float emsize = 24;
@@ -723,7 +702,7 @@ namespace LinearGradientBrushTest
 
 		void PaintView14 (Graphics g)
 		{
-			return;
+
 			// Create a LinearGradientBrush object
 			LinearGradientBrush brBrush =
 				new LinearGradientBrush(
