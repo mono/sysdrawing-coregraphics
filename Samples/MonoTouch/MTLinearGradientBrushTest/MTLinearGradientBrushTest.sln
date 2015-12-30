@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTLinearGradientBrushTest", "MTLinearGradientBrushTest.csproj", "{64F53A4D-F8CA-4317-8969-50D29C2466D1}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "DrawingShared", "..\..\DrawingShared.shproj", "{C8F85826-762F-41B3-9719-8C348C491BA1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|iPhoneSimulator = Debug|iPhoneSimulator
+		Release|iPhone = Release|iPhone
+		Release|iPhoneSimulator = Release|iPhoneSimulator
+		Debug|iPhone = Debug|iPhone
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{64F53A4D-F8CA-4317-8969-50D29C2466D1}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{64F53A4D-F8CA-4317-8969-50D29C2466D1}.Debug|iPhone.Build.0 = Debug|iPhone
+		{64F53A4D-F8CA-4317-8969-50D29C2466D1}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{64F53A4D-F8CA-4317-8969-50D29C2466D1}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{64F53A4D-F8CA-4317-8969-50D29C2466D1}.Release|iPhone.ActiveCfg = Release|iPhone
+		{64F53A4D-F8CA-4317-8969-50D29C2466D1}.Release|iPhone.Build.0 = Release|iPhone
+		{64F53A4D-F8CA-4317-8969-50D29C2466D1}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{64F53A4D-F8CA-4317-8969-50D29C2466D1}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+	EndGlobalSection
+EndGlobal

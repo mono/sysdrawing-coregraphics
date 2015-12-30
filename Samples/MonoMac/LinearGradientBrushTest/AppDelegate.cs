@@ -17,7 +17,7 @@ namespace LinearGradientBrushTest
 		public override void DidFinishLaunching (NSNotification notification)
 		{
 			mainWindowController = new MainWindowController ();
-			var drawingView = new DrawingView(mainWindowController.Window.ContentView.Bounds);
+			var drawingView = new DrawingShared.DrawingView(mainWindowController.Window.ContentView.Bounds);
 			
 			mainWindowController.Window.ContentView.AddSubview(drawingView);
 			mainWindowController.Window.MakeKeyAndOrderFront (this);
