@@ -363,23 +363,23 @@ namespace System.Drawing.Drawing2D
 		float[] factors;
 		unsafe public void GradientLerp (nfloat *data, nfloat *outData) 
 		{
-			float lerpDist = *(float*)data;
+			nfloat lerpDist = *(nfloat*)data;
 		
-			int i = 0;
+			nint i = 0;
 
-			int numPositions = positions.Length;
+			nint numPositions = positions.Length;
 
 			// Make sure we put the linear distance value back into the 0.0 .. 1.0 range
 			// depending on the wrap mode
 			if (wrapMode == WrapMode.Tile || wrapMode == WrapMode.TileFlipY)
 			{
 				// Repeat
-				lerpDist = lerpDist - (float)Math.Floor(lerpDist);
+				lerpDist = lerpDist - (nfloat)Math.Floor(lerpDist);
 			}
 			else 
 			{
 				// Reflect
-				lerpDist = (float)Math.Abs(lerpDist) % 2.0f;
+				lerpDist = (nfloat)Math.Abs(lerpDist) % 2.0f;
 				if (lerpDist > 1.0f) {
 					lerpDist = 2.0f - lerpDist;
 				}
@@ -391,9 +391,9 @@ namespace System.Drawing.Drawing2D
 					break;
 			}
 
-			float prevPosition = 0;
-			float dist = 0;
-			float normalized = 0;
+			nfloat prevPosition = 0;
+			nfloat dist = 0;
+			nfloat normalized = 0;
 
 			if (i == 0 || i == numPositions) {
 				if (i == numPositions)
@@ -410,14 +410,14 @@ namespace System.Drawing.Drawing2D
 				// Get the distance between current position and last position
 				dist = factors[i] - prevPosition;
 				// normalized value between the two shading colors
-				normalized = (lerpDist - prevPosition)/dist;
+                normalized = (lerpDist - prevPosition)/dist;
 //				Console.WriteLine("prev {0} dist {1} normal {2} i {3} t {4}", 
 //				                  prevPosition, dist, normalized, i, t);
 				for(ushort ctr = 0; ctr < 4; ctr++) {
 					
-					outData[ctr] = GeomUtilities.Lerp(shadingColors[0][ctr], 
+					outData[ctr] = (nfloat)GeomUtilities.Lerp(shadingColors[0][ctr], 
 					                    shadingColors[1][ctr],
-					                    normalized);
+					                    (float)normalized);
 				}
 			} 
 			else 
@@ -433,13 +433,13 @@ namespace System.Drawing.Drawing2D
 				// Get the distance between current position and last position
 				dist = positions[i] - prevPosition;
 				// normalized value between the two shading colors
-				normalized = (lerpDist - prevPosition)/dist;
+                normalized = (lerpDist - prevPosition)/dist;
 
 				for(ushort ctr = 0; ctr < 4; ctr++) {
 
-					outData[ctr] = GeomUtilities.Lerp(shadingColors[i-1][ctr], 
+					outData[ctr] = (nfloat)GeomUtilities.Lerp(shadingColors[i-1][ctr], 
 					                    shadingColors[i][ctr],
-					                    normalized);
+					                    (float)normalized);
 				}
 			}
 
@@ -451,7 +451,7 @@ namespace System.Drawing.Drawing2D
 				// it is really never mentioned that alpha is included.
 				for(ushort ctr = 0; ctr < 3; ctr++) {
 					
-					outData[ctr] = (float)Math.Pow(outData[ctr], gamma);
+					outData[ctr] = (nfloat)Math.Pow(outData[ctr], gamma);
 				}
 
 			}
