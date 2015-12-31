@@ -35,6 +35,35 @@ namespace DrawingShared
                 };
         }
 		
+        protected void OnPaint(PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
+            paintViewActions[currentView].Invoke(g);
+            if (saveCurrentView)
+                SavePaintView(paintViewActions[currentView]);
+
+            g.ResetTransform();
+            Font viewFont = new Font("Helvetica", 18, FontStyle.Bold);
+            Brush sBrush = Brushes.Black;
+            PointF anyKeyPoint = PointF.Empty;
+
+            #if __MAC__
+            var anyKey = "Press any key to continue.";
+            #endif
+            #if __IOS__
+            var anyKey = "Tap Screen to continue.";
+            #endif
+
+            SizeF anyKeySize = g.MeasureString(anyKey, viewFont);
+            anyKeyPoint.X = (ClientRectangle.Width / 2) - (anyKeySize.Width / 2);
+            anyKeyPoint.Y = ClientRectangle.Height - (anyKeySize.Height + 10);
+            g.DrawString(anyKey, viewFont, sBrush, anyKeyPoint );
+            g.Dispose();
+
+        }
+
 		void PaintView0 (Graphics g)
 		{
 			// Create a pen object:
