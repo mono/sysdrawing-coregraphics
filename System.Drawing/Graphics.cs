@@ -549,7 +549,11 @@ namespace System.Drawing {
 
 		}
 
-		
+		/// <summary>
+        /// Fills the interior of a region.
+        /// </summary>
+        /// <param name="brush">Brush.</param>
+        /// <param name="region">Region.</param>
 		public void FillRegion (Brush brush, Region region)
 		{
 			if (brush == null)

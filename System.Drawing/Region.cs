@@ -404,11 +404,19 @@ namespace System.Drawing
 			Transform (translateMatrix);
 		}
 
+        /// <summary>
+        /// Updates this Region to the intersection of itself with the specified Rectangle structure.
+        /// </summary>
+        /// <param name="rect">Rect.</param>
 		public void Intersect(Rectangle rect)
 		{
 			Intersect ((RectangleF)rect);
 		}
 
+        /// <summary>
+        /// Updates this Region to the intersection of itself with the specified RectangleF structure.
+        /// </summary>
+        /// <param name="rect">Rect.</param>
 		public void Intersect(RectangleF rect)
 		{
 
@@ -416,6 +424,10 @@ namespace System.Drawing
 			calculateRegionPath (ClipType.ctIntersection);
 		}
 
+        /// <summary>
+        /// Updates this Region to the intersection of itself with the specified Region.
+        /// </summary>
+        /// <param name="region">Region.</param>
 		public void Intersect(Region region)
 		{
 
@@ -423,18 +435,40 @@ namespace System.Drawing
 			calculateRegionPath (ClipType.ctIntersection);
 		}
 
+        /// <summary>
+        /// Updates this Region to the intersection of itself with the specified GraphicsPath.
+        /// </summary>
+        /// <param name="path">Path.</param>
+        public void Intersect(GraphicsPath path)
+        {
+            var region = new Region(path);
+            Intersect(region);
+            region.Dispose();
+        }
 
+        /// <summary>
+        /// Updates this Region to the union of itself and the specified Rectangle structure.
+        /// </summary>
+        /// <param name="rect">Rect.</param>
 		public void Union(Rectangle rect)
 		{
 			Union ((RectangleF)rect);
 		}
 
+        /// <summary>
+        /// Updates this Region to the union of itself and the specified RectangleF structure.
+        /// </summary>
+        /// <param name="rect">Rect.</param>
 		public void Union(RectangleF rect)
 		{
 			regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Union));
 			calculateRegionPath (ClipType.ctUnion);
 		}
 
+        /// <summary>
+        /// Updates this Region to the union of itself and the specified Region.
+        /// </summary>
+        /// <param name="region">Region.</param>
 		public void Union(Region region)
 		{
 
@@ -442,17 +476,40 @@ namespace System.Drawing
 			calculateRegionPath (ClipType.ctUnion);
 		}
 
+        /// <summary>
+        /// Updates this Region to the union of itself and the specified GraphicsPath.
+        /// </summary>
+        /// <param name="path">Path.</param>
+        public void Union(GraphicsPath path)
+        {
+            var region = new Region(path);
+            Union(region);
+            region.Dispose();
+        }
+
+        /// <summary>
+        /// Updates this Region to the union minus the intersection of itself with the specified Rectangle structure.
+        /// </summary>
+        /// <param name="rect">Rect.</param>
 		public void Xor(Rectangle rect)
 		{
 			Xor ((RectangleF)rect);
 		}
 
+        /// <summary>
+        /// Updates this Region to the union minus the intersection of itself with the specified RectangleF structure.
+        /// </summary>
+        /// <param name="rect">Rect.</param>
 		public void Xor(RectangleF rect)
 		{
 			regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Xor));
 			calculateRegionPath (ClipType.ctXor);
 		}
 
+        /// <summary>
+        /// Updates this Region to the union minus the intersection of itself with the specified Region.
+        /// </summary>
+        /// <param name="region">Region.</param>
 		public void Xor(Region region)
 		{
 
@@ -460,23 +517,57 @@ namespace System.Drawing
 			calculateRegionPath (ClipType.ctXor);
 		}
 
-		public void Exclude(Rectangle rect)
+        /// <summary>
+        /// Updates this Region to the union minus the intersection of itself with the specified GraphicsPath.
+        /// </summary>
+        /// <param name="path">Path.</param>
+        public void Xor(GraphicsPath path)
+        {
+            var region = new Region(path);
+            Xor(region) ;
+            region.Dispose();
+        }
+
+        /// <summary>
+        /// Updates this Region to contain only the portion of its interior that does not intersect with the specified Rectangle structure.
+        /// </summary>
+        /// <param name="rect">Rect.</param>
+        public void Exclude(Rectangle rect)
 		{
 			Exclude ((RectangleF)rect);
 		}
 
+        /// <summary>
+        /// Updates this Region to contain only the portion of its interior that does not intersect with the specified RectangleF structure.
+        /// </summary>
+        /// <param name="rect">Rect.</param>
 		public void Exclude(RectangleF rect)
 		{
 			regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Difference));
 			calculateRegionPath (ClipType.ctDifference);
 		}
 
+        /// <summary>
+        /// Updates this Region to contain only the portion of its interior that does not intersect with the specified Region.
+        /// </summary>
+        /// <param name="region">Region.</param>
 		public void Exclude(Region region)
 		{
 
 			regionList.Add(new RegionEntry(RegionType.Path, region.solution, region.solution, RegionClipType.Difference));
 			calculateRegionPath (ClipType.ctDifference);
 		}
+
+        /// <summary>
+        /// Updates this Region to contain only the portion of its interior that does not intersect with the specified GraphicsPath.
+        /// </summary>
+        /// <param name="path">Path.</param>
+        public void Exclude(GraphicsPath path)
+        {
+            var region = new Region(path);
+            Exclude(region);
+            region.Dispose();
+        }
 
 		void calculateRegionPath (ClipType clipType)
 		{
