@@ -13,9 +13,6 @@ namespace DrawingShared
 	public partial class DrawingView 
 	{
 
-		Font anyKeyFont = new Font("Chalkduster", 18, FontStyle.Bold);
-		Font clipFont = new Font("Helvetica",12, FontStyle.Bold);
-
 		Image bmp;
 		Image bmp2;
 

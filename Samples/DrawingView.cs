@@ -34,6 +34,9 @@ namespace DrawingShared
 
         int currentView = 0;
 
+        Font anyKeyFont = new Font("Chalkduster", 18, FontStyle.Bold);
+        Font clipFont = new Font("Helvetica",12, FontStyle.Bold);
+
         // When true will save the graphics to a file on the desktop
         bool saveCurrentView = false;
 
