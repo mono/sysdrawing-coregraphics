@@ -1,0 +1,19 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClippingTests", "ClippingTests.csproj", "{7825E8A3-BA73-4A8E-95F1-9CA608EDBAAF}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "DrawingShared", "..\..\DrawingShared.shproj", "{C8F85826-762F-41B3-9719-8C348C491BA1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7825E8A3-BA73-4A8E-95F1-9CA608EDBAAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7825E8A3-BA73-4A8E-95F1-9CA608EDBAAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7825E8A3-BA73-4A8E-95F1-9CA608EDBAAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7825E8A3-BA73-4A8E-95F1-9CA608EDBAAF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
