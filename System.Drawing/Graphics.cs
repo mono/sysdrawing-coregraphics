@@ -1044,7 +1044,38 @@ namespace System.Drawing {
 		
 		public GraphicsContainer BeginContainer ()
 		{
-			throw new NotImplementedException ();		
+            if (stateStack == null)
+            {
+                stateStack = new object[MAX_GRAPHICS_STATE_STACK];
+                statePos = 0;
+            }
+
+            var gsCurrentState = new GraphicsContainer(++statePos);
+
+            var currentState = new CGGraphicsState();
+
+            currentState.lastPen = LastPen;
+            currentState.lastBrush = LastBrush;
+            // Make sure we clone the Matrices or we will still modify
+            // them after the save as they are the same objects.  Woops!!
+            currentState.model = modelMatrix.Clone();
+            currentState.view = viewMatrix.Clone();
+            currentState.compositingQuality = CompositingQuality;
+            currentState.compositingMode = CompositingMode;
+            currentState.interpolationMode = interpolationMode;
+            currentState.pageScale = pageScale;
+            currentState.pageUnit = graphicsUnit;
+            //currentState.pixelOffsetMode = PixelOffsetMode;
+            currentState.smoothingMode = smoothingMode;
+            //currentState.textContrast = TextContrast;
+            //currentState.textRenderingHint = TextRenderingHint;
+            currentState.renderingOrigin = renderingOrigin;
+
+            currentState.clipRegion = clipRegion;
+
+            stateStack[gsCurrentState.NativeObject] = currentState;
+
+            return gsCurrentState;
 		}
 		
 		public GraphicsContainer BeginContainer (Rectangle dstRect, Rectangle srcRect, GraphicsUnit unit)
@@ -1059,7 +1090,40 @@ namespace System.Drawing {
 
 		public void EndContainer (GraphicsContainer container)
 		{
-			throw new NotImplementedException ();
+            if (stateStack == null)
+            {
+                stateStack = new object[MAX_GRAPHICS_STATE_STACK];
+                statePos = 0;
+            }
+
+            if (container.NativeObject > statePos)
+                return;
+
+            if (container.NativeObject >= MAX_GRAPHICS_STATE_STACK)
+                throw new OutOfMemoryException();
+
+            var gstate = (CGGraphicsState)stateStack[container.NativeObject];
+            LastPen = gstate.lastPen;
+            LastBrush = gstate.lastBrush;
+            modelMatrix = gstate.model;
+            viewMatrix = gstate.view;
+
+            CompositingMode = gstate.compositingMode;
+            CompositingQuality = gstate.compositingQuality;
+            interpolationMode = gstate.interpolationMode;
+            pageScale = gstate.pageScale;
+            graphicsUnit = gstate.pageUnit;
+            //PixelOffsetMode = gstate.pixelOffsetMode;
+            SmoothingMode = gstate.smoothingMode;
+            //TextContrast = gstate.textContrast;
+            //TextRenderingHint = gstate.textRenderingHint;
+            renderingOrigin = gstate.renderingOrigin;
+            clipRegion = gstate.clipRegion;
+
+            // re-apply our ModelView to the graphics context
+            applyModelView();
+
+            statePos = container.NativeObject - 1;
 		}
 		
 

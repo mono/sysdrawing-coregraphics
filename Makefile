@@ -23,6 +23,7 @@ MONO_SOURCES = \
 	$(MONO_SYSD)/System.Drawing.Drawing2D/WarpMode.cs		\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/WrapMode.cs		\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/GraphicsState.cs		\
+	$(MONO_SYSD)/System.Drawing.Drawing2D/GraphicsContainer.cs		\
 	$(MONO_SYSD)/System.Drawing.Imaging/BitmapData.cs		\
 	$(MONO_SYSD)/System.Drawing.Imaging/ColorAdjustType.cs		\
 	$(MONO_SYSD)/System.Drawing.Imaging/ColorChannelFlag.cs		\
@@ -58,7 +59,6 @@ MONO_SOURCES = \
 	$(MONO_SYSD)/System.Drawing/SizeFConverter.cs			\
 
 SOURCES =	\
-	./System.Drawing.Drawing2D/GraphicsContainer.cs	\
 	./System.Drawing.Drawing2D/GraphicsPath.cs	\
 	./System.Drawing.Drawing2D/CGGraphicsState.cs	\
 	./System.Drawing.Drawing2D/Matrix.cs		\

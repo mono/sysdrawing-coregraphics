@@ -47,6 +47,9 @@
     <Compile Include="..\System.Drawing.Drawing2D\CGGraphicsState.cs">
       <Link>System.Drawing.Drawing2D\CGGraphicsState.cs</Link>
     </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\GraphicsContainer.cs">
+      <Link>External\GraphicsContainer.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\System.Drawing\Brush.cs" />
@@ -129,7 +132,6 @@
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\ImageLockMode.cs">
       <Link>External\ImageLockMode.cs</Link>
     </Compile>
-    <Compile Include="..\System.Drawing.Drawing2D\GraphicsContainer.cs" />
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\DashCap.cs">
       <Link>External\DashCap.cs</Link>
     </Compile>
