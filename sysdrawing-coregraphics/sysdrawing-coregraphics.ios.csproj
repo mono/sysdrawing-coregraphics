@@ -41,6 +41,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\GraphicsState.cs">
+      <Link>External\GraphicsState.cs</Link>
+    </Compile>
+    <Compile Include="..\System.Drawing.Drawing2D\CGGraphicsState.cs">
+      <Link>System.Drawing.Drawing2D\CGGraphicsState.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\System.Drawing\Brush.cs" />
@@ -157,7 +163,6 @@
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\FontStyle.cs">
       <Link>External\FontStyle.cs</Link>
     </Compile>
-    <Compile Include="..\System.Drawing.Drawing2D\GraphicsState.cs" />
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\IconConverter.cs">
       <Link>External\IconConverter.cs</Link>
     </Compile>

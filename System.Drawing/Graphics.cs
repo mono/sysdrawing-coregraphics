@@ -869,6 +869,7 @@ namespace System.Drawing {
 				return compositing_mode;
 			}
 			set {
+                //var blendmode = contex
 				compositing_mode = value;
 				switch (compositing_mode) 
 				{
@@ -876,7 +877,7 @@ namespace System.Drawing {
 					context.SetBlendMode (CGBlendMode.Copy);
 					break;
 				case CompositingMode.SourceOver:
-					context.SetBlendMode (CGBlendMode.Overlay);
+                    context.SetBlendMode (CGBlendMode.Normal);
 					break;
 				}
 			}
@@ -1294,41 +1295,84 @@ namespace System.Drawing {
 			context.RestoreState ();
 		}
 		
-		public void Restore (GraphicsState gstate)
+        static uint MAX_GRAPHICS_STATE_STACK = 512;
+        static object[] stateStack;
+        static uint statePos;
+
+		public void Restore (GraphicsState state)
 		{
+
+            if (stateStack == null)
+            {
+                stateStack = new object[MAX_GRAPHICS_STATE_STACK];
+                statePos = 0;
+            }
+
+            if (state.nativeState > statePos)
+                return;
+            
+            if (state.nativeState >= MAX_GRAPHICS_STATE_STACK)
+                throw new OutOfMemoryException();
+
+            var gstate = (CGGraphicsState)stateStack[state.nativeState];
 			LastPen = gstate.lastPen;
 			LastBrush = gstate.lastBrush;
 			modelMatrix = gstate.model;
 			viewMatrix = gstate.view;
+
+            CompositingMode = gstate.compositingMode;
+            CompositingQuality = gstate.compositingQuality;
+            interpolationMode = gstate.interpolationMode;
+            pageScale = gstate.pageScale;
+            graphicsUnit = gstate.pageUnit;
+            //PixelOffsetMode = gstate.pixelOffsetMode;
+            SmoothingMode = gstate.smoothingMode;
+            //TextContrast = gstate.textContrast;
+            //TextRenderingHint = gstate.textRenderingHint;
 			renderingOrigin = gstate.renderingOrigin;
-			graphicsUnit = gstate.pageUnit;
-			pageScale = gstate.pageScale;
-			SmoothingMode = gstate.smoothingMode;
 			clipRegion = gstate.clipRegion;
-			//applyModelView();
-			// I do not know if we should use the contexts save/restore state or our own
-			// we will do that save state for now
-			context.RestoreState();
+
+            // re-apply our ModelView to the graphics context
+			applyModelView();
+
+            statePos = state.nativeState - 1;
+
 		}
 		
 		public GraphicsState Save ()
 		{
-			var currentState = new GraphicsState();
+            if (stateStack == null)
+            {
+                stateStack = new object[MAX_GRAPHICS_STATE_STACK];
+                statePos = 0;
+            }
+
+			var gsCurrentState = new GraphicsState();
+            gsCurrentState.nativeState = ++statePos;
+
+            var currentState = new CGGraphicsState();
+
 			currentState.lastPen = LastPen;
 			currentState.lastBrush = LastBrush;
 			// Make sure we clone the Matrices or we will still modify
 			// them after the save as they are the same objects.  Woops!!
 			currentState.model = modelMatrix.Clone();
 			currentState.view = viewMatrix.Clone();
-			currentState.renderingOrigin = renderingOrigin;
-			currentState.pageUnit = graphicsUnit;
-			currentState.pageScale = pageScale;
-			currentState.smoothingMode = smoothingMode;
+            currentState.compositingQuality = CompositingQuality;
+            currentState.compositingMode = CompositingMode;
+            currentState.interpolationMode = interpolationMode;
+            currentState.pageScale = pageScale;
+            currentState.pageUnit = graphicsUnit;
+            //currentState.pixelOffsetMode = PixelOffsetMode;
+            currentState.smoothingMode = smoothingMode;
+            //currentState.textContrast = TextContrast;
+            //currentState.textRenderingHint = TextRenderingHint;
+            currentState.renderingOrigin = renderingOrigin;
+
 			currentState.clipRegion = clipRegion;
-			// I do not know if we should use the contexts save/restore state or our own
-			// we will do that save state for now
-			context.SaveState();
-			return currentState;
+
+            stateStack[gsCurrentState.nativeState] = currentState;
+			return gsCurrentState;
 		}
 		
 		public void DrawClosedCurve (Pen pen, PointF [] points)
