@@ -1,31 +1,25 @@
 using System;
-using System.Text;
 using System.Collections.Specialized;
-using System.Collections;
-
-//using System.Windows.Forms;
 using System.IO;
 
-namespace MTExample4_9
-{
-	class TextFileReader
-	{
+namespace MTExample4_9 {
+	class TextFileReader {
 		public string[,] ReadTextFile (string fileName)
 		{
-			if (File.Exists (fileName)) {   
-				string[,] sArray = ReadFile (fileName);
+			if (File.Exists(fileName)) {
+				string[,] sArray = ReadFile(fileName);
 				return sArray;
-			} else {
-				return null;
 			}
+
+			return null;
 		}
 
-		private string[,] ReadFile (string fileName)
+		string[,] ReadFile (string fileName)
 		{
 			try {
-				StringCollection sc = new StringCollection ();
-				FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.ReadWrite);
-				StreamReader sr = new StreamReader (fs);
+				var sc = new StringCollection ();
+				var fs = new FileStream (fileName, FileMode.Open, FileAccess.ReadWrite);
+				var sr = new StreamReader (fs);
 
 				// Read file into a string collection
 				int noBytesRead = 0;
@@ -50,8 +44,7 @@ namespace MTExample4_9
 					}
 				}
 				return sArray2;
-			} catch (Exception e) {
-				//MessageBox.Show (e.Message, "Error Saving File.");
+			} catch (Exception) {
 				return null;
 			}
 		}

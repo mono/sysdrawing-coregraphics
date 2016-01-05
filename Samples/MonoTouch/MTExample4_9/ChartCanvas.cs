@@ -1,33 +1,30 @@
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
+using CoreGraphics;
 using UIKit;
 
-namespace MTExample4_9
-{
+namespace MTExample4_9 {
 	public class ChartCanvas : UIView {
-
-		private ChartStyle cs;
-		private DataCollection dc;
+		ChartStyle cs;
+		DataCollection dc;
 
 		public PlotPanel PlotPanel;
 
-		public ChartCanvas (RectangleF rect) : base (rect)
+		public ChartCanvas (CGRect rect) : base (rect)
 		{
 			ContentMode = UIViewContentMode.Redraw;
-			this.AutoresizingMask = UIViewAutoresizing.All;
-			this.BackColor = Color.Wheat;
+			AutoresizingMask = UIViewAutoresizing.All;
+			BackColor = Color.Wheat;
 
 			PlotPanel = new PlotPanel(rect);
 
-			this.AddSubview(PlotPanel);
+			AddSubview (PlotPanel);
 
 			// Subscribing to a paint eventhandler to drawingPanel: 
-			PlotPanel.Paint +=
-				new PaintEventHandler(PlotPanelPaint);
+			PlotPanel.Paint += PlotPanelPaint;
 			
-			cs = new ChartStyle(this);
-			dc = new DataCollection(this);
+			cs = new ChartStyle (this);
+			dc = new DataCollection (this);
 			// Specify chart style parameters:
 			cs.Title = "Chart of GE Stock";
 			cs.XTickOffset = 1;
@@ -36,81 +33,72 @@ namespace MTExample4_9
 			cs.YLimMin = 32f;
 			cs.YLimMax = 36f;
 			cs.XTick = 2f;
-			cs.YTick = 0.5f;
+			cs.YTick = .5f;
 			dc.StockChartType = DataCollection.StockChartTypeEnum.Candle;
 		}
 		
-		private void AddData()
+		void AddData ()
 		{
-			dc.DataSeriesList.Clear();
-			TextFileReader tfr = new TextFileReader();
-			DataSeries ds = new DataSeries();
-			
+			dc.DataSeriesList.Clear ();
+			var tfr = new TextFileReader ();
+			var ds = new DataSeries ();
+
 			// Add GE stock data from a text data file:
 			ds = new DataSeries();
-			ds.DataString = tfr.ReadTextFile("GE.txt");
+			ds.DataString = tfr.ReadTextFile ("GE.txt");
 			ds.LineStyle.LineColor = Color.DarkBlue;
-			dc.Add(ds);         
+			dc.Add (ds);
 		}
-		
-		private void PlotPanelPaint(object sender, PaintEventArgs e)
+
+		void PlotPanelPaint(object sender, PaintEventArgs e)
 		{
 			Graphics g = e.Graphics;
-			AddData();
-			cs.PlotPanelStyle(g);
-			dc.AddStockChart(g, cs);
+			AddData ();
+			cs.PlotPanelStyle (g);
+			dc.AddStockChart (g, cs);
 		}
 
 		#region Form interface
-		public Rectangle ClientRectangle 
-		{
+		public Rectangle ClientRectangle {
 			get {
-				return new Rectangle((int)Bounds.X,
-				                      (int)Bounds.Y,
-				                      (int)Bounds.Width,
-				                      (int)Bounds.Height);
+				return new Rectangle ((int)Bounds.X, (int)Bounds.Y, (int)Bounds.Width, (int)Bounds.Height);
 			}
 		}
 
-		public Color BackColor 
-		{
+		public Color BackColor {
 			get {
-				float red;
-				float green;
-				float blue;
-				float alpha;
-				BackgroundColor.GetRGBA(out red, out green, out blue, out alpha);
-				return Color.FromArgb((int)alpha, (int)red, (int)green, (int)blue);
+				nfloat red;
+				nfloat green;
+				nfloat blue;
+				nfloat alpha;
+				BackgroundColor.GetRGBA (out red, out green, out blue, out alpha);
+				return Color.FromArgb ((int)alpha, (int)red, (int)green, (int)blue);
 			}
-
 			set {
 				var bgc = value;
-				BackgroundColor = UIColor.FromRGBA(bgc.R,bgc.G,bgc.B, bgc.A);
+				BackgroundColor = UIColor.FromRGBA (bgc.R,bgc.G,bgc.B, bgc.A);
 
 			}
 		}
 
 		Font font;
-		public Font Font
-		{
+		public Font Font {
 			get {
 				if (font == null)
-					font = new Font("Helvetica",12);
+					font = new Font ("Helvetica", 12f);
 				return font;
 			}
-			set 
-			{
+			set {
 				font = value;
 			}
 		}
-
 		#endregion
 
 
-		public override void Draw (RectangleF dirtyRect)
+		public override void Draw (CGRect rect)
 		{
 			Graphics g = Graphics.FromCurrentContext();
-			cs.ChartArea = this.ClientRectangle;
+			cs.ChartArea = ClientRectangle;
 			cs.SetChartArea(g);
 		}
 
