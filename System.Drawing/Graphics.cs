@@ -1080,12 +1080,29 @@ namespace System.Drawing {
 		
 		public GraphicsContainer BeginContainer (Rectangle dstRect, Rectangle srcRect, GraphicsUnit unit)
 		{
-			throw new NotImplementedException ();		
+            return BeginContainer ((RectangleF)dstRect, (RectangleF)srcRect, unit);
 		}
 
 		public GraphicsContainer BeginContainer (RectangleF dstRect, RectangleF srcRect, GraphicsUnit unit)
 		{
-			throw new NotImplementedException ();		
+            var container = BeginContainer();
+
+            var srcRect1 = srcRect;
+
+            // If the source units are not the same we need to convert them
+            // The reason we check for Pixel here is that our graphics already has the Pixel's baked into the model view transform
+            if (unit != graphicsUnit && unit != GraphicsUnit.Pixel) 
+            {
+                ConversionHelpers.GraphicsUnitConversion (unit, graphicsUnit, DpiX, DpiX,  ref srcRect1);
+            } 
+
+            TranslateTransform(dstRect.X, dstRect.Y);
+
+            float scaleX = dstRect.Width/srcRect1.Width;
+            float scaleY = dstRect.Height/srcRect1.Height;
+            ScaleTransform(scaleX, scaleY);
+
+            return container;
 		}
 
 		public void EndContainer (GraphicsContainer container)
