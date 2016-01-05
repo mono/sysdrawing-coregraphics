@@ -64,7 +64,7 @@ namespace MTExample5_6 {
 			}
 		}
 
-		PointF Point2D(CGPoint pt)
+		PointF Point2D (CGPoint pt)
 		{
 			var aPoint = new PointF ();
 			aPoint.X = (float)(form1.panel1.Width / 2 + pt.X);
