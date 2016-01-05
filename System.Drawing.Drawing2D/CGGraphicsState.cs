@@ -33,7 +33,7 @@ using System.Drawing.Text;
 
 namespace System.Drawing.Drawing2D
 {
-	public class CGGraphicsState {
+	internal class CGGraphicsState {
 
 		// TODO: set the rest of the states
 		// These are just off the top of my head for right now as am sure there are
