@@ -347,7 +347,7 @@ namespace MTExample4_9 {
 			if (IsXGrid == true) {
 				for (fY = ym; fY < YLimMax; fY += YTick) {
 					g.DrawLine (aPen, Point2D (new CGPoint (XLimMin, fY)),
-                        Point2D (new CGPoint (XLimMax, fY)));
+						Point2D (new CGPoint (XLimMax, fY)));
 				}
 			}
 
