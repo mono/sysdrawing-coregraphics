@@ -20,6 +20,7 @@ namespace DrawingShared
             // Load our painting view methods.
             paintViewActions = new Action<Graphics>[]
                 {
+                    BeginContainerVoid,
                     GraphicsSave1,
                     GraphicsSave2,
                 };
@@ -135,6 +136,24 @@ namespace DrawingShared
             Pen bluePen = new Pen(Color.FromArgb(255, 0, 0, 255));
             graphics.DrawEllipse(bluePen, 0, 0, 100, 20);
 
+        }
+
+        private void BeginContainerVoid(Graphics g)
+        {
+            // Begin graphics container.
+            GraphicsContainer containerState = g.BeginContainer();
+
+            // Translate world transformation.
+            g.TranslateTransform(100.0F, 100.0F);
+
+            // Fill translated rectangle in container with red.
+            g.FillRectangle(new SolidBrush(Color.Red), 0, 0, 200, 200);
+
+            // End graphics container.
+            g.EndContainer(containerState);
+
+            // Fill untransformed rectangle with green.
+            g.FillRectangle(new SolidBrush(Color.Green), 0, 0, 200, 200);
         }
 
 
