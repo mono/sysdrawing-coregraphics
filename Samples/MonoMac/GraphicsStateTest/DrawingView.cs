@@ -20,9 +20,12 @@ namespace DrawingShared
             // Load our painting view methods.
             paintViewActions = new Action<Graphics>[]
                 {
-                    BeginContainerVoid,
+
                     GraphicsSave1,
                     GraphicsSave2,
+                    BeginContainerVoid,
+                    BeginEndContainer1,
+                    BeginEndContainer2,
                 };
         }
 
@@ -38,6 +41,8 @@ namespace DrawingShared
                 SavePaintView(paintViewActions[currentView]);
 
             g.ResetTransform ();
+            g.PageScale = 1;
+
             Brush sBrush = Brushes.Black;
 
             if (!g.IsClipEmpty) 
@@ -156,7 +161,73 @@ namespace DrawingShared
             g.FillRectangle(new SolidBrush(Color.Green), 0, 0, 200, 200);
         }
 
+        void BeginEndContainer1 (Graphics g)
+        {
+            g.FillRectangle(Brushes.Blue, 0, 0, 100, 100);
 
+            GraphicsContainer c1 = g.BeginContainer(
+                new Rectangle(100, 100, 100, 100),
+                new Rectangle(0, 0, 100, 100),
+                GraphicsUnit.Pixel);
+
+            g.FillRectangle(Brushes.Green, 0, 0, 100, 100);
+
+            GraphicsContainer c2 = g.BeginContainer(
+                new Rectangle(100, 100, 100, 100),
+                new Rectangle(0, 0, 100, 100),
+                GraphicsUnit.Pixel);
+
+            g.FillRectangle(Brushes.Red, 0, 0, 100, 100);
+
+            GraphicsState s1 = g.Save();
+            g.PageUnit = GraphicsUnit.Pixel;
+
+            g.PageScale = 0.7f;
+            g.FillRectangle(Brushes.AliceBlue, 0, 0, 100, 100);
+
+            g.EndContainer(c2);
+            g.PageScale = 0.7f;
+            g.FillRectangle(Brushes.Magenta, 0, 0, 100, 100);
+
+            g.EndContainer(c1);
+            g.PageScale = 0.7f;
+            g.FillRectangle(Brushes.Maroon, 0, 0, 100, 100);
+
+        }
+
+        void BeginEndContainer2 (Graphics g)
+        {
+            g.FillRectangle(Brushes.Blue, 0, 0, 100, 100);
+
+            GraphicsContainer c1 = g.BeginContainer(
+                new Rectangle(100, 100, 125, 125),
+                new Rectangle(0, 0, 100, 100),
+                GraphicsUnit.Pixel);
+
+            g.FillRectangle(Brushes.Green, 0, 0, 100, 100);
+
+            GraphicsContainer c2 = g.BeginContainer(
+                new Rectangle(100, 100, 125, 125),
+                new Rectangle(0, 0, 100, 100),
+                GraphicsUnit.Pixel);
+
+            g.FillRectangle(Brushes.Red, 0, 0, 100, 100);
+
+            GraphicsState s1 = g.Save();
+            g.PageUnit = GraphicsUnit.Pixel;
+
+            g.PageScale = 0.7f;
+            g.FillRectangle(Brushes.AliceBlue, 0, 0, 100, 100);
+
+            g.EndContainer(c2);
+            g.PageScale = 0.7f;
+            g.FillRectangle(Brushes.Magenta, 0, 0, 100, 100);
+
+            g.EndContainer(c1);
+            g.PageScale = 0.7f;
+            g.FillRectangle(Brushes.Maroon, 0, 0, 100, 100);
+
+        }
 	}
 }
 
