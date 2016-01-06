@@ -1,5 +1,5 @@
 using System;
-using System.Drawing;
+using CoreGraphics;
 using Foundation;
 using UIKit;
 
@@ -8,8 +8,8 @@ namespace MTUniversalProject
 	public partial class MTUniversalProjectViewController : UIViewController
 	{
 
-		RectangleF portrait;
-		RectangleF landscape;
+		CGRect portrait;
+		CGRect landscape;
 
 		static bool UserInterfaceIdiomIsPhone {
 			get { return UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone; }
@@ -33,8 +33,8 @@ namespace MTUniversalProject
 			base.ViewDidLoad ();
 			
 			// Perform any additional setup after loading the view, typically from a nib.
-			portrait = new RectangleF (this.View.Bounds.Location, this.View.Bounds.Size);
-			landscape = new RectangleF(this.View.Bounds.Location, new SizeF(this.View.Bounds.Width * 2, this.View.Bounds.Height * 2));
+			portrait = new CGRect (this.View.Bounds.Location, this.View.Bounds.Size);
+			landscape = new CGRect(this.View.Bounds.Location, new CGSize(this.View.Bounds.Width * 2, this.View.Bounds.Height * 2));
 		}
 
 		public override bool ShouldAutorotateToInterfaceOrientation (UIInterfaceOrientation toInterfaceOrientation)

@@ -1,14 +1,10 @@
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 
-namespace MTExample4_7
-{
-	public class ColorMap
-	{
-		private int colormapLength = 64;
-		private int alphaValue = 255;
-        
+namespace MTExample4_7 {
+	public class ColorMap {
+		int colormapLength = 64;
+		int alphaValue = 255;
+
 		public ColorMap ()
 		{
 		}
@@ -53,7 +49,7 @@ namespace MTExample4_7
 		}
 
 		public int[,] Autumn ()
-		{   
+		{
 			int[,] cmap = new int[colormapLength, 4];
 			float[] autumn = new float[colormapLength];
 			for (int i = 0; i < colormapLength; i++) {
@@ -98,7 +94,7 @@ namespace MTExample4_7
 		{
 			int[,] cmap = new int[colormapLength, 4];
 			float[,] cMatrix = new float[colormapLength, 3];
-			int n = (int)Math.Ceiling (colormapLength / 4.0f);
+			var n = (int)Math.Ceiling (colormapLength / 4.0f);
 			int nMod = 0;
 			float[] fArray = new float[3 * n - 1];
 			int[] red = new int[fArray.Length];
@@ -135,7 +131,7 @@ namespace MTExample4_7
 				}
 				for (int j = 0; j < green.Length; j++) {
 					if (i == green [j] && green [j] < colormapLength)
-						cMatrix [i, 1] = fArray [i - (int)green [0]];
+						cMatrix [i, 1] = fArray [i - green [0]];
 				}
 				for (int j = 0; j < blue.Length; j++) {
 					if (i == blue [j] && blue [j] >= 0)

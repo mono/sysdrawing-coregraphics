@@ -1,154 +1,125 @@
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
+using CoreGraphics;
 using UIKit;
 
-namespace MTExample5_5
-{
+namespace MTExample5_5 {
 	public class PlotPanel : UIView {
-
 		public event PaintEventHandler Paint;
 
-		public PlotPanel (RectangleF rect) : base (rect)
+		public PlotPanel(CGRect rect) : base(rect)
 		{
 			ContentMode = UIViewContentMode.Redraw;
-			this.AutoresizingMask = UIViewAutoresizing.All;
-			this.BackColor = Color.Wheat;
-
-			// Set Form1 size:
-//			this.Width = 350;
-//			this.Height = 300;
-			// Sub Chart parameters:
-			// Subscribing to a paint eventhandler to drawingPanel: 
+			BackColor = Color.Wheat;
 		}
 
 		#region Panel interface
-		public Rectangle ClientRectangle 
-		{
+		public CGRect ClientRectangle {
 			get {
-				return new Rectangle((int)Bounds.X,
-				                      (int)Bounds.Y,
-				                      (int)Bounds.Width,
-				                      (int)Bounds.Height);
+				return new CGRect((int)Bounds.X, (int)Bounds.Y, (int)Bounds.Width, (int)Bounds.Height);
 			}
 		}
 
-		public Color BackColor 
-		{
+		public Color BackColor {
 			get {
-				float red;
-				float green;
-				float blue;
-				float alpha;
-				BackgroundColor.GetRGBA(out red, out green, out blue, out alpha);
-				return Color.FromArgb((int)alpha, (int)red, (int)green, (int)blue);
+				nfloat red;
+				nfloat green;
+				nfloat blue;
+				nfloat alpha;
+				BackgroundColor.GetRGBA (out red, out green, out blue, out alpha);
+				return Color.FromArgb ((int)alpha, (int)red, (int)green, (int)blue);
 			}
-
 			set {
 				var bgc = value;
-				BackgroundColor = UIColor.FromRGBA(bgc.R,bgc.G,bgc.B, bgc.A);
-
+				BackgroundColor = UIColor.FromRGBA (bgc.R, bgc.G, bgc.B, bgc.A);
 			}
 		}
 
 		Font font;
-		public Font Font
-		{
+		public Font Font {
 			get {
 				if (font == null)
-					font = new Font("Helvetica",12);
+					font = new Font ("Helvetica", 12f);
 				return font;
 			}
-			set 
-			{
+			set {
 				font = value;
 			}
 		}
 
-		public int Left 
-		{
-			get { return (int)Frame.Left; }
-
-			set {
-				var location = new PointF(value, Frame.Y);
-				Frame = new RectangleF(location, Frame.Size);
+		public int Left {
+			get {
+				return (int)Frame.Left;
 			}
-
+			set {
+				var location = new CGPoint (value, Frame.Y);
+				Frame = new CGRect(location, Frame.Size);
+			}
 		}
 
-		public int Right 
-		{
-			get { return (int)Frame.Right; }
-
-			set { 
+		public int Right {
+			get {
+				return (int)Frame.Right;
+			}
+			set {
 				var size = Frame;
 				size.Width = size.X - value;
 				Frame = size;
 			}
-			
 		}
 
-		public int Top
-		{
-			get { return (int)Frame.Top; }
-			set { 
-				var location = new PointF(Frame.X, value);
-				Frame = new RectangleF(location, Frame.Size);
-
+		public int Top {
+			get {
+				return (int)Frame.Top;
+			}
+			set {
+				var location = new CGPoint (Frame.X, value);
+				Frame = new CGRect (location, Frame.Size);
 			}
 		}
 
-		public int Bottom
-		{
-			get { return (int)Frame.Bottom; }
-			set { 
+		public int Bottom {
+			get {
+				return (int)Frame.Bottom;
+			}
+			set {
 				var frame = Frame;
 				frame.Height = frame.Y - value;
 				Frame = frame;
-
 			}
 		}
 
-		public int Width 
-		{
-			get { return (int)Frame.Width; }
-			set { 
+		public int Width {
+			get {
+				return (int)Frame.Width;
+			}
+			set {
 				var frame = Frame;
 				frame.Width = value;
 				Frame = frame;
-
 			}
 		}
 
-		public int Height
-		{
-			get { return (int)Frame.Height; }
-			set { 
+		public int Height {
+			get {
+				return (int)Frame.Height;
+			}
+			set {
 				var frame = Frame;
 				frame.Height = value;
 				Frame = frame;
-
 			}
 		}
 		#endregion
 
-
-		public override void Draw (RectangleF dirtyRect)
+		public override void Draw (CGRect rect)
 		{
-			if(Paint != null)
-			{
+			if (Paint != null) {
 				Graphics g = Graphics.FromCurrentContext();
-				Rectangle clip = new Rectangle((int)dirtyRect.X,
-				                               (int)dirtyRect.Y,
-				                               (int)dirtyRect.Width,
-				                               (int)dirtyRect.Height);
-				
-				var args = new PaintEventArgs(g, clip);
-
+				var clip = new CGRect ((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
+				var args = new PaintEventArgs (g, clip);
 				Paint(this, args);
 			}
-
-			 
 		}
 	}
 
@@ -157,54 +128,45 @@ namespace MTExample5_5
 public delegate void PaintEventHandler(object sender, PaintEventArgs e);
 
 
-public class PaintEventArgs : EventArgs, IDisposable
-{
-	private readonly Rectangle clipRect;
-	private Graphics graphics;
+public class PaintEventArgs : EventArgs, IDisposable {
+	readonly CGRect clipRect;
+	Graphics graphics;
 
-	public PaintEventArgs(Graphics graphics, Rectangle clipRect)
+	public PaintEventArgs (Graphics graphics, CGRect clipRect)
 	{
 		if (graphics == null)
-		{
-			throw new ArgumentNullException("graphics");
-		}
+			throw new ArgumentNullException ("graphics");
 		this.graphics = graphics;
 		this.clipRect = clipRect;
 	}
-	
-	public void Dispose()
+
+	public void Dispose ()
 	{
-		this.Dispose(true);
-		GC.SuppressFinalize(this);
+		this.Dispose (true);
+		GC.SuppressFinalize (this);
 	}
-	
-	protected virtual void Dispose(bool disposing)
+
+	protected virtual void Dispose (bool disposing)
 	{
-		if ((disposing && (this.graphics != null)))
-		{
-			this.graphics.Dispose();
+		if ((disposing && (this.graphics != null))) {
+			this.graphics.Dispose ();
 		}
 	}
-	
+
 	~PaintEventArgs()
 	{
 		this.Dispose(false);
 	}
-	
-	public Rectangle ClipRectangle
-	{
-		get
-		{
+
+	public CGRect ClipRectangle {
+		get {
 			return this.clipRect;
 		}
 	}
-	
-	public Graphics Graphics
-	{
-		get
-		{
+
+	public Graphics Graphics {
+		get {
 			return this.graphics;
 		}
 	}
-	
 }
