@@ -1,7 +1,8 @@
 using System;
-using System.Drawing;
+using CoreGraphics;
 using System.Drawing.Drawing2D;
 using UIKit;
+using System.Drawing;
 
 namespace MTLinearGradientBrushTest
 {
@@ -9,7 +10,7 @@ namespace MTLinearGradientBrushTest
 
 		public event PaintEventHandler Paint;
 
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			ContentMode = UIViewContentMode.Redraw;
 			this.AutoresizingMask = UIViewAutoresizing.All;
@@ -17,13 +18,9 @@ namespace MTLinearGradientBrushTest
 		}
 
 		#region Panel interface
-		public Rectangle ClientRectangle 
-		{
+		public Rectangle ClientRectangle {
 			get {
-				return new Rectangle((int)Bounds.X,
-				                     (int)Bounds.Y,
-				                     (int)Bounds.Width,
-				                     (int)Bounds.Height);
+				return new Rectangle((int)Bounds.X, (int)Bounds.Y, (int)Bounds.Width, (int)Bounds.Height);
 			}
 		}
 		
@@ -61,8 +58,8 @@ namespace MTLinearGradientBrushTest
 			}
 			
 			set {
-				var location = new PointF(value, Frame.Y);
-				Frame = new RectangleF(location, Frame.Size);
+				var location = new CGPoint(value, Frame.Y);
+				Frame = new CGRect(location, Frame.Size);
 			}
 			
 		}
@@ -83,8 +80,8 @@ namespace MTLinearGradientBrushTest
 		{
 			get { return (int)Frame.Top; }
 			set { 
-				var location = new PointF(Frame.X, value);
-				Frame = new RectangleF(location, Frame.Size);
+				var location = new CGPoint(Frame.X, value);
+				Frame = new CGRect(location, Frame.Size);
 				
 			}
 		}
@@ -121,12 +118,12 @@ namespace MTLinearGradientBrushTest
 		}
 #endregion
 
-		public override void Draw (RectangleF dirtyRect)
+		public override void Draw (CGRect dirtyRect)
 		{
 			Graphics g = Graphics.FromCurrentContext();
 			g.Clear(backColor);
 
-			Rectangle clip = new Rectangle((int)dirtyRect.X,
+			CGRect clip = new CGRect((int)dirtyRect.X,
 			                               (int)dirtyRect.Y,
 			                               (int)dirtyRect.Width,
 			                               (int)dirtyRect.Height);
@@ -141,7 +138,7 @@ namespace MTLinearGradientBrushTest
 			}
 		}
 
-		public override void TouchesBegan (MonoTouch.Foundation.NSSet touches, UIEvent evt)
+		public override void TouchesBegan (Foundation.NSSet touches, UIEvent evt)
 		{
 			currentView++;
 			currentView %= totalViews;
@@ -217,11 +214,11 @@ namespace MTLinearGradientBrushTest
 			g.ResetTransform();
 			Font viewFont = new Font("Helvetica", 18, FontStyle.Bold);
 			Brush sBrush = Brushes.Black;
-			PointF anyKeyPoint = PointF.Empty;
+			var anyKeyPoint = Point.Empty;
 			var anyKey = "Tap Screen to continue.";
-			SizeF anyKeySize = g.MeasureString(anyKey, viewFont);
-			anyKeyPoint.X = (ClientRectangle.Width / 2) - (anyKeySize.Width / 2);
-			anyKeyPoint.Y = ClientRectangle.Height - (anyKeySize.Height + 10);
+			CGSize anyKeySize = g.MeasureString(anyKey, viewFont);
+			anyKeyPoint.X = (int)((ClientRectangle.Width / 2) - (anyKeySize.Width / 2));
+			anyKeyPoint.Y = (int)(ClientRectangle.Height - (anyKeySize.Height + 10));
 			g.DrawString(anyKey, viewFont, sBrush, anyKeyPoint );
 			g.Dispose();
 
@@ -232,7 +229,6 @@ namespace MTLinearGradientBrushTest
 			// Create a pen object:
 			Pen aPen = new Pen(Color.Blue, 2);
 			var smallRect = new Rectangle(500,20,50,20);
-
 
 			Pen gPen = new Pen(Color.Green, 2);
 			var largeRect = new Rectangle(260, 100, 117, 117);
@@ -250,20 +246,14 @@ namespace MTLinearGradientBrushTest
 			g.DrawRectangle(gPen, largeRect);
 			g.DrawRectangle(aPen, smallRect);
 
-			Point startPoint2 = new Point(10, 110);
-			Point endPoint2 = new Point(140, 110);
 			Rectangle ellipseRect2 = new Rectangle(20, 100, 200, 200);
 
-			var startPoint = new PointF(ellipseRect2.X + 50, ellipseRect2.Y + ellipseRect2.Height /2);
-			var endPoint = new PointF(ellipseRect2.X + (ellipseRect2.Width / 2) + 50, ellipseRect2.Bottom - 50);
+			var startPoint = new Point(ellipseRect2.X + 50, ellipseRect2.Y + ellipseRect2.Height /2);
+			var endPoint = new Point(ellipseRect2.X + (ellipseRect2.Width / 2) + 50, ellipseRect2.Bottom - 50);
 
 			float[] myFactors = { .2f, .4f, .8f, .8f, .4f, .2f };
 			float[] myPositions = { 0.0f, .2f, .4f, .6f, .8f, 1.0f };
-			//float[] myFactors = { .2f, .4f, .8f };//, .8f, .4f, .2f };
-			//float[] myPositions = { 0.0f, .2f, 1.0f };//, .6f, .8f, 1.0f };
 
-			//float[] myFactors = { .2f };
-			//float[] myPositions = { 1 }; 
 			Blend myBlend = new Blend();
 			myBlend.Factors = myFactors;
 			myBlend.Positions = myPositions;
@@ -272,11 +262,6 @@ namespace MTLinearGradientBrushTest
 				endPoint,
 				Color.Blue,
 				Color.Red);
-
-			//			LinearGradientBrush lgBrush2 = new LinearGradientBrush(
-			//			    ellipseRect2,
-			//			    Color.Blue,
-			//			    Color.Red, 45, true);
 
 			lgBrush2.WrapMode = WrapMode.TileFlipXY;
 			lgBrush2.Blend = myBlend;
@@ -308,12 +293,6 @@ namespace MTLinearGradientBrushTest
 
 			// Declare a rectangle to draw the Blend in.
 			Rectangle rectangle1 = new Rectangle(10, 10, 120, 100);
-
-			// Create a new LinearGradientBrush using the rectangle,  
-			// green and blue. and 90-degree angle.
-			//			LinearGradientBrush brush1 =
-			//				new LinearGradientBrush(rectangle1, Color.LightGreen,
-			//				                        Color.Blue, 90, true);
 
 			LinearGradientBrush brush1 =
 				new LinearGradientBrush(rectangle1, Color.LightGreen,
@@ -361,7 +340,7 @@ namespace MTLinearGradientBrushTest
 		void PaintView2 (Graphics g)
 		{
 			// Create a LinearGradientBrush.
-			Rectangle myRect = new Rectangle(20, 20, 200, 100);
+			RectangleF myRect = new RectangleF(20, 20, 200, 100);
 			LinearGradientBrush myLGBrush = new LinearGradientBrush(
 				myRect, Color.Blue, Color.Red,  0.0f, true);
 
@@ -608,7 +587,7 @@ namespace MTLinearGradientBrushTest
 
 			// The emsize is calculated here until it can be fixed.
 			float emsize = 24;
-			var myRect = new RectangleF(10, 10, 200, 200);
+			var myRect = new Rectangle (10, 10, 200, 200);
 			LinearGradientBrush myBrush = new LinearGradientBrush(myRect, Color.Black, Color.Black, 0 , false);
 			ColorBlend cb = new ColorBlend();
 			cb.Positions = new[] {0, 1/6f, 2/6f, 3/6f, 4/6f, 5/6f, 1};
@@ -642,17 +621,17 @@ namespace MTLinearGradientBrushTest
 					0.0f, true);
 			// Fill rectangle
 			g.FillRectangle(rgBrush,
-			                new Rectangle(10, 10, 300, 100));
+				new Rectangle(10, 10, 300, 100));
 			// Set sigma bell shape
 			rgBrush.SetSigmaBellShape(0.5f, 1.0f);
 			// Fill rectangle again
 			g.FillRectangle(rgBrush,
-			                new Rectangle(10, 120, 300, 100));
+				new Rectangle(10, 120, 300, 100));
 			// Set blend triangular shape
 			rgBrush.SetBlendTriangularShape(0.5f, 1.0f);
 			// Fill rectangle again
 			g.FillRectangle(rgBrush,
-			                new Rectangle(10, 240, 300, 100));
+				new Rectangle(10, 240, 300, 100));
 		}
 
 		void PaintView13 (Graphics g)
@@ -666,17 +645,17 @@ namespace MTLinearGradientBrushTest
 					0.0f, true);
 			// Fill rectangle
 			g.FillRectangle(rgBrush,
-			                new Rectangle(10, 10, 300, 100));
+				new Rectangle(10, 10, 300, 100));
 			// Set sigma bell shape
 			rgBrush.SetSigmaBellShape(0.8f, 1.0f);
 			// Fill rectangle again
 			g.FillRectangle(rgBrush,
-			                new Rectangle(10, 120, 300, 100));
+				new Rectangle(10, 120, 300, 100));
 			// Set blend triangular shape
 			rgBrush.SetBlendTriangularShape(0.2f, 1.0f);
 			// Fill rectangle again
 			g.FillRectangle(rgBrush,
-			                new Rectangle(10, 240, 300, 100));
+				new Rectangle(10, 240, 300, 100));
 		}
 
 		void PaintView14 (Graphics g)
@@ -763,10 +742,10 @@ public delegate void PaintEventHandler(object sender, PaintEventArgs e);
 
 public class PaintEventArgs : EventArgs, IDisposable
 {
-	private readonly Rectangle clipRect;
+	private readonly CGRect clipRect;
 	private Graphics graphics;
 
-	public PaintEventArgs(Graphics graphics, Rectangle clipRect)
+	public PaintEventArgs(Graphics graphics, CGRect clipRect)
 	{
 		if (graphics == null)
 		{
@@ -795,7 +774,7 @@ public class PaintEventArgs : EventArgs, IDisposable
 		this.Dispose(false);
 	}
 
-	public Rectangle ClipRectangle
+	public CGRect ClipRectangle
 	{
 		get
 		{
