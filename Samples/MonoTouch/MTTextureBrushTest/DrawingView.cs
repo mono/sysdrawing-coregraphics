@@ -1,13 +1,14 @@
 using System;
-using System.Drawing;
+using CoreGraphics;
 using System.Drawing.Drawing2D;
 using UIKit;
 using Foundation;
+using System.Drawing;
 
 namespace MTTextureBrushTest
 {
 	public class DrawingView : UIView {
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			ContentMode = UIViewContentMode.Redraw;
 			this.AutoresizingMask = UIViewAutoresizing.All;
@@ -17,7 +18,7 @@ namespace MTTextureBrushTest
 
 		float Width = 0;
 
-		public override void Draw (RectangleF rect)
+		public override void Draw (CGRect rect)
 		{
 			Graphics g = Graphics.FromCurrentContext();
 			
@@ -33,7 +34,7 @@ namespace MTTextureBrushTest
 			
 			var textureBrush = new TextureBrush(texture);
 			Pen blackPen = new Pen(Color.Black);
-			var rect2 = new RectangleF(20,100,200,200);
+			var rect2 = new Rectangle(20,100,200,200);
 			
 			//textureBrush.WrapMode = WrapMode.TileFlipXY;
 			
@@ -46,7 +47,7 @@ namespace MTTextureBrushTest
 			
 			var textureBrush2 = new TextureBrush(cocoaMonoTexture);
 			Pen bluePen = new Pen(Color.Blue);
-			var rectt = new RectangleF(300,100,200,200);
+			var rectt = new Rectangle(300,100,200,200);
 			
 			textureBrush2.WrapMode = WrapMode.TileFlipXY;
 			
