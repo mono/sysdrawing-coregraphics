@@ -1,9 +1,10 @@
 using System;
-using System.Drawing;
+using CoreGraphics;
 using System.Drawing.Drawing2D;
 using UIKit;
 using Foundation;
 using CoreGraphics;
+using System.Drawing;
 
 namespace MTRegionTests
 {
@@ -11,7 +12,7 @@ namespace MTRegionTests
 
 		public event PaintEventHandler Paint;
 
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			ContentMode = UIViewContentMode.Redraw;
 			this.AutoresizingMask = UIViewAutoresizing.All;
@@ -28,10 +29,10 @@ namespace MTRegionTests
 		}
 
 		#region Panel interface
-		public Rectangle ClientRectangle 
+		public CGRect ClientRectangle 
 		{
 			get {
-				return new Rectangle((int)Bounds.X,
+				return new CGRect((int)Bounds.X,
 				                     (int)Bounds.Y,
 				                     (int)Bounds.Width,
 				                     (int)Bounds.Height);
@@ -72,8 +73,8 @@ namespace MTRegionTests
 			}
 			
 			set {
-				var location = new PointF(value, Frame.Y);
-				Frame = new RectangleF(location, Frame.Size);
+				var location = new CGPoint(value, Frame.Y);
+				Frame = new CGRect(location, Frame.Size);
 			}
 			
 		}
@@ -94,8 +95,8 @@ namespace MTRegionTests
 		{
 			get { return (int)Frame.Top; }
 			set { 
-				var location = new PointF(Frame.X, value);
-				Frame = new RectangleF(location, Frame.Size);
+				var location = new CGPoint(Frame.X, value);
+				Frame = new CGRect(location, Frame.Size);
 				
 			}
 		}
@@ -132,12 +133,12 @@ namespace MTRegionTests
 		}
 #endregion
 
-		public override void Draw (RectangleF dirtyRect)
+		public override void Draw (CGRect dirtyRect)
 		{
 			Graphics g = Graphics.FromCurrentContext();
 			g.Clear(backColor);
 
-			Rectangle clip = new Rectangle((int)dirtyRect.X,
+			CGRect clip = new CGRect((int)dirtyRect.X,
 			                               (int)dirtyRect.Y,
 			                               (int)dirtyRect.Width,
 			                               (int)dirtyRect.Height);
@@ -152,7 +153,7 @@ namespace MTRegionTests
 			}
 		}
 
-		public override void TouchesBegan (MonoTouch.Foundation.NSSet touches, UIEvent evt)
+		public override void TouchesBegan (Foundation.NSSet touches, UIEvent evt)
 		{
 			currentView++;
 			currentView %= totalViews;
@@ -170,9 +171,9 @@ namespace MTRegionTests
 
 
 		Rectangle regionRect1 = new Rectangle(50, 50, 100, 100);
-		RectangleF regionRectF1 = new RectangleF(110, 60, 100, 100);
+		Rectangle regionRectF1 = new Rectangle(110, 60, 100, 100);
 		Rectangle regionRect2 = new Rectangle(110, 60, 100, 100);
-		RectangleF regionRectF2 = new RectangleF(110, 60, 100, 100);
+		Rectangle regionRectF2 = new Rectangle(110, 60, 100, 100);
 
 
 		int currentView = 0;
@@ -256,7 +257,7 @@ namespace MTRegionTests
 				var clipString = string.Format("Clip-{0}", g.ClipBounds);
 				g.ResetClip ();
 				var clipSize = g.MeasureString(clipString, clipFont);
-				clipPoint.X = (ClientRectangle.Width / 2) - (clipSize.Width / 2);
+				clipPoint.X = (float)((ClientRectangle.Width / 2) - (clipSize.Width / 2));
 				clipPoint.Y = 5;
 				g.DrawString(clipString, clipFont, sBrush, clipPoint );
 
@@ -265,12 +266,12 @@ namespace MTRegionTests
 			var anyKeyPoint = PointF.Empty;
 			var anyKey = "Tap screen to continue.";
 			var anyKeySize = g.MeasureString(anyKey, anyKeyFont);
-			anyKeyPoint.X = (ClientRectangle.Width / 2) - (anyKeySize.Width / 2);
-			anyKeyPoint.Y = ClientRectangle.Height - (anyKeySize.Height + 10);
+			anyKeyPoint.X = (float)((ClientRectangle.Width / 2) - (anyKeySize.Width / 2));
+			anyKeyPoint.Y = (float)(ClientRectangle.Height - (anyKeySize.Height + 10));
 			g.DrawString(anyKey, anyKeyFont, sBrush, anyKeyPoint );
 
 			anyKeySize = g.MeasureString(title, anyKeyFont);
-			anyKeyPoint.X = (ClientRectangle.Width / 2) - (anyKeySize.Width / 2);
+			anyKeyPoint.X = (float)((ClientRectangle.Width / 2) - (anyKeySize.Width / 2));
 			anyKeyPoint.Y -= anyKeySize.Height;
 			g.DrawString(title, anyKeyFont, sBrush, anyKeyPoint );
 
@@ -335,7 +336,7 @@ namespace MTRegionTests
 
 			// create the second rectangle and draw it to the screen in red.
 			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
+				Rectangle.Round(regionRectF2));
 
 			// Create a region using the first rectangle.
 			Region myRegion = new Region(regionRect1);
@@ -363,7 +364,7 @@ namespace MTRegionTests
 
 			// create the second rectangle and draw it to the screen in red.
 			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
+				Rectangle.Round(regionRectF2));
 			g.FillRectangle (myBrush, regionRect2);
 
 			// Create a region using the first rectangle.
@@ -397,7 +398,7 @@ namespace MTRegionTests
 
 			// create the second rectangle and draw it to the screen in red.
 			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
+				Rectangle.Round(regionRectF2));
 			g.FillRectangle(myBrush, regionRect2);
 
 			// Create a region using the first rectangle.
@@ -430,7 +431,7 @@ namespace MTRegionTests
 
 			// create the second rectangle and draw it to the screen in red.
 			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
+				Rectangle.Round(regionRectF2));
 			g.FillRectangle(myBrush, regionRect2);
 
 			// Create a region using the first rectangle.
@@ -463,7 +464,7 @@ namespace MTRegionTests
 
 			// create the second rectangle and draw it to the screen in red.
 			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
+				Rectangle.Round(regionRectF2));
 			g.FillRectangle(myBrush, regionRect2);
 
 			// Create a region using the first rectangle.
@@ -497,7 +498,7 @@ namespace MTRegionTests
 
 			// create the second rectangle and draw it to the screen in red.
 			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
+				Rectangle.Round(regionRectF2));
 			g.FillRectangle(myBrush, regionRect2);
 
 			// Create a region using the first rectangle.
@@ -530,7 +531,7 @@ namespace MTRegionTests
 
 			// create the second rectangle and draw it to the screen in red.
 			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
+				Rectangle.Round(regionRectF2));
 			g.FillRectangle(myBrush, regionRect2);
 
 			// Create a region using the first rectangle.
@@ -564,7 +565,7 @@ namespace MTRegionTests
 
 			// create the second rectangle and draw it to the screen in red.
 			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
+				Rectangle.Round(regionRectF2));
 			g.FillRectangle(myBrush, regionRect2);
 
 			// Create a region using the first rectangle.
@@ -597,7 +598,7 @@ namespace MTRegionTests
 
 			// create the second rectangle and draw it to the screen in red.
 			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
+				Rectangle.Round(regionRectF2));
 			g.FillRectangle(myBrush, regionRect2);
 
 			// Create a region using the first rectangle.
@@ -631,7 +632,7 @@ namespace MTRegionTests
 
 			// create the second rectangle and draw it to the screen in red.
 			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
+				Rectangle.Round(regionRectF2));
 			g.FillRectangle(myBrush, regionRect2);
 
 			// Create a region using the first rectangle.
@@ -665,7 +666,7 @@ namespace MTRegionTests
 
 			// create the second rectangle and draw it to the screen in red.
 			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
+				Rectangle.Round(regionRectF2));
 			g.FillRectangle(myBrush, regionRect2);
 
 			// Create a region using the first rectangle.
@@ -700,7 +701,7 @@ namespace MTRegionTests
 
 			// create the second rectangle and draw it to the screen in red.
 			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
+				Rectangle.Round(regionRectF2));
 			g.FillRectangle(myBrush, regionRect2);
 
 			// Create a region using the first rectangle.
@@ -734,7 +735,7 @@ namespace MTRegionTests
 
 			// create the second rectangle and draw it to the screen in red.
 			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
+				Rectangle.Round(regionRectF2));
 			g.FillRectangle(myBrush, regionRect2);
 
 			// Create a region using the first rectangle.
@@ -797,7 +798,7 @@ namespace MTRegionTests
 
 			// rotation.
 			Matrix transformMatrix = new Matrix();
-			transformMatrix.RotateAt(45, new Point(100, 50));
+			transformMatrix.RotateAt(45, new PointF(100, 50));
 
 			// Apply the transform to the region.
 			myRegion.Transform(transformMatrix);
@@ -840,7 +841,7 @@ namespace MTRegionTests
 			g.DrawString("contained = " + contained.ToString(),
 			             myFont,
 			             txtBrush,
-			             new PointF(regionRectF2.Right + 10, regionRectF2.Top));
+				new PointF(regionRectF2.Right + 10, regionRectF2.Top));
 
 			regionRect1.Y += 120;
 			regionRectF2.Y += 120;
@@ -870,7 +871,7 @@ namespace MTRegionTests
 			g.DrawString("contained = " + contained.ToString(),
 			             myFont,
 			             txtBrush,
-			             new PointF(regionRectF2.Right + 10, regionRectF2.Top));
+				new PointF(regionRectF2.Right + 10, regionRectF2.Top));
 
 			// restore defaults
 			regionRect1.Y -= 120;
@@ -891,10 +892,10 @@ public delegate void PaintEventHandler(object sender, PaintEventArgs e);
 
 public class PaintEventArgs : EventArgs, IDisposable
 {
-	private readonly Rectangle clipRect;
+	private readonly CGRect clipRect;
 	private Graphics graphics;
 
-	public PaintEventArgs(Graphics graphics, Rectangle clipRect)
+	public PaintEventArgs(Graphics graphics, CGRect clipRect)
 	{
 		if (graphics == null)
 		{
@@ -923,7 +924,7 @@ public class PaintEventArgs : EventArgs, IDisposable
 		this.Dispose(false);
 	}
 
-	public Rectangle ClipRectangle
+	public CGRect ClipRectangle
 	{
 		get
 		{
