@@ -1,200 +1,173 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using UIKit;
-using Foundation;
-using CoreGraphics;
 
+using CoreGraphics;
+using Foundation;
 using Plasmoid.Extensions;
+using UIKit;
 
 namespace MTGraphicsPathTests
 {
-	public class DrawingView : UIView {
-
+	public class DrawingView : UIView
+	{
 		public event PaintEventHandler Paint;
 
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			ContentMode = UIViewContentMode.Redraw;
-			this.AutoresizingMask = UIViewAutoresizing.All;
+			AutoresizingMask = UIViewAutoresizing.All;
 			BackgroundColor = new UIColor (0, 0, 0, 0);
 			BackColor = Color.Wheat;
-
-			var mainBundle = NSBundle.MainBundle;
-
-//			var filePath = mainBundle.PathForResource("bitmap50","png");
-//			bmp = Bitmap.FromFile(filePath);
-//
-//			filePath = mainBundle.PathForResource("bitmap25","png");
-//			bmp2 = Bitmap.FromFile(filePath);
 		}
 
 		#region Panel interface
-		public Rectangle ClientRectangle 
-		{
+
+		public Rectangle ClientRectangle {
 			get {
-				return new Rectangle((int)Bounds.X,
-				                     (int)Bounds.Y,
-				                     (int)Bounds.Width,
-				                     (int)Bounds.Height);
+				return new Rectangle ((int)Bounds.X, (int)Bounds.Y, (int)Bounds.Width, (int)Bounds.Height);
 			}
 		}
-		
+
 		Color backColor = Color.White;
-		public Color BackColor 
-		{
+
+		public Color BackColor {
 			get {
 				return backColor;
 			}
-			
 			set {
 				backColor = value;
 			}
 		}
-		
+
 		Font font;
-		public Font Font
-		{
+
+		public Font Font {
 			get {
 				if (font == null)
-					font = new Font("Helvetica",12);
+					font = new Font ("Helvetica", 12f);
 				return font;
 			}
-			set 
-			{
+			set {
 				font = value;
 			}
 		}
-		
-		public int Left 
-		{
-			get { 
-				
+
+		public int Left {
+			get {
 				return (int)Frame.Left; 
 			}
-			
 			set {
-				var location = new PointF(value, Frame.Y);
-				Frame = new RectangleF(location, Frame.Size);
+				var location = new CGPoint (value, Frame.Y);
+				Frame = new CGRect (location, Frame.Size);
 			}
-			
 		}
-		
-		public int Right 
-		{
-			get { return (int)Frame.Right; }
-			
-			set { 
+
+		public int Right {
+			get {
+				return (int)Frame.Right;
+			}
+			set {
 				var size = Frame;
 				size.Width = size.X - value;
 				Frame = size;
 			}
-			
 		}
-		
-		public int Top
-		{
-			get { return (int)Frame.Top; }
-			set { 
-				var location = new PointF(Frame.X, value);
-				Frame = new RectangleF(location, Frame.Size);
-				
+
+		public int Top {
+			get {
+				return (int)Frame.Top;
+			}
+			set {
+				var location = new CGPoint (Frame.X, value);
+				Frame = new CGRect (location, Frame.Size);
 			}
 		}
-		
-		public int Bottom
-		{
-			get { return (int)Frame.Bottom; }
-			set { 
+
+		public int Bottom {
+			get {
+				return (int)Frame.Bottom;
+			}
+			set {
 				var frame = Frame;
 				frame.Height = frame.Y - value;
 				Frame = frame;
-				
 			}
 		}
-		
-		public int Width 
-		{
-			get { return (int)Frame.Width; }
-			set { 
+
+		public int Width {
+			get {
+				return (int)Frame.Width;
+			}
+			set {
 				var frame = Frame;
 				frame.Width = value;
 				Frame = frame;
 			}
 		}
-		
-		public int Height
-		{
-			get { return (int)Frame.Height; }
-			set { 
+
+		public int Height {
+			get {
+				return (int)Frame.Height;
+			}
+			set {
 				var frame = Frame;
 				frame.Height = value;
 				Frame = frame;
 			}
 		}
-#endregion
 
-		public override void Draw (RectangleF dirtyRect)
+		#endregion
+
+		public override void Draw (CGRect rect)
 		{
-			Graphics g = Graphics.FromCurrentContext();
-			g.Clear(backColor);
+			Graphics g = Graphics.FromCurrentContext ();
+			g.Clear (backColor);
 
-			Rectangle clip = new Rectangle((int)dirtyRect.X,
-			                               (int)dirtyRect.Y,
-			                               (int)dirtyRect.Width,
-			                               (int)dirtyRect.Height);
+			var clip = new CGRect (rect.X, rect.Y, rect.Width, rect.Height);
+			var args = new PaintEventArgs (g, clip);
 
-			var args = new PaintEventArgs(g, clip);
+			OnPaint (args);
 
-			OnPaint(args);
-
-			if(Paint != null)
-			{
-				Paint(this, args);
-			}
+			if (Paint != null)
+				Paint (this, args);
 		}
 
-		public override void TouchesBegan (MonoTouch.Foundation.NSSet touches, UIEvent evt)
+		public override void TouchesBegan (NSSet touches, UIEvent evt)
 		{
 			currentView++;
 			currentView %= totalViews;
-			//Console.WriteLine("Current View: {0}", currentView);
-			MarkDirty();
-			//this.NeedsDisplay = true;
+			MarkDirty ();
 			SetNeedsDisplay ();
 		}
 
-		Font anyKeyFont = new Font("Chalkduster", 18, FontStyle.Bold);
-		Font clipFont = new Font("Helvetica",12, FontStyle.Bold);
+		Font anyKeyFont = new Font ("Chalkduster", 18, FontStyle.Bold);
+		Font clipFont = new Font ("Helvetica", 12, FontStyle.Bold);
 
 		Image bmp;
 		Image bmp2;
 
+		Rectangle pathRect1 = new Rectangle (50, 50, 100, 100);
+		Rectangle pathRectF1 = new Rectangle (110, 60, 100, 100);
+		Rectangle pathRect2 = new Rectangle (110, 60, 100, 100);
+		Rectangle pathRectF2 = new Rectangle (110, 60, 100, 100);
+		Rectangle pathRect3 = new Rectangle (50, 50, 50, 100);
+		Rectangle pathRectF3 = new Rectangle (50, 50, 50, 100);
+		Rectangle pathRect4 = new Rectangle (110, 60, 100, 50);
+		Rectangle pathRectF4 = new Rectangle (110, 60, 100, 50);
 
-		Rectangle pathRect1 = new Rectangle(50, 50, 100, 100);
-		RectangleF pathRectF1 = new RectangleF(110, 60, 100, 100);
-		Rectangle pathRect2 = new Rectangle(110, 60, 100, 100);
-		RectangleF pathRectF2 = new RectangleF(110, 60, 100, 100);
-		Rectangle pathRect3 = new Rectangle(50, 50, 50, 100);
-		RectangleF pathRectF3 = new RectangleF(50, 50, 50, 100);
-		Rectangle pathRect4 = new Rectangle(110, 60, 100, 50);
-		RectangleF pathRectF4 = new RectangleF(110, 60, 100, 50);
-
-
-		int currentView = 0;
+		int currentView;
 		int totalViews = 75;
 
 		string title = string.Empty;
 
-		protected void OnPaint(PaintEventArgs e)
+		protected void OnPaint (PaintEventArgs e)
 		{
-			Graphics g = Graphics.FromCurrentContext();
+			Graphics g = Graphics.FromCurrentContext ();
 			g.InterpolationMode = InterpolationMode.NearestNeighbor;
 
-			g.Clear(Color.White);
-			//g.SmoothingMode = SmoothingMode.HighQuality;
-			switch (currentView) 
-			{
+			g.Clear (Color.White);
+			switch (currentView) {
 			case 0:
 				AddArcRectangle (g);
 				break;
@@ -355,7 +328,7 @@ namespace MTGraphicsPathTests
 				PathIterator6 (g);
 				break;
 			case 53:
-				PathIterator7(g);
+				PathIterator7 (g);
 				break;
 			case 54:
 				Widen1 (g);
@@ -415,46 +388,44 @@ namespace MTGraphicsPathTests
 
 			g.ResetTransform ();
 
-			if (!g.IsClipEmpty) 
-			{
+			if (!g.IsClipEmpty) {
 				var clipPoint = PointF.Empty;
-				var clipString = string.Format("Clip-{0}", g.ClipBounds);
+				var clipString = string.Format ("Clip-{0}", g.ClipBounds);
 				g.ResetClip ();
-				var clipSize = g.MeasureString(clipString, clipFont);
+				var clipSize = g.MeasureString (clipString, clipFont);
 				clipPoint.X = (ClientRectangle.Width / 2) - (clipSize.Width / 2);
 				clipPoint.Y = 5;
-				g.DrawString(clipString, clipFont, sBrush, clipPoint );
+				g.DrawString (clipString, clipFont, sBrush, clipPoint);
 
 			}
 
 			var anyKeyPoint = PointF.Empty;
 			var anyKey = "Tap screen to continue.";
-			var anyKeySize = g.MeasureString(anyKey, anyKeyFont);
+			var anyKeySize = g.MeasureString (anyKey, anyKeyFont);
 			anyKeyPoint.X = (ClientRectangle.Width / 2) - (anyKeySize.Width / 2);
 			anyKeyPoint.Y = ClientRectangle.Height - (anyKeySize.Height + 10);
-			g.DrawString(anyKey, anyKeyFont, sBrush, anyKeyPoint );
+			g.DrawString (anyKey, anyKeyFont, sBrush, anyKeyPoint);
 
-			anyKeySize = g.MeasureString(title, anyKeyFont);
+			anyKeySize = g.MeasureString (title, anyKeyFont);
 			anyKeyPoint.X = (ClientRectangle.Width / 2) - (anyKeySize.Width / 2);
 			anyKeyPoint.Y -= anyKeySize.Height;
-			g.DrawString(title, anyKeyFont, sBrush, anyKeyPoint );
+			g.DrawString (title, anyKeyFont, sBrush, anyKeyPoint);
 
-			g.Dispose();
+			g.Dispose ();
 		}
 
-		private void AddArcRectangle (Graphics g)
+		void AddArcRectangle (Graphics g)
 		{
-
 			// Create a GraphicsPath object.
-			GraphicsPath myPath = new GraphicsPath();
+			var myPath = new GraphicsPath ();
 
 			// Set up and call AddArc, and close the figure.
-			myPath.StartFigure();
-			myPath.AddArc(pathRect3, 0, 180);
-			myPath.CloseFigure();
+			myPath.StartFigure ();
+			myPath.AddArc (pathRect3, 0, 180);
+			myPath.CloseFigure ();
 
 			// Draw the path to screen.
-			g.DrawPath(new Pen(Color.Red, 3), myPath);
+			g.DrawPath (new Pen (Color.Red, 3), myPath);
 
 			title = "AddArcRectangle";
 
@@ -464,15 +435,15 @@ namespace MTGraphicsPathTests
 		{
 
 			// Create a GraphicsPath object.
-			GraphicsPath myPath = new GraphicsPath();
+			GraphicsPath myPath = new GraphicsPath ();
 
 			// Set up and call AddArc, and close the figure.
-			myPath.StartFigure();
-			myPath.AddArc(pathRectF3, 0, 180);
-			myPath.CloseFigure();
+			myPath.StartFigure ();
+			myPath.AddArc (pathRectF3, 0, 180);
+			myPath.CloseFigure ();
 
 			// Draw the path to screen.
-			g.DrawPath(new Pen(Color.Red, 3), myPath);
+			g.DrawPath (new Pen (Color.Red, 3), myPath);
 
 			title = "AddArcRectangleF";
 
@@ -482,15 +453,15 @@ namespace MTGraphicsPathTests
 		{
 
 			// Create a GraphicsPath object.
-			GraphicsPath myPath = new GraphicsPath();
+			GraphicsPath myPath = new GraphicsPath ();
 
 			// Set up and call AddArc, and close the figure.
-			myPath.StartFigure();
-			myPath.AddArc(110,60,50,100, 0, 180);
-			myPath.CloseFigure();
+			myPath.StartFigure ();
+			myPath.AddArc (110, 60, 50, 100, 0, 180);
+			myPath.CloseFigure ();
 
 			// Draw the path to screen.
-			g.DrawPath(new Pen(Color.Red, 3), myPath);
+			g.DrawPath (new Pen (Color.Red, 3), myPath);
 
 			title = "AddArcInt32";
 
@@ -500,102 +471,97 @@ namespace MTGraphicsPathTests
 		{
 
 			// Create a GraphicsPath object.
-			GraphicsPath myPath = new GraphicsPath();
+			GraphicsPath myPath = new GraphicsPath ();
 
 			// Set up and call AddArc, and close the figure.
-			myPath.StartFigure();
-			myPath.AddArc(110.5f,60.5f,50.5f,100.5f, 0, 180);
-			myPath.CloseFigure();
+			myPath.StartFigure ();
+			myPath.AddArc (110.5f, 60.5f, 50.5f, 100.5f, 0, 180);
+			myPath.CloseFigure ();
 
 			// Draw the path to screen.
-			g.DrawPath(new Pen(Color.Red, 3), myPath);
+			g.DrawPath (new Pen (Color.Red, 3), myPath);
 
 			title = "AddArcSingle";
 
 		}
 
-		private void AddBezier1(Graphics g)
+		void AddBezier1 (Graphics g)
 		{
-
 			// Create a new Path.
-			GraphicsPath myPath = new GraphicsPath();
+			var myPath = new GraphicsPath ();
 
 			// Call AddBezier.
-			myPath.StartFigure();
-			myPath.AddBezier(50, 50, 70, 0, 100, 120, 150, 50);
+			myPath.StartFigure ();
+			myPath.AddBezier (50, 50, 70, 0, 100, 120, 150, 50);
 
 			// Close the curve.
-			myPath.CloseFigure();
+			myPath.CloseFigure ();
 
 			// Draw the path to screen.
-			g.DrawPath(new Pen(Color.Red, 2), myPath);
+			g.DrawPath (new Pen (Color.Red, 2), myPath);
 
 			title = "AddBezierInt32";
 		}
 
-		private void AddBezier2(Graphics g)
+		void AddBezier2 (Graphics g)
 		{
 
 			// Create a new Path.
-			GraphicsPath myPath = new GraphicsPath();
+			var myPath = new GraphicsPath ();
 
 			// Call AddBezier.
-			myPath.StartFigure();
-			myPath.AddBezier(new Point(50, 50), new Point(70, 0), new Point(100, 120), new Point(150, 50));
+			myPath.StartFigure ();
+			myPath.AddBezier (new Point (50, 50), new Point (70, 0), new Point (100, 120), new Point (150, 50));
 
 			// Close the curve.
-			myPath.CloseFigure();
+			myPath.CloseFigure ();
 
 			// Draw the path to screen.
-			g.DrawPath(new Pen(Color.Red, 2), myPath);
+			g.DrawPath (new Pen (Color.Red, 2), myPath);
 
 			title = "AddBezierPoint";
 		}
 
-		private void AddBezier3(Graphics g)
+		void AddBezier3 (Graphics g)
 		{
-
 			// Create a new Path.
-			GraphicsPath myPath = new GraphicsPath();
+			var myPath = new GraphicsPath ();
 
 			// Call AddBezier.
-			myPath.StartFigure();
-			myPath.AddBezier(new PointF(50.5f, 50.5f), new PointF(70.5f, 0), new PointF(100.5f, 120.5f), new PointF(150.5f, 50.5f));
+			myPath.StartFigure ();
+			myPath.AddBezier (new PointF (50.5f, 50.5f), new PointF (70.5f, 0), new PointF (100.5f, 120.5f), new PointF (150.5f, 50.5f));
 
 			// Close the curve.
-			myPath.CloseFigure();
+			myPath.CloseFigure ();
 
 			// Draw the path to screen.
-			g.DrawPath(new Pen(Color.Red, 2), myPath);
+			g.DrawPath (new Pen (Color.Red, 2), myPath);
 
 			title = "AddBezierPointF";
 		}
 
-		private void AddBezier4(Graphics g)
+		void AddBezier4 (Graphics g)
 		{
-
 			// Create a new Path.
-			GraphicsPath myPath = new GraphicsPath();
+			var myPath = new GraphicsPath ();
 
 			// Call AddBezier.
-			myPath.StartFigure();
-			myPath.AddBezier(50.5f, 50.5f, 70.5f, 0, 100.5f, 120.5f, 150.5f, 50.5f);
+			myPath.StartFigure ();
+			myPath.AddBezier (50.5f, 50.5f, 70.5f, 0, 100.5f, 120.5f, 150.5f, 50.5f);
 
 			// Close the curve.
-			myPath.CloseFigure();
+			myPath.CloseFigure ();
 
 			// Draw the path to screen.
-			g.DrawPath(new Pen(Color.Red, 2), myPath);
+			g.DrawPath (new Pen (Color.Red, 2), myPath);
 
 			title = "AddBezierSingle";
 		}
 
-		private void AddBeziers1(Graphics g)
+		void AddBeziers1 (Graphics g)
 		{
-
 			// Adds two Bezier curves.
-			Point[] myArray =
-			{
+			Point[] myArray = {
 				new Point(20, 100),
 				new Point(40, 75),
 				new Point(60, 125),
@@ -616,19 +582,18 @@ namespace MTGraphicsPathTests
 			title = "AddBeziersPoint";
 		}
 
-		private void AddBeziers2(Graphics g)
+		void AddBeziers2(Graphics g)
 		{
-
 			// Adds two Bezier curves.
-			PointF[] myArray =
+			Point[] myArray =
 			{
-				new PointF(20, 100),
-				new PointF(40, 75),
-				new PointF(60, 125),
-				new PointF(80, 100),
-				new PointF(100, 50),
-				new PointF(120, 150),
-				new PointF(140, 100)
+				new Point(20, 100),
+				new Point(40, 75),
+				new Point(60, 125),
+				new Point(80, 100),
+				new Point(100, 50),
+				new Point(120, 150),
+				new Point(140, 100)
 			};
 
 			// Create the path and add the curves.
@@ -672,14 +637,14 @@ namespace MTGraphicsPathTests
 		{
 
 			// Creates a symetrical, closed curve.
-			PointF[] myArray =
+			Point[] myArray =
 			{
-				new PointF(20,100),
-				new PointF(40,150),
-				new PointF(60,125),
-				new PointF(40,100),
-				new PointF(60,75),
-				new PointF(40,50)
+				new Point(20,100),
+				new Point(40,150),
+				new Point(60,125),
+				new Point(40,100),
+				new Point(60,75),
+				new Point(40,50)
 			};
 
 			// Create a new path and add curve.
@@ -720,13 +685,13 @@ namespace MTGraphicsPathTests
 		{
 
 			// Create some points.
-			PointF point1 = new PointF(20, 20);
-			PointF point2 = new PointF(40, 0);
-			PointF point3 = new PointF(60, 40);
-			PointF point4 = new PointF(80, 20);
+			Point point1 = new Point(20, 20);
+			Point point2 = new Point(40, 0);
+			Point point3 = new Point(60, 40);
+			Point point4 = new Point(80, 20);
 
 			// Create an array of the points.
-			PointF[] curvePoints = {point1, point2, point3, point4};
+			Point[] curvePoints = {point1, point2, point3, point4};
 
 			// Create a GraphicsPath object and add a curve.
 			GraphicsPath myPath = new GraphicsPath();
@@ -743,7 +708,7 @@ namespace MTGraphicsPathTests
 		{
 
 			// Create a path and add an ellipse.
-			Rectangle myEllipse = new Rectangle(20, 20, 100, 50);
+			var myEllipse = new Rectangle(20, 20, 100, 50);
 			GraphicsPath myPath = new GraphicsPath();
 			myPath.AddEllipse(myEllipse);
 
@@ -757,7 +722,7 @@ namespace MTGraphicsPathTests
 		{
 
 			// Create a path and add an ellipse.
-			RectangleF myEllipse = new RectangleF(20.5f, 20.5f, 100.5f, 50.5f);
+			var myEllipse = new RectangleF (20.5f, 20.5f, 100.5f, 50.5f);
 			GraphicsPath myPath = new GraphicsPath();
 			myPath.AddEllipse(myEllipse);
 
@@ -771,7 +736,7 @@ namespace MTGraphicsPathTests
 		{
 
 			// Create a path and add an ellipse.
-			GraphicsPath myPath = new GraphicsPath();
+			var myPath = new GraphicsPath();
 			myPath.AddEllipse(20, 20, 100, 50);
 
 			// Draw the path to the screen.
@@ -862,12 +827,12 @@ namespace MTGraphicsPathTests
 
 
 			// Create a symetrical triangle using an array of points.
-			Point[] myArray =
+			PointF[] myArray =
 			{
-				new Point(30,30),
-				new Point(60,60),
-				new Point(0,60),
-				new Point(30,30)
+				new PointF(30,30),
+				new PointF(60,60),
+				new PointF(0,60),
+				new PointF(30,30)
 			};
 
 			//Create a path and add lines.
@@ -975,13 +940,13 @@ namespace MTGraphicsPathTests
 		{
 
 			// Create an array of points.
-			PointF[] myArray =
+			Point[] myArray =
 			{
-				new PointF(23, 20),
-				new PointF(40, 10),
-				new PointF(57, 20),
-				new PointF(50, 40),
-				new PointF(30, 40)
+				new Point(23, 20),
+				new Point(40, 10),
+				new Point(57, 20),
+				new Point(50, 40),
+				new Point(30, 40)
 			};
 
 			// Create a GraphicsPath object and add a polygon.
@@ -1015,7 +980,7 @@ namespace MTGraphicsPathTests
 
 			// Create a GraphicsPath object and add a rectangle to it.
 			GraphicsPath myPath = new GraphicsPath();
-			RectangleF pathRect = new RectangleF(20, 20, 100, 200);
+			Rectangle pathRect = new Rectangle(20, 20, 100, 200);
 			myPath.AddRectangle(pathRect);
 
 			// Draw the path to the screen.
@@ -1051,11 +1016,11 @@ namespace MTGraphicsPathTests
 
 			// Adds a pattern of rectangles to a GraphicsPath object.
 			GraphicsPath myPath = new GraphicsPath();
-			RectangleF[] pathRects =
+			Rectangle[] pathRects =
 			{
-				new RectangleF(20,20,100,200),
-				new RectangleF(40,40,120,220),
-				new RectangleF(60,60,240,140)
+				new Rectangle(20,20,100,200),
+				new Rectangle(40,40,120,220),
+				new Rectangle(60,60,240,140)
 			};
 			myPath.AddRectangles(pathRects);
 
@@ -1133,7 +1098,7 @@ namespace MTGraphicsPathTests
 		{
 			GraphicsPath myPath = new GraphicsPath();
 			myPath.AddLine(100, 100, 300, 100);
-			PointF lastPoint = myPath.GetLastPoint();
+			CGPoint lastPoint = myPath.GetLastPoint();
 			if(!lastPoint.IsEmpty)
 			{
 				string lastPointXString = lastPoint.X.ToString();
@@ -1156,7 +1121,7 @@ namespace MTGraphicsPathTests
 
 			try
 			{
-				PointF lastPoint = myPath.GetLastPoint();
+				CGPoint lastPoint = myPath.GetLastPoint();
 				if(!lastPoint.IsEmpty)
 				{
 					string lastPointXString = lastPoint.X.ToString();
@@ -1531,12 +1496,12 @@ namespace MTGraphicsPathTests
 			g.DrawPath(pathPen, myPath);
 
 			// Get the path bounds for Path number 1 and draw them.
-			RectangleF boundRect = myPath.GetBounds();
-			g.DrawRectangle(new Pen(Color.Red, 1),
-			                boundRect.X,
-			                boundRect.Y,
-			                boundRect.Height,
-			                boundRect.Width);
+			CGRect boundRect = myPath.GetBounds();
+			g.DrawRectangle (new Pen (Color.Red, 1),
+				(int)boundRect.X,
+				(int)boundRect.Y,
+				(int)boundRect.Height,
+				(int)boundRect.Width);
 
 			// Create a second graphics path and a wider Pen.
 			GraphicsPath myPath2 = new GraphicsPath();
@@ -1548,14 +1513,14 @@ namespace MTGraphicsPathTests
 			g.FillPath(Brushes.Black, myPath2);
 
 			// Get the second path bounds.
-			RectangleF boundRect2 = myPath2.GetBounds();
+			CGRect boundRect2 = myPath2.GetBounds();
 
 			// Draw the bounding rectangle.
-			g.DrawRectangle(new Pen(Color.Red, 1),
-			                boundRect2.X,
-			                boundRect2.Y,
-			                boundRect2.Height,
-			                boundRect2.Width);
+			g.DrawRectangle (new Pen (Color.Red, 1),
+				(int)boundRect2.X,
+				(int)boundRect2.Y,
+				(int)boundRect2.Height,
+				(int)boundRect2.Width);
 
 			// Display the rectangle size.
 			//MessageBox.Show(boundRect2.ToString());
@@ -2258,7 +2223,7 @@ namespace MTGraphicsPathTests
 
 			var clr = Color.Aquamarine;
 
-			g.ScaleTransform(cx / 300f, cy / 200f);
+			g.ScaleTransform ((float)(cx / 300f), (float)(cy / 200f));
 
 			for (int i = 0; i < 6; i++)
 			{
@@ -2364,20 +2329,20 @@ namespace MTGraphicsPathTests
 			FontFamily family = new FontFamily("Arial");
 			int fontStyle = (int)FontStyle.Italic;
 			int emSize = 26;
-			PointF origin = new PointF(20, 20);
-			SizeF sizeLayout = new SizeF (ClientRectangle.Size.Width - origin.X * 2, ClientRectangle.Size.Height - origin.Y * 2);
+			Point origin = new Point(20, 20);
+			Size sizeLayout = new Size (ClientRectangle.Size.Width - origin.X * 2, ClientRectangle.Size.Height - origin.Y * 2);
 			StringFormat format = StringFormat.GenericDefault;
 
 			var size = g.MeasureString (stringText, new Font (family, emSize));
 			format.Alignment = StringAlignment.Far;
 			format.LineAlignment = StringAlignment.Center;
-			myPath.AddRectangle (new RectangleF (origin.X, origin.Y, sizeLayout.Width, sizeLayout.Height));
+			myPath.AddRectangle (new Rectangle (origin.X, origin.Y, sizeLayout.Width, sizeLayout.Height));
 			// Add the string to the path.
 			myPath.AddString(stringText,
 			                 family,
 			                 fontStyle,
 			                 emSize,
-			                 new RectangleF(origin,sizeLayout),
+							 new RectangleF (origin,sizeLayout),
 			                 format);
 
 			//Draw the path to the screen.
@@ -2398,7 +2363,7 @@ namespace MTGraphicsPathTests
 			//Add a string               
 			pth.AddString("Outline Text.",
 			              new FontFamily("Times New Roman"),0,50,
-			              new Point(30,30), StringFormat.GenericTypographic);
+				new Point(30,30), StringFormat.GenericTypographic);
 			//Select the pen             
 			Pen p=new Pen(Color.Blue,1.0f);
 			//draw the hollow outlined text
@@ -2408,7 +2373,7 @@ namespace MTGraphicsPathTests
 			//Add new text
 			pth.AddString("Filled outline Text.",
 			              new FontFamily("Papyrus"),0,35,
-			              new Point(30,120),StringFormat.GenericTypographic);
+				new Point(30,120),StringFormat.GenericTypographic);
 			//Fill it
 			g.FillPath(Brushes.Red,pth);
 			//outline it
@@ -2431,28 +2396,28 @@ namespace MTGraphicsPathTests
 			FontFamily fntFamily = new FontFamily("Times New Roman");
 			string s="Embossed Text";
 
-			myPath.AddString (s, fntFamily, 0, 50, new PointF (28, 28), StringFormat.GenericTypographic);
+			myPath.AddString (s, fntFamily, 0, 50, new Point (28, 28), StringFormat.GenericTypographic);
 			g.FillPath (Brushes.White, myPath);
 
 			myPath.Reset ();
-			myPath.AddString (s, fntFamily, 0, 50, new PointF (32, 32), StringFormat.GenericTypographic);
+			myPath.AddString (s, fntFamily, 0, 50, new Point (32, 32), StringFormat.GenericTypographic);
 			g.FillPath (Brushes.DarkGray, myPath);
 
 			myPath.Reset ();
-			myPath.AddString (s, fntFamily, 0, 50, new PointF (30, 30), StringFormat.GenericTypographic);
+			myPath.AddString (s, fntFamily, 0, 50, new Point (30, 30), StringFormat.GenericTypographic);
 			g.FillPath (Brushes.Black, myPath);
 
 			s="Chiseled Text";
 			myPath.Reset ();
-			myPath.AddString (s, fntFamily, 0, 50, new PointF (28, 108), StringFormat.GenericTypographic);
+			myPath.AddString (s, fntFamily, 0, 50, new Point (28, 108), StringFormat.GenericTypographic);
 			g.FillPath (Brushes.DarkGray, myPath);
 
 			myPath.Reset ();
-			myPath.AddString (s, fntFamily, 0, 50, new PointF (32, 112), StringFormat.GenericTypographic);
+			myPath.AddString (s, fntFamily, 0, 50, new Point (32, 112), StringFormat.GenericTypographic);
 			g.FillPath (Brushes.LightGray, myPath);
 
 			myPath.Reset ();
-			myPath.AddString (s, new FontFamily ("Times New Roman"), 0, 50, new PointF (30, 110), StringFormat.GenericTypographic);
+			myPath.AddString (s, new FontFamily ("Times New Roman"), 0, 50, new Point (30, 110), StringFormat.GenericTypographic);
 			g.FillPath (Brushes.SeaShell, myPath);
 
 			fntFamily.Dispose();
@@ -2495,12 +2460,12 @@ namespace MTGraphicsPathTests
 			g.DrawPath(Pens.Blue, myPath);
 
 			// Test the visibility of point (50, 50). 
-			bool visible = myPath.IsVisible(new PointF(50, 50), g);
+			bool visible = myPath.IsVisible(new Point(50, 50), g);
 			g.FillRectangle(Brushes.Green, new Rectangle(48, 48, 2, 2));
 			// Show the result.
 			g.DrawString("Visible = " + visible, new Font("Arial", 12), Brushes.Green, 60, 50);
 
-			visible = myPath.IsVisible(new PointF(90, 90), g);
+			visible = myPath.IsVisible(new Point(90, 90), g);
 			g.FillRectangle(Brushes.Red, new Rectangle(88, 88, 2, 2));
 			// Show the result.
 			g.DrawString("Visible = " + visible, new Font("Arial", 12), Brushes.Red, 100, 90);
@@ -2530,7 +2495,7 @@ namespace MTGraphicsPathTests
 		private void SetClip2(Graphics g)
 		{
 
-			g.SetClip (new RectangleF (50, 50, 100, 100));
+			g.SetClip (new Rectangle (50, 50, 100, 100));
 
 			// Create graphics path.
 			GraphicsPath clipPath = new GraphicsPath();
@@ -2549,7 +2514,7 @@ namespace MTGraphicsPathTests
 		private void SetClip3(Graphics g)
 		{
 
-			g.SetClip (new RectangleF (50, 50, 100, 100));
+			g.SetClip (new Rectangle (50, 50, 100, 100));
 
 			// Create graphics path.
 			GraphicsPath clipPath = new GraphicsPath();
@@ -2568,7 +2533,7 @@ namespace MTGraphicsPathTests
 		private void SetClip4(Graphics g)
 		{
 
-			g.SetClip (new RectangleF (50, 50, 100, 100));
+			g.SetClip (new Rectangle (50, 50, 100, 100));
 
 			// Create graphics path.
 			GraphicsPath clipPath = new GraphicsPath();
@@ -2587,7 +2552,7 @@ namespace MTGraphicsPathTests
 		private void SetClip5(Graphics g)
 		{
 
-			g.SetClip (new RectangleF (50, 50, 100, 100));
+			g.SetClip (new Rectangle (50, 50, 100, 100));
 
 			// Create graphics path.
 			GraphicsPath clipPath = new GraphicsPath();
@@ -2613,10 +2578,10 @@ namespace MTGraphicsPathTests
 			g.FillPath(Brushes.Wheat, widePath);
 			g.DrawPath(Pens.Black, myPath);
 
-			var point = new PointF(100, 50);
+			var point = new Point(100, 50);
 
 			bool visible = myPath.IsOutlineVisible(point, testPen, g);
-			g.FillRectangle(Brushes.Red, new RectangleF(point.X, point.Y, 2, 2));
+			g.FillRectangle(Brushes.Red, new Rectangle(point.X, point.Y, 2, 2));
 			// Show the result.
 			g.DrawString("Visible = " + visible, new Font("Arial", 12), Brushes.Red, point.X + 10, point.Y);
 
@@ -2624,7 +2589,7 @@ namespace MTGraphicsPathTests
 			point.Y = 80;
 
 			visible = myPath.IsOutlineVisible(point, testPen, g);
-			g.FillRectangle(Brushes.Green, new RectangleF(point.X, point.Y, 2, 2));
+			g.FillRectangle(Brushes.Green, new Rectangle(point.X, point.Y, 2, 2));
 			// Show the result.
 			g.DrawString("Visible = " + visible, new Font("Arial", 12), Brushes.Green, point.X + 10, point.Y);
 
@@ -2650,7 +2615,7 @@ namespace MTGraphicsPathTests
 				new PointF(0,this.ClientRectangle.Height),
 				new PointF(this.ClientRectangle.Width,this.ClientRectangle.Height)
 			};
-			var rect = new RectangleF(0, 0, 1000, 500);
+			var rect = new Rectangle(0, 0, 1000, 500);
 
 			//Warp the path
 			pth.Warp(points, rect);
@@ -2671,7 +2636,7 @@ namespace MTGraphicsPathTests
 
 			// Create a path and add a rectangle.
 			GraphicsPath myPath = new GraphicsPath();
-			RectangleF srcRect = new RectangleF(0, 0, 100, 200);
+			Rectangle srcRect = new Rectangle(0, 0, 100, 200);
 			myPath.AddRectangle(srcRect);
 
 			// Draw the source path (rectangle)to the screen.
@@ -2733,10 +2698,10 @@ public delegate void PaintEventHandler(object sender, PaintEventArgs e);
 
 public class PaintEventArgs : EventArgs, IDisposable
 {
-	private readonly Rectangle clipRect;
+	private readonly CGRect clipRect;
 	private Graphics graphics;
 
-	public PaintEventArgs(Graphics graphics, Rectangle clipRect)
+	public PaintEventArgs(Graphics graphics, CGRect clipRect)
 	{
 		if (graphics == null)
 		{
@@ -2765,7 +2730,7 @@ public class PaintEventArgs : EventArgs, IDisposable
 		this.Dispose(false);
 	}
 
-	public Rectangle ClipRectangle
+	public CGRect ClipRectangle
 	{
 		get
 		{

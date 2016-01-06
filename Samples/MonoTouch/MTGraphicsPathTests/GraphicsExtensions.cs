@@ -1,9 +1,12 @@
 using System;
-using System.Drawing;
+using CoreGraphics;
 using System.Drawing.Drawing2D;
 
 
 // Code taken for testing from here: http://www.codeproject.com/Articles/38436/Extended-Graphics-Rounded-rectangles-Font-metrics
+using System.Drawing;
+
+
 namespace Plasmoid.Extensions
 {
 	static class GraphicsExtension
@@ -29,9 +32,9 @@ namespace Plasmoid.Extensions
 				SizeF sizeF = new SizeF(diameter, diameter);
 				RectangleF arc = new RectangleF(rectangle.Location, sizeF);
 				path.AddArc(arc, 180, 90);
-				arc.X = rectangle.Right - diameter;
+				arc.X = (int)(rectangle.Right - diameter);
 				path.AddArc(arc, 270, 90);
-				arc.Y = rectangle.Bottom - diameter;
+				arc.Y = (int)(rectangle.Bottom - diameter);
 				path.AddArc(arc, 0, 90);
 				arc.X = rectangle.Left;
 				path.AddArc(arc, 90, 90);
@@ -50,20 +53,20 @@ namespace Plasmoid.Extensions
 			{
 				if (baseRect.Width > baseRect.Height)
 				{
-					diameter = baseRect.Height;
+					diameter = (float)baseRect.Height;
 					SizeF sizeF = new SizeF(diameter, diameter);
 					arc = new RectangleF(baseRect.Location, sizeF);
 					path.AddArc(arc, 90, 180);
-					arc.X = baseRect.Right - diameter;
+					arc.X = (int)(baseRect.Right - diameter);
 					path.AddArc(arc, 270, 180);
 				}
 				else if (baseRect.Width < baseRect.Height)
 				{
-					diameter = baseRect.Width;
+					diameter = (float)baseRect.Width;
 					SizeF sizeF = new SizeF(diameter, diameter);
 					arc = new RectangleF(baseRect.Location, sizeF);
 					path.AddArc(arc, 180, 180);
-					arc.Y = baseRect.Bottom - diameter;
+					arc.Y = (int)(baseRect.Bottom - diameter);
 					path.AddArc(arc, 0, 180);
 				}
 				else path.AddEllipse(baseRect);
