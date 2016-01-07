@@ -129,4 +129,4 @@ bin/mac/xm45/System.Drawing.dll: $(SOURCES) $(MONO_SOURCES) $(MONO_EXTRA_SOURCES
 	/Library/Frameworks/Mono.framework/Commands/mcs -unsafe -noconfig -define:MONOMAC -define:XM45 -debug -out:bin/mac/xm45/System.Drawing.dll $(MAC_SOURCES)  -target:library -define:MONOMAC /nostdlib /reference:$(MAC_PREFIX)/lib/mono/4.5/System.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/System.Core.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/Xamarin.Mac.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/mscorlib.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/OpenTK.dll
 
 clean:
-	rm -r bin/
+	rm -rf bin/
