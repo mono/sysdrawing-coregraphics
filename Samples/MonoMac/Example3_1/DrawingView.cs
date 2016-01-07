@@ -4,15 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Drawing.Drawing2D;
 
-using MonoMac.Foundation;
-using MonoMac.AppKit;
-using MonoMac.CoreGraphics;
-using MonoMac.CoreText;
+using Foundation;
+using AppKit;
+using CoreGraphics;
+using CoreText;
+using CoreGraphics;
 using System.Drawing;
 
 namespace Example3_1
 {
-	public partial class DrawingView : MonoMac.AppKit.NSView
+	public partial class DrawingView : AppKit.NSView
 	{
 
 		// Define the drawing area
@@ -47,14 +48,14 @@ namespace Example3_1
 			this.AutoresizingMask = NSViewResizingMask.HeightSizable | NSViewResizingMask.WidthSizable;
 		}
 
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			Initialize();
 		}
 		
 #endregion
 		
-		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
+		public override void DrawRect (CGRect dirtyRect)
 		{
 
 			var g = Graphics.FromCurrentContext();

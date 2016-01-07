@@ -2,13 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MonoMac.Foundation;
-using MonoMac.AppKit;
+using Foundation;
+using AppKit;
+using CoreGraphics;
 using System.Drawing;
 
 namespace Example2
 {
-	public partial class DrawingView : MonoMac.AppKit.NSView
+	public partial class DrawingView : AppKit.NSView
 	{
 
 		// Define the drawing area
@@ -42,14 +43,14 @@ namespace Example2
 			this.AutoresizingMask = NSViewResizingMask.HeightSizable | NSViewResizingMask.WidthSizable;
 		}
 
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			Initialize();
 		}
 		
 #endregion
-		
-		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
+
+		public override void DrawRect (CGRect dirtyRect)
 		{
 			//			var gc = NSGraphicsContext.FromGraphicsPort(
 			//				NSGraphicsContext.CurrentContext.GraphicsPort.Handle,true);
@@ -63,7 +64,7 @@ namespace Example2
 			g.Clear(Color.White);
 			
 			//RectangleF ClientRectangle = this.Bounds;
-			RectangleF ClientRectangle = dirtyRect;
+			CGRect ClientRectangle = dirtyRect;
 			
 			// Calculate the location and size of the drawing area
 			// within which we want to draw the graphics:
@@ -83,7 +84,7 @@ namespace Example2
 			g.PageUnit = GraphicsUnit.Inch;
 			ClientRectangle = new RectangleF(0.5f,0.5f, 1.5f, 1.5f);
 			aPen.Width = 1 / g.DpiX;
-			g.DrawRectangle(aPen, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
+			g.DrawRectangle(aPen, (float)ClientRectangle.X, (float)ClientRectangle.Y, (float)ClientRectangle.Width, (float)ClientRectangle.Height);
 
 			aPen.Dispose();
 

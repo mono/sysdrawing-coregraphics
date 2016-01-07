@@ -4,15 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Drawing.Drawing2D;
 
-using MonoMac.Foundation;
-using MonoMac.AppKit;
-using MonoMac.CoreGraphics;
-using MonoMac.CoreText;
+using Foundation;
+using AppKit;
+using CoreGraphics;
+using CoreText;
+using CoreGraphics;
 using System.Drawing;
 
 namespace Example5_6
 {
-	public partial class PlotPanel : MonoMac.AppKit.NSView
+	public partial class PlotPanel : AppKit.NSView
 	{
 		public event PaintEventHandler Paint;
 
@@ -38,7 +39,7 @@ namespace Example5_6
 			BackColor = Color.Wheat;
 		}
 
-		public PlotPanel (RectangleF rect) : base (rect)
+		public PlotPanel (CGRect rect) : base (rect)
 		{
 			Initialize();
 
@@ -90,8 +91,8 @@ namespace Example5_6
 			}
 			
 			set {
-				var location = new PointF(value, Frame.Y);
-				Frame = new RectangleF(location, Frame.Size);
+				var location = new CGPoint(value, Frame.Y);
+				Frame = new CGRect(location, Frame.Size);
 			}
 			
 		}
@@ -112,8 +113,8 @@ namespace Example5_6
 		{
 			get { return (int)Frame.Top; }
 			set { 
-				var location = new PointF(Frame.X, value);
-				Frame = new RectangleF(location, Frame.Size);
+				var location = new CGPoint (Frame.X, value);
+				Frame = new CGRect (location, Frame.Size);
 				
 			}
 		}
@@ -152,7 +153,7 @@ namespace Example5_6
 		}
 #endregion
 
-		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
+		public override void DrawRect (CGRect dirtyRect)
 		{
 			if(Paint != null)
 			{

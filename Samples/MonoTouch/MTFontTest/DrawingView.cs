@@ -2,130 +2,113 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using MonoTouch.CoreGraphics;
+using CoreGraphics;
+using Foundation;
+using UIKit;
 
-namespace MTFontTest
-{
+namespace MTFontTest {
 	public class DrawingView : UIView {
 
 		public event PaintEventHandler Paint;
 
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			ContentMode = UIViewContentMode.Redraw;
-			this.AutoresizingMask = UIViewAutoresizing.All;
+			AutoresizingMask = UIViewAutoresizing.All;
 			BackgroundColor = new UIColor (0, 0, 0, 0);
 			BackColor = Color.Wheat;
 
 			var mainBundle = NSBundle.MainBundle;
-
-//			var filePath = mainBundle.PathForResource("bitmap50","png");
-//			bmp = Bitmap.FromFile(filePath);
-//
-//			filePath = mainBundle.PathForResource("bitmap25","png");
-//			bmp2 = Bitmap.FromFile(filePath);
 		}
 
 		#region Panel interface
-		public Rectangle ClientRectangle 
-		{
+		public Rectangle ClientRectangle {
 			get {
-				return new Rectangle((int)Bounds.X,
-				                     (int)Bounds.Y,
-				                     (int)Bounds.Width,
-				                     (int)Bounds.Height);
+				return new Rectangle ((int)Bounds.X, (int)Bounds.Y, (int)Bounds.Width, (int)Bounds.Height);
 			}
 		}
-		
+
 		Color backColor = Color.White;
-		public Color BackColor 
-		{
+		public Color BackColor {
 			get {
 				return backColor;
 			}
-			
 			set {
 				backColor = value;
 			}
 		}
-		
+
 		Font font;
-		public Font Font
-		{
+		public Font Font {
 			get {
 				if (font == null)
-					font = new Font("Helvetica",12);
+					font = new Font ("Helvetica", 12f);
 				return font;
 			}
-			set 
-			{
+			set {
 				font = value;
 			}
 		}
-		
-		public int Left 
-		{
-			get { 
-				
+
+		public int Left  {
+			get {
 				return (int)Frame.Left; 
 			}
-			
 			set {
-				var location = new PointF(value, Frame.Y);
-				Frame = new RectangleF(location, Frame.Size);
+				var location = new CGPoint (value, Frame.Y);
+				Frame = new CGRect (location, Frame.Size);
 			}
-			
 		}
-		
-		public int Right 
-		{
-			get { return (int)Frame.Right; }
-			
-			set { 
+
+		public int Right  {
+			get {
+				return (int)Frame.Right;
+			}
+			set {
 				var size = Frame;
 				size.Width = size.X - value;
 				Frame = size;
 			}
-			
 		}
-		
-		public int Top
-		{
-			get { return (int)Frame.Top; }
-			set { 
-				var location = new PointF(Frame.X, value);
-				Frame = new RectangleF(location, Frame.Size);
-				
+
+		public int Top {
+			get {
+				return (int)Frame.Top;
+			}
+			set {
+				var location = new CGPoint (Frame.X, value);
+				Frame = new CGRect (location, Frame.Size);
 			}
 		}
-		
+
 		public int Bottom
 		{
-			get { return (int)Frame.Bottom; }
-			set { 
+			get {
+				return (int)Frame.Bottom;
+			}
+			set {
 				var frame = Frame;
 				frame.Height = frame.Y - value;
 				Frame = frame;
-				
 			}
 		}
-		
-		public int Width 
-		{
-			get { return (int)Frame.Width; }
-			set { 
+
+		public int Width {
+			get {
+				return (int)Frame.Width;
+			}
+			set {
 				var frame = Frame;
 				frame.Width = value;
 				Frame = frame;
 			}
 		}
-		
-		public int Height
-		{
-			get { return (int)Frame.Height; }
-			set { 
+
+		public int Height {
+			get {
+				return (int)Frame.Height;
+			}
+			set {
 				var frame = Frame;
 				frame.Height = value;
 				Frame = frame;
@@ -133,63 +116,43 @@ namespace MTFontTest
 		}
 #endregion
 
-		public override void Draw (RectangleF dirtyRect)
+		public override void Draw (CGRect rect)
 		{
 			Graphics g = Graphics.FromCurrentContext();
 			g.Clear(backColor);
 
-			Rectangle clip = new Rectangle((int)dirtyRect.X,
-			                               (int)dirtyRect.Y,
-			                               (int)dirtyRect.Width,
-			                               (int)dirtyRect.Height);
+			var clip = new CGRect ((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
+			var args = new PaintEventArgs (g, clip);
 
-			var args = new PaintEventArgs(g, clip);
-
-			OnPaint(args);
+			OnPaint (args);
 
 			if(Paint != null)
-			{
-				Paint(this, args);
-			}
+				Paint (this, args);
 		}
 
-		public override void TouchesBegan (MonoTouch.Foundation.NSSet touches, UIEvent evt)
+		public override void TouchesBegan (NSSet touches, UIEvent evt)
 		{
 			currentView++;
 			currentView %= totalViews;
-			//Console.WriteLine("Current View: {0}", currentView);
-			MarkDirty();
-			//this.NeedsDisplay = true;
+			MarkDirty ();
 			SetNeedsDisplay ();
 		}
 
-		Font anyKeyFont = new Font("Chalkduster", 18, FontStyle.Bold);
-		Font clipFont = new Font("Helvetica",12, FontStyle.Bold);
-
-		Image bmp;
-		Image bmp2;
-
-
-		Rectangle regionRect1 = new Rectangle(50, 50, 100, 100);
-		RectangleF regionRectF1 = new RectangleF(110, 60, 100, 100);
-		Rectangle regionRect2 = new Rectangle(110, 60, 100, 100);
-		RectangleF regionRectF2 = new RectangleF(110, 60, 100, 100);
-
+		Font anyKeyFont = new Font ("Chalkduster", 18f, FontStyle.Bold);
+		Font clipFont = new Font ("Helvetica",12f, FontStyle.Bold);
 
 		int currentView = 0;
 		int totalViews = 4;
 
 		string title = string.Empty;
 
-		protected void OnPaint(PaintEventArgs e)
+		protected void OnPaint (PaintEventArgs e)
 		{
 			Graphics g = e.Graphics;
 			g.InterpolationMode = InterpolationMode.NearestNeighbor;
 
 			g.Clear(Color.White);
-			//g.SmoothingMode = SmoothingMode.None;
-			switch (currentView) 
-			{
+			switch (currentView) {
 			case 0:
 				AvailableFonts (g);
 				break;
@@ -202,23 +165,20 @@ namespace MTFontTest
 			case 3:
 				ObtainFontMetrics (g);
 				break;
-
-
 			}
 
 			Brush sBrush = Brushes.Black;
 
 			g.ResetTransform ();
 
-			if (!g.IsClipEmpty) 
-			{
+			if (!g.IsClipEmpty)  {
 				var clipPoint = PointF.Empty;
-				var clipString = string.Format("Clip-{0}", g.ClipBounds);
+				var clipString = string.Format ("Clip-{0}", g.ClipBounds);
 				g.ResetClip ();
 				var clipSize = g.MeasureString(clipString, clipFont);
 				clipPoint.X = (ClientRectangle.Width / 2) - (clipSize.Width / 2);
-				clipPoint.Y = 5;
-				g.DrawString(clipString, clipFont, sBrush, clipPoint );
+				clipPoint.Y = 5f;
+				g.DrawString (clipString, clipFont, sBrush, clipPoint );
 
 			}
 
@@ -240,25 +200,20 @@ namespace MTFontTest
 
 		void ObtainFontMetrics(Graphics g)
 		{
-			string infoString = "";  // enough space for one line of output 
-			int ascent;             // font family ascent in design units 
-			float ascentPixel;      // ascent converted to pixels 
-			int descent;            // font family descent in design units 
-			float descentPixel;     // descent converted to pixels 
-			int lineSpacing;        // font family line spacing in design units 
-			float lineSpacingPixel; // line spacing converted to pixels
+			string infoString = "";	// enough space for one line of output 
+			int ascent;				// font family ascent in design units 
+			float ascentPixel;		// ascent converted to pixels 
+			int descent;			// font family descent in design units 
+			float descentPixel;		// descent converted to pixels 
+			int lineSpacing;		// font family line spacing in design units 
+			float lineSpacingPixel;	// line spacing converted to pixels
 
-			FontStyle fontStyle = FontStyle.Regular; 
-			//fontStyle = FontStyle.Italic | FontStyle.Bold;
-			FontFamily fontFamily = new FontFamily("arial");
-			//fontFamily = FontFamily.GenericSansSerif;
+			var fontStyle = FontStyle.Regular;
+			var fontFamily = new FontFamily ("arial");
 
-			Font font = new Font(
-				fontFamily,
-				16, fontStyle,
-				GraphicsUnit.Pixel);
-			PointF pointF = new PointF(10, 10);
-			SolidBrush solidBrush = new SolidBrush(Color.Black);
+			var font = new Font (fontFamily, 16, fontStyle, GraphicsUnit.Pixel);
+			var pointF = new PointF (10, 10);
+			var solidBrush = new SolidBrush(Color.Black);
 
 			// Display the font size in pixels.
 			infoString = "font family : " + font.FontFamily.Name + " " + fontStyle + ".";
@@ -269,27 +224,24 @@ namespace MTFontTest
 
 			// Display the font size in pixels.
 			infoString = "font.Size returns " + font.Size + ".";
-			g.DrawString(infoString, font, solidBrush, pointF);
+			g.DrawString (infoString, font, solidBrush, pointF);
 
 			// Move down one line.
 			pointF.Y += font.Height;
 
 			// Display the font family em height in design units.
-			infoString = "fontFamily.GetEmHeight() returns " +
-			             fontFamily.GetEmHeight(fontStyle) + ".";
-			g.DrawString(infoString, font, solidBrush, pointF);
+			infoString = "fontFamily.GetEmHeight() returns " + fontFamily.GetEmHeight(fontStyle) + ".";
+			g.DrawString (infoString, font, solidBrush, pointF);
 
 			// Move down two lines.
 			pointF.Y += 2 * font.Height;
 
 			// Display the ascent in design units and pixels.
-			ascent = fontFamily.GetCellAscent(fontStyle);
+			ascent = fontFamily.GetCellAscent (fontStyle);
 
 			// 14.484375 = 16.0 * 1854 / 2048
-			ascentPixel =
-				font.Size * ascent / fontFamily.GetEmHeight(fontStyle);
-			infoString = "The ascent is " + ascent + " design units, " + ascentPixel +
-			             " pixels.";
+			ascentPixel = font.Size * ascent / fontFamily.GetEmHeight(fontStyle);
+			infoString = "The ascent is " + ascent + " design units, " + ascentPixel + " pixels.";
 			g.DrawString(infoString, font, solidBrush, pointF);
 
 			// Move down one line.
@@ -299,11 +251,9 @@ namespace MTFontTest
 			descent = fontFamily.GetCellDescent(fontStyle);
 
 			// 3.390625 = 16.0 * 434 / 2048
-			descentPixel =
-				font.Size * descent / fontFamily.GetEmHeight(fontStyle);
-			infoString = "The descent is " + descent + " design units, " +
-			             descentPixel + " pixels.";
-			g.DrawString(infoString, font, solidBrush, pointF);
+			descentPixel = font.Size * descent / fontFamily.GetEmHeight(fontStyle);
+			infoString = "The descent is " + descent + " design units, " + descentPixel + " pixels.";
+			g.DrawString (infoString, font, solidBrush, pointF);
 
 			// Move down one line.
 			pointF.Y += font.Height;
@@ -312,28 +262,21 @@ namespace MTFontTest
 			lineSpacing = fontFamily.GetLineSpacing(fontStyle);
 
 			// 18.398438 = 16.0 * 2355 / 2048
-			lineSpacingPixel =
-				font.Size * lineSpacing / fontFamily.GetEmHeight(fontStyle);
-			infoString = "The line spacing is " + lineSpacing + " design units, " +
-			             lineSpacingPixel + " pixels.";
-			g.DrawString(infoString, font, solidBrush, pointF);
-
+			lineSpacingPixel = font.Size * lineSpacing / fontFamily.GetEmHeight(fontStyle);
+			infoString = "The line spacing is " + lineSpacing + " design units, " + lineSpacingPixel + " pixels.";
+			g.DrawString (infoString, font, solidBrush, pointF);
 			title = "ObtainFontMetrics";
 		}
 
-
-		private void AvailableFonts(Graphics g)
+		void AvailableFonts (Graphics g)
 		{
 			var installedFonts = new InstalledFontCollection ();
 
-			foreach ( FontFamily ff in installedFonts.Families )
-			{
-				Console.WriteLine(ff.ToString());
-
-				foreach (var style in Enum.GetValues(typeof(FontStyle)) )
-				{
-					if (ff.IsStyleAvailable((FontStyle)style))
-						Console.WriteLine(ff.ToString() + " - " + (FontStyle)style);
+			foreach ( FontFamily ff in installedFonts.Families ) {
+				Console.WriteLine (ff.ToString());
+				foreach (var style in Enum.GetValues(typeof(FontStyle)) ) {
+					if (ff.IsStyleAvailable ((FontStyle)style))
+						Console.WriteLine (ff.ToString() + " - " + (FontStyle)style);
 				}
 			}
 
@@ -341,11 +284,10 @@ namespace MTFontTest
 			format.Alignment = StringAlignment.Center;
 			format.LineAlignment = StringAlignment.Center;
 			g.DrawString ("Please see console.", anyKeyFont, Brushes.Blue, ClientRectangle,format);
-
 			title = "AvailableFonts";
 		}
 
-		private void PrivateFonts(Graphics g)
+		void PrivateFonts (Graphics g)
 		{
 			var privateFonts = new PrivateFontCollection ();
 
@@ -355,13 +297,11 @@ namespace MTFontTest
 			privateFonts.AddFontFile ("American Typewriter.ttf");
 			privateFonts.AddFontFile ("Paint Boy.ttf");
 
-			foreach ( FontFamily ff in privateFonts.Families )
-			{
-				Console.WriteLine(ff.ToString());
-				foreach (var style in Enum.GetValues(typeof(FontStyle)) )
-				{
-					if (ff.IsStyleAvailable((FontStyle)style))
-						Console.WriteLine(ff.ToString() + " - " + (FontStyle)style);
+			foreach ( FontFamily ff in privateFonts.Families ) {
+				Console.WriteLine (ff.ToString ());
+				foreach (var style in Enum.GetValues (typeof(FontStyle)) ) {
+					if (ff.IsStyleAvailable ((FontStyle)style))
+						Console.WriteLine (ff.ToString() + " - " + (FontStyle)style);
 				}
 			}
 
@@ -369,45 +309,30 @@ namespace MTFontTest
 			format.Alignment = StringAlignment.Center;
 			format.LineAlignment = StringAlignment.Center;
 			g.DrawString ("Please see console.", anyKeyFont, Brushes.Blue, ClientRectangle,format);
-
 			title = "PrivateFontCollection";
-
 		}
 
-
-		void CreatePrivateFontCollection(Graphics g)
+		void CreatePrivateFontCollection (Graphics g)
 		{
-
-			PointF pointF = new PointF(10, 20);
-			SolidBrush solidBrush = new SolidBrush(Color.Black);
+			var pointF = new PointF (10, 20);
+			var solidBrush = new SolidBrush (Color.Black);
 
 			int count = 0;
-			string familyName = "";
+			string familyName = string.Empty;
 			string familyNameAndStyle;
 			FontFamily[] fontFamilies;
-			PrivateFontCollection privateFontCollection = new PrivateFontCollection();
-
-			// Add three font files to the private collection.
-
-//			var path = Environment.ExpandEnvironmentVariables("%SystemRoot%\\Fonts\\");
-//
-//			privateFontCollection.AddFontFile(System.IO.Path.Combine(path,"Arial.ttf"));
-//			privateFontCollection.AddFontFile(System.IO.Path.Combine(path,"CourBI.ttf"));
-//			//privateFontCollection.AddFontFile(System.IO.Path.Combine(path, "Courier New.ttf"));
-//			privateFontCollection.AddFontFile(System.IO.Path.Combine(path, "TimesBD.ttf"));
+			var privateFontCollection = new PrivateFontCollection ();
 			privateFontCollection.AddFontFile ("A Damn Mess.ttf");
 			privateFontCollection.AddFontFile ("Abberancy.ttf");
 			privateFontCollection.AddFontFile ("Abduction.ttf");
 			privateFontCollection.AddFontFile ("American Typewriter.ttf");
 			privateFontCollection.AddFontFile ("Paint Boy.ttf");
 
-
 			// Get the array of FontFamily objects.
 			fontFamilies = privateFontCollection.Families;
 
 			// How many objects in the fontFamilies array?
 			count = fontFamilies.Length;
-
 			var fontSize = 20;
 
 			// Display the name of each font family in the private collection 
@@ -416,15 +341,13 @@ namespace MTFontTest
 			{
 				// Get the font family name.
 				familyName = fontFamilies[j].Name;
-
 				// Is the regular style available? 
 				if (fontFamilies[j].IsStyleAvailable(FontStyle.Regular))
 				{
-					familyNameAndStyle = "";
+					familyNameAndStyle = string.Empty;
 					familyNameAndStyle = familyNameAndStyle + familyName;
 					familyNameAndStyle = familyNameAndStyle + " Regular";
-
-					Font regFont = new Font(
+					var regFont = new Font(
 						familyName,
 						fontSize,
 						FontStyle.Regular,
@@ -442,28 +365,28 @@ namespace MTFontTest
 				// Is the bold style available? 
 				if (fontFamilies[j].IsStyleAvailable(FontStyle.Bold))
 				{
-					familyNameAndStyle = "";
+					familyNameAndStyle = string.Empty;
 					familyNameAndStyle = familyNameAndStyle + familyName;
 					familyNameAndStyle = familyNameAndStyle + " Bold";
 
-					Font boldFont = new Font(
+					var boldFont = new Font(
 						familyName,
 						fontSize,
 						FontStyle.Bold,
 						GraphicsUnit.Pixel);
 
 					g.DrawString(familyNameAndStyle, boldFont, solidBrush, pointF);
-
 					pointF.Y += boldFont.Height;
 				}
+
 				// Is the italic style available? 
 				if (fontFamilies[j].IsStyleAvailable(FontStyle.Italic))
 				{
-					familyNameAndStyle = "";
+					familyNameAndStyle = string.Empty;
 					familyNameAndStyle = familyNameAndStyle + familyName;
 					familyNameAndStyle = familyNameAndStyle + " Italic";
 
-					Font italicFont = new Font(
+					var italicFont = new Font(
 						familyName,
 						fontSize,
 						FontStyle.Italic,
@@ -479,14 +402,13 @@ namespace MTFontTest
 				}
 
 				// Is the bold italic style available? 
-				if (fontFamilies[j].IsStyleAvailable(FontStyle.Italic) &&
-					fontFamilies[j].IsStyleAvailable(FontStyle.Bold))
+				if (fontFamilies[j].IsStyleAvailable(FontStyle.Italic) && fontFamilies[j].IsStyleAvailable(FontStyle.Bold))
 				{
-					familyNameAndStyle = "";
+					familyNameAndStyle = string.Empty;
 					familyNameAndStyle = familyNameAndStyle + familyName;
 					familyNameAndStyle = familyNameAndStyle + "BoldItalic";
 
-					Font italicFont = new Font(
+					var italicFont = new Font(
 						familyName,
 						26,
 						FontStyle.Italic | FontStyle.Bold,
@@ -503,11 +425,11 @@ namespace MTFontTest
 				// Is the underline style available? 
 				if (fontFamilies[j].IsStyleAvailable(FontStyle.Underline))
 				{
-					familyNameAndStyle = "";
+					familyNameAndStyle = string.Empty;
 					familyNameAndStyle = familyNameAndStyle + familyName;
 					familyNameAndStyle = familyNameAndStyle + " Underline";
 
-					Font underlineFont = new Font(
+					var underlineFont = new Font(
 						familyName,
 						fontSize,
 						FontStyle.Underline,
@@ -523,19 +445,18 @@ namespace MTFontTest
 				}
 
 				// Is the strikeout style available? 
-				if (fontFamilies[j].IsStyleAvailable(FontStyle.Strikeout))
-				{
-					familyNameAndStyle = "";
+				if (fontFamilies[j].IsStyleAvailable(FontStyle.Strikeout)) {
+					familyNameAndStyle = string.Empty;
 					familyNameAndStyle = familyNameAndStyle + familyName;
 					familyNameAndStyle = familyNameAndStyle + " Strikeout";
 
-					Font strikeFont = new Font(
+					var strikeFont = new Font(
 						familyName,
 						fontSize,
 						FontStyle.Strikeout,
 						GraphicsUnit.Pixel);
 
-					g.DrawString(
+					g.DrawString (
 						familyNameAndStyle,
 						strikeFont,
 						solidBrush,
@@ -544,10 +465,8 @@ namespace MTFontTest
 					pointF.Y += strikeFont.Height;
 				}
 
-				// Separate the families with white space.
 				pointF.Y += 10;
-
-			} // for
+			}
 
 			title = "CreatePrivateFontCollection";
 		}
@@ -560,15 +479,13 @@ namespace MTFontTest
 public delegate void PaintEventHandler(object sender, PaintEventArgs e);
 
 
-public class PaintEventArgs : EventArgs, IDisposable
-{
-	private readonly Rectangle clipRect;
-	private Graphics graphics;
+public class PaintEventArgs : EventArgs, IDisposable {
+	readonly CGRect clipRect;
+	Graphics graphics;
 
-	public PaintEventArgs(Graphics graphics, Rectangle clipRect)
+	public PaintEventArgs(Graphics graphics, CGRect clipRect)
 	{
-		if (graphics == null)
-		{
+		if (graphics == null) {
 			throw new ArgumentNullException("graphics");
 		}
 		this.graphics = graphics;
@@ -583,8 +500,7 @@ public class PaintEventArgs : EventArgs, IDisposable
 
 	protected virtual void Dispose(bool disposing)
 	{
-		if ((disposing && (this.graphics != null)))
-		{
+		if ((disposing && (this.graphics != null))) {
 			this.graphics.Dispose();
 		}
 	}
@@ -594,18 +510,14 @@ public class PaintEventArgs : EventArgs, IDisposable
 		this.Dispose(false);
 	}
 
-	public Rectangle ClipRectangle
-	{
-		get
-		{
+	public CGRect ClipRectangle {
+		get {
 			return this.clipRect;
 		}
 	}
 
-	public Graphics Graphics
-	{
-		get
-		{
+	public Graphics Graphics {
+		get {
 			return this.graphics;
 		}
 	}

@@ -1,23 +1,20 @@
-using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using MonoTouch.UIKit;
+using CoreGraphics;
 
-namespace MTExample3_2
-{
-	public class ChartStyle
-	{
-		private Form form1;
-		private Rectangle chartArea;
-		private Rectangle plotArea;
-		private Color chartBackColor;
-		private Color chartBorderColor;
-		private Color plotBackColor = Color.White;
-		private Color plotBorderColor = Color.Black;
-		private float xLimMin = 0f;
-		private float xLimMax = 10f;
-		private float yLimMin = 0f;
-		private float yLimMax = 10f;
+namespace MTExample3_2 {
+	public class ChartStyle {
+		Form form1;
+		Rectangle chartArea;
+		Rectangle plotArea;
+		Color chartBackColor;
+		Color chartBorderColor;
+		Color plotBackColor = Color.White;
+		Color plotBorderColor = Color.Black;
+		float xLimMin = 0f;
+		float xLimMax = 10f;
+
+		float yLimMin = 0f;
+		float yLimMax = 10f;
 
 		public ChartStyle (Form fm1)
 		{
@@ -29,60 +26,99 @@ namespace MTExample3_2
 		}
 
 		public Color ChartBackColor {
-			get { return chartBackColor; }
-			set { chartBackColor = value; }
+			get {
+				return chartBackColor;
+			}
+			set {
+				chartBackColor = value;
+			}
 		}
 
 		public Color ChartBorderColor {
-			get { return chartBorderColor; }
-			set { chartBorderColor = value; }
+			get {
+				return chartBorderColor;
+			}
+			set {
+				chartBorderColor = value;
+			}
 		}
 
 		public Color PlotBackColor {
-			get { return plotBackColor; }
-			set { plotBackColor = value; }
+			get {
+				return plotBackColor; }
+			set {
+				plotBackColor = value;
+			}
 		}
 
 		public Color PlotBorderColor {
-			get { return plotBorderColor; }
-			set { plotBorderColor = value; }
+			get {
+				return plotBorderColor;
+			}
+			set {
+				plotBorderColor = value;
+			}
 		}
 
 		public Rectangle ChartArea {
-			get { return chartArea; }
-			set { chartArea = value; }
+			get {
+				return chartArea;
+			}
+			set {
+				chartArea = value;
+			}
 		}
 
 		public Rectangle PlotArea {
-			get { return plotArea; }
-			set { plotArea = value; }
+			get {
+				return plotArea;
+			}
+			set {
+				plotArea = value;
+			}
 		}
 
 		public float XLimMax {
-			get { return xLimMax; }
-			set { xLimMax = value; }
+			get {
+				return xLimMax;
+			}
+			set {
+				xLimMax = value;
+			}
 		}
 
 		public float XLimMin {
-			get { return xLimMin; }
-			set { xLimMin = value; }
+			get {
+				return xLimMin;
+			}
+			set {
+				xLimMin = value;
+			}
 		}
 
 		public float YLimMax {
-			get { return yLimMax; }
-			set { yLimMax = value; }
+			get {
+				return yLimMax;
+			}
+			set {
+				yLimMax = value;
+			}
 		}
 
 		public float YLimMin {
-			get { return yLimMin; }
-			set { yLimMin = value; }
+			get {
+				return yLimMin;
+			}
+			set {
+				yLimMin = value;
+			}
 		}
 
 		public void AddChartStyle (Graphics g)
 		{
 			// Draw ChartArea and PlotArea:
-			Pen aPen = new Pen (ChartBorderColor, 1f);
-			SolidBrush aBrush = new SolidBrush (ChartBackColor);
+			var aPen = new Pen (ChartBorderColor, 1f);
+			var aBrush = new SolidBrush (ChartBackColor);
 			g.FillRectangle (aBrush, ChartArea);
 			g.DrawRectangle (aPen, ChartArea);
 			aPen = new Pen (PlotBorderColor, 1f);
@@ -93,18 +129,16 @@ namespace MTExample3_2
 			aBrush.Dispose ();
 		}
 
-		public PointF Point2D (PointF pt)
+		public PointF Point2D (CGPoint pt)
 		{
-			PointF aPoint = new PointF ();
+			var aPoint = new PointF ();
 			if (pt.X < XLimMin || pt.X > XLimMax ||
 				pt.Y < YLimMin || pt.Y > YLimMax) {
-				pt.X = Single.NaN;
-				pt.Y = Single.NaN;
+				pt.X = float.NaN;
+				pt.Y = float.NaN;
 			}
-			aPoint.X = PlotArea.X + (pt.X - XLimMin) *
-				PlotArea.Width / (XLimMax - XLimMin);
-			aPoint.Y = PlotArea.Bottom - (pt.Y - YLimMin) *
-				PlotArea.Height / (YLimMax - YLimMin);
+			aPoint.X = (float)(PlotArea.X + (pt.X - XLimMin) * PlotArea.Width / (XLimMax - XLimMin));
+			aPoint.Y = (float)(PlotArea.Bottom - (pt.Y - YLimMin) * PlotArea.Height / (YLimMax - YLimMin));
 			return aPoint;
 		}
 	}

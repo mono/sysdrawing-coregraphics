@@ -3,12 +3,12 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 
 #if MONOMAC
-using MonoMac.CoreGraphics;
-using MonoMac.AppKit;
-using MonoMac.Foundation;
+using CoreGraphics;
+using AppKit;
+using Foundation;
 #else
-using MonoTouch.CoreGraphics;
-using MonoTouch.UIKit;
+using CoreGraphics;
+using UIKit;
 #endif
 
 namespace System.Drawing
@@ -611,7 +611,7 @@ namespace System.Drawing
 			
 			if (Math.Abs(sweepAngle) >= 360)
 			{
-				graphics.AddEllipseInRect(new RectangleF(x,y,width,height));
+				graphics.AddEllipseInRect (new CGRect (x,y,width,height));
 				return;
 			}
 			

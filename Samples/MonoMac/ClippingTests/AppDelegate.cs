@@ -1,30 +1,29 @@
-using System;
-using System.Drawing;
-using MonoMac.Foundation;
-using MonoMac.AppKit;
-using MonoMac.ObjCRuntime;
+﻿using AppKit;
+using Foundation;
 
 namespace ClippingTests
 {
-	public partial class AppDelegate : NSApplicationDelegate
-	{
-		MainWindowController mainWindowController;
+    [Register("AppDelegate")]
+    public class AppDelegate : NSApplicationDelegate
+    {
+        public AppDelegate()
+        {
+        }
 
-		public AppDelegate ()
-		{
-		}
+        public override void DidFinishLaunching(NSNotification notification)
+        {
+            // Insert code here to initialize your application
+        }
 
-		public override void FinishedLaunching (NSObject notification)
-		{
-			mainWindowController = new MainWindowController ();
-			mainWindowController.Window.MakeKeyAndOrderFront (this);
-			mainWindowController.Window.ContentView.AddSubview(new DrawingView(mainWindowController.Window.ContentView.Bounds));
-		}
+        public override void WillTerminate(NSNotification notification)
+        {
+            // Insert code here to tear down your application
+        }
 
-		public override bool ApplicationShouldTerminateAfterLastWindowClosed (NSApplication sender)
-		{
-			return true;
-		}
-	}
+        public override bool ApplicationShouldTerminateAfterLastWindowClosed(NSApplication sender)
+        {
+            return true;
+        }
+    }
 }
 

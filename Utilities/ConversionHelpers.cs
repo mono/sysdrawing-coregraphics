@@ -3,9 +3,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 
 #if MONOMAC
-using MonoMac.CoreGraphics;
+using CoreGraphics;
 #else
-using MonoTouch.CoreGraphics;
+using CoreGraphics;
 #endif
 
 namespace System.Drawing
@@ -17,6 +17,69 @@ namespace System.Drawing
 		internal const float MS_DPI = 96;
 
 		internal static float F_PI = (float)Math.PI;
+
+		internal static CGSize ToCGSize (this SizeF size)
+		{
+#if XM45
+			return new CGSize (size.Width, size.Height);
+#else
+			return (CGSize)size;
+#endif
+		}
+
+		internal static SizeF ToSizeF (this CGSize size)
+		{
+#if XM45
+			return new SizeF ((float)size.Width, (float)size.Height);
+#else
+			return (SizeF)size;
+#endif
+		}
+
+		internal static CGPoint ToCGPoint (this PointF point)
+		{
+#if XM45
+			return new CGPoint (point.X, point.Y);
+#else
+			return (CGPoint)point;
+#endif
+		}
+
+		internal static PointF ToPointF (this CGPoint point)
+		{
+#if XM45
+			return new PointF ((float)point.X, (float)point.Y);
+#else
+			return (PointF)point;
+#endif
+		}
+
+		internal static CGRect ToCGRect (this RectangleF rect)
+		{
+#if XM45
+			return new CGRect (rect.X, rect.Y, rect.Width, rect.Height);
+#else
+			return (CGRect)rect;
+#endif
+		}
+		
+		internal static RectangleF ToRectangleF (this CGRect rect)
+		{
+#if XM45
+			return new RectangleF ((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
+#else
+			return (RectangleF)rect;
+#endif
+		}
+		
+		internal static RectangleF ToRectangleF (this Rectangle rect)
+		{
+#if XM45
+			return new RectangleF (rect.X, rect.Y, rect.Width, rect.Height);
+#else
+			return (RectangleF)rect;
+#endif
+		}
 		
 		internal static CGColor ToCGColor (this Color color)
 		{				

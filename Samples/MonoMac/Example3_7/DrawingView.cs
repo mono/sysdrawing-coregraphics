@@ -4,15 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Drawing.Drawing2D;
 
-using MonoMac.Foundation;
-using MonoMac.AppKit;
-using MonoMac.CoreGraphics;
-using MonoMac.CoreText;
+using Foundation;
+using AppKit;
+using CoreGraphics;
+using CoreText;
+using CoreGraphics;
 using System.Drawing;
 
 namespace Example3_7
 {
-	public partial class DrawingView : MonoMac.AppKit.NSView, Form
+	public partial class DrawingView : AppKit.NSView, Form
 	{
 
 		private SubChart sc;
@@ -199,7 +200,7 @@ namespace Example3_7
 			dc4.Add(ds);
 		}
 
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			Initialize();
 		}
@@ -243,7 +244,7 @@ namespace Example3_7
 		}
 		#endregion
 
-		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
+		public override void DrawRect (CGRect dirtyRect)
 		{
 
 			var g = Graphics.FromCurrentContext();

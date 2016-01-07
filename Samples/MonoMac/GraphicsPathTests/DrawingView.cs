@@ -2,373 +2,160 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 
-using MonoMac.Foundation;
-using MonoMac.AppKit;
-using MonoMac.CoreGraphics;
-
 using Plasmoid.Extensions;
 
-namespace GraphicsPathTests
+namespace DrawingShared
 {
 
-	public partial class DrawingView : MonoMac.AppKit.NSView
-	{
+    public partial class DrawingView 
+    {
 
-		#region Constructors
-		
-		// Called when created from unmanaged code
-		public DrawingView (IntPtr handle) : base (handle)
-		{
-			Initialize ();
-		}
-		
-		// Called when created directly from a XIB file
-		[Export ("initWithCoder:")]
-		public DrawingView (NSCoder coder) : base (coder)
-		{
-			Initialize ();
-		}
-		
-		// Shared initialization code
-		void Initialize ()
-		{
-			this.AutoresizingMask = NSViewResizingMask.HeightSizable | NSViewResizingMask.WidthSizable;
+        Rectangle pathRect1 = new Rectangle(50, 50, 100, 100);
+        RectangleF pathRectF1 = new RectangleF(110, 60, 100, 100);
+        Rectangle pathRect2 = new Rectangle(110, 60, 100, 100);
+        RectangleF pathRectF2 = new RectangleF(110, 60, 100, 100);
+        Rectangle pathRect3 = new Rectangle(50, 50, 50, 100);
+        RectangleF pathRectF3 = new RectangleF(50, 50, 50, 100);
+        Rectangle pathRect4 = new Rectangle(110, 60, 100, 50);
+        RectangleF pathRectF4 = new RectangleF(110, 60, 100, 50);
 
 
-			// We need to set these two view properites so that when we clear an infinite region
-			// it actually clears to the background color.
-			// If not set this may set the rectangle to Black depending on the context
-			// passed.  
-			this.WantsLayer = true;
-			Layer.BackgroundColor = new CGColor (0, 0, 0, 0);
+        void PlatformInitialize()
+        {
 
+            // Load our painting view methods.
+            paintViewActions = new Action<Graphics>[]
+                {
+                      AddArcRectangle,
+                      AddArcRectangleF,
+                      AddArc1,
+                      AddArc2,
+                      AddBezier1,
+                      AddBezier2,
+                      AddBezier3,
+                      AddBezier4,
+                      AddBeziers1,
+                      AddBeziers2,
+                      AddClosedCurve1,
+                      AddClosedCurve2,
+                      AddCurve1,
+                      AddCurve2,
+                      AddEllipse1,
+                      AddEllipse2,
+                      AddEllipse3,
+                      AddEllipse4,
+                      AddLine1,
+                      AddLine2,
+                      AddLine3,
+                      AddLine4,
+                      AddLines1,
+                      AddLines2,
+                      AddPie1,
+                      AddPie2,
+                      AddPie3,
+                      AddPolygon1,
+                      AddPolygon2,
+                      AddRectangle1,
+                      AddRectangle2,
+                      AddRectangles1,
+                      AddRectangles2,
+                      AddPath1,
+                      CloseAllFigures1,
+                      GetLastPoint1,
+                      GetLastPoint2,
+                      Reset1,
+                      Reverse1,
+                      SetMarkers1,
+                      SetMarkers2,
+                      ClearMarkers1,
+                      ClearMarkers2,
+                      TransformPath,
+                      StartFigure,
+                      GetBounds,
+                      Flatten1,
+                      PathIterator1,
+                      PathIterator2,
+                      PathIterator3,
+                      PathIterator4,
+                      PathIterator5,
+                      PathIterator6,
+                      PathIterator7,
+                      Widen1,
+                      Widen2,
+                      RoundeRectangle1,
+                      AddString1,
+                      AddString2,
+                      AddString3,
+                      AddString4,
+                      IsVisible1,
+                      IsVisible2,
+                      SetClip1,
+                      SetClip2,
+                      SetClip3,
+                      SetClip4,
+                      SetClip5,
+                      IsOutlineVisible1,
+                      Warp1,
+                      Warp2,
+                      Warp3,
+                      Warp4,
 
-			var mainBundle = NSBundle.MainBundle;
-//			var filePath = mainBundle.PathForResource("bitmap50","png");
-//			bmp = Bitmap.FromFile(filePath);
-//
-//			filePath = mainBundle.PathForResource("bitmap25","png");
-//			bmp2 = Bitmap.FromFile(filePath);
-		}
+ 
+                };
+        }
 
-		public DrawingView (RectangleF rect) : base (rect)
-		{
-			Initialize();
-		}
-		
-#endregion
+        protected void OnPaint(PaintEventArgs e)
+        {
+            Graphics g = Graphics.FromCurrentContext();
+            g.InterpolationMode = InterpolationMode.NearestNeighbor;
 
-		Font anyKeyFont = new Font("Chalkduster", 18, FontStyle.Bold);
-		Font clipFont = new Font("Helvetica",12, FontStyle.Bold);
+            paintViewActions[currentView].Invoke(g);
+            if (saveCurrentView)
+                SavePaintView(paintViewActions[currentView]);
 
-		Image bmp;
-		Image bmp2;
+            g.ResetTransform ();
+            Brush sBrush = Brushes.Black;
 
+            if (!g.IsClipEmpty) 
+            {
+                var clipPoint = PointF.Empty;
+                var clipString = string.Format("Clip-{0}", g.ClipBounds);
+                g.ResetClip ();
+                var clipSize = g.MeasureString(clipString, clipFont);
+                clipPoint.X = (ClientRectangle.Width / 2) - (clipSize.Width / 2);
+                clipPoint.Y = 5;
+                g.DrawString(clipString, clipFont, sBrush, clipPoint );
+            }
 
-		Rectangle pathRect1 = new Rectangle(50, 50, 100, 100);
-		RectangleF pathRectF1 = new RectangleF(110, 60, 100, 100);
-		Rectangle pathRect2 = new Rectangle(110, 60, 100, 100);
-		RectangleF pathRectF2 = new RectangleF(110, 60, 100, 100);
-		Rectangle pathRect3 = new Rectangle(50, 50, 50, 100);
-		RectangleF pathRectF3 = new RectangleF(50, 50, 50, 100);
-		Rectangle pathRect4 = new Rectangle(110, 60, 100, 50);
-		RectangleF pathRectF4 = new RectangleF(110, 60, 100, 50);
+            var anyKeyPoint = PointF.Empty;
 
+            #if __MAC__
+            var anyKey = "Press any key to continue.";
+            #endif
+            #if __IOS__
+            var anyKey = "Tap Screen to continue.";
+            #endif
 
-		int currentView = 71;
-		int totalViews = 75;
+            var anyKeySize = g.MeasureString(anyKey, anyKeyFont);
+            anyKeyPoint.X = (ClientRectangle.Width / 2) - (anyKeySize.Width / 2);
+            anyKeyPoint.Y = ClientRectangle.Height - (anyKeySize.Height + 10);
+            g.DrawString(anyKey, anyKeyFont, sBrush, anyKeyPoint );
 
-		public Rectangle ClientRectangle 
-		{
-			get {
-				return new Rectangle((int)Bounds.X,
-				                     (int)Bounds.Y,
-				                     (int)Bounds.Width,
-				                     (int)Bounds.Height);
-			}
-		}
+            var title = paintViewActions[currentView].Method.Name;
+            anyKeySize = g.MeasureString(title, anyKeyFont);
+            anyKeyPoint.X = (ClientRectangle.Width / 2) - (anyKeySize.Width / 2);
+            anyKeyPoint.Y -= anyKeySize.Height;
+            g.DrawString(title, anyKeyFont, sBrush, anyKeyPoint );
 
-		public override bool AcceptsFirstResponder ()
-		{
-			return true;
-		}
+            g.Dispose();
 
-		public override void KeyDown (NSEvent theEvent)
-		{
-			currentView++;
-			currentView %= totalViews;
-			//Console.WriteLine("Current View: {0}", currentView);
-			this.NeedsDisplay = true;
-		}
-
-		string title = string.Empty;
-
-		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
-		{
-			Graphics g = Graphics.FromCurrentContext();
-			g.InterpolationMode = InterpolationMode.NearestNeighbor;
-
-			g.Clear(Color.White);
-			//g.SmoothingMode = SmoothingMode.HighQuality;
-			switch (currentView) 
-			{
-			case 0:
-				AddArcRectangle (g);
-				break;
-			case 1:
-				AddArcRectangleF (g);
-				break;
-			case 2:
-				AddArc1 (g);
-				break;
-			case 3:
-				AddArc2 (g);
-				break;
-			case 4:
-				AddBezier1 (g);
-				break;
-			case 5:
-				AddBezier2 (g);
-				break;
-			case 6:
-				AddBezier3 (g);
-				break;
-			case 7:
-				AddBezier4 (g);
-				break;
-			case 8:
-				AddBeziers1 (g);
-				break;
-			case 9:
-				AddBeziers2 (g);
-				break;
-			case 10:
-				AddClosedCurve1 (g);
-				break;
-			case 11:
-				AddClosedCurve2 (g);
-				break;
-			case 12:
-				AddCurve1 (g);
-				break;
-			case 13:
-				AddCurve2 (g);
-				break;
-			case 14:
-				AddEllipse1 (g);
-				break;
-			case 15:
-				AddEllipse2 (g);
-				break;
-			case 16:
-				AddEllipse3 (g);
-				break;
-			case 17:
-				AddEllipse4 (g);
-				break;
-			case 18:
-				AddLine1 (g);
-				break;
-			case 19:
-				AddLine2 (g);
-				break;
-			case 20:
-				AddLine3 (g);
-				break;
-			case 21:
-				AddLine4 (g);
-				break;
-			case 22:
-				AddLines1 (g);
-				break;
-			case 23:
-				AddLines2 (g);
-				break;
-			case 24:
-				AddPie1 (g);
-				break;
-			case 25:
-				AddPie2 (g);
-				break;
-			case 26:
-				AddPie3 (g);
-				break;
-			case 27:
-				AddPolygon1 (g);
-				break;
-			case 28:
-				AddPolygon2 (g);
-				break;
-			case 29:
-				AddRectangle1 (g);
-				break;
-			case 30:
-				AddRectangle2 (g);
-				break;
-			case 31:
-				AddRectangles1 (g);
-				break;
-			case 32:
-				AddRectangles2 (g);
-				break;
-			case 33:
-				AddPath1 (g);
-				break;
-			case 34:
-				CloseAllFigures1 (g);
-				break;
-			case 35:
-				GetLastPoint1 (g);
-				break;
-			case 36:
-				GetLastPoint2 (g);
-				break;
-			case 37:
-				Reset1 (g);
-				break;
-			case 38:
-				Reverse1 (g);
-				break;
-			case 39:
-				SetMarkers1 (g);
-				break;
-			case 40:
-				SetMarkers2 (g);
-				break;
-			case 41:
-				ClearMarkers1 (g);
-				break;
-			case 42:
-				ClearMarkers2 (g);
-				break;
-			case 43:
-				TransformPath (g);
-				break;
-			case 44:
-				StartFigure (g);
-				break;
-			case 45:
-				GetBounds (g);
-				break;
-			case 46:
-				Flatten1 (g);
-				break;
-			case 47:
-				PathIterator1 (g);
-				break;
-			case 48:
-				PathIterator2 (g);
-				break;
-			case 49:
-				PathIterator3 (g);
-				break;
-			case 50:
-				PathIterator4 (g);
-				break;
-			case 51:
-				PathIterator5 (g);
-				break;
-			case 52:
-				PathIterator6 (g);
-				break;
-			case 53:
-				PathIterator7(g);
-				break;
-			case 54:
-				Widen1 (g);
-				break;
-			case 55:
-				Widen2 (g);
-				break;
-			case 56:
-				RoundeRectangle1 (g);
-				break;
-			case 57:
-				AddString1 (g);
-				break;
-			case 58:
-				AddString2 (g);
-				break;
-			case 59:
-				AddString3 (g);
-				break;
-			case 60:
-				AddString4 (g);
-				break;
-			case 61:
-				IsVisible1 (g);
-				break;
-			case 62:
-				IsVisible2 (g);
-				break;
-			case 63:
-				SetClip1 (g);
-				break;
-			case 64:
-				SetClip2 (g);
-				break;
-			case 65:
-				SetClip3 (g);
-				break;
-			case 66:
-				SetClip4 (g);
-				break;
-			case 67:
-				SetClip5 (g);
-				break;
-			case 68:
-				IsOutlineVisible1 (g);
-				break;
-			case 69:
-				Warp1 (g);
-				break;
-			case 70:
-				Warp2 (g);
-				break;
-			case 71:
-				Warp3 (g);
-				break;
-			case 72:
-				Warp4 (g);
-				break;
-
-
-			}
-
-			g.ResetTransform ();
-			Brush sBrush = Brushes.Black;
-
-			if (!g.IsClipEmpty) 
-			{
-				var clipPoint = PointF.Empty;
-				var clipString = string.Format("Clip-{0}", g.ClipBounds);
-				g.ResetClip ();
-				var clipSize = g.MeasureString(clipString, clipFont);
-				clipPoint.X = (ClientRectangle.Width / 2) - (clipSize.Width / 2);
-				clipPoint.Y = 5;
-				g.DrawString(clipString, clipFont, sBrush, clipPoint );
-
-			}
-
-			var anyKeyPoint = PointF.Empty;
-			var anyKey = "Press any key to continue.";
-			var anyKeySize = g.MeasureString(anyKey, anyKeyFont);
-			anyKeyPoint.X = (ClientRectangle.Width / 2) - (anyKeySize.Width / 2);
-			anyKeyPoint.Y = ClientRectangle.Height - (anyKeySize.Height + 10);
-			g.DrawString(anyKey, anyKeyFont, sBrush, anyKeyPoint );
-
-			anyKeySize = g.MeasureString(title, anyKeyFont);
-			anyKeyPoint.X = (ClientRectangle.Width / 2) - (anyKeySize.Width / 2);
-			anyKeyPoint.Y -= anyKeySize.Height;
-			g.DrawString(title, anyKeyFont, sBrush, anyKeyPoint );
-
-			g.Dispose();
-		}
+        }
 
 		private void AddArcRectangle (Graphics g)
 		{
@@ -383,8 +170,6 @@ namespace GraphicsPathTests
 
 			// Draw the path to screen.
 			g.DrawPath(new Pen(Color.Red, 3), myPath);
-
-			title = "AddArcRectangle";
 
 		}
 
@@ -402,7 +187,6 @@ namespace GraphicsPathTests
 			// Draw the path to screen.
 			g.DrawPath(new Pen(Color.Red, 3), myPath);
 
-			title = "AddArcRectangleF";
 
 		}
 
@@ -420,8 +204,7 @@ namespace GraphicsPathTests
 			// Draw the path to screen.
 			g.DrawPath(new Pen(Color.Red, 3), myPath);
 
-			title = "AddArcInt32";
-
+			
 		}
 
 		private void AddArc2 (Graphics g)
@@ -438,8 +221,7 @@ namespace GraphicsPathTests
 			// Draw the path to screen.
 			g.DrawPath(new Pen(Color.Red, 3), myPath);
 
-			title = "AddArcSingle";
-
+			
 		}
 
 		private void AddBezier1(Graphics g)
@@ -458,7 +240,7 @@ namespace GraphicsPathTests
 			// Draw the path to screen.
 			g.DrawPath(new Pen(Color.Red, 2), myPath);
 
-			title = "AddBezierInt32";
+			
 		}
 
 		private void AddBezier2(Graphics g)
@@ -477,7 +259,7 @@ namespace GraphicsPathTests
 			// Draw the path to screen.
 			g.DrawPath(new Pen(Color.Red, 2), myPath);
 
-			title = "AddBezierPoint";
+			
 		}
 
 		private void AddBezier3(Graphics g)
@@ -496,7 +278,7 @@ namespace GraphicsPathTests
 			// Draw the path to screen.
 			g.DrawPath(new Pen(Color.Red, 2), myPath);
 
-			title = "AddBezierPointF";
+			
 		}
 
 		private void AddBezier4(Graphics g)
@@ -515,7 +297,7 @@ namespace GraphicsPathTests
 			// Draw the path to screen.
 			g.DrawPath(new Pen(Color.Red, 2), myPath);
 
-			title = "AddBezierSingle";
+			
 		}
 
 		private void AddBeziers1(Graphics g)
@@ -541,7 +323,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 
-			title = "AddBeziersPoint";
+			
 		}
 
 		private void AddBeziers2(Graphics g)
@@ -567,7 +349,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 
-			title = "AddBeziersPointF";
+			
 		}
 
 		
@@ -593,7 +375,7 @@ namespace GraphicsPathTests
 			// Draw the path to screen.
 			g.DrawPath(myPen, myPath);
 
-			title = "AddClosedCurvePoint";
+			
 		}
 
 		private void AddClosedCurve2(Graphics g)
@@ -618,7 +400,7 @@ namespace GraphicsPathTests
 			// Draw the path to screen.
 			g.DrawPath(myPen, myPath);
 
-			title = "AddClosedCurvePointF";
+			
 		}
 
 		private void AddCurve1(Graphics g)
@@ -641,7 +423,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 
-			title = "AddCurvePoint";
+			
 		}
 
 		private void AddCurve2(Graphics g)
@@ -664,7 +446,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 
-			title = "AddCurvePointF";
+			
 		}
 
 		private void AddEllipse1(Graphics g)
@@ -678,7 +460,7 @@ namespace GraphicsPathTests
 			// Draw the path to the screen.
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
-			title = "AddEllipseRectangle";
+			
 		}
 
 		private void AddEllipse2(Graphics g)
@@ -692,7 +474,7 @@ namespace GraphicsPathTests
 			// Draw the path to the screen.
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
-			title = "AddEllipseRectangleF";
+			
 		}
 
 		private void AddEllipse3(Graphics g)
@@ -705,7 +487,7 @@ namespace GraphicsPathTests
 			// Draw the path to the screen.
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
-			title = "AddEllipseInt32";
+			
 		}
 
 		
@@ -719,7 +501,7 @@ namespace GraphicsPathTests
 			// Draw the path to the screen.
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
-			title = "AddEllipseSingle";
+			
 		}
 
 		private void AddLine1(Graphics g)
@@ -735,7 +517,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 
-			title = "AddLineInt32";
+			
 		}
 
 		private void AddLine2(Graphics g)
@@ -751,7 +533,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 
-			title = "AddLineSingle";
+			
 		}
 
 		private void AddLine3(Graphics g)
@@ -767,7 +549,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 			
-			title = "AddLinePoint";
+			
 		}
 
 		private void AddLine4(Graphics g)
@@ -782,7 +564,7 @@ namespace GraphicsPathTests
 			// Draw the path to the screen.
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
-			title = "AddLinePointF";
+			
 		}
 		
 		private void AddLines1(Graphics g)
@@ -806,7 +588,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 
-			title = "AddLinesPoint";
+			
 		}
 		
 		private void AddLines2(Graphics g)
@@ -830,7 +612,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 
-			title = "AddLinesPointF";
+			
 		}
 
 		private void AddPie1(Graphics g)
@@ -844,7 +626,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 
-			title = "AddPieInt32";
+			
 		}
 
 		private void AddPie2(Graphics g)
@@ -858,7 +640,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 			
-			title = "AddPieSingle";
+			
 		}
 
 		private void AddPie3(Graphics g)
@@ -872,7 +654,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 
-			title = "AddPieRectangle";
+			
 		}
 
 		private void AddPolygon1(Graphics g)
@@ -896,7 +678,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 
-			title = "AddPolygonPoint";
+			
 		}	
 		
 		private void AddPolygon2(Graphics g)
@@ -920,7 +702,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 
-			title = "AddPolygonPointF";
+			
 		}		
 	
 		private void AddRectangle1(Graphics g)
@@ -935,7 +717,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 			
-			title = "AddRectangle";
+			
 		}
 		
 		private void AddRectangle2(Graphics g)
@@ -950,7 +732,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 
-			title = "AddRectangleF";
+			
 		}
 
 		private void AddRectangles1(Graphics g)
@@ -970,7 +752,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 
-			title = "AddRectanglesRectangle";
+			
 
 		}
 
@@ -991,7 +773,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 
-			title = "AddRectanglesRectangleF";
+			
 
 		}
 
@@ -1027,7 +809,7 @@ namespace GraphicsPathTests
 			Pen myPen = new Pen(Color.Black, 2);
 			g.DrawPath(myPen, myPath);
 
-			title = "AddPath";
+			
 		}
 
 		private void CloseAllFigures1(Graphics g)
@@ -1054,7 +836,7 @@ namespace GraphicsPathTests
 			// Draw the path to the screen.
 			g.DrawPath(new Pen(Color.Black, 3), myPath);
 
-			title = "CloseAllFigures";
+			
 		}
 
 		private void GetLastPoint1(Graphics g)
@@ -1074,7 +856,7 @@ namespace GraphicsPathTests
 			// Draw the path to the screen.
 			g.DrawPath(new Pen(Color.Black, 2), myPath);
 
-			title = "GetLastPoint - Console";
+			
 		}
 
 		
@@ -1102,7 +884,7 @@ namespace GraphicsPathTests
 			// Draw the path to the screen.
 			g.DrawPath(new Pen(Color.Black, 2), myPath);
 
-			title = "GetLastPointEmptyPath - Console";
+			
 		}
 
 		public void Reset1(Graphics g)
@@ -1140,7 +922,7 @@ namespace GraphicsPathTests
 				                      150,
 				                      20);
 
-			title = "Reset";
+			
 		} 
 		//End GraphicsPathResetExample 
 
@@ -1207,7 +989,7 @@ namespace GraphicsPathTests
 			// Draw the reversed set of points to the screen.
 			DrawPoints2(g, myPath.PathPoints, 150);
 
-			title = "Reverse";
+			
 		}
 		//End GraphicsPathReverseExample. 
 
@@ -1250,7 +1032,7 @@ namespace GraphicsPathTests
 			g.DrawPath(new Pen(Color.Black, 2), myPath);
 
 
-			title = "SetMarkers";
+			
 		}
 
 		private void SetMarkers2(Graphics g)
@@ -1302,7 +1084,7 @@ namespace GraphicsPathTests
 			// Draw the reversed set of points to the screen.
 			DrawPoints2(g, myPath.PathPoints, 150);
 
-			title = "SetMarkersReverse";
+			
 		}
 
 		
@@ -1324,7 +1106,7 @@ namespace GraphicsPathTests
 			g.DrawPath(new Pen(Color.Black, 2), myPath);
 
 
-			title = "ClearMarkers";
+			
 		}
 
 		private void ClearMarkers2(Graphics g)
@@ -1388,7 +1170,7 @@ namespace GraphicsPathTests
 			// Draw the reversed set of points to the screen.
 			DrawPoints2(g, myPath.PathPoints, 150);
 
-			title = "ClearMarkersReverse";
+			
 		}
 
 		private void TransformPath(Graphics g)
@@ -1409,7 +1191,7 @@ namespace GraphicsPathTests
 			// Draw the transformed ellipse to the screen.
 			g.DrawPath(new Pen(Color.Red, 2), myPath);
 
-			title = "TransformPath";
+			
 
 		}
 
@@ -1442,7 +1224,7 @@ namespace GraphicsPathTests
 			// Draw the path to the screen.
 			g.DrawPath(new Pen(Color.Black), myPath);
 
-			title = "StartFigure";
+			
 		} 
 
 		public void GetBounds(Graphics g)
@@ -1485,9 +1267,7 @@ namespace GraphicsPathTests
 			                         boundRect2.Height,
 			                         boundRect2.Width);
 
-			// Display the rectangle size.
-			//MessageBox.Show(boundRect2.ToString());
-			title = "GetBounds";
+			
 		}
 
 		private void Flatten1 (Graphics g)
@@ -1526,7 +1306,7 @@ namespace GraphicsPathTests
 
 			g.DrawPath(new Pen(Color.Red, 1), myPath);
 
-			title = "Flatten";
+			
 		}
 
 		public void PathIterator1 (Graphics g)
@@ -1622,7 +1402,7 @@ namespace GraphicsPathTests
 				j+=20;
 			}
 
-			title = "PathIteratorCopyData";
+			
 		}
 
 		public void PathIterator2 (Graphics g)
@@ -1701,7 +1481,7 @@ namespace GraphicsPathTests
 				j+=20;
 			}
 
-			title = "PathIteratorEnumerate";
+			
 		}
 
 		public void PathIterator3(Graphics g)
@@ -1764,7 +1544,7 @@ namespace GraphicsPathTests
 			// List the total number of path points to the screen.
 			ListPathPoints(g, myPath, myPathIterator, 200, 2);
 
-			title = "PathIteratorNextPathType";
+			
 		}
 
 		//------------------------------------------------------- 
@@ -1906,7 +1686,7 @@ namespace GraphicsPathTests
 			                      200,
 			                      20);
 
-			title = "PathIteratorNextSubpath1";
+			
 		}
 
 		public void PathIterator5(Graphics g)
@@ -1972,7 +1752,7 @@ namespace GraphicsPathTests
 			g.DrawString("Marker: 1" + "  Num Points: " +
 			                      markerPoints.ToString(),  myFont, myBrush, 200, 20);
 
-			title = "PathIteratorNextMarker1";
+			
 
 		}
 
@@ -2057,7 +1837,7 @@ namespace GraphicsPathTests
 			                      200,
 			                      j);
 
-			title = "PathIteratorNextMarker2";
+			
 		}
 
 		public void PathIterator7(Graphics g)
@@ -2139,7 +1919,7 @@ namespace GraphicsPathTests
 			                      200,
 			                      20);
 
-			title = "PathIteratorNextSubpath2";
+			
 		}
 
 		private void Widen1(Graphics g)
@@ -2164,7 +1944,7 @@ namespace GraphicsPathTests
 		
 			//g.DrawPath (Pens.Black, myPath);
 
-			title = "Widen 1";
+			
 
 		}
 
@@ -2186,7 +1966,7 @@ namespace GraphicsPathTests
 
 			var clr = Color.Aquamarine;
 
-			g.ScaleTransform(cx / 300f, cy / 200f);
+			g.ScaleTransform((float)(cx / 300f), (float)(cy / 200f));
 
 			for (int i = 0; i < 6; i++)
 			{
@@ -2211,7 +1991,7 @@ namespace GraphicsPathTests
 					case 2: g.FillPath(brush, pathClone); break;
 				}
 			}
-			title = "Widen 2";
+			
 
 		}
 
@@ -2239,7 +2019,7 @@ namespace GraphicsPathTests
 			g.DrawRoundedRectangle(new Pen(InactiveBorderLight), 12, 12, width - 44, height - 64, 10);
 			g.FillRoundedRectangle(new SolidBrush(Color.FromArgb(100, 70, 130, 180)), 12, 12 + ((height - 64) / 2), width - 44, (height - 64)/2, 10);
 
-			title = "RoundedRectangle1";
+			
 		}
 
 		
@@ -2276,7 +2056,7 @@ namespace GraphicsPathTests
 
 			//OutputPaths("", myPath);
 
-			title = "AddStringPoint";
+			
 
 		}
 
@@ -2314,7 +2094,7 @@ namespace GraphicsPathTests
 
 			//OutputPaths("", myPath);
 
-			title = "AddStringRectangleF";
+			
 
 		}
 
@@ -2346,7 +2126,7 @@ namespace GraphicsPathTests
 			pth.Dispose();
 
 
-			title = "AddString3";
+			
 
 		}
 		
@@ -2385,7 +2165,7 @@ namespace GraphicsPathTests
 
 			fntFamily.Dispose();
 
-			title = "AddString4";
+			
 		}
 
 
@@ -2409,7 +2189,7 @@ namespace GraphicsPathTests
 			// Show the result.
 			g.DrawString("Visible = " + visible, new Font("Arial", 12), Brushes.Red, 100, 90);
 
-			title = "IsVisibleInt32";
+			
 		}
 
 		
@@ -2433,7 +2213,7 @@ namespace GraphicsPathTests
 			// Show the result.
 			g.DrawString("Visible = " + visible, new Font("Arial", 12), Brushes.Red, 100, 90);
 
-			title = "IsVisibleIntPointF";
+			
 		}
 
 
@@ -2452,7 +2232,7 @@ namespace GraphicsPathTests
 			// Fill rectangle to demonstrate clipping region.
 			g.FillRectangle(new SolidBrush(Color.Blue), 0, 0, 500, 300);
 
-			title = "SetClipPath";
+			
 		}
 
 		private void SetClip2(Graphics g)
@@ -2470,7 +2250,7 @@ namespace GraphicsPathTests
 			// Fill rectangle to demonstrate clipping region.
 			g.FillRectangle(new SolidBrush(Color.Blue), 0, 0, 500, 300);
 
-			title = "SetClipPathCombineIntersect";
+			
 		}
 
 		
@@ -2489,7 +2269,7 @@ namespace GraphicsPathTests
 			// Fill rectangle to demonstrate clipping region.
 			g.FillRectangle(new SolidBrush(Color.Blue), 0, 0, 500, 300);
 
-			title = "SetClipPathCombineUnion";
+			
 		}
 
 		
@@ -2508,7 +2288,7 @@ namespace GraphicsPathTests
 			// Fill rectangle to demonstrate clipping region.
 			g.FillRectangle(new SolidBrush(Color.Blue), 0, 0, 500, 300);
 
-			title = "SetClipPathCombineExclude";
+			
 		}
 
 		
@@ -2527,7 +2307,7 @@ namespace GraphicsPathTests
 			// Fill rectangle to demonstrate clipping region.
 			g.FillRectangle(new SolidBrush(Color.Blue), 0, 0, 500, 300);
 
-			title = "SetClipPathCombineXor";
+			
 		}
 		
 		public void IsOutlineVisible1(Graphics g)
@@ -2556,7 +2336,7 @@ namespace GraphicsPathTests
 			// Show the result.
 			g.DrawString("Visible = " + visible, new Font("Arial", 12), Brushes.Green, point.X + 10, point.Y);
 
-			title = "IsOutlineVisible";
+			
 		}
 
 		private void Warp1 (Graphics g)
@@ -2589,7 +2369,7 @@ namespace GraphicsPathTests
 			g.FillPath(Brushes.Yellow, pth);
 			pth.Dispose();
 
-			title = "Warp - Perspective";
+			
 
 		}
 
@@ -2622,7 +2402,7 @@ namespace GraphicsPathTests
 			// Draw the warped path (rectangle) to the screen.
 			g.DrawPath(new Pen(Color.Red), myPath);
 
-			title = "Warp2";
+			
 		} 
 
 
@@ -2668,7 +2448,7 @@ namespace GraphicsPathTests
 			// Draw the warped path (rectangle) to the screen.
 			g.FillPath(new HatchBrush(HatchStyle.HorizontalBrick, Color.Red), myPath);
 
-			title = "WarpPerspective";
+			
 		} 
 
 
@@ -2715,7 +2495,7 @@ namespace GraphicsPathTests
 			// Draw the warped path (rectangle) to the screen.
 			g.FillPath(new HatchBrush(HatchStyle.HorizontalBrick, Color.Red), myPath);
 
-			title = "WarpBilinear";
+			
 		} 
 
 

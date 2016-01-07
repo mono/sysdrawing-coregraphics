@@ -11,9 +11,9 @@ using System.Drawing.Drawing2D;
 using System.ComponentModel;
 
 #if MONOMAC
-using MonoMac.CoreGraphics;
+using CoreGraphics;
 #else
-using MonoTouch.CoreGraphics;
+using CoreGraphics;
 #endif
 
 namespace System.Drawing
@@ -287,7 +287,7 @@ namespace System.Drawing
 				context.SetLineDash(dashOffset,setupMorseCode(DashDotDot));
 				break;
 			default:
-				context.SetLineDash(0, new float[0]);
+				context.SetLineDash(0, new nfloat[0]);
 				break;
 			}
 			// miter limit
@@ -299,9 +299,9 @@ namespace System.Drawing
 			graphics.LastPen = this;
 		}
 
-		float[] setupMorseCode (float[] morse) 
+		nfloat[] setupMorseCode (float[] morse) 
 		{
-			float[] dashdots = new float[morse.Length];
+			nfloat[] dashdots = new nfloat[morse.Length];
 			for (int x = 0; x < dashdots.Length; x++) 
 			{
 				dashdots[x] = morse[x] * width;

@@ -3,9 +3,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 
 #if MONOMAC
-using MonoMac.CoreGraphics;
+using CoreGraphics;
 #else
-using MonoTouch.CoreGraphics;
+using CoreGraphics;
 #endif
 
 namespace System.Drawing
@@ -467,14 +467,14 @@ namespace System.Drawing
 			var x = rectangle.X;
 			var y = rectangle.Y;
 
-			rectangle.X = transform.xx * x + transform.xy * y + transform.x0;
-			rectangle.Y = transform.yx * x + transform.yy * y + transform.y0;
+			rectangle.X = (float)(transform.xx * x + transform.xy * y + transform.x0);
+			rectangle.Y = (float)(transform.yx * x + transform.yy * y + transform.y0);
 
 			x = rectangle.Width;
 			y = rectangle.Height;
 
-			rectangle.Width = transform.xx * x + transform.xy * y + transform.x0;
-			rectangle.Height = transform.yx * x + transform.yy * y + transform.y0;
+			rectangle.Width = (float)(transform.xx * x + transform.xy * y + transform.x0);
+			rectangle.Height = (float)(transform.yx * x + transform.yy * y + transform.y0);
 
 		}
 
@@ -489,14 +489,14 @@ namespace System.Drawing
 			var x = rectangle.X;
 			var y = rectangle.Y;
 
-			rectangle.X = transform.xx * x + transform.xy * y + transform.x0;
-			rectangle.Y = transform.yx * x + transform.yy * y + transform.y0;
+			rectangle.X = (float)(transform.xx * x + transform.xy * y + transform.x0);
+			rectangle.Y = (float)(transform.yx * x + transform.yy * y + transform.y0);
 
 			x = rectangle.Width;
 			y = rectangle.Height;
 
-			rectangle.Width = transform.xx * x + transform.xy * y + transform.x0;
-			rectangle.Height = transform.yx * x + transform.yy * y + transform.y0;
+			rectangle.Width = (float)(transform.xx * x + transform.xy * y + transform.x0);
+			rectangle.Height = (float)(transform.yx * x + transform.yy * y + transform.y0);
 
 			return new RectangleF (rectangle.Location, rectangle.Size);;
 		}

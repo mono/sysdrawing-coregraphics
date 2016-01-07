@@ -1,8 +1,9 @@
 using System;
+using CoreGraphics;
+using Foundation;
+using AppKit;
+using ObjCRuntime;
 using System.Drawing;
-using MonoMac.Foundation;
-using MonoMac.AppKit;
-using MonoMac.ObjCRuntime;
 
 namespace Example4_1
 {
@@ -14,11 +15,11 @@ namespace Example4_1
 		{
 		}
 
-		public override void FinishedLaunching (NSObject notification)
+		public override void DidFinishLaunching (NSNotification notification)
 		{
 			mainWindowController = new MainWindowController ();
 			mainWindowController.Window.MakeKeyAndOrderFront (this);
-			RectangleF bounds = mainWindowController.Window.ContentView.Bounds;
+			CGRect bounds = mainWindowController.Window.ContentView.Bounds;
 			bounds.Inflate(-50,-50);
 			//mainWindowController.Window.ContentView.AddSubview(new ChartCanvas(mainWindowController.Window.ContentView.Bounds));
 			mainWindowController.Window.ContentView.AddSubview(new ChartCanvas(bounds));

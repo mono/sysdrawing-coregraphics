@@ -1,16 +1,17 @@
 using System;
-using System.Drawing;
+using CoreGraphics;
 using System.Drawing.Drawing2D;
-using MonoTouch.UIKit;
+using UIKit;
+using System.Drawing;
 
 namespace sample
 {
 	public class DrawingView : UIView {
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 		}
 		
-		public override void Draw (RectangleF rect)
+		public override void Draw (CGRect rect)
 		{
 			var ctx = new Graphics (UIGraphics.GetCurrentContext ());
 

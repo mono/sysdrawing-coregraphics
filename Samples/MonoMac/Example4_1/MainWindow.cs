@@ -2,13 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MonoMac.Foundation;
-using MonoMac.CoreFoundation;
-using MonoMac.AppKit;
+using Foundation;
+using CoreFoundation;
+using AppKit;
 
 namespace Example4_1
 {
-	public partial class MainWindow : MonoMac.AppKit.NSWindow
+	public partial class MainWindow : AppKit.NSWindow
 	{
 		#region Constructors
 		

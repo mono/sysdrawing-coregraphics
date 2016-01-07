@@ -29,15 +29,15 @@ using System;
 using System.Drawing.Text;
 
 #if MONOMAC
-using MonoMac.AppKit;
-using MonoMac.Foundation;
-using MonoMac.CoreGraphics;
-using MonoMac.CoreText;
+using AppKit;
+using Foundation;
+using CoreGraphics;
+using CoreText;
 #else
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using MonoTouch.CoreGraphics;
-using MonoTouch.CoreText;
+using UIKit;
+using Foundation;
+using CoreGraphics;
+using CoreText;
 #endif
 
 namespace System.Drawing
@@ -185,9 +185,9 @@ namespace System.Drawing
 				return (int)Math.Round(font.DescentMetric / font.Size * font.UnitsPerEmMetric);
 			case  Metric.LineSpacing:
 				float lineHeight = 0;
-				lineHeight += font.AscentMetric;
-				lineHeight += font.DescentMetric;
-				lineHeight += font.LeadingMetric;
+				lineHeight += (float)font.AscentMetric;
+				lineHeight += (float)font.DescentMetric;
+				lineHeight += (float)font.LeadingMetric;
 				return (int)Math.Round(lineHeight / font.Size * font.UnitsPerEmMetric);
 			}
 

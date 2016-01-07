@@ -1,14 +1,11 @@
-using System;
 using System.Collections;
-using System.Drawing;
+using CoreGraphics;
 
-namespace MTExample4_7
-{
-	public class DataSeries
-	{
-		private ArrayList pointList;
-		private LineStyle lineStyle;
-		private string seriesName = "";
+namespace MTExample4_7 {
+	public class DataSeries {
+		ArrayList pointList;
+		LineStyle lineStyle;
+		string seriesName = string.Empty;
 
 		public DataSeries ()
 		{
@@ -17,23 +14,35 @@ namespace MTExample4_7
 		}
 
 		public LineStyle LineStyle {
-			get { return lineStyle; }
-			set { lineStyle = value; }
+			get {
+				return lineStyle;
+			}
+			set {
+				lineStyle = value;
+			}
 		}
 
 		public ArrayList PointList {
-			get { return pointList; }
-			set { pointList = value; }
+			get {
+				return pointList;
+			}
+			set {
+				pointList = value;
+			}
 		}
 
-		public void AddPoint (PointF pt)
+		public void AddPoint (CGPoint pt)
 		{
 			pointList.Add (pt);
 		}
 
 		public string SeriesName {
-			get { return seriesName; }
-			set { seriesName = value; }
+			get {
+				return seriesName;
+			}
+			set {
+				seriesName = value;
+			}
 		}
 	}
 }

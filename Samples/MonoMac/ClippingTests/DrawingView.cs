@@ -2,905 +2,778 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 
-using MonoMac.Foundation;
-using MonoMac.AppKit;
-using MonoMac.CoreGraphics;
-
-namespace ClippingTests
+namespace DrawingShared
 {
-	public partial class DrawingView : MonoMac.AppKit.NSView
-	{
-
-		#region Constructors
-
-		// Called when created from unmanaged code
-		public DrawingView (IntPtr handle) : base (handle)
-		{
-			Initialize ();
-		}
-
-		// Called when created directly from a XIB file
-		[Export ("initWithCoder:")]
-		public DrawingView (NSCoder coder) : base (coder)
-		{
-			Initialize ();
-		}
-
-		// Shared initialization code
-		void Initialize ()
-		{
-			this.AutoresizingMask = NSViewResizingMask.HeightSizable | NSViewResizingMask.WidthSizable;
-
-
-			// We need to set these two view properites so that when we clear an infinite region
-			// it actually clears to the background color.
-			// If not set this may set the rectangle to Black depending on the context
-			// passed.  
-			this.WantsLayer = true;
-			Layer.BackgroundColor = new CGColor (0, 0, 0, 0);
-
-
-			var mainBundle = NSBundle.MainBundle;
-			//			var filePath = mainBundle.PathForResource("bitmap50","png");
-			//			bmp = Bitmap.FromFile(filePath);
-			//
-			//			filePath = mainBundle.PathForResource("bitmap25","png");
-			//			bmp2 = Bitmap.FromFile(filePath);
-		}
-
-		public DrawingView (RectangleF rect) : base (rect)
-		{
-			Initialize();
-		}
-
-		#endregion
-
-		Font anyKeyFont = new Font("Chalkduster", 18, FontStyle.Bold);
-		Font clipFont = new Font("Helvetica",12, FontStyle.Bold);
-
-		Image bmp;
-		Image bmp2;
-
-
-		Rectangle regionRect1 = new Rectangle(50, 50, 100, 100);
-		RectangleF regionRectF1 = new RectangleF(110, 60, 100, 100);
-		Rectangle regionRect2 = new Rectangle(110, 60, 100, 100);
-		RectangleF regionRectF2 = new RectangleF(110, 60, 100, 100);
-
-
-		int currentView = 0;
-		int totalViews = 20;
-
-		public Rectangle ClientRectangle 
-		{
-			get {
-				return new Rectangle((int)Bounds.X,
-				                     (int)Bounds.Y,
-				                     (int)Bounds.Width,
-				                     (int)Bounds.Height);
-			}
-		}
-
-		public override bool AcceptsFirstResponder ()
-		{
-			return true;
-		}
-
-		public override void KeyDown (NSEvent theEvent)
-		{
-			currentView++;
-			currentView %= totalViews;
-			//Console.WriteLine("Current View: {0}", currentView);
-			this.NeedsDisplay = true;
-		}
-
-		string title = string.Empty;
-
-		public override void DrawRect (System.Drawing.RectangleF dirtyRect)
-		{
-			Graphics g = Graphics.FromCurrentContext();
-			g.InterpolationMode = InterpolationMode.NearestNeighbor;
-
-			g.Clear(Color.White);
-			//g.SmoothingMode = SmoothingMode.None;
-			switch (currentView) 
-			{
-			case 0:
-				ClipRegionInfinite (g);
-				break;
-			case 1:
-				ClipRegionEmpty (g);
-				break;
-			case 2:
-				ClipRegion1 (g);
-				break;
-			case 3:
-				ClipRegionIntersect (g);
-				break;
-			case 4:
-				ClipRegionUnion (g);
-				break;
-			case 5:
-				ClipRegionExclude (g);
-				break;
-			case 6:
-				ClipRegionXor(g);
-				break;
-			case 7:
-				ClipRegionInfiniteIntersect(g);
-				break;
-			case 8:
-				ClipRegionInfiniteUnion(g);
-				break;
-			case 9:
-				ClipRegionInfiniteExclude(g);
-				break;
-			case 10:
-				ClipRegionInfiniteXor(g);
-				break;
-			case 11:
-				ClipRegionEmptyIntersect(g);
-				break;
-			case 12:
-				ClipRegionEmptyUnion(g);
-				break;
-			case 13:
-				ClipRegionEmptyExclude(g);
-				break;
-			case 14:
-				ClipRegionEmptyXor(g);
-				break;
-			case 15:
-				IntersectClipRectangle(g);
-				break;
-			case 16:
-				ExcludeClipRectangle(g);
-				break;
-			case 17:
-				TranslateClip (g);
-				break;
-			}
-
-			g.ResetTransform ();
-			Brush sBrush = Brushes.Black;
-
-//			if (!g.IsClipEmpty) 
-//			{
-				var clipPoint = PointF.Empty;
-				var clipString = string.Format("Clip-{0}", g.ClipBounds);
-				g.ResetClip ();
-				var clipSize = g.MeasureString(clipString, clipFont);
-				clipPoint.X = (ClientRectangle.Width / 2) - (clipSize.Width / 2);
-				clipPoint.Y = 5;
-				g.DrawString(clipString, clipFont, sBrush, clipPoint );
-
-//			}
-
-			var anyKeyPoint = PointF.Empty;
-			var anyKey = "Press any key to continue.";
-			var anyKeySize = g.MeasureString(anyKey, anyKeyFont);
-			anyKeyPoint.X = (ClientRectangle.Width / 2) - (anyKeySize.Width / 2);
-			anyKeyPoint.Y = ClientRectangle.Height - (anyKeySize.Height + 10);
-			g.DrawString(anyKey, anyKeyFont, sBrush, anyKeyPoint );
-
-			anyKeySize = g.MeasureString(title, anyKeyFont);
-			anyKeyPoint.X = (ClientRectangle.Width / 2) - (anyKeySize.Width / 2);
-			anyKeyPoint.Y -= anyKeySize.Height;
-			g.DrawString(title, anyKeyFont, sBrush, anyKeyPoint );
-
-			g.Dispose();
-		}
-
-		void ClipRegionInfinite(Graphics g)
-		{
-
-			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
-
-			// Create the first rectangle and draw it to the screen in myPen color.
-			g.DrawRectangle(myPen, regionRect1);
-
-			// Create a region using the first rectangle.
-			Region myRegion = new Region();
-
-			g.Clip = myRegion;
-
-			g.Clear (Color.Red);
-
-			title = "ClipInfiniteRegion";
-		}
-
-		void ClipRegionEmpty(Graphics g)
-		{
-
-			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
-
-			// Create the first rectangle and draw it to the screen in myPen color.
-			g.DrawRectangle(myPen, regionRect1);
-
-			// Create a region using the first rectangle.
-			Region myRegion = new Region(regionRect1);
-			myRegion.MakeEmpty ();
-
-			g.Clip = myRegion;
-
-			g.Clear (Color.Red);
-
-			title = "ClipEmptyRegion";
-		}
-
-		void ClipRegion1(Graphics g)
-		{
-
-			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
-
-			// Create the first rectangle and draw it to the screen in myPen color.
-			g.DrawRectangle(myPen, regionRect1);
-
-
-			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
-			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
-
-			// create the second rectangle and draw it to the screen in red.
-			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
-
-			// Create a region using the first rectangle.
-			Region myRegion = new Region(regionRect1);
-
-			g.Clip = myRegion;
-
-			// Greenish
-			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
-			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
-
-			// Clear intersection area of myRegion with blue.
-			g.Clear(myBrush.Color);
-
-			g.SetClip (regionRect2);
-
-			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
-			g.FillRectangle(myBrush, new Rectangle(regionRect2.X + 50,regionRect2.Y + 50,250,300));
-
-			title = "ClipRegion1";
-		}
-
-		void ClipRegionIntersect(Graphics g)
-		{
-
-			// Greyish blue
-			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-			// Create the first rectangle and draw it to the screen in black.
-			g.DrawRectangle(myPen, regionRect1);
-			g.FillRectangle (myBrush, regionRect1);
+    public partial class DrawingView 
+    {
+        Rectangle regionRect1 = new Rectangle(50, 50, 100, 100);
+        RectangleF regionRectF1 = new RectangleF(110, 60, 100, 100);
+        Rectangle regionRect2 = new Rectangle(110, 60, 100, 100);
+        RectangleF regionRectF2 = new RectangleF(110, 60, 100, 100);
+
+        void PlatformInitialize()
+        {
+
+            // Load our painting view methods.
+            paintViewActions = new Action<Graphics>[]
+                {
+                    ClipRegionInfinite,
+                    ClipRegionEmpty,
+                    ClipRegion1,
+                    ClipRegionIntersect,
+                    ClipRegionUnion,
+                    ClipRegionExclude,
+                    ClipRegionXor,
+                    ClipRegionInfiniteIntersect,
+                    ClipRegionInfiniteUnion,
+                    ClipRegionInfiniteExclude,
+                    ClipRegionInfiniteXor,
+                    ClipRegionEmptyIntersect,
+                    ClipRegionEmptyUnion,
+                    ClipRegionEmptyExclude,
+                    ClipRegionEmptyXor,
+                    IntersectClipRectangle,
+                    ExcludeClipRectangle,
+                    TranslateClip,
+ 
+                };
+        }
+
+        protected void OnPaint(PaintEventArgs e)
+        {
+            Graphics g = Graphics.FromCurrentContext();
+            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+
+            g.Clear(Color.White);
+
+            paintViewActions[currentView].Invoke(g);
+            if (saveCurrentView)
+                SavePaintView(paintViewActions[currentView]);
+
+            g.ResetTransform ();
+            Brush sBrush = Brushes.Black;
+
+//            if (!g.IsClipEmpty) 
+//            {
+                var clipPoint = PointF.Empty;
+                var clipString = string.Format("Clip-{0}", g.ClipBounds);
+                g.ResetClip ();
+                var clipSize = g.MeasureString(clipString, clipFont);
+                clipPoint.X = (ClientRectangle.Width / 2) - (clipSize.Width / 2);
+                clipPoint.Y = 5;
+                g.DrawString(clipString, clipFont, sBrush, clipPoint );
+//            }
 
-			// Pinkish
-			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
-			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+            var anyKeyPoint = PointF.Empty;
 
-			// create the second rectangle and draw it to the screen in red.
-			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
-			g.FillRectangle (myBrush, regionRect2);
+            #if __MAC__
+            var anyKey = "Press any key to continue.";
+            #endif
+            #if __IOS__
+            var anyKey = "Tap Screen to continue.";
+            #endif
 
-			// Create a region using the first rectangle.
-			Region myRegion = new Region(regionRect1);
+            var anyKeySize = g.MeasureString(anyKey, anyKeyFont);
+            anyKeyPoint.X = (ClientRectangle.Width / 2) - (anyKeySize.Width / 2);
+            anyKeyPoint.Y = ClientRectangle.Height - (anyKeySize.Height + 10);
+            g.DrawString(anyKey, anyKeyFont, sBrush, anyKeyPoint );
 
-			// Get the area of intersection for myRegion when combined with 
-			// complementRect.
-			myRegion.Intersect(regionRectF2);
+            var title = paintViewActions[currentView].Method.Name;
+            anyKeySize = g.MeasureString(title, anyKeyFont);
+            anyKeyPoint.X = (ClientRectangle.Width / 2) - (anyKeySize.Width / 2);
+            anyKeyPoint.Y -= anyKeySize.Height;
+            g.DrawString(title, anyKeyFont, sBrush, anyKeyPoint );
 
-			// Greenish
-			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
-			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+            g.Dispose();
+        }
 
-			g.Clip = myRegion;
+        void ClipRegionInfinite(Graphics g)
+        {
 
-			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
+            Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-			title = "ClipRegionIntersect";
-		}
+            // Create the first rectangle and draw it to the screen in myPen color.
+            g.DrawRectangle(myPen, regionRect1);
 
-		void ClipRegionUnion(Graphics g)
-		{
+            // Create a region using the first rectangle.
+            Region myRegion = new Region();
 
-			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+            g.Clip = myRegion;
 
-			// Create the first rectangle and draw it to the screen in black.
-			g.DrawRectangle(myPen, regionRect1);
-			g.FillRectangle(myBrush, regionRect1);
+            g.Clear (Color.Red);
 
-			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
-			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+        }
 
-			// create the second rectangle and draw it to the screen in red.
-			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
-			g.FillRectangle(myBrush, regionRect2);
+        void ClipRegionEmpty(Graphics g)
+        {
 
-			// Create a region using the first rectangle.
-			Region myRegion = new Region(regionRect1);
+            Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-			// Get the area of intersection for myRegion when combined with 
-			// complementRect.
-			myRegion.Union(regionRectF2);
+            // Create the first rectangle and draw it to the screen in myPen color.
+            g.DrawRectangle(myPen, regionRect1);
 
-			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
-			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+            // Create a region using the first rectangle.
+            Region myRegion = new Region(regionRect1);
+            myRegion.MakeEmpty ();
 
-			g.Clip = myRegion;
+            g.Clip = myRegion;
 
-			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
+            g.Clear (Color.Red);
 
-			title = "ClipRegionUnion";
-		}
+        }
 
-		void ClipRegionExclude(Graphics g)
-		{
+        void ClipRegion1(Graphics g)
+        {
 
-			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+            Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-			// Create the first rectangle and draw it to the screen in black.
-			g.DrawRectangle(myPen, regionRect1);
-			g.FillRectangle(myBrush, regionRect1);
+            // Create the first rectangle and draw it to the screen in myPen color.
+            g.DrawRectangle(myPen, regionRect1);
 
-			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
-			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
 
-			// create the second rectangle and draw it to the screen in red.
-			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
-			g.FillRectangle(myBrush, regionRect2);
+            myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+            myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			// Create a region using the first rectangle.
-			Region myRegion = new Region(regionRect1);
+            // create the second rectangle and draw it to the screen in red.
+            g.DrawRectangle(myPen,
+                Rectangle.Round(regionRectF2));
 
-			// Get the area of intersection for myRegion when combined with 
-			// complementRect.
-			myRegion.Exclude(regionRectF2);
+            // Create a region using the first rectangle.
+            Region myRegion = new Region(regionRect1);
 
-			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
-			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+            g.Clip = myRegion;
 
-			g.Clip = myRegion;
+            // Greenish
+            myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+            myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
+            // Clear intersection area of myRegion with blue.
+            g.Clear(myBrush.Color);
 
+            g.SetClip (regionRect2);
 
-			title = "ClipRegionExclude";
-		}
+            myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+            g.FillRectangle(myBrush, new Rectangle(regionRect2.X + 50,regionRect2.Y + 50,250,300));
 
-		void ClipRegionXor(Graphics g)
-		{
+        }
 
-			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+        void ClipRegionIntersect(Graphics g)
+        {
 
-			// Create the first rectangle and draw it to the screen in black.
-			g.DrawRectangle(myPen, regionRect1);
-			g.FillRectangle(myBrush, regionRect1);
+            // Greyish blue
+            Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
-			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+            // Create the first rectangle and draw it to the screen in black.
+            g.DrawRectangle(myPen, regionRect1);
+            g.FillRectangle (myBrush, regionRect1);
 
-			// create the second rectangle and draw it to the screen in red.
-			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
-			g.FillRectangle(myBrush, regionRect2);
+            // Pinkish
+            myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+            myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
 
-			// Create a region using the first rectangle.
-			Region myRegion = new Region(regionRect1);
+            // create the second rectangle and draw it to the screen in red.
+            g.DrawRectangle(myPen,
+                Rectangle.Round(regionRectF2));
+            g.FillRectangle (myBrush, regionRect2);
 
-			// Get the area of intersection for myRegion when combined with 
-			// complementRect.
-			myRegion.Xor(regionRectF2);
+            // Create a region using the first rectangle.
+            Region myRegion = new Region(regionRect1);
 
-			g.Clip = myRegion;
+            // Get the area of intersection for myRegion when combined with 
+            // complementRect.
+            myRegion.Intersect(regionRectF2);
 
-			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
-			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+            // Greenish
+            myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+            myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
+            g.Clip = myRegion;
 
-			title = "ClipRegionXor";
-		}
+            g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
-		void ClipRegionInfiniteIntersect(Graphics g)
-		{
+        }
 
-			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+        void ClipRegionUnion(Graphics g)
+        {
 
-			// Create the first rectangle and draw it to the screen in black.
-			g.DrawRectangle(myPen, regionRect1);
-			g.FillRectangle(myBrush, regionRect1);
+            Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
-			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+            // Create the first rectangle and draw it to the screen in black.
+            g.DrawRectangle(myPen, regionRect1);
+            g.FillRectangle(myBrush, regionRect1);
 
-			// create the second rectangle and draw it to the screen in red.
-			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
-			g.FillRectangle(myBrush, regionRect2);
+            myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+            myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
 
-			// Create a region using the first rectangle.
-			Region myRegion = new Region();
+            // create the second rectangle and draw it to the screen in red.
+            g.DrawRectangle(myPen,
+                Rectangle.Round(regionRectF2));
+            g.FillRectangle(myBrush, regionRect2);
 
-			// Get the area of intersection for myRegion when combined with 
-			// complementRect.
-			myRegion.Intersect(regionRectF2);
+            // Create a region using the first rectangle.
+            Region myRegion = new Region(regionRect1);
 
-			g.Clip = myRegion;
+            // Get the area of intersection for myRegion when combined with 
+            // complementRect.
+            myRegion.Union(regionRectF2);
 
-			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
-			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+            myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+            myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
+            g.Clip = myRegion;
 
-			title = "ClipRegionInfiniteIntersect";
-		}
+            g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
-		void ClipRegionInfiniteUnion(Graphics g)
-		{
+        }
 
-			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+        void ClipRegionExclude(Graphics g)
+        {
 
-			// Create the first rectangle and draw it to the screen in black.
-			g.DrawRectangle(myPen, regionRect1);
-			g.FillRectangle(myBrush, regionRect1);
+            Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
-			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+            // Create the first rectangle and draw it to the screen in black.
+            g.DrawRectangle(myPen, regionRect1);
+            g.FillRectangle(myBrush, regionRect1);
 
-			// create the second rectangle and draw it to the screen in red.
-			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
-			g.FillRectangle(myBrush, regionRect2);
+            myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+            myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
 
-			// Create a region using the first rectangle.
-			Region myRegion = new Region();
+            // create the second rectangle and draw it to the screen in red.
+            g.DrawRectangle(myPen,
+                Rectangle.Round(regionRectF2));
+            g.FillRectangle(myBrush, regionRect2);
 
-			// Get the area of intersection for myRegion when combined with 
-			// complementRect.
-			myRegion.Union(regionRectF2);
+            // Create a region using the first rectangle.
+            Region myRegion = new Region(regionRect1);
 
-			g.Clip = myRegion;
+            // Get the area of intersection for myRegion when combined with 
+            // complementRect.
+            myRegion.Exclude(regionRectF2);
 
-			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
-			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+            myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+            myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
+            g.Clip = myRegion;
 
-			title = "ClipRegionInfiniteUnion";
-		}
+            g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
 
-		void ClipRegionInfiniteExclude(Graphics g)
-		{
+        }
 
-			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+        void ClipRegionXor(Graphics g)
+        {
 
-			// Create the first rectangle and draw it to the screen in black.
-			g.DrawRectangle(myPen, regionRect1);
-			g.FillRectangle(myBrush, regionRect1);
+            Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
-			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+            // Create the first rectangle and draw it to the screen in black.
+            g.DrawRectangle(myPen, regionRect1);
+            g.FillRectangle(myBrush, regionRect1);
 
-			// create the second rectangle and draw it to the screen in red.
-			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
-			g.FillRectangle(myBrush, regionRect2);
+            myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+            myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
 
-			// Create a region using the first rectangle.
-			Region myRegion = new Region();
+            // create the second rectangle and draw it to the screen in red.
+            g.DrawRectangle(myPen,
+                Rectangle.Round(regionRectF2));
+            g.FillRectangle(myBrush, regionRect2);
 
-			// Get the area of intersection for myRegion when combined with 
-			// complementRect.
-			myRegion.Exclude(regionRectF2);
+            // Create a region using the first rectangle.
+            Region myRegion = new Region(regionRect1);
 
-			g.Clip = myRegion;
+            // Get the area of intersection for myRegion when combined with 
+            // complementRect.
+            myRegion.Xor(regionRectF2);
 
-			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
-			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+            g.Clip = myRegion;
 
-			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
+            myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+            myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			title = "ClipRegionInfiniteExclude";
-		}
+            g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
-		void ClipRegionInfiniteXor(Graphics g)
-		{
+        }
 
-			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+        void ClipRegionInfiniteIntersect(Graphics g)
+        {
 
-			// Create the first rectangle and draw it to the screen in black.
-			g.DrawRectangle(myPen, regionRect1);
-			g.FillRectangle(myBrush, regionRect1);
+            Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
-			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+            // Create the first rectangle and draw it to the screen in black.
+            g.DrawRectangle(myPen, regionRect1);
+            g.FillRectangle(myBrush, regionRect1);
 
-			// create the second rectangle and draw it to the screen in red.
-			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
-			g.FillRectangle(myBrush, regionRect2);
+            myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+            myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
 
-			// Create a region using the first rectangle.
-			Region myRegion = new Region();
+            // create the second rectangle and draw it to the screen in red.
+            g.DrawRectangle(myPen,
+                Rectangle.Round(regionRectF2));
+            g.FillRectangle(myBrush, regionRect2);
 
-			// Get the area of intersection for myRegion when combined with 
-			// complementRect.
-			myRegion.Xor(regionRectF2);
+            // Create a region using the first rectangle.
+            Region myRegion = new Region();
 
-			g.Clip = myRegion;
+            // Get the area of intersection for myRegion when combined with 
+            // complementRect.
+            myRegion.Intersect(regionRectF2);
 
-			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
-			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+            g.Clip = myRegion;
 
-			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
+            myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+            myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			title = "ClipRegionInfiniteXor";
-		}
+            g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
+        }
 
-		void ClipRegionEmptyIntersect(Graphics g)
-		{
+        void ClipRegionInfiniteUnion(Graphics g)
+        {
 
-			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+            Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-			// Create the first rectangle and draw it to the screen in black.
-			g.DrawRectangle(myPen, regionRect1);
-			g.FillRectangle(myBrush, regionRect1);
+            // Create the first rectangle and draw it to the screen in black.
+            g.DrawRectangle(myPen, regionRect1);
+            g.FillRectangle(myBrush, regionRect1);
 
-			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
-			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+            myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+            myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
 
-			// create the second rectangle and draw it to the screen in red.
-			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
-			g.FillRectangle(myBrush, regionRect2);
+            // create the second rectangle and draw it to the screen in red.
+            g.DrawRectangle(myPen,
+                Rectangle.Round(regionRectF2));
+            g.FillRectangle(myBrush, regionRect2);
 
-			// Create a region using the first rectangle.
-			Region myRegion = new Region();
-			myRegion.MakeEmpty();
+            // Create a region using the first rectangle.
+            Region myRegion = new Region();
 
-			// Get the area of intersection for myRegion when combined with 
-			// complementRect.
-			myRegion.Intersect(regionRectF2);
+            // Get the area of intersection for myRegion when combined with 
+            // complementRect.
+            myRegion.Union(regionRectF2);
 
-			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
-			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+            g.Clip = myRegion;
 
-			g.FillRegion(myBrush, myRegion);
+            myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+            myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			title = "ClipRegionEmptyIntersect";
-		}
+            g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
-		void ClipRegionEmptyUnion(Graphics g)
-		{
+        }
 
-			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-			// Create the first rectangle and draw it to the screen in black.
-			g.DrawRectangle(myPen, regionRect1);
-			g.FillRectangle(myBrush, regionRect1);
+        void ClipRegionInfiniteExclude(Graphics g)
+        {
 
-			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
-			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+            Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-			// create the second rectangle and draw it to the screen in red.
-			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
-			g.FillRectangle(myBrush, regionRect2);
+            // Create the first rectangle and draw it to the screen in black.
+            g.DrawRectangle(myPen, regionRect1);
+            g.FillRectangle(myBrush, regionRect1);
 
-			// Create a region using the first rectangle.
-			Region myRegion = new Region();
-			myRegion.MakeEmpty();
+            myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+            myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
 
-			// Get the area of intersection for myRegion when combined with 
-			// complementRect.
-			myRegion.Union(regionRectF2);
+            // create the second rectangle and draw it to the screen in red.
+            g.DrawRectangle(myPen,
+                Rectangle.Round(regionRectF2));
+            g.FillRectangle(myBrush, regionRect2);
 
-			g.Clip = myRegion;
+            // Create a region using the first rectangle.
+            Region myRegion = new Region();
 
-			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
-			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+            // Get the area of intersection for myRegion when combined with 
+            // complementRect.
+            myRegion.Exclude(regionRectF2);
 
-			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
+            g.Clip = myRegion;
 
-			title = "ClipRegionEmptyUnion";
-		}
+            myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+            myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
+            g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
-		void ClipRegionEmptyExclude(Graphics g)
-		{
+        }
 
-			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+        void ClipRegionInfiniteXor(Graphics g)
+        {
 
-			// Create the first rectangle and draw it to the screen in black.
-			g.DrawRectangle(myPen, regionRect1);
-			g.FillRectangle(myBrush, regionRect1);
+            Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
-			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+            // Create the first rectangle and draw it to the screen in black.
+            g.DrawRectangle(myPen, regionRect1);
+            g.FillRectangle(myBrush, regionRect1);
 
-			// create the second rectangle and draw it to the screen in red.
-			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
-			g.FillRectangle(myBrush, regionRect2);
+            myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+            myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
 
-			// Create a region using the first rectangle.
-			Region myRegion = new Region();
-			myRegion.MakeEmpty();
+            // create the second rectangle and draw it to the screen in red.
+            g.DrawRectangle(myPen,
+                Rectangle.Round(regionRectF2));
+            g.FillRectangle(myBrush, regionRect2);
 
-			// Get the area of intersection for myRegion when combined with 
-			// complementRect.
-			myRegion.Exclude(regionRectF2);
+            // Create a region using the first rectangle.
+            Region myRegion = new Region();
 
-			g.Clip = myRegion;
+            // Get the area of intersection for myRegion when combined with 
+            // complementRect.
+            myRegion.Xor(regionRectF2);
 
-			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
-			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+            g.Clip = myRegion;
 
-			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
+            myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+            myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			title = "ClipRegionEmptyExclude";
-		}
+            g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
-		void ClipRegionEmptyXor(Graphics g)
-		{
+        }
 
-			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-			// Create the first rectangle and draw it to the screen in black.
-			g.DrawRectangle(myPen, regionRect1);
-			g.FillRectangle(myBrush, regionRect1);
+        void ClipRegionEmptyIntersect(Graphics g)
+        {
 
-			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
-			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+            Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-			// create the second rectangle and draw it to the screen in red.
-			g.DrawRectangle(myPen,
-			                Rectangle.Round(regionRectF2));
-			g.FillRectangle(myBrush, regionRect2);
+            // Create the first rectangle and draw it to the screen in black.
+            g.DrawRectangle(myPen, regionRect1);
+            g.FillRectangle(myBrush, regionRect1);
 
-			// Create a region using the first rectangle.
-			Region myRegion = new Region();
-			myRegion.MakeEmpty();
+            myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+            myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
 
-			// Get the area of intersection for myRegion when combined with 
-			// complementRect.
-			myRegion.Xor(regionRectF2);
+            // create the second rectangle and draw it to the screen in red.
+            g.DrawRectangle(myPen,
+                Rectangle.Round(regionRectF2));
+            g.FillRectangle(myBrush, regionRect2);
 
-			g.Clip = myRegion;
+            // Create a region using the first rectangle.
+            Region myRegion = new Region();
+            myRegion.MakeEmpty();
 
-			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
-			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+            // Get the area of intersection for myRegion when combined with 
+            // complementRect.
+            myRegion.Intersect(regionRectF2);
 
-			g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
+            myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+            myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			title = "ClipRegionEmptyXor";
-		}
+            g.FillRegion(myBrush, myRegion);
 
-		public void IntersectClipRectangle(Graphics g)
-		{
+        }
 
-			Pen myPen = new Pen(Color.FromArgb(255, 0, 0x33, 0), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0x66, 0xEF, 0x7F));
+        void ClipRegionEmptyUnion(Graphics g)
+        {
 
-			// Set clipping region.
-			Rectangle clipRect = new Rectangle(0, 0, 200, 200);
-			Region clipRegion = new Region(clipRect);
-			g.SetClip(clipRegion, CombineMode.Replace);
+            Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-			// Update clipping region to intersection of 
+            // Create the first rectangle and draw it to the screen in black.
+            g.DrawRectangle(myPen, regionRect1);
+            g.FillRectangle(myBrush, regionRect1);
 
-			// existing region with specified rectangle.
-			Rectangle intersectRect = new Rectangle(100, 100, 200, 200);
-			Region intersectRegion = new Region(intersectRect);
-			g.IntersectClip(intersectRegion);
+            myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+            myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
 
-			// Fill rectangle to demonstrate effective clipping region.
-			g.FillRectangle(myBrush, 0, 0, 500, 500);
+            // create the second rectangle and draw it to the screen in red.
+            g.DrawRectangle(myPen,
+                Rectangle.Round(regionRectF2));
+            g.FillRectangle(myBrush, regionRect2);
 
-			// Reset clipping region to infinite.
-			g.ResetClip();
+            // Create a region using the first rectangle.
+            Region myRegion = new Region();
+            myRegion.MakeEmpty();
 
-			// Draw clipRect and intersectRect to screen.
-			myPen.Color = Color.FromArgb(196, 0xC3, 0xC9, 0xCF);
-			myBrush.Color = Color.FromArgb(127, 0xDD, 0xDD, 0xF0);
-			g.DrawRectangle(myPen, clipRect);
-			g.FillRectangle(myBrush, clipRect);
+            // Get the area of intersection for myRegion when combined with 
+            // complementRect.
+            myRegion.Union(regionRectF2);
 
-			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
-			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+            g.Clip = myRegion;
 
-			g.DrawRectangle(myPen, intersectRect);
-			g.FillRectangle(myBrush, intersectRect);
+            myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+            myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			title = "IntersectClipRectangle";
-		}
+            g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
-		public void ExcludeClipRectangle(Graphics g)
-		{
+        }
 
-			// Create rectangle for exclusion.
-			Rectangle excludeRect = new Rectangle(100, 100, 200, 200);
 
-			// Set clipping region to exclude rectangle.
-			g.ExcludeClip(excludeRect);
+        void ClipRegionEmptyExclude(Graphics g)
+        {
 
-			var myBrush = new SolidBrush(Color.FromArgb(127, 0x66, 0xEF, 0x7F));
+            Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-			// Fill large rectangle to show clipping region.
-			g.FillRectangle(myBrush, 0, 0, 500, 500);
+            // Create the first rectangle and draw it to the screen in black.
+            g.DrawRectangle(myPen, regionRect1);
+            g.FillRectangle(myBrush, regionRect1);
 
-			title = "ExcludeClipRectangle";
-		}
+            myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+            myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
 
+            // create the second rectangle and draw it to the screen in red.
+            g.DrawRectangle(myPen,
+                Rectangle.Round(regionRectF2));
+            g.FillRectangle(myBrush, regionRect2);
 
-		
-		public void TranslateClip (Graphics g)
-		{
+            // Create a region using the first rectangle.
+            Region myRegion = new Region();
+            myRegion.MakeEmpty();
 
-			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+            // Get the area of intersection for myRegion when combined with 
+            // complementRect.
+            myRegion.Exclude(regionRectF2);
 
-			// Create the first rectangle and draw it to the screen in blue.
-			Rectangle regionRect = new Rectangle(100, 50, 100, 100);
-			g.DrawRectangle(myPen, regionRect);
-			g.FillRectangle (myBrush, regionRect);
+            g.Clip = myRegion;
 
-			// Create a region using the first rectangle.
-			Region myRegion = new Region(regionRect);
+            myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+            myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			g.Clip = myRegion;
+            g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
-			// Apply the translation to the region.
-			g.TranslateClip(150, 100);
+        }
 
-			// Fill the transformed region with red and draw it to the screen in red.
-			myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
-			myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
-			g.FillRectangle(myBrush, new Rectangle(0,0,500,500) );
+        void ClipRegionEmptyXor(Graphics g)
+        {
 
-			title = "TranslateClip";
-		}
+            Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
+            // Create the first rectangle and draw it to the screen in black.
+            g.DrawRectangle(myPen, regionRect1);
+            g.FillRectangle(myBrush, regionRect1);
 
-		void DrawRegionTranslateClip(Graphics g)
-		{
-			// Create rectangle for clipping region.
-			Rectangle clipRect = new Rectangle(0, 0, 100, 100);
+            myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+            myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
 
-			// Set clipping region of graphics to rectangle.
-			g.SetClip(clipRect);
+            // create the second rectangle and draw it to the screen in red.
+            g.DrawRectangle(myPen,
+                Rectangle.Round(regionRectF2));
+            g.FillRectangle(myBrush, regionRect2);
 
-			// Translate clipping region. 
-			int dx = 50;
-			int dy = 50;
-			g.TranslateClip(dx, dy);
+            // Create a region using the first rectangle.
+            Region myRegion = new Region();
+            myRegion.MakeEmpty();
 
-			// Fill rectangle to demonstrate translated clip region.
-			g.FillRectangle(new SolidBrush(Color.Black), 0, 0, 500, 300);
-			title = "DrawRegionTranslateClip";
-		}
+            // Get the area of intersection for myRegion when combined with 
+            // complementRect.
+            myRegion.Xor(regionRectF2);
 
-		void DrawRegionIntersectClip(Graphics g)
-		{
-			// Create the first rectangle and draw it to the screen in black.
-			Rectangle regionRect = new Rectangle(20, 20, 100, 100);
-			g.DrawRectangle(Pens.Black, regionRect);
+            g.Clip = myRegion;
 
-			// create the second rectangle and draw it to the screen in red.
-			RectangleF complementRect = new RectangleF(90, 30, 100, 100);
-			g.DrawRectangle(Pens.Red,
-			                Rectangle.Round(complementRect));
+            myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+            myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
 
-			// Create a region using the first rectangle.
-			Region myRegion = new Region(regionRect);
+            g.FillRectangle (myBrush, new Rectangle (0, 0, 500, 500));
 
-			// Get the area of intersection for myRegion when combined with 
-			// complementRect.
-			myRegion.Intersect(complementRect);
+        }
 
-			//			var unionRect = complementRect.UnionWith (regionRect);
-			//			g.DrawRectangle(Pens.Green,
-			//			                Rectangle.Round(unionRect));
-			//
-			//			g.Clip = myRegion;
-			//
-			//			g.DrawImage(bmp2, unionRect);
+        public void IntersectClipRectangle(Graphics g)
+        {
 
-			title = "DrawImageIntersetClip";
-		}
+            Pen myPen = new Pen(Color.FromArgb(255, 0, 0x33, 0), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0x66, 0xEF, 0x7F));
 
-		public void GraphicsIsVisibleRectangleF(Graphics g)
-		{
+            // Set clipping region.
+            Rectangle clipRect = new Rectangle(0, 0, 200, 200);
+            Region clipRegion = new Region(clipRect);
+            g.SetClip(clipRegion, CombineMode.Replace);
 
-			Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
-			SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+            // Update clipping region to intersection of 
 
-			// Create the first rectangle and draw it to the screen in blue.
-			g.DrawRectangle(myPen, regionRect1);
-			g.FillRectangle (myBrush, regionRect1);
+            // existing region with specified rectangle.
+            Rectangle intersectRect = new Rectangle(100, 100, 200, 200);
+            Region intersectRegion = new Region(intersectRect);
+            g.IntersectClip(intersectRegion);
 
-			// Create the second rectangle and draw it to the screen in red.
-			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
-			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+            // Fill rectangle to demonstrate effective clipping region.
+            g.FillRectangle(myBrush, 0, 0, 500, 500);
 
-			g.DrawRectangle(myPen, Rectangle.Round(regionRectF2));
-			g.FillRectangle (myBrush, Rectangle.Round (regionRectF2));
+            // Reset clipping region to infinite.
+            g.ResetClip();
 
-			// Create a region using the first rectangle.
-			Region myRegion = new Region(regionRect1);
+            // Draw clipRect and intersectRect to screen.
+            myPen.Color = Color.FromArgb(196, 0xC3, 0xC9, 0xCF);
+            myBrush.Color = Color.FromArgb(127, 0xDD, 0xDD, 0xF0);
+            g.DrawRectangle(myPen, clipRect);
+            g.FillRectangle(myBrush, clipRect);
 
-			// Determine if myRect is contained in the region. 
-			bool contained = myRegion.IsVisible(regionRect2);
+            myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+            myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
 
-			// Display the result.
-			Font myFont = new Font("Arial", 8);
-			SolidBrush txtBrush = new SolidBrush(Color.Black);
-			g.DrawString("contained = " + contained.ToString(),
-			             myFont,
-			             txtBrush,
-			             new PointF(regionRectF2.Right + 10, regionRectF2.Top));
+            g.DrawRectangle(myPen, intersectRect);
+            g.FillRectangle(myBrush, intersectRect);
 
-			regionRect1.Y += 120;
-			regionRectF2.Y += 120;
-			regionRectF2.X += 41;
+        }
 
-			myPen.Color = Color.FromArgb (196, 0xC3, 0xC9, 0xCF);
-			myBrush.Color = Color.FromArgb(127, 0xDD, 0xDD, 0xF0);
+        public void ExcludeClipRectangle(Graphics g)
+        {
 
-			// Create the first rectangle and draw it to the screen in blue.
-			g.DrawRectangle(myPen, regionRect1);
-			g.FillRectangle (myBrush, regionRect1);
+            // Create rectangle for exclusion.
+            Rectangle excludeRect = new Rectangle(100, 100, 200, 200);
 
-			// Create the second rectangle and draw it to the screen in red.
-			myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
-			myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+            // Set clipping region to exclude rectangle.
+            g.ExcludeClip(excludeRect);
 
-			g.DrawRectangle(myPen, Rectangle.Round(regionRectF2));
-			g.FillRectangle (myBrush, Rectangle.Round (regionRectF2));
+            var myBrush = new SolidBrush(Color.FromArgb(127, 0x66, 0xEF, 0x7F));
 
-			// Create a region using the first rectangle.
-			myRegion = new Region(regionRect1);
+            // Fill large rectangle to show clipping region.
+            g.FillRectangle(myBrush, 0, 0, 500, 500);
 
-			// Determine if myRect is contained in the region. 
-			contained = myRegion.IsVisible(regionRectF2);
+        }
 
-			// Display the result.
-			g.DrawString("contained = " + contained.ToString(),
-			             myFont,
-			             txtBrush,
-			             new PointF(regionRectF2.Right + 10, regionRectF2.Top));
 
 
+        public void TranslateClip (Graphics g)
+        {
 
-			title = "GraphicsIsVisibleRectangleF";
+            Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
 
-		}
-		
+            // Create the first rectangle and draw it to the screen in blue.
+            Rectangle regionRect = new Rectangle(100, 50, 100, 100);
+            g.DrawRectangle(myPen, regionRect);
+            g.FillRectangle (myBrush, regionRect);
+
+            // Create a region using the first rectangle.
+            Region myRegion = new Region(regionRect);
+
+            g.Clip = myRegion;
+
+            // Apply the translation to the region.
+            g.TranslateClip(150, 100);
+
+            // Fill the transformed region with red and draw it to the screen in red.
+            myBrush.Color = Color.FromArgb(127, 0x66, 0xEF, 0x7F);
+            myPen.Color = Color.FromArgb(255, 0, 0x33, 0);
+            g.FillRectangle(myBrush, new Rectangle(0,0,500,500) );
+
+        }
+
+
+        void DrawRegionTranslateClip(Graphics g)
+        {
+            // Create rectangle for clipping region.
+            Rectangle clipRect = new Rectangle(0, 0, 100, 100);
+
+            // Set clipping region of graphics to rectangle.
+            g.SetClip(clipRect);
+
+            // Translate clipping region. 
+            int dx = 50;
+            int dy = 50;
+            g.TranslateClip(dx, dy);
+
+            // Fill rectangle to demonstrate translated clip region.
+            g.FillRectangle(new SolidBrush(Color.Black), 0, 0, 500, 300);
+        }
+
+        void DrawRegionIntersectClip(Graphics g)
+        {
+            // Create the first rectangle and draw it to the screen in black.
+            Rectangle regionRect = new Rectangle(20, 20, 100, 100);
+            g.DrawRectangle(Pens.Black, regionRect);
+
+            // create the second rectangle and draw it to the screen in red.
+            RectangleF complementRect = new RectangleF(90, 30, 100, 100);
+            g.DrawRectangle(Pens.Red,
+                Rectangle.Round(complementRect));
+
+            // Create a region using the first rectangle.
+            Region myRegion = new Region(regionRect);
+
+            // Get the area of intersection for myRegion when combined with 
+            // complementRect.
+            myRegion.Intersect(complementRect);
+
+            //          var unionRect = complementRect.UnionWith (regionRect);
+            //          g.DrawRectangle(Pens.Green,
+            //                          Rectangle.Round(unionRect));
+            //
+            //          g.Clip = myRegion;
+            //
+            //          g.DrawImage(bmp2, unionRect);
+
+        }
+
+        public void GraphicsIsVisibleRectangleF(Graphics g)
+        {
+
+            Pen myPen = new Pen(Color.FromArgb(196, 0xC3, 0xC9, 0xCF), (float)0.6);
+            SolidBrush myBrush = new SolidBrush(Color.FromArgb(127, 0xDD, 0xDD, 0xF0));
+
+            // Create the first rectangle and draw it to the screen in blue.
+            g.DrawRectangle(myPen, regionRect1);
+            g.FillRectangle (myBrush, regionRect1);
+
+            // Create the second rectangle and draw it to the screen in red.
+            myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+            myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+
+            g.DrawRectangle(myPen, Rectangle.Round(regionRectF2));
+            g.FillRectangle (myBrush, Rectangle.Round (regionRectF2));
+
+            // Create a region using the first rectangle.
+            Region myRegion = new Region(regionRect1);
+
+            // Determine if myRect is contained in the region. 
+            bool contained = myRegion.IsVisible(regionRect2);
+
+            // Display the result.
+            Font myFont = new Font("Arial", 8);
+            SolidBrush txtBrush = new SolidBrush(Color.Black);
+            g.DrawString("contained = " + contained.ToString(),
+                myFont,
+                txtBrush,
+                new PointF(regionRectF2.Right + 10, regionRectF2.Top));
+
+            regionRect1.Y += 120;
+            regionRectF2.Y += 120;
+            regionRectF2.X += 41;
+
+            myPen.Color = Color.FromArgb (196, 0xC3, 0xC9, 0xCF);
+            myBrush.Color = Color.FromArgb(127, 0xDD, 0xDD, 0xF0);
+
+            // Create the first rectangle and draw it to the screen in blue.
+            g.DrawRectangle(myPen, regionRect1);
+            g.FillRectangle (myBrush, regionRect1);
+
+            // Create the second rectangle and draw it to the screen in red.
+            myPen.Color = Color.FromArgb(196, 0xF9, 0xBE, 0xA6);
+            myBrush.Color = Color.FromArgb(127, 0xFF, 0xE0, 0xE0);
+
+            g.DrawRectangle(myPen, Rectangle.Round(regionRectF2));
+            g.FillRectangle (myBrush, Rectangle.Round (regionRectF2));
+
+            // Create a region using the first rectangle.
+            myRegion = new Region(regionRect1);
+
+            // Determine if myRect is contained in the region. 
+            contained = myRegion.IsVisible(regionRectF2);
+
+            // Display the result.
+            g.DrawString("contained = " + contained.ToString(),
+                myFont,
+                txtBrush,
+                new PointF(regionRectF2.Right + 10, regionRectF2.Top));
+
+        }
 	}
 }
 

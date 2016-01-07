@@ -1,46 +1,61 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Text;
+using System.Drawing;
 
-namespace MTExample4_7
-{
-	public class LineStyle
-	{
-		private DashStyle linePattern = DashStyle.Solid;
-		private Color lineColor = Color.Black;
-		private float LineThickness = 1.0f;
-		private PlotLinesMethodEnum pltLineMethod = PlotLinesMethodEnum.Lines;
-		private bool isVisible = true;
+namespace MTExample4_7 {
+	public class LineStyle {
+		DashStyle linePattern = DashStyle.Solid;
+		Color lineColor = Color.Black;
+		float LineThickness = 1f;
+		PlotLinesMethodEnum pltLineMethod = PlotLinesMethodEnum.Lines;
+		bool isVisible = true;
 
 		public LineStyle ()
 		{
 		}
 
 		public bool IsVisible {
-			get { return isVisible; }
-			set { isVisible = value; }
+			get {
+				return isVisible;
+			}
+			set {
+				isVisible = value;
+			}
 		}
 
 		public PlotLinesMethodEnum PlotMethod {
-			get { return pltLineMethod; }
-			set { pltLineMethod = value; }
+			get {
+				return pltLineMethod;
+			}
+			set {
+				pltLineMethod = value;
+			}
 		}
 
 		virtual public DashStyle Pattern {
-			get { return linePattern; }
-			set { linePattern = value; }
+			get {
+				return linePattern;
+			}
+			set {
+				linePattern = value;
+			}
 		}
 
 		public float Thickness {
-			get { return LineThickness; }
-			set { LineThickness = value; }
+			get {
+				return LineThickness;
+			}
+			set {
+				LineThickness = value;
+			}
 		}
 
 		virtual public Color LineColor {
-			get { return lineColor; }
-			set { lineColor = value; }
+			get {
+				return lineColor;
+			}
+			set {
+				lineColor = value;
+			}
 		}
 
 		public enum PlotLinesMethodEnum

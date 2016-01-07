@@ -1,13 +1,14 @@
 using System;
-using System.Drawing;
+using CoreGraphics;
 using System.Drawing.Drawing2D;
-using MonoTouch.UIKit;
+using UIKit;
+using System.Drawing;
 
 namespace MTUniversalProject
 {
 	public class DrawingView : UIView {
 
-		public DrawingView (RectangleF rect) : base (rect)
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			//ContentMode = UIViewContentMode.Redraw;
 			this.AutoresizingMask = UIViewAutoresizing.All;
@@ -17,13 +18,13 @@ namespace MTUniversalProject
 
 		float Width = 0;
 
-		public override void Draw (RectangleF rect)
+		public override void Draw (CGRect rect)
 		{
 			Graphics g = Graphics.FromCurrentContext();
 			Console.WriteLine ("Draw {0}", rect);
 			g.Clear(Color.Wheat);
 
-			Width = rect.Width;
+			Width = (float)rect.Width;
 
 			DrawFlag(g, 20, 50, this.Width - 50);
 			g.Dispose();

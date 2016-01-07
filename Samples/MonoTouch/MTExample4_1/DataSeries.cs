@@ -1,44 +1,51 @@
-using System;
 using System.Collections;
-using System.Drawing;
 
-namespace MTExample4_1
-{
-    public class DataSeries
-    {
-        private ArrayList pointList;
-        private BarStyle barStyle;
-        private string seriesName = "";
+using CoreGraphics;
 
-        public DataSeries()
-        {
-            barStyle = new BarStyle();
-            pointList = new ArrayList();
-        }
+namespace MTExample4_1 {
+	public class DataSeries {
+		ArrayList pointList;
+		BarStyle barStyle;
+		string seriesName = string.Empty;
 
-        public BarStyle BarStyle
-        {
-            get { return barStyle; }
-            set { barStyle = value; }
-        }
+		public DataSeries ()
+		{
+			barStyle = new BarStyle ();
+			pointList = new ArrayList ();
+		}
 
-        public ArrayList PointList
-        {
-            get { return pointList; }
-            set { pointList = value; }
-        }
+		public BarStyle BarStyle {
+			get {
+				return barStyle;
+			}
+			set {
+				barStyle = value;
+			}
+		}
 
-        public void AddPoint(PointF pt)
-        {
-            pointList.Add(pt);
-        }
+		public ArrayList PointList {
+			get {
+				return pointList;
+			}
+			set {
+				pointList = value;
+			}
+		}
 
-        public string SeriesName
-        {
-            get { return seriesName; }
-            set { seriesName = value; }
-        }
-    }
+		public void AddPoint (CGPoint pt)
+		{
+			pointList.Add (pt);
+		}
+
+		public string SeriesName {
+			get {
+				return seriesName;
+			}
+			set {
+				seriesName = value;
+			}
+		}
+	}
 }
 
 

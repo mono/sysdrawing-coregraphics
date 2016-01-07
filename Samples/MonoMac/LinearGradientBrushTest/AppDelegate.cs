@@ -1,34 +1,29 @@
-using System;
-using System.Drawing;
-using MonoMac.Foundation;
-using MonoMac.AppKit;
-using MonoMac.ObjCRuntime;
+﻿using AppKit;
+using Foundation;
 
 namespace LinearGradientBrushTest
 {
-	public partial class AppDelegate : NSApplicationDelegate
-	{
-		MainWindowController mainWindowController;
-		
-		public AppDelegate ()
-		{
-		}
+    [Register("AppDelegate")]
+    public class AppDelegate : NSApplicationDelegate
+    {
+        public AppDelegate()
+        {
+        }
 
-		public override void FinishedLaunching (NSObject notification)
-		{
-			mainWindowController = new MainWindowController ();
-			var drawingView = new DrawingView(mainWindowController.Window.ContentView.Bounds);
-			
-			mainWindowController.Window.ContentView.AddSubview(drawingView);
-			mainWindowController.Window.MakeKeyAndOrderFront (this);
-			mainWindowController.Window.MakeFirstResponder(drawingView);
+        public override void DidFinishLaunching(NSNotification notification)
+        {
+            // Insert code here to initialize your application
+        }
 
-		}
-		
-		public override bool ApplicationShouldTerminateAfterLastWindowClosed (NSApplication sender)
-		{
-			return true;
-		}
-	}
+        public override void WillTerminate(NSNotification notification)
+        {
+            // Insert code here to tear down your application
+        }
+
+        public override bool ApplicationShouldTerminateAfterLastWindowClosed(NSApplication sender)
+        {
+            return true;
+        }
+    }
 }
 

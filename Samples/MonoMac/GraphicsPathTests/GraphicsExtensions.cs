@@ -1,9 +1,12 @@
 using System;
-using System.Drawing;
+using CoreGraphics;
 using System.Drawing.Drawing2D;
 
 
 // Code taken for testing from here: http://www.codeproject.com/Articles/38436/Extended-Graphics-Rounded-rectangles-Font-metrics
+using System.Drawing;
+
+
 namespace Plasmoid.Extensions
 {
 	static class GraphicsExtension

@@ -1,101 +1,86 @@
-using System;
-using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing;
 
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
+using CoreGraphics;
+using Foundation;
+using UIKit;
 
-namespace MTBitmapTests
-{
+namespace MTBitmapTests {
 	public class DrawingView : UIView {
-		public DrawingView (RectangleF rect) : base (rect)
+		const int SCALE = 4;
+		const int HEIGHT = 100;
+		const int WIDTH = 100;
+
+		Image circleImage = null;
+		CGPoint circleLocation = new CGPoint(0, 0);
+
+		Color BACKCOLOR = Color.LightCoral;
+		Color FORECOLOR = Color.Blue;
+
+		public DrawingView (CGRect rect) : base (rect)
 		{
 			ContentMode = UIViewContentMode.Redraw;
-			this.AutoresizingMask = UIViewAutoresizing.All;
+			AutoresizingMask = UIViewAutoresizing.All;
 			var color = Color.Wheat;
-			var wheat = new UIColor(color.R / 255f, color.G/255f, color.B/255f, color.A/255f );
+			var wheat = new UIColor (color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f);
 			BackgroundColor = wheat;
 		}
 
-		public override void Draw (RectangleF rect)
+		public override void Draw (CGRect rect)
 		{
-			Graphics g = Graphics.FromCurrentContext();
-			
-			g.Clear(Color.Wheat);
-			
+			Graphics g = Graphics.FromCurrentContext ();
+
+			g.Clear (Color.Wheat);
+
 			var mainBundle = NSBundle.MainBundle;
-			var filePath = mainBundle.PathForResource("CocoaMono","png");
-			
-			var bitmap = Image.FromFile(filePath);
-			
-			filePath = mainBundle.PathForResource("tiger-Q300","png");
-			
-			var tiger = Image.FromFile(filePath);
-			
-			using (var ig = Graphics.FromImage(bitmap)) 
-			{
-				//ig.Clear(Color.Red);
+			var filePath = mainBundle.PathForResource ("CocoaMono", "png");
+
+			var bitmap = Image.FromFile (filePath);
+
+			filePath = mainBundle.PathForResource ("tiger-Q300", "png");
+
+			var tiger = Image.FromFile (filePath);
+
+			using (var ig = Graphics.FromImage (bitmap)) {
 				var pen = new Pen (Brushes.Yellow, 20);
-				var rec = new SizeF (200, 200);
-				var recp = new PointF (bitmap.Width - rec.Width - pen.Width / 2, bitmap.Height - rec.Height - pen.Width / 2);
-				ig.DrawEllipse (pen, new RectangleF (recp, rec));
+				var rec = new CGSize (200, 200);
+				var recp = new CGPoint (bitmap.Width - rec.Width - pen.Width / 2, bitmap.Height - rec.Height - pen.Width / 2);
+				ig.DrawEllipse (pen, (RectangleF)new CGRect(recp, rec));
 			}
-			
-			g.DrawImage(bitmap, new Point(50,50));
-			g.DrawImage(tiger, new Point(200,200));
 
-			// To test Save uncomment the following lines
-//			var destopDirectory = Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
-//			var finalPath = System.IO.Path.Combine (destopDirectory, "cocoa-mono-withcircle.jpg");
-//
-//			bitmap.Save(finalPath);
-			
+			g.DrawImage (bitmap, 50f, 50f);
+			g.DrawImage (tiger, 200f, 200f);
 
-			using (SolidBrush brush = new SolidBrush(BACKCOLOR))
-			{
-				Image pic = GetCircleImage(); //get circle image
-				Size newSize = new Size(pic.Size.Width * _scale, pic.Size.Height * _scale);//calculate new size of circle
-				g.FillEllipse(brush, new Rectangle(_circleLocation, newSize));//draw the shape background
-				g.DrawImage(pic, new Rectangle(_circleLocation, newSize));//draw the hatch style
+			using (var brush = new SolidBrush (BACKCOLOR)) {
+				Image pic = GetCircleImage (); //get circle image
+				var newSize = new CGSize (pic.Size.Width * SCALE, pic.Size.Height * SCALE); //calculate new size of circle
+				g.FillEllipse (brush, (RectangleF)new CGRect (circleLocation, newSize)); //draw the shape background
+				g.DrawImage (pic, (RectangleF)new CGRect (circleLocation, newSize)); //draw the hatch style
 			}
-			
-			g.Dispose();
-			
+
+			g.Dispose ();
+
 		}
-		
+
 		/// <summary>
 		/// Get the initial image
 		/// </summary>
 		/// <returns></returns>
-		private Image GetCircleImage()
+		Image GetCircleImage ()
 		{
-			if (_circleImage == null)
-			{
+			if (circleImage == null) {
 				//draw the initial image programmatically
-				_circleImage = new Bitmap(WIDTH, HEIGHT);
-				Graphics g = Graphics.FromImage(_circleImage);
-				
+				circleImage = new Bitmap (WIDTH, HEIGHT);
+				Graphics g = Graphics.FromImage (circleImage);
+
 				//draw the shape hatch style, not draw backgound
-				using (HatchBrush brush = new HatchBrush(HatchStyle.Wave, FORECOLOR, Color.Transparent))
-				{
-					g.FillEllipse(brush, new Rectangle(Point.Empty, new Size(WIDTH, HEIGHT)));
-				}
-				g.Dispose();
+				using (HatchBrush brush = new HatchBrush (HatchStyle.Wave, FORECOLOR, Color.Transparent))
+					g.FillEllipse (brush, 0, 0, WIDTH, HEIGHT);
+
+				g.Dispose ();
 			}
-			
-			return _circleImage;
+
+			return circleImage;
 		}
-		
-		private Image _circleImage = null;
-		private Point _circleLocation = new Point(0, 0);
-		private int _scale = 4;
-		
-		private const int HEIGHT = 100;
-		private const int WIDTH = 100;
-		
-		private Color BACKCOLOR = Color.LightCoral;
-		private Color FORECOLOR = Color.Blue;		
-
-
 	}
 }

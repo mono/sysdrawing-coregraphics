@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MTExample5_5
-{
-	public class Point3
-	{
+namespace MTExample5_5 {
+	public class Point3 {
 		public float X;
 		public float Y;
 		public float Z;
@@ -26,7 +20,7 @@ namespace MTExample5_5
 		// Apply a transformation to a point:
 		public void Transform (Matrix3 m)
 		{
-			float[] result = m.VectorMultiply (new float[4] { X, Y, Z, W });
+			float[] result = m.VectorMultiply (new float[] { X, Y, Z, W });
 			X = result [0];
 			Y = result [1];
 			Z = result [2];
@@ -35,7 +29,7 @@ namespace MTExample5_5
 
 		public void TransformNormalize (Matrix3 m)
 		{
-			float[] result = m.VectorMultiply (new float[4] { X, Y, Z, W });
+			float[] result = m.VectorMultiply (new float[] { X, Y, Z, W });
 			X = result [0] / result [3];
 			Y = result [1] / result [3];
 			Z = result [2];

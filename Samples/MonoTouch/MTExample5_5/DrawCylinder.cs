@@ -1,14 +1,11 @@
-using System;
 using System.Drawing;
-//using System.Windows.Forms;
+using CoreGraphics;
 
-namespace MTExample5_5
-{
-	public class DrawCylinder
-	{
-		private ChartCanvas form1;
-		private float r = 10;
-		private float h = 10;
+namespace MTExample5_5 {
+	public class DrawCylinder {
+		ChartCanvas form1;
+		float r = 10f;
+		float h = 10f;
 
 		public DrawCylinder (ChartCanvas fm1)
 		{
@@ -25,28 +22,27 @@ namespace MTExample5_5
 		public Point3[] CircleCoordinates (float y)
 		{
 			Point3[] pts = new Point3[30];
-			Matrix3 m = new Matrix3 ();
-			for (int i = 0; i < pts.Length; i++) {
+			var m = new Matrix3 ();
+			for (int i = 0; i < pts.Length; i++)
 				pts [i] = m.Cylindrical (r, i * 360 / (pts.Length - 1), y);
-			}
 			return pts;
 		}
-        
+
 		public void DrawIsometricView (Graphics g)
 		{
 			Point3[] ptsBottom = CircleCoordinates (-h / 2);
-			PointF[] ptaBottom = new PointF[ptsBottom.Length];
+			var ptaBottom = new PointF[ptsBottom.Length];
 			Point3[] ptsTop = CircleCoordinates (h / 2);
-			PointF[] ptaTop = new PointF[ptsTop.Length];
+			var ptaTop = new PointF[ptsTop.Length];
 			Matrix3 m = Matrix3.Axonometric (35.26f, -45);
 			for (int i = 0; i < ptsBottom.Length; i++) {
 				ptsBottom [i].Transform (m);
-				ptaBottom [i] = Point2D (new PointF (ptsBottom [i].X, ptsBottom [i].Y));
+				ptaBottom [i] = Point2D (new CGPoint (ptsBottom [i].X, ptsBottom [i].Y));
 				ptsTop [i].Transform (m);
-				ptaTop [i] = Point2D (new PointF (ptsTop [i].X, ptsTop [i].Y));
+				ptaTop [i] = Point2D (new CGPoint (ptsTop [i].X, ptsTop [i].Y));
 			}
 
-			PointF[] ptf = new PointF[4];
+			var ptf = new PointF[4];
 			for (int i = 1; i < ptsTop.Length; i++) {
 				ptf [0] = ptaBottom [i - 1];
 				ptf [1] = ptaTop [i - 1];
@@ -62,11 +58,11 @@ namespace MTExample5_5
 			g.DrawPolygon (Pens.Black, ptaTop);
 		}
 
-		private PointF Point2D (PointF pt)
+		PointF Point2D (CGPoint pt)
 		{
-			PointF aPoint = new PointF ();
-			aPoint.X = form1.panel1.Width / 2 + pt.X;
-			aPoint.Y = form1.panel1.Height / 2 - pt.Y;
+			var aPoint = new PointF ();
+			aPoint.X = (float)(form1.panel1.Width / 2 + pt.X);
+			aPoint.Y = (float)(form1.panel1.Height / 2 - pt.Y);
 			return aPoint;
 		}
 	}

@@ -35,9 +35,9 @@ using System.Drawing.Drawing2D;
 using System.Collections.Generic;
 
 #if MONOMAC
-using MonoMac.CoreGraphics;
+using CoreGraphics;
 #else
-using MonoTouch.CoreGraphics;
+using CoreGraphics;
 #endif
 
 // Polygon Clipping Library
@@ -192,7 +192,7 @@ namespace System.Drawing
 			var flatPath = PointFArrayToIntArray (clonePath.PathPoints, scale);
 			solution.Add (flatPath);
 			regionList.Add (new RegionEntry (RegionType.Path, clonePath, flatPath));
-			regionBounds = regionPath.BoundingBox;
+			regionBounds = regionPath.BoundingBox.ToRectangleF ();
 		}
 
 		internal static Path PointFArrayToIntArray(PointF[] points, float scale)
@@ -230,11 +230,11 @@ namespace System.Drawing
 
 				switch (type & PathPointType.PathTypeMask){
 				case PathPointType.Start:
-					regionPath.MoveToPoint (point);
+					regionPath.MoveToPoint (point.ToCGPoint ());
 					break;
 
 				case PathPointType.Line:
-					regionPath.AddLineToPoint (point);
+					regionPath.AddLineToPoint (point.ToCGPoint ());
 					break;
 
 				case PathPointType.Bezier3:
@@ -336,7 +336,7 @@ namespace System.Drawing
 			regionPath.AddLineToPoint (infinite.Right, infinite.Bottom);
 			regionPath.AddLineToPoint (infinite.Left, infinite.Bottom);
 
-			regionBounds = regionPath.BoundingBox;
+			regionBounds = regionPath.BoundingBox.ToRectangleF ();
 		}
 
 		public void MakeEmpty() 
@@ -404,11 +404,19 @@ namespace System.Drawing
 			Transform (translateMatrix);
 		}
 
+        /// <summary>
+        /// Updates this Region to the intersection of itself with the specified Rectangle structure.
+        /// </summary>
+        /// <param name="rect">Rect.</param>
 		public void Intersect(Rectangle rect)
 		{
 			Intersect ((RectangleF)rect);
 		}
 
+        /// <summary>
+        /// Updates this Region to the intersection of itself with the specified RectangleF structure.
+        /// </summary>
+        /// <param name="rect">Rect.</param>
 		public void Intersect(RectangleF rect)
 		{
 
@@ -416,6 +424,10 @@ namespace System.Drawing
 			calculateRegionPath (ClipType.ctIntersection);
 		}
 
+        /// <summary>
+        /// Updates this Region to the intersection of itself with the specified Region.
+        /// </summary>
+        /// <param name="region">Region.</param>
 		public void Intersect(Region region)
 		{
 
@@ -423,18 +435,40 @@ namespace System.Drawing
 			calculateRegionPath (ClipType.ctIntersection);
 		}
 
+        /// <summary>
+        /// Updates this Region to the intersection of itself with the specified GraphicsPath.
+        /// </summary>
+        /// <param name="path">Path.</param>
+        public void Intersect(GraphicsPath path)
+        {
+            var region = new Region(path);
+            Intersect(region);
+            region.Dispose();
+        }
 
+        /// <summary>
+        /// Updates this Region to the union of itself and the specified Rectangle structure.
+        /// </summary>
+        /// <param name="rect">Rect.</param>
 		public void Union(Rectangle rect)
 		{
 			Union ((RectangleF)rect);
 		}
 
+        /// <summary>
+        /// Updates this Region to the union of itself and the specified RectangleF structure.
+        /// </summary>
+        /// <param name="rect">Rect.</param>
 		public void Union(RectangleF rect)
 		{
 			regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Union));
 			calculateRegionPath (ClipType.ctUnion);
 		}
 
+        /// <summary>
+        /// Updates this Region to the union of itself and the specified Region.
+        /// </summary>
+        /// <param name="region">Region.</param>
 		public void Union(Region region)
 		{
 
@@ -442,17 +476,40 @@ namespace System.Drawing
 			calculateRegionPath (ClipType.ctUnion);
 		}
 
+        /// <summary>
+        /// Updates this Region to the union of itself and the specified GraphicsPath.
+        /// </summary>
+        /// <param name="path">Path.</param>
+        public void Union(GraphicsPath path)
+        {
+            var region = new Region(path);
+            Union(region);
+            region.Dispose();
+        }
+
+        /// <summary>
+        /// Updates this Region to the union minus the intersection of itself with the specified Rectangle structure.
+        /// </summary>
+        /// <param name="rect">Rect.</param>
 		public void Xor(Rectangle rect)
 		{
 			Xor ((RectangleF)rect);
 		}
 
+        /// <summary>
+        /// Updates this Region to the union minus the intersection of itself with the specified RectangleF structure.
+        /// </summary>
+        /// <param name="rect">Rect.</param>
 		public void Xor(RectangleF rect)
 		{
 			regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Xor));
 			calculateRegionPath (ClipType.ctXor);
 		}
 
+        /// <summary>
+        /// Updates this Region to the union minus the intersection of itself with the specified Region.
+        /// </summary>
+        /// <param name="region">Region.</param>
 		public void Xor(Region region)
 		{
 
@@ -460,23 +517,57 @@ namespace System.Drawing
 			calculateRegionPath (ClipType.ctXor);
 		}
 
-		public void Exclude(Rectangle rect)
+        /// <summary>
+        /// Updates this Region to the union minus the intersection of itself with the specified GraphicsPath.
+        /// </summary>
+        /// <param name="path">Path.</param>
+        public void Xor(GraphicsPath path)
+        {
+            var region = new Region(path);
+            Xor(region) ;
+            region.Dispose();
+        }
+
+        /// <summary>
+        /// Updates this Region to contain only the portion of its interior that does not intersect with the specified Rectangle structure.
+        /// </summary>
+        /// <param name="rect">Rect.</param>
+        public void Exclude(Rectangle rect)
 		{
 			Exclude ((RectangleF)rect);
 		}
 
+        /// <summary>
+        /// Updates this Region to contain only the portion of its interior that does not intersect with the specified RectangleF structure.
+        /// </summary>
+        /// <param name="rect">Rect.</param>
 		public void Exclude(RectangleF rect)
 		{
 			regionList.Add(new RegionEntry(RegionType.Rectangle, rect, RectangleToPath(rect), RegionClipType.Difference));
 			calculateRegionPath (ClipType.ctDifference);
 		}
 
+        /// <summary>
+        /// Updates this Region to contain only the portion of its interior that does not intersect with the specified Region.
+        /// </summary>
+        /// <param name="region">Region.</param>
 		public void Exclude(Region region)
 		{
 
 			regionList.Add(new RegionEntry(RegionType.Path, region.solution, region.solution, RegionClipType.Difference));
 			calculateRegionPath (ClipType.ctDifference);
 		}
+
+        /// <summary>
+        /// Updates this Region to contain only the portion of its interior that does not intersect with the specified GraphicsPath.
+        /// </summary>
+        /// <param name="path">Path.</param>
+        public void Exclude(GraphicsPath path)
+        {
+            var region = new Region(path);
+            Exclude(region);
+            region.Dispose();
+        }
 
 		void calculateRegionPath (ClipType clipType)
 		{
@@ -512,7 +603,7 @@ namespace System.Drawing
 				if (regionPath.IsEmpty)
 					regionBounds = RectangleF.Empty;
 				else
-					regionBounds = regionPath.BoundingBox;
+					regionBounds = regionPath.BoundingBox.ToRectangleF ();
 
 			}
 
@@ -525,11 +616,11 @@ namespace System.Drawing
 
 			foreach (var poly in solution)
 			{
-				regionPath.MoveToPoint(IntPointToPointF(poly[0]));
+				regionPath.MoveToPoint(IntPointToPointF(poly[0]).ToCGPoint ());
 
 				for (var p =1; p < poly.Count; p++) 
 				{
-					regionPath.AddLineToPoint (IntPointToPointF (poly [p]));
+					regionPath.AddLineToPoint (IntPointToPointF (poly [p]).ToCGPoint ());
 				}
 			}
 
@@ -558,7 +649,7 @@ namespace System.Drawing
 		{
 			// eoFill - A Boolean value that, if true, specifies to use the even-odd fill rule to evaluate 
 			// the painted region of the path. If false, the winding fill rule is used.
-			return regionPath.ContainsPoint (point, EVEN_ODD_FILL);
+			return regionPath.ContainsPoint (point.ToCGPoint (), EVEN_ODD_FILL);
 		}
 
 		public bool IsVisible(Rectangle rectangle)
@@ -570,10 +661,10 @@ namespace System.Drawing
 		{
 			// eoFill - A Boolean value that, if true, specifies to use the even-odd fill rule to evaluate 
 			// the painted region of the path. If false, the winding fill rule is used.
-			var topLeft = new PointF (rectangle.Left, rectangle.Top);
-			var topRight = new PointF (rectangle.Right, rectangle.Top);
-			var bottomRight = new PointF (rectangle.Right, rectangle.Bottom);
-			var bottomLeft = new PointF (rectangle.Left, rectangle.Bottom);
+			var topLeft = new CGPoint (rectangle.Left, rectangle.Top);
+			var topRight = new CGPoint (rectangle.Right, rectangle.Top);
+			var bottomRight = new CGPoint (rectangle.Right, rectangle.Bottom);
+			var bottomLeft = new CGPoint (rectangle.Left, rectangle.Bottom);
 
 			return regionPath.ContainsPoint (topLeft, EVEN_ODD_FILL) || regionPath.ContainsPoint (topRight, EVEN_ODD_FILL)
 				|| regionPath.ContainsPoint (bottomRight, EVEN_ODD_FILL) || regionPath.ContainsPoint (bottomLeft, EVEN_ODD_FILL);
@@ -584,14 +675,14 @@ namespace System.Drawing
 		{
 			// eoFill - A Boolean value that, if true, specifies to use the even-odd fill rule to evaluate 
 			// the painted region of the path. If false, the winding fill rule is used.
-			return regionPath.ContainsPoint (new PointF(x,y), EVEN_ODD_FILL);
+			return regionPath.ContainsPoint (new CGPoint (x,y), EVEN_ODD_FILL);
 		}
 
 		public bool IsVisible(int x, int y)
 		{
 			// eoFill - A Boolean value that, if true, specifies to use the even-odd fill rule to evaluate 
 			// the painted region of the path. If false, the winding fill rule is used.
-			return regionPath.ContainsPoint (new PointF(x,y), EVEN_ODD_FILL);
+			return regionPath.ContainsPoint (new CGPoint (x,y), EVEN_ODD_FILL);
 		}
 
 		internal bool IsEmpty

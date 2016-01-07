@@ -17,15 +17,15 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 
 #if MONOMAC
-using MonoMac.CoreGraphics;
-using MonoMac.AppKit;
-using MonoMac.Foundation;
-using MonoMac.CoreText;
+using CoreGraphics;
+using AppKit;
+using Foundation;
+using CoreText;
 #else
-using MonoTouch.CoreGraphics;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using MonoTouch.CoreText;
+using CoreGraphics;
+using UIKit;
+using Foundation;
+using CoreText;
 #endif
 
 namespace System.Drawing {
@@ -81,11 +81,11 @@ namespace System.Drawing {
 			this (context, UIScreen.MainScreen.Scale)
 		{	}
 
-		private Graphics(CGContext context, float screenScale)
+		private Graphics(CGContext context, nfloat screenScale)
 		{
 			var gc = context;
 			nativeObject = gc;
-			this.screenScale = screenScale;
+			this.screenScale = (float)screenScale;
 			InitializeContext(gc);
 
 		}
@@ -149,14 +149,14 @@ namespace System.Drawing {
 
 			ResetTransform();
 
-			boundingBox = context.GetClipBoundingBox();
+			boundingBox = context.GetClipBoundingBox().ToRectangleF ();
 
 			// We are going to try this here and it may cause problems down the road.
 			// This seems to only happen with Mac and not iOS
 			// What is happening is that sub views are offset by their relative location
 			// within the window.  That means our drawing locations are also offset by this 
 			// value as well.  So what we need to do is translate our view by this offset as well.
-			subviewClipOffset = context.GetClipBoundingBox();
+			subviewClipOffset = context.GetClipBoundingBox().ToRectangleF ();
 
 			PageUnit = GraphicsUnit.Pixel;
 			PageScale = 1;
@@ -481,7 +481,7 @@ namespace System.Drawing {
 		void RectanglePath (RectangleF rectangle) 
 		{
 			MoveTo (rectangle.Location);
-			context.AddRect(rectangle);
+			context.AddRect(rectangle.ToCGRect ());
 			context.ClosePath();
 		}
 
@@ -549,7 +549,11 @@ namespace System.Drawing {
 
 		}
 
-		
+		/// <summary>
+        /// Fills the interior of a region.
+        /// </summary>
+        /// <param name="brush">Brush.</param>
+        /// <param name="region">Region.</param>
 		public void FillRegion (Brush brush, Region region)
 		{
 			if (brush == null)
@@ -575,7 +579,7 @@ namespace System.Drawing {
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
 
-			context.AddEllipseInRect(rect);
+			context.AddEllipseInRect (rect.ToCGRect ());
 			StrokePen(pen);
 		}
 
@@ -606,7 +610,7 @@ namespace System.Drawing {
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
 
-			context.AddEllipseInRect(rect);
+			context.AddEllipseInRect(rect.ToCGRect ());
 			FillBrush(brush);
 		}
 
@@ -865,6 +869,7 @@ namespace System.Drawing {
 				return compositing_mode;
 			}
 			set {
+                //var blendmode = contex
 				compositing_mode = value;
 				switch (compositing_mode) 
 				{
@@ -872,7 +877,7 @@ namespace System.Drawing {
 					context.SetBlendMode (CGBlendMode.Copy);
 					break;
 				case CompositingMode.SourceOver:
-					context.SetBlendMode (CGBlendMode.Overlay);
+                    context.SetBlendMode (CGBlendMode.Normal);
 					break;
 				}
 			}
@@ -971,7 +976,7 @@ namespace System.Drawing {
 
 		public void SetClip (Rectangle rect, CombineMode combineMode)
 		{
-			SetClip ((RectangleF)rect, combineMode);
+			SetClip (rect.ToRectangleF (), combineMode);
 		}
 
 		public void SetClip (GraphicsPath graphicsPath, CombineMode combineMode)
@@ -1026,7 +1031,7 @@ namespace System.Drawing {
 			//state after you’ve completed any clipped drawing.
 			context.SaveState ();
 			if (clipRegion.IsEmpty) {
-				context.ClipToRect (RectangleF.Empty);
+				context.ClipToRect (CGRect.Empty);
 			} else {
 				//context.ClipToRect ((RectangleF)clipRegion.regionObject);
 				context.AddPath (clipRegion.regionPath);
@@ -1039,22 +1044,103 @@ namespace System.Drawing {
 		
 		public GraphicsContainer BeginContainer ()
 		{
-			throw new NotImplementedException ();		
+            if (stateStack == null)
+            {
+                stateStack = new object[MAX_GRAPHICS_STATE_STACK];
+                statePos = 0;
+            }
+
+            var gsCurrentState = new GraphicsContainer(++statePos);
+
+            var currentState = new CGGraphicsState();
+
+            currentState.lastPen = LastPen;
+            currentState.lastBrush = LastBrush;
+            // Make sure we clone the Matrices or we will still modify
+            // them after the save as they are the same objects.  Woops!!
+            currentState.model = modelMatrix.Clone();
+            currentState.view = viewMatrix.Clone();
+            currentState.compositingQuality = CompositingQuality;
+            currentState.compositingMode = CompositingMode;
+            currentState.interpolationMode = interpolationMode;
+            currentState.pageScale = pageScale;
+            currentState.pageUnit = graphicsUnit;
+            //currentState.pixelOffsetMode = PixelOffsetMode;
+            currentState.smoothingMode = smoothingMode;
+            //currentState.textContrast = TextContrast;
+            //currentState.textRenderingHint = TextRenderingHint;
+            currentState.renderingOrigin = renderingOrigin;
+
+            currentState.clipRegion = clipRegion;
+
+            stateStack[gsCurrentState.NativeObject] = currentState;
+
+            return gsCurrentState;
 		}
 		
 		public GraphicsContainer BeginContainer (Rectangle dstRect, Rectangle srcRect, GraphicsUnit unit)
 		{
-			throw new NotImplementedException ();		
+            return BeginContainer ((RectangleF)dstRect, (RectangleF)srcRect, unit);
 		}
 
 		public GraphicsContainer BeginContainer (RectangleF dstRect, RectangleF srcRect, GraphicsUnit unit)
 		{
-			throw new NotImplementedException ();		
+            var container = BeginContainer();
+
+            var srcRect1 = srcRect;
+
+            // If the source units are not the same we need to convert them
+            // The reason we check for Pixel here is that our graphics already has the Pixel's baked into the model view transform
+            if (unit != graphicsUnit && unit != GraphicsUnit.Pixel) 
+            {
+                ConversionHelpers.GraphicsUnitConversion (unit, graphicsUnit, DpiX, DpiX,  ref srcRect1);
+            } 
+
+            TranslateTransform(dstRect.X, dstRect.Y);
+
+            float scaleX = dstRect.Width/srcRect1.Width;
+            float scaleY = dstRect.Height/srcRect1.Height;
+            ScaleTransform(scaleX, scaleY);
+
+            return container;
 		}
 
 		public void EndContainer (GraphicsContainer container)
 		{
-			throw new NotImplementedException ();
+            if (stateStack == null)
+            {
+                stateStack = new object[MAX_GRAPHICS_STATE_STACK];
+                statePos = 0;
+            }
+
+            if (container.NativeObject > statePos)
+                return;
+
+            if (container.NativeObject >= MAX_GRAPHICS_STATE_STACK)
+                throw new OutOfMemoryException();
+
+            var gstate = (CGGraphicsState)stateStack[container.NativeObject];
+            LastPen = gstate.lastPen;
+            LastBrush = gstate.lastBrush;
+            modelMatrix = gstate.model;
+            viewMatrix = gstate.view;
+
+            CompositingMode = gstate.compositingMode;
+            CompositingQuality = gstate.compositingQuality;
+            interpolationMode = gstate.interpolationMode;
+            pageScale = gstate.pageScale;
+            graphicsUnit = gstate.pageUnit;
+            //PixelOffsetMode = gstate.pixelOffsetMode;
+            SmoothingMode = gstate.smoothingMode;
+            //TextContrast = gstate.textContrast;
+            //TextRenderingHint = gstate.textRenderingHint;
+            renderingOrigin = gstate.renderingOrigin;
+            clipRegion = gstate.clipRegion;
+
+            // re-apply our ModelView to the graphics context
+            applyModelView();
+
+            statePos = container.NativeObject - 1;
 		}
 		
 
@@ -1285,46 +1371,89 @@ namespace System.Drawing {
 		public void Clear (Color color)
 		{
 			context.SaveState ();
-			context.SetFillColorWithColor(new CGColor(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f));
+			context.SetFillColor (new CGColor(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f));
 			context.FillRect(context.GetClipBoundingBox());
 			context.RestoreState ();
 		}
 		
-		public void Restore (GraphicsState gstate)
+        static uint MAX_GRAPHICS_STATE_STACK = 512;
+        static object[] stateStack;
+        static uint statePos;
+
+		public void Restore (GraphicsState state)
 		{
+
+            if (stateStack == null)
+            {
+                stateStack = new object[MAX_GRAPHICS_STATE_STACK];
+                statePos = 0;
+            }
+
+            if (state.nativeState > statePos)
+                return;
+            
+            if (state.nativeState >= MAX_GRAPHICS_STATE_STACK)
+                throw new OutOfMemoryException();
+
+            var gstate = (CGGraphicsState)stateStack[state.nativeState];
 			LastPen = gstate.lastPen;
 			LastBrush = gstate.lastBrush;
 			modelMatrix = gstate.model;
 			viewMatrix = gstate.view;
+
+            CompositingMode = gstate.compositingMode;
+            CompositingQuality = gstate.compositingQuality;
+            interpolationMode = gstate.interpolationMode;
+            pageScale = gstate.pageScale;
+            graphicsUnit = gstate.pageUnit;
+            //PixelOffsetMode = gstate.pixelOffsetMode;
+            SmoothingMode = gstate.smoothingMode;
+            //TextContrast = gstate.textContrast;
+            //TextRenderingHint = gstate.textRenderingHint;
 			renderingOrigin = gstate.renderingOrigin;
-			graphicsUnit = gstate.pageUnit;
-			pageScale = gstate.pageScale;
-			SmoothingMode = gstate.smoothingMode;
 			clipRegion = gstate.clipRegion;
-			//applyModelView();
-			// I do not know if we should use the contexts save/restore state or our own
-			// we will do that save state for now
-			context.RestoreState();
+
+            // re-apply our ModelView to the graphics context
+			applyModelView();
+
+            statePos = state.nativeState - 1;
+
 		}
 		
 		public GraphicsState Save ()
 		{
-			var currentState = new GraphicsState();
+            if (stateStack == null)
+            {
+                stateStack = new object[MAX_GRAPHICS_STATE_STACK];
+                statePos = 0;
+            }
+
+			var gsCurrentState = new GraphicsState();
+            gsCurrentState.nativeState = ++statePos;
+
+            var currentState = new CGGraphicsState();
+
 			currentState.lastPen = LastPen;
 			currentState.lastBrush = LastBrush;
 			// Make sure we clone the Matrices or we will still modify
 			// them after the save as they are the same objects.  Woops!!
 			currentState.model = modelMatrix.Clone();
 			currentState.view = viewMatrix.Clone();
-			currentState.renderingOrigin = renderingOrigin;
-			currentState.pageUnit = graphicsUnit;
-			currentState.pageScale = pageScale;
-			currentState.smoothingMode = smoothingMode;
+            currentState.compositingQuality = CompositingQuality;
+            currentState.compositingMode = CompositingMode;
+            currentState.interpolationMode = interpolationMode;
+            currentState.pageScale = pageScale;
+            currentState.pageUnit = graphicsUnit;
+            //currentState.pixelOffsetMode = PixelOffsetMode;
+            currentState.smoothingMode = smoothingMode;
+            //currentState.textContrast = TextContrast;
+            //currentState.textRenderingHint = TextRenderingHint;
+            currentState.renderingOrigin = renderingOrigin;
+
 			currentState.clipRegion = clipRegion;
-			// I do not know if we should use the contexts save/restore state or our own
-			// we will do that save state for now
-			context.SaveState();
-			return currentState;
+
+            stateStack[gsCurrentState.nativeState] = currentState;
+			return gsCurrentState;
 		}
 		
 		public void DrawClosedCurve (Pen pen, PointF [] points)
