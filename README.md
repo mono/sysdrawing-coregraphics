@@ -3,7 +3,7 @@ Apple's CoreGraphics engine. With the exception of a couple of APIs
 to integrate into the native platform, the API is identical to what
 developers are used to.
 
-This works with both iOS and OSX, using Xamarin.Mac Unfied and Xamarin.iOS
+This works with both iOS and OSX, using Xamarin.Mac Unified and Xamarin.iOS
 Unified.
 
 The Makefile assumes you have a copy of mono checked out side by side. 
