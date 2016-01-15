@@ -119,6 +119,8 @@ MAC_PREFIX=/Library/Frameworks/Xamarin.Mac.framework/Versions/Current
 MAC_SOURCES=$(SOURCES) $(MONO_SOURCES)
 mac-mobile: bin/mac/mobile/System.Drawing.dll
 mac-xm45: bin/mac/xm45/System.Drawing.dll
+XM_45_BCL_PATH ?= $(MAC_PREFIX)/lib/mono/4.5
+
 
 bin/mac/mobile/System.Drawing.dll: $(SOURCES) $(MONO_SOURCES) $(MONO_EXTRA_SOURCES) Makefile
 	mkdir -p bin/mac/mobile
@@ -126,7 +128,7 @@ bin/mac/mobile/System.Drawing.dll: $(SOURCES) $(MONO_SOURCES) $(MONO_EXTRA_SOURC
 
 bin/mac/xm45/System.Drawing.dll: $(SOURCES) $(MONO_SOURCES) $(MONO_EXTRA_SOURCES) Makefile
 	mkdir -p bin/mac/xm45
-	/Library/Frameworks/Mono.framework/Commands/mcs -unsafe -noconfig -define:MONOMAC -define:XM45 -debug -out:bin/mac/xm45/System.Drawing.dll $(MAC_SOURCES)  -target:library -define:MONOMAC /nostdlib /reference:$(MAC_PREFIX)/lib/mono/4.5/System.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/System.Core.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/Xamarin.Mac.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/mscorlib.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/OpenTK.dll
+	/Library/Frameworks/Mono.framework/Commands/mcs -unsafe -noconfig -define:MONOMAC -define:XM45 -debug -out:bin/mac/xm45/System.Drawing.dll $(MAC_SOURCES)  -target:library -define:MONOMAC /nostdlib /reference:$(XM_45_BCL_PATH)/System.dll /reference:$(XM_45_BCL_PATH)/System.Core.dll /reference:$(XM_45_BCL_PATH)/mscorlib.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/Xamarin.Mac.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/OpenTK.dll
 
 clean:
 	rm -rf bin/
