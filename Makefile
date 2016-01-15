@@ -1,4 +1,4 @@
-MONO_SYSD=../mono/mcs/class/System.Drawing
+MONO_SYSD ?= ../mono/mcs/class/System.Drawing
 
 MONO_SOURCES = \
 	$(MONO_SYSD)/System.Drawing.Drawing2D/Blend.cs			\
