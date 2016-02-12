@@ -8,3 +8,9 @@ Unified.
 
 The Makefile assumes you have a copy of mono checked out side by side. 
 You can update the MONO_SYSD variable to point to a checkout in another location if necessary.
+
+To Build:
+
+make
+
+output will be found in top level bin directory.

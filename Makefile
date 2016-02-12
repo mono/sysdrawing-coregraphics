@@ -47,7 +47,6 @@ MONO_SOURCES = \
 	$(MONO_SYSD)/System.Drawing/StringAligment.cs			\
 	$(MONO_SYSD)/System.Drawing/StringFormatFlags.cs		\
 	$(MONO_SYSD)/System.Drawing/StringTrimming.cs			\
-	$(MONO_SYSD)/System.Drawing/SystemColors.cs			\
 	$(MONO_SYSD)/System.Drawing/ToolboxBitmapAttribute.cs		\
 	$(MONO_SYSD)/System.Drawing.Drawing2D/HatchStyle.cs		\
 	$(MONO_SYSD)/System.Drawing.Imaging/FrameDimension.cs		\
@@ -57,6 +56,9 @@ MONO_SOURCES = \
 	$(MONO_SYSD)/System.Drawing/RectangleConverter.cs		\
 	$(MONO_SYSD)/System.Drawing/SizeConverter.cs			\
 	$(MONO_SYSD)/System.Drawing/SizeFConverter.cs			\
+
+IOS_MONO_SOURCES = \
+	$(MONO_SYSD)/System.Drawing/SystemColors.cs			\
 
 SOURCES =	\
 	./System.Drawing.Drawing2D/GraphicsPath.cs	\
@@ -70,7 +72,6 @@ SOURCES =	\
 	./System.Drawing.Text/FontCollection.cs		\
 	./System.Drawing/Bitmap.cs			\
 	./System.Drawing/Brush.cs			\
-	./System.Drawing/Color.cs			\
 	./System.Drawing/Font.cs			\
 	./System.Drawing/FontFamily.cs			\
 	./System.Drawing/Graphics-DrawEllipticalArc.cs	\
@@ -78,7 +79,6 @@ SOURCES =	\
 	./System.Drawing/Graphics.cs			\
 	./System.Drawing/Icon.cs			\
 	./System.Drawing/Image.cs			\
-	./System.Drawing/KnownColor.cs			\
 	./System.Drawing/KnownColors.cs			\
 	./System.Drawing/Pen.cs				\
 	./System.Drawing/Region.cs			\
@@ -103,6 +103,10 @@ SOURCES =	\
 	./Utilities/GeomUtilities.cs \
 	./Utilities/Locale.cs \
 
+IOS_SOURCES =	\
+	./System.Drawing/Color.cs			\
+	./System.Drawing/KnownColor.cs			\
+
 all: ios mac
 mac: mac-mobile mac-xm45
 
@@ -114,12 +118,13 @@ IOS_PREFIX=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current
 
 ios: bin/ios/System.Drawing.dll
 
+IOS_SOURCE_LIST=$(SOURCES) $(MONO_SOURCES) $(IOS_SOURCES) $(IOS_MONO_SOURCES)
 bin/ios/System.Drawing.dll: $(SOURCES) $(MONO_SOURCES) Makefile
 	mkdir -p bin/ios
-	$(IOS_PREFIX)/bin/smcs $(KEY_ARGS) -define:MONOTOUCH -unsafe -target:library -out:bin/ios/System.Drawing.dll -debug $(SOURCES) $(MONO_SOURCES) -r:$(IOS_PREFIX)/lib/mono/Xamarin.iOS/System.Core.dll -r:$(IOS_PREFIX)/lib/mono/Xamarin.iOS/Xamarin.iOS.dll
+	$(IOS_PREFIX)/bin/smcs $(KEY_ARGS) -define:MONOTOUCH -unsafe -target:library -out:bin/ios/System.Drawing.dll -debug $(IOS_SOURCE_LIST) -r:$(IOS_PREFIX)/lib/mono/Xamarin.iOS/System.Core.dll -r:$(IOS_PREFIX)/lib/mono/Xamarin.iOS/Xamarin.iOS.dll
 
 MAC_PREFIX=/Library/Frameworks/Xamarin.Mac.framework/Versions/Current
-MAC_SOURCES=$(SOURCES) $(MONO_SOURCES)
+MAC_SOURCE_LIST=$(SOURCES) $(MONO_SOURCES)
 mac-mobile: bin/mac/mobile/System.Drawing.dll
 mac-xm45: bin/mac/xm45/System.Drawing.dll
 XM_45_BCL_PATH ?= $(MAC_PREFIX)/lib/mono/4.5
@@ -127,12 +132,12 @@ XM_45_BCL_PATH ?= $(MAC_PREFIX)/lib/mono/4.5
 
 bin/mac/mobile/System.Drawing.dll: $(SOURCES) $(MONO_SOURCES) $(MONO_EXTRA_SOURCES) Makefile
 	mkdir -p bin/mac/mobile
-	/Library/Frameworks/Mono.framework/Commands/mcs -unsafe -noconfig $(KEY_ARGS) -define:MONOMAC -debug -out:bin/mac/mobile/System.Drawing.dll $(MAC_SOURCES)  -target:library -define:MONOMAC /nostdlib /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/System.dll /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/System.Core.dll /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/Xamarin.Mac.dll /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/mscorlib.dll
+	/Library/Frameworks/Mono.framework/Commands/mcs -unsafe -noconfig $(KEY_ARGS) -define:MONOMAC -debug -out:bin/mac/mobile/System.Drawing.dll $(MAC_SOURCE_LIST)  -target:library -define:MONOMAC /nostdlib /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/System.dll /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/System.Core.dll /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/Xamarin.Mac.dll /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/mscorlib.dll  /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/OpenTK.dll
 
 
 bin/mac/xm45/System.Drawing.dll: $(SOURCES) $(MONO_SOURCES) $(MONO_EXTRA_SOURCES) Makefile
 	mkdir -p bin/mac/xm45
-	/Library/Frameworks/Mono.framework/Commands/mcs -unsafe -noconfig $(KEY_ARGS) -define:MONOMAC -define:XM45 -debug -out:bin/mac/xm45/System.Drawing.dll $(MAC_SOURCES)  -target:library -define:MONOMAC /nostdlib /reference:$(XM_45_BCL_PATH)/System.dll /reference:$(XM_45_BCL_PATH)/System.Core.dll /reference:$(XM_45_BCL_PATH)/mscorlib.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/Xamarin.Mac.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/OpenTK.dll
+	/Library/Frameworks/Mono.framework/Commands/mcs -unsafe -noconfig $(KEY_ARGS) -define:MONOMAC -define:XM45 -debug -out:bin/mac/xm45/System.Drawing.dll $(MAC_SOURCE_LIST)  -target:library -define:MONOMAC /nostdlib /reference:$(XM_45_BCL_PATH)/System.dll /reference:$(XM_45_BCL_PATH)/System.Core.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/Xamarin.Mac.dll  /reference:$(XM_45_BCL_PATH)/mscorlib.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/OpenTK.dll
 
 clean:
 	rm -rf bin/
