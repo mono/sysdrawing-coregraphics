@@ -1157,6 +1157,7 @@ namespace System.Drawing {
 			{
 				// Quartz performs antialiasing for a graphics context if both the allowsAntialiasing parameter 
 				// and the graphics state parameter shouldAntialias are true.
+				smoothingMode = value;
 				switch (value) 
 				{
 				case SmoothingMode.AntiAlias:
