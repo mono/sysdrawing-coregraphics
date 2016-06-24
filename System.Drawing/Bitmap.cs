@@ -1146,6 +1146,58 @@ namespace System.Drawing {
 			}
 			Save (path, format);
 		}
+
+		public void Save (Stream stream, ImageFormat format)
+		{
+			if (stream == null)
+				throw new ArgumentNullException ("stream");
+			
+			if (NativeCGImage == null)
+				throw new ObjectDisposedException ("cgimage");
+
+			// for now we will just default this to png
+			var typeIdentifier = "public.png";
+
+			// Get the correct type identifier
+			if (format == ImageFormat.Bmp)
+				typeIdentifier = "com.microsoft.bmp";
+//			else if (format == ImageFormat.Emf)
+//				typeIdentifier = "image/emf";
+//			else if (format == ImageFormat.Exif)
+//				typeIdentifier = "image/exif";
+			else if (format == ImageFormat.Gif)
+				typeIdentifier = "com.compuserve.gif";
+			else if (format == ImageFormat.Icon)
+				typeIdentifier = "com.microsoft.ico";
+			else if (format == ImageFormat.Jpeg)
+				typeIdentifier = "public.jpeg";
+			else if (format == ImageFormat.Png)
+				typeIdentifier = "public.png";
+			else if (format == ImageFormat.Tiff)
+				typeIdentifier = "public.tiff";
+			else if (format == ImageFormat.Wmf)
+				typeIdentifier = "com.adobe.pdf";
+
+			// Not sure what this is yet
+			else if (format == ImageFormat.MemoryBmp)
+				throw new NotImplementedException("ImageFormat.MemoryBmp not supported");
+
+			using (var imageData = new NSMutableData ())
+			{
+				using (var dest = CGImageDestination.Create (imageData, typeIdentifier, frameCount))
+				{
+					dest.AddImage (NativeCGImage, (NSDictionary)null);
+					dest.Close ();
+				}
+
+				using (var ms = new MemoryStream (imageData.ToArray()))
+				{
+					ms.WriteTo (stream);
+					stream.Seek (0,System.IO.SeekOrigin.Begin);
+				}
+			}
+		}
+
 		public BitmapData LockBits (RectangleF rect, ImageLockMode flags, PixelFormat pixelFormat)
 		{
 
