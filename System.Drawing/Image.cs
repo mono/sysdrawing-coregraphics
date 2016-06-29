@@ -206,7 +206,9 @@ namespace System.Drawing {
 
 		public void Save (Stream stream, ImageFormat format)
 		{
-			throw new NotImplementedException ();
+			var b = this as Bitmap;
+			if (b != null)
+				b.Save(stream, format);
 		}
 		
 		public void Save (Stream stream)
