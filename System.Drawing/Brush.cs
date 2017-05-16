@@ -16,7 +16,7 @@ using CoreGraphics;
 namespace System.Drawing {
 
 	public abstract partial class Brush : MarshalByRefObject, IDisposable, ICloneable {
-		protected bool changed = true;
+		internal bool changed = true;
 		
 		~Brush ()
 		{

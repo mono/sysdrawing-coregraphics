@@ -2,7 +2,7 @@ using System;
 
 namespace System.Drawing
 {
-	public class Locale
+	internal class Locale
 	{
 		public static string GetText (string format)
 		{
