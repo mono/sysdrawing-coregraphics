@@ -76,7 +76,7 @@ namespace ClipperLib
   using Polygons = List<List<IntPoint>>;
 #endif
 
-  public class DoublePoint
+  internal class DoublePoint
   {
     public double X { get; set; }
     public double Y { get; set; }
@@ -99,7 +99,7 @@ namespace ClipperLib
   // PolyTree & PolyNode classes
   //------------------------------------------------------------------------------
 
-  public class PolyTree : PolyNode
+  internal class PolyTree : PolyNode
   {
       internal List<PolyNode> m_AllPolys = new List<PolyNode>();
 
@@ -131,7 +131,7 @@ namespace ClipperLib
 
   }
         
-  public class PolyNode 
+  internal class PolyNode 
   {
       internal PolyNode m_Parent;
       internal Path m_polygon = new Path();
@@ -411,7 +411,7 @@ namespace ClipperLib
   //------------------------------------------------------------------------------
   //------------------------------------------------------------------------------
 
-  public struct IntPoint
+  internal struct IntPoint
   {
     public cInt X;
     public cInt Y;
@@ -475,7 +475,7 @@ namespace ClipperLib
 }
 
 
-  public struct IntRect
+  internal struct IntRect
   {
     public cInt left;
     public cInt top;
@@ -494,16 +494,16 @@ namespace ClipperLib
     }
   }
 
-  public enum ClipType { ctIntersection, ctUnion, ctDifference, ctXor };
-  public enum PolyType { ptSubject, ptClip };
+  internal enum ClipType { ctIntersection, ctUnion, ctDifference, ctXor };
+  internal enum PolyType { ptSubject, ptClip };
   
   //By far the most widely used winding rules for polygon filling are
   //EvenOdd & NonZero (GDI, GDI+, XLib, OpenGL, Cairo, AGG, Quartz, SVG, Gr32)
   //Others rules include Positive, Negative and ABS_GTR_EQ_TWO (only in OpenGL)
   //see http://glprogramming.com/red/chapter11.html
-  public enum PolyFillType { pftEvenOdd, pftNonZero, pftPositive, pftNegative };
-  public enum JoinType { jtSquare, jtRound, jtMiter };
-  public enum EndType { etClosed, etButt, etSquare, etRound};
+  internal enum PolyFillType { pftEvenOdd, pftNonZero, pftPositive, pftNegative };
+  internal enum JoinType { jtSquare, jtRound, jtMiter };
+  internal enum EndType { etClosed, etButt, etSquare, etRound};
 
   internal enum EdgeSide {esLeft, esRight};
   internal enum Direction {dRightToLeft, dLeftToRight};
@@ -577,7 +577,7 @@ namespace ClipperLib
     public IntPoint OffPt;
   };
 
-  public class ClipperBase
+  internal class ClipperBase
   {    
     protected const double horizontal = -3.4E+38;
     protected const int Skip = -2;
@@ -1427,7 +1427,7 @@ namespace ClipperLib
 
   } //end ClipperBase
 
-  public class Clipper : ClipperBase
+  internal class Clipper : ClipperBase
   {
       //InitOptions that can be passed to the constructor ...
       public const int ioReverseSolution = 1;
