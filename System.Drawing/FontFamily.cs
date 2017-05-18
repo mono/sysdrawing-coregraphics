@@ -84,6 +84,11 @@ namespace System.Drawing
 			get { return familyName; }
 		}
 
+		public string GetName(int language)
+		{
+			return Name;
+		}
+
 		public bool IsStyleAvailable (FontStyle fontStyle)
 		{
 			return NativeStyleAvailable (fontStyle);

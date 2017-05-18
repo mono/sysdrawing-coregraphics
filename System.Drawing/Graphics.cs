@@ -628,7 +628,7 @@ namespace System.Drawing {
 		{
 			FillEllipse (brush, new RectangleF (x1, y1, x2, y2));
 		}
-		
+
 		public void FillEllipse (Brush brush, float x1, float y1, float x2, float y2)
 		{
 			FillEllipse (brush, new RectangleF (x1, y1, x2, y2));
@@ -1721,10 +1721,10 @@ namespace System.Drawing {
 			if (brush == null)
 				throw new ArgumentNullException (nameof(brush));
 			if (points == null)
-				throw new ArgumentNullException (nameof (points);
+                throw new ArgumentNullException (nameof (points));
 
 			PolygonSetup (points);
-			FillBrush (brush, fillMode);
+			FillBrush (brush, FillMode.Alternate);
 		}
 
 		public void FillPolygon(Brush brush, PointF[] points, FillMode fillMode)

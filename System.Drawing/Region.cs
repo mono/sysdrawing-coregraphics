@@ -657,6 +657,16 @@ namespace System.Drawing
 			return IsVisible ((RectangleF)rectangle);
 		}
 
+        public bool IsVisible(int x, int y, int width, int height)
+        {
+            return IsVisible(new RectangleF(x, y, width, height));
+        }
+
+		public bool IsVisible(float x, float y, float width, float height)
+		{
+			return IsVisible(new RectangleF(x, y, width, height));
+		}
+
 		public bool IsVisible(RectangleF rectangle)
 		{
 			// eoFill - A Boolean value that, if true, specifies to use the even-odd fill rule to evaluate 

@@ -135,7 +135,7 @@ namespace System.Drawing
 			DrawString(s, font, brush, new RectangleF(point.X, point.Y, 0, 0), format);
 		}
 
-        public void DrawString(string s, Font font, Brush brush, PointF point)
+        	public void DrawString(string s, Font font, Brush brush, PointF point)
 		{
 			DrawString(s, font, brush, new RectangleF(point.X, point.Y, 0, 0), null);
 		}
@@ -145,15 +145,15 @@ namespace System.Drawing
 			DrawString (s, font, brush, new RectangleF(x, y, 0, 0), format);
 		}
 
-        public void DrawString(string s, Font font, Brush brush, float x, float y)
+        	public void DrawString(string s, Font font, Brush brush, float x, float y)
 		{
-			DrawString(s, font, brush, new RectangleF(x, y, 0, 0), format, null);
+            		DrawString(s, font, brush, new RectangleF(x, y, 0, 0));
 		}
 
-        public void DrawString(string s, Font font, Brush brush, RectangleF layoutRectangle)
-        {
-            DrawString(s, font, brush, layoutRectangle, null);
-        }
+        	public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle)
+		{
+			DrawString (s, font, brush, layoutRectangle, null);
+		}
 
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
 		{

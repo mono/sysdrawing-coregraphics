@@ -77,7 +77,7 @@ namespace System.Drawing
 		{
 		}
 
-		public Font (FontFamily familyName, float emSize, FontStyle style,
+        public Font (FontFamily family, float emSize, FontStyle style,
 		             GraphicsUnit unit, byte gdiCharSet, bool  gdiVerticalFont )
 		{
 
@@ -85,12 +85,22 @@ namespace System.Drawing
 			if (emSize <= 0)
 				throw new ArgumentException("emSize is less than or equal to 0, evaluates to infinity, or is not a valid number.","emSize");
 
-			fontFamily = familyName;
+			fontFamily = family;
 			fontStyle = style;
 			this.gdiVerticalFont = gdiVerticalFont;
 			this.gdiCharSet = gdiCharSet;
 
-			CreateNativeFont (familyName, emSize, style, unit, gdiCharSet, gdiVerticalFont);
+			CreateNativeFont (family, emSize, style, unit, gdiCharSet, gdiVerticalFont);
+		}
+
+        public Font(Font prototype, FontStyle style)
+        {
+            // no null checks, MS throws a NullReferenceException if original is null
+            fontFamily = prototype.FontFamily;
+            fontStyle = style;
+            gdiVerticalFont = prototype.gdiVerticalFont;
+            gdiCharSet = prototype.gdiCharSet;
+            CreateNativeFont(fontFamily, sizeInPoints, style, Unit, gdiCharSet, gdiVerticalFont);
 		}
 
 		#region ISerializable implementation
