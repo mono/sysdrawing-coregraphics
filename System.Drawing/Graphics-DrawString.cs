@@ -130,19 +130,32 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-
-
-		public void DrawString (string s, Font font, Brush brush, PointF point, StringFormat format = null)
+		public void DrawString (string s, Font font, Brush brush, PointF point, StringFormat format)
 		{
 			DrawString(s, font, brush, new RectangleF(point.X, point.Y, 0, 0), format);
 		}
 
-		public void DrawString (string s, Font font, Brush brush, float x, float y, StringFormat format = null)
+        public void DrawString(string s, Font font, Brush brush, PointF point)
+		{
+			DrawString(s, font, brush, new RectangleF(point.X, point.Y, 0, 0), null);
+		}
+
+		public void DrawString (string s, Font font, Brush brush, float x, float y, StringFormat format)
 		{
 			DrawString (s, font, brush, new RectangleF(x, y, 0, 0), format);
 		}
 
-		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format = null)
+        public void DrawString(string s, Font font, Brush brush, float x, float y)
+		{
+			DrawString(s, font, brush, new RectangleF(x, y, 0, 0), format, null);
+		}
+
+        public void DrawString(string s, Font font, Brush brush, RectangleF layoutRectangle)
+        {
+            DrawString(s, font, brush, layoutRectangle, null);
+        }
+
+		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
 		{
 			if (font == null)
 				throw new ArgumentNullException ("font");

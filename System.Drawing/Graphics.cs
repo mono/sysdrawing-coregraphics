@@ -15,6 +15,7 @@ using System;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+using System.Diagnostics.Contracts;
 
 #if MONOMAC
 using CoreGraphics;
@@ -66,7 +67,7 @@ namespace System.Drawing {
 		public Graphics (CGContext context, bool flipped = true)
 		{
 			if (context == null)
-				throw new ArgumentNullException ("context");
+				throw new ArgumentNullException (nameof(context));
 			isFlipped = flipped;
 			screenScale = 1;
 			InitializeContext(context);
@@ -291,7 +292,7 @@ namespace System.Drawing {
 		public void DrawArc (Pen pen, float x, float y, float width, float height, float startAngle, float sweepAngle)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 
 			DrawEllipticalArc(x, y, width, height, startAngle, sweepAngle, false);
 			StrokePen (pen);
@@ -303,7 +304,7 @@ namespace System.Drawing {
    		public void DrawArc (Pen pen, int x, int y, int width, int height, int startAngle, int sweepAngle)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			DrawEllipticalArc(x, y, width, height, startAngle, sweepAngle, false);
 			StrokePen (pen);
 		}
@@ -311,7 +312,7 @@ namespace System.Drawing {
 		public void DrawLine (Pen pen, Point pt1, Point pt2)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof(pen));
 
 			// DrawLine is throwing an assertion error on MonoTouch
 			// Assertion failed: (CGFloatIsValid(x) && CGFloatIsValid(y))
@@ -329,7 +330,7 @@ namespace System.Drawing {
 		public void DrawBezier (Pen pen, PointF pt1, PointF pt2, PointF pt3, PointF pt4)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			MoveTo (pt1.X, pt1.Y);
 			CurveTo (pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
 			StrokePen (pen);
@@ -338,7 +339,7 @@ namespace System.Drawing {
 		public void DrawBezier (Pen pen, Point pt1, Point pt2, Point pt3, Point pt4)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			MoveTo (pt1.X, pt1.Y);
 			CurveTo (pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
 			StrokePen (pen);
@@ -347,7 +348,7 @@ namespace System.Drawing {
 		public void DrawBezier (Pen pen, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			MoveTo (x1, y1);
 			CurveTo (x2, y2, x3, y3, x4, y4);
 			StrokePen (pen);
@@ -356,9 +357,9 @@ namespace System.Drawing {
 		public void DrawBeziers (Pen pen, Point [] points)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			if (points == null)
-				throw new ArgumentNullException ("points");
+				throw new ArgumentNullException (nameof (points));
 			
             int length = points.Length;
             if (length < 4)
@@ -377,9 +378,9 @@ namespace System.Drawing {
 		public void DrawBeziers (Pen pen, PointF [] points)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			if (points == null)
-				throw new ArgumentNullException ("points");
+				throw new ArgumentNullException (nameof (points));
             int length = points.Length;
             if (length < 4)
 	            return;
@@ -397,7 +398,7 @@ namespace System.Drawing {
 		public void DrawLine (Pen pen, PointF pt1, PointF pt2)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 
 			// DrawLine is throwing an assertion error on MonoTouch
 			// Assertion failed: (CGFloatIsValid(x) && CGFloatIsValid(y))
@@ -415,7 +416,7 @@ namespace System.Drawing {
 		public void DrawLine (Pen pen, int x1, int y1, int x2, int y2)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 
 			MoveTo (x1, y1);
 			LineTo (x2, y2);
@@ -426,7 +427,7 @@ namespace System.Drawing {
 		public void DrawLine (Pen pen, float x1, float y1, float x2, float y2)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 
 			MoveTo (x1, y1);
 			LineTo (x2, y2);
@@ -437,10 +438,10 @@ namespace System.Drawing {
 		public void DrawLines (Pen pen, Point [] points)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 
 			if (points == null)
-				throw new ArgumentNullException ("points");
+				throw new ArgumentNullException (nameof (points));
 			int count = points.Length;
 			if (count < 2)
 				return;
@@ -454,10 +455,10 @@ namespace System.Drawing {
 		public void DrawLines (Pen pen, PointF [] points)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 
 			if (points == null)
-				throw new ArgumentNullException ("points");
+				throw new ArgumentNullException (nameof (points));
 			int count = points.Length;
 			if (count < 2)
 				return;
@@ -488,7 +489,7 @@ namespace System.Drawing {
 		public void DrawRectangle (Pen pen, float x1, float y1, float x2, float y2)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 
 			RectanglePath (new RectangleF(x1, y1, x2, y2));
 			StrokePen (pen);
@@ -497,7 +498,7 @@ namespace System.Drawing {
 		public void DrawRectangle (Pen pen, int x1, int y1, int x2, int y2)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			RectanglePath (new RectangleF(x1, y1, x2, y2));
 			StrokePen (pen);
 		}
@@ -505,7 +506,7 @@ namespace System.Drawing {
 		public void DrawRectangle (Pen pen, Rectangle rect)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 
 			RectanglePath (new RectangleF(rect.X, rect.Y, rect.Width, rect.Height));
 			StrokePen (pen);
@@ -515,7 +516,7 @@ namespace System.Drawing {
 		public void FillRectangle (Brush brush, float x1, float y1, float x2, float y2)
 		{
 			if (brush == null)
-				throw new ArgumentNullException ("brush");
+				throw new ArgumentNullException (nameof(brush));
 			RectanglePath (new RectangleF(x1, y1, x2, y2));
 			FillBrush (brush);
 
@@ -524,7 +525,7 @@ namespace System.Drawing {
 		public void FillRectangle (Brush brush, Rectangle rect)
 		{
 			if (brush == null)
-				throw new ArgumentNullException ("brush");
+				throw new ArgumentNullException (nameof(brush));
 			RectanglePath (new RectangleF(rect.X, rect.Y, rect.Width, rect.Height));
 			FillBrush (brush);
 
@@ -533,7 +534,7 @@ namespace System.Drawing {
 		public void FillRectangle (Brush brush, RectangleF rect)
 		{
 			if (brush == null)
-				throw new ArgumentNullException ("brush");
+				throw new ArgumentNullException (nameof(brush));
 			RectanglePath (new RectangleF(rect.X, rect.Y, rect.Width, rect.Height));
 			FillBrush (brush);
 
@@ -542,7 +543,7 @@ namespace System.Drawing {
 		public void FillRectangle (Brush brush, int x1, int y1, int x2, int y2)
 		{
 			if (brush == null)
-				throw new ArgumentNullException ("brush");
+				throw new ArgumentNullException (nameof(brush));
 
 			RectanglePath (new RectangleF(x1, y1, x2, y2));
 			FillBrush (brush);
@@ -557,9 +558,9 @@ namespace System.Drawing {
 		public void FillRegion (Brush brush, Region region)
 		{
 			if (brush == null)
-				throw new ArgumentNullException ("brush");
+				throw new ArgumentNullException (nameof(brush));
 			if (region == null)
-				throw new ArgumentNullException ("region");
+				throw new ArgumentNullException (nameof(region));
 
 			// We will clear the rectangle of our clipping bounds for Empty
 			if (region.regionPath == null) 
@@ -577,7 +578,7 @@ namespace System.Drawing {
 		public void DrawEllipse (Pen pen, RectangleF rect)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 
 			context.AddEllipseInRect (rect.ToCGRect ());
 			StrokePen(pen);
@@ -591,7 +592,7 @@ namespace System.Drawing {
 		public void DrawEllipse (Pen pen, Rectangle rect)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			
 			DrawEllipse (pen, new RectangleF (rect.X, rect.Y, rect.Width, rect.Height));
 		}
@@ -599,16 +600,25 @@ namespace System.Drawing {
 		public void DrawEllipse (Pen pen, float x, float y, float width, float height)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 
 			DrawEllipse (pen, new RectangleF (x, y, width, height));
 
 		}
 
+        public void FillEllipse(Brush brush, Rectangle rect)
+        {
+			if (brush == null)
+                throw new ArgumentNullException(nameof(brush));
+
+			context.AddEllipseInRect(rect.ToCGRect());
+			FillBrush(brush);
+		}
+
 		public void FillEllipse (Brush brush, RectangleF rect)
 		{
 			if (brush == null)
-				throw new ArgumentNullException ("brush");
+				throw new ArgumentNullException (nameof(brush));
 
 			context.AddEllipseInRect(rect.ToCGRect ());
 			FillBrush(brush);
@@ -740,16 +750,20 @@ namespace System.Drawing {
 				result [i] = new PointF (points [i].X, points [i].Y);
 			return result;
 		}
-		
-		
-		public void DrawCurve (Pen pen, PointF[] points, int offset, int numberOfSegments, float tension = 0.5f)
+
+        public void DrawCurve(Pen pen, PointF[] points, int offset, int numberOfSegments)
+        {
+            DrawCurve(pen, points, offset, numberOfSegments, 0.5f);
+        }
+
+		public void DrawCurve (Pen pen, PointF[] points, int offset, int numberOfSegments, float tension)
 		{
 			if (points == null)
-				throw new ArgumentNullException ("points");
+				throw new ArgumentNullException (nameof (points));
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			if (numberOfSegments < 1)
-				throw new ArgumentException ("numberOfSegments");
+                throw new ArgumentException (nameof (numberOfSegments));
 
 			int count = points.Length;
 			// we need 3 points for the first curve, 2 more for each curves 
@@ -764,20 +778,35 @@ namespace System.Drawing {
 			StrokePen (pen);
 		}
 
-		public void DrawCurve (Pen pen, Point[] points, int offset, int numberOfSegments, float tension = 0.5f)
+        public void DrawCurve(Pen pen, Point[] points, int offset, int numberOfSegments)
+        {
+            DrawCurve(pen, points, offset, numberOfSegments, 0.5f);
+        }
+
+        public void DrawCurve (Pen pen, Point[] points, int offset, int numberOfSegments, float tension)
 		{
 			DrawCurve (pen, ConvertPoints (points), offset, numberOfSegments, tension);
 		}
-		
-		public void DrawCurve (Pen pen, Point [] points, float tension = 0.5f)
+
+        public void DrawCurve(Pen pen, Point[] points)
+        {
+            DrawCurve(pen, points, 0.5f);
+        }
+
+        public void DrawCurve (Pen pen, Point [] points, float tension)
 		{
 			DrawCurve (pen, ConvertPoints (points), tension);
 		}
 
-		public void DrawCurve (Pen pen, PointF [] points, float tension = 0.5f)
+        public void DrawCurve(Pen pen, PointF[] points)
+        {
+            DrawCurve(pen, points, 0.5f);
+        }
+
+		public void DrawCurve (Pen pen, PointF [] points, float tension)
 		{
 			if (points == null)
-				throw new ArgumentNullException ("points");
+				throw new ArgumentNullException (nameof (points));
 			int count = points.Length;
 			if (count == 2)
 				DrawLines (pen, points);
@@ -840,9 +869,9 @@ namespace System.Drawing {
 		public void DrawPath (Pen pen, GraphicsPath path)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			if (path == null)
-				throw new ArgumentNullException ("path");
+				throw new ArgumentNullException (nameof(path));
 
 			PlotPath (path);
 			StrokePen (pen);
@@ -851,9 +880,9 @@ namespace System.Drawing {
 		public void FillPath (Brush brush, GraphicsPath path)
 		{
 			if (brush == null)
-				throw new ArgumentNullException ("brush");
+				throw new ArgumentNullException (nameof(brush));
 			if (path == null)
-				throw new ArgumentNullException ("path");
+				throw new ArgumentNullException (nameof(path));
 			PlotPath (path);
 
 			var fillMode = path.FillMode;
@@ -934,8 +963,8 @@ namespace System.Drawing {
 		
 		public static Graphics FromImage (Image image)
 		{
-			if (image == null) 
-				throw new ArgumentNullException ("image");
+            if (image == null) 
+                throw new ArgumentNullException (nameof (image));
 
 			if ((image.PixelFormat & PixelFormat.Indexed) != 0)
 				throw new Exception ("Cannot create Graphics from an indexed bitmap.");
@@ -1460,9 +1489,9 @@ namespace System.Drawing {
 		public void DrawClosedCurve (Pen pen, PointF [] points)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			if (points == null)
-				throw new ArgumentNullException ("points");
+				throw new ArgumentNullException (nameof (points));
 			
 			DrawClosedCurve (pen, points, 0.5f, FillMode.Winding);
 		}
@@ -1470,9 +1499,9 @@ namespace System.Drawing {
 		public void DrawClosedCurve (Pen pen, Point [] points)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			if (points == null)
-				throw new ArgumentNullException ("points");
+				throw new ArgumentNullException (nameof (points));
 			
 			DrawClosedCurve (pen, ConvertPoints (points), 0.5f, FillMode.Winding);
 		}
@@ -1482,9 +1511,9 @@ namespace System.Drawing {
 		public void DrawClosedCurve (Pen pen, Point [] points, float tension, FillMode fillmode)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			if (points == null)
-				throw new ArgumentNullException ("points");
+				throw new ArgumentNullException (nameof (points));
 
 			DrawClosedCurve (pen, ConvertPoints (points), tension, fillmode);
 		}
@@ -1494,9 +1523,9 @@ namespace System.Drawing {
 		public void DrawClosedCurve (Pen pen, PointF [] points, float tension, FillMode fillmode)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			if (points == null)
-				throw new ArgumentNullException ("points");
+				throw new ArgumentNullException (nameof (points));
 
 			int count = points.Length;
 			if (count == 2)
@@ -1513,9 +1542,9 @@ namespace System.Drawing {
 		public void FillClosedCurve (Brush brush, PointF [] points)
 		{
 			if (brush == null)
-				throw new ArgumentNullException ("brush");
+				throw new ArgumentNullException (nameof(brush));
 			if (points == null)
-				throw new ArgumentNullException ("points");
+				throw new ArgumentNullException (nameof (points));
 			
 			FillClosedCurve(brush,points,FillMode.Alternate);
 		}
@@ -1523,34 +1552,44 @@ namespace System.Drawing {
 		public void FillClosedCurve (Brush brush, Point [] points)
 		{
 			if (brush == null)
-				throw new ArgumentNullException ("brush");
+				throw new ArgumentNullException (nameof(brush));
 			if (points == null)
-				throw new ArgumentNullException ("points");
+				throw new ArgumentNullException (nameof (points));
 			
 			FillClosedCurve(brush,ConvertPoints(points),FillMode.Alternate);
 		}
- 			
+
+        public void FillClosedCurve(Brush brush, Point[] points, FillMode fillmode)
+        {
+			FillClosedCurve(brush, points, fillmode, 0.5f);
+		}
+
 		// according to MSDN fillmode "is required but ignored" which makes _some_ sense since the unmanaged 
 		// GDI+ call doesn't support it (issue spotted using Gendarme's AvoidUnusedParametersRule)
-		public void FillClosedCurve (Brush brush, Point [] points, FillMode fillmode, float tension = 0.5f)
+		public void FillClosedCurve (Brush brush, Point [] points, FillMode fillmode, float tension)
 		{
 			if (brush == null)
-				throw new ArgumentNullException ("brush");
+				throw new ArgumentNullException (nameof(brush));
 			if (points == null)
-				throw new ArgumentNullException ("points");
+				throw new ArgumentNullException (nameof (points));
 			
 			FillClosedCurve(brush,points,FillMode.Alternate);
 		}
 
+        public void FillClosedCurve(Brush brush, PointF[] points, FillMode fillmode)
+        {
+            FillClosedCurve(brush, points, fillmode, 0.5f);
+        }
+
 		// according to MSDN fillmode "is required but ignored" which makes _some_ sense since the unmanaged 
 		// GDI+ call doesn't support it (issue spotted using Gendarme's AvoidUnusedParametersRule)
-		public void FillClosedCurve (Brush brush, PointF [] points, FillMode fillmode, float tension = 0.5f)
+		public void FillClosedCurve (Brush brush, PointF [] points, FillMode fillmode, float tension)
 		{
 
 			if (brush == null)
-				throw new ArgumentNullException ("brush");
+				throw new ArgumentNullException (nameof(brush));
 			if (points == null)
-				throw new ArgumentNullException ("points");
+				throw new ArgumentNullException (nameof (points));
 			
 			int count = points.Length;
 			if (count == 2)
@@ -1594,14 +1633,14 @@ namespace System.Drawing {
 		public void DrawPie (Pen pen, Rectangle rect, float startAngle, float sweepAngle)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			DrawPie (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 		}
 		
 		public void DrawPie (Pen pen, RectangleF rect, float startAngle, float sweepAngle)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			DrawPie (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 		}
 
@@ -1613,7 +1652,7 @@ namespace System.Drawing {
 		public void DrawPie (Pen pen, float x, float y, float width, float height, float startAngle, float sweepAngle)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			DrawEllipticalArc(x,y,width,height, startAngle, sweepAngle, true);
 			StrokePen(pen);
 
@@ -1621,7 +1660,7 @@ namespace System.Drawing {
 		public void FillPie (Brush brush, Rectangle rect, float startAngle, float sweepAngle)
 		{
 			if (brush == null)
-				throw new ArgumentNullException ("brush");
+				throw new ArgumentNullException (nameof(brush));
 			DrawEllipticalArc(rect, startAngle, sweepAngle, true);
 			FillBrush(brush);
 		}
@@ -1629,7 +1668,7 @@ namespace System.Drawing {
 		public void FillPie (Brush brush, int x, int y, int width, int height, int startAngle, int sweepAngle)
 		{
 			if (brush == null)
-				throw new ArgumentNullException ("brush");
+				throw new ArgumentNullException (nameof(brush));
 			DrawEllipticalArc(x,y,width,height, startAngle, sweepAngle, true);
 			FillBrush(brush);
 		}
@@ -1637,7 +1676,7 @@ namespace System.Drawing {
 		public void FillPie (Brush brush, float x, float y, float width, float height, float startAngle, float sweepAngle)
 		{
 			if (brush == null)
-				throw new ArgumentNullException ("brush");
+				throw new ArgumentNullException (nameof(brush));
 			DrawEllipticalArc(x,y,width,height, startAngle, sweepAngle, true);
 			FillBrush(brush);
 		}
@@ -1645,7 +1684,7 @@ namespace System.Drawing {
 		void PolygonSetup (PointF [] points)
 		{
 			if (points == null)
-				throw new ArgumentNullException ("points");
+				throw new ArgumentNullException (nameof (points));
 			if (points.Length < 2)
 				throw new ArgumentException ("Needs at least two points");
 			MoveTo (points [0]);
@@ -1661,34 +1700,50 @@ namespace System.Drawing {
 		public void DrawPolygon (Pen pen, PointF [] points)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("pen");
+				throw new ArgumentNullException (nameof (pen));
 			PolygonSetup (points);
 			context.ClosePath ();
 			StrokePen (pen);
 		}	
 
-		public void FillPolygon (Brush brush, Point [] points, FillMode fillMode = FillMode.Alternate)
+		public void FillPolygon (Brush brush, Point [] points, FillMode fillMode)
 		{
 			FillPolygon (brush, ConvertPoints (points), fillMode);
 		}
 
-		public void FillPolygon (Brush brush, PointF [] points, FillMode fillMode = FillMode.Alternate)
+        public void FillPolygon(Brush brush, Point[] points)
+		{
+            FillPolygon(brush, ConvertPoints(points), FillMode.Alternate);
+		}
+
+		public void FillPolygon (Brush brush, PointF [] points)
 		{
 			if (brush == null)
-				throw new ArgumentNullException ("brush");
+				throw new ArgumentNullException (nameof(brush));
 			if (points == null)
-				throw new ArgumentNullException ("points");
+				throw new ArgumentNullException (nameof (points);
 
 			PolygonSetup (points);
 			FillBrush (brush, fillMode);
 		}
-		
+
+		public void FillPolygon(Brush brush, PointF[] points, FillMode fillMode)
+		{
+			if (brush == null)
+				throw new ArgumentNullException(nameof(brush));
+			if (points == null)
+				throw new ArgumentNullException(nameof(points));
+
+            PolygonSetup(points);
+            FillBrush(brush, FillMode.Alternate);
+        }
+
 		public void DrawRectangles (Pen pen, RectangleF [] rects)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("image");
+				throw new ArgumentNullException (nameof(pen));
 			if (rects == null)
-				throw new ArgumentNullException ("rects");
+				throw new ArgumentNullException (nameof(rects));
 
 			foreach (var rect in rects)
 				RectanglePath (rect.X, rect.Y, rect.Right, rect.Bottom);
@@ -1698,7 +1753,7 @@ namespace System.Drawing {
 		public void DrawRectangles (Pen pen, Rectangle [] rects)
 		{
 			if (pen == null)
-				throw new ArgumentNullException ("image");
+				throw new ArgumentNullException (nameof(pen));
 			if (rects == null)
 				throw new ArgumentNullException ("rects");
 
@@ -1710,9 +1765,9 @@ namespace System.Drawing {
 		public void FillRectangles (Brush brush, Rectangle [] rects)
 		{
 			if (brush == null)
-				throw new ArgumentNullException ("brush");
+				throw new ArgumentNullException (nameof(brush));
 			if (rects == null)
-				throw new ArgumentNullException ("rects");
+                    throw new ArgumentNullException (nameof (rects));
 
 			foreach (var rect in rects)
 				RectanglePath (rect.X, rect.Y, rect.Right, rect.Bottom);
@@ -1722,9 +1777,9 @@ namespace System.Drawing {
 		public void FillRectangles (Brush brush, RectangleF [] rects)
 		{
 			if (brush == null)
-				throw new ArgumentNullException ("brush");
+                    throw new ArgumentNullException (nameof (brush));
 			if (rects == null)
-				throw new ArgumentNullException ("rects");
+                    throw new ArgumentNullException (nameof(rects));
 
 			foreach (var rect in rects)
 				RectanglePath (rect.X, rect.Y, rect.Right, rect.Bottom);
@@ -1796,7 +1851,7 @@ namespace System.Drawing {
 		public void MultiplyTransform (Matrix matrix, MatrixOrder order)
 		{
 			if (matrix == null)
-				throw new ArgumentNullException ("matrix");
+				throw new ArgumentNullException (nameof(matrix));
 
 			if (order == MatrixOrder.Prepend)
 				context.ConcatCTM (matrix.transform);
@@ -1807,7 +1862,7 @@ namespace System.Drawing {
 		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, PointF [] pts)
 		{
 			if (pts == null)
-				throw new ArgumentNullException ("pts");
+				throw new ArgumentNullException (nameof(pts));
 
 			Matrix transform = new Matrix();
 			ConversionHelpers.GetGraphicsTransform (this, destSpace, srcSpace, ref transform);
@@ -1818,7 +1873,7 @@ namespace System.Drawing {
 		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, Point [] pts)
 		{						
 			if (pts == null)
-				throw new ArgumentNullException ("pts");
+				throw new ArgumentNullException (nameof(pts));
 
 			Matrix transform = new Matrix();
 			ConversionHelpers.GetGraphicsTransform (this, destSpace, srcSpace, ref transform);

@@ -62,7 +62,16 @@ namespace System.Drawing
 			return (CGRect)rect;
 #endif
 		}
-		
+
+		internal static CGRect ToCGRect(this Rectangle rect)
+		{
+#if XM45
+            return new CGRect (rect.X, rect.Y, rect.Width, rect.Height);
+#else
+			return (CGRect)rect;
+#endif
+		}
+
 		internal static RectangleF ToRectangleF (this CGRect rect)
 		{
 #if XM45
