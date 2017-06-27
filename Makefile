@@ -132,12 +132,12 @@ XM_45_BCL_PATH ?= $(MAC_PREFIX)/lib/mono/4.5
 
 bin/mac/mobile/System.Drawing.dll: $(SOURCES) $(MONO_SOURCES) $(MONO_EXTRA_SOURCES) Makefile
 	mkdir -p bin/mac/mobile
-	/Library/Frameworks/Mono.framework/Commands/mcs -unsafe -noconfig $(KEY_ARGS) -define:MONOMAC -debug -out:bin/mac/mobile/System.Drawing.dll $(MAC_SOURCE_LIST)  -target:library -define:MONOMAC /nostdlib /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/System.dll /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/System.Core.dll /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/Xamarin.Mac.dll /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/mscorlib.dll  /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/OpenTK.dll
+	/Library/Frameworks/Mono.framework/Commands/csc -unsafe -noconfig $(KEY_ARGS) -define:MONOMAC -debug -out:bin/mac/mobile/System.Drawing.dll $(MAC_SOURCE_LIST)  -target:library -define:MONOMAC /nostdlib /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/System.dll /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/System.Core.dll /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/Xamarin.Mac.dll /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/mscorlib.dll  /reference:$(MAC_PREFIX)/lib/mono/Xamarin.Mac/OpenTK.dll
 
 
 bin/mac/xm45/System.Drawing.dll: $(SOURCES) $(MONO_SOURCES) $(MONO_EXTRA_SOURCES) Makefile
 	mkdir -p bin/mac/xm45
-	/Library/Frameworks/Mono.framework/Commands/mcs -unsafe -noconfig $(KEY_ARGS) -define:MONOMAC -define:XM45 -debug -out:bin/mac/xm45/System.Drawing.dll $(MAC_SOURCE_LIST)  -target:library -define:MONOMAC /nostdlib /reference:$(XM_45_BCL_PATH)/System.dll /reference:$(XM_45_BCL_PATH)/System.Core.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/Xamarin.Mac.dll  /reference:$(XM_45_BCL_PATH)/mscorlib.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/OpenTK.dll
+	/Library/Frameworks/Mono.framework/Commands/csc -unsafe -noconfig $(KEY_ARGS) -define:MONOMAC -define:XM45 -debug -out:bin/mac/xm45/System.Drawing.dll $(MAC_SOURCE_LIST)  -target:library -define:MONOMAC /nostdlib /reference:$(XM_45_BCL_PATH)/System.dll /reference:$(XM_45_BCL_PATH)/System.Core.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/Xamarin.Mac.dll  /reference:$(XM_45_BCL_PATH)/mscorlib.dll /reference:$(MAC_PREFIX)/lib/mono/4.5/OpenTK.dll
 
 clean:
 	rm -rf bin/
