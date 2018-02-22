@@ -6,11 +6,6 @@ developers are used to.
 This works with both iOS and OSX, using Xamarin.Mac Unified and Xamarin.iOS
 Unified.
 
-The Makefile assumes you have a copy of mono checked out side by side. 
-You can update the MONO_SYSD variable to point to a checkout in another location if necessary.
+You will need a checkout of Mono as a peer module to this module.
 
-To Build:
-
-make
-
-output will be found in top level bin directory.
+Open the solution 

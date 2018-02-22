@@ -1,55 +1,57 @@
 MONO_SYSD ?= ../mono/mcs/class/System.Drawing
+COREFX    ?= ../mono/external/corefx/src/System.Drawing.Common/src
 
 MONO_SOURCES = \
-	$(MONO_SYSD)/System.Drawing.Drawing2D/Blend.cs			\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/ColorBlend.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/CombineMode.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/CompostingMode.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/CompostingQuality.cs	\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/CoordinateSpace.cs	\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/DashCap.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/DashStyle.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/FillMode.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/FlushIntention.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/InterpolationMode.cs	\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/LineCap.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/LineJoin.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/LinearGradientMode.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/MatrixOrder.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/PathData.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/PathPointType.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/PixelOffsetMode.cs	\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/SmoothingMode.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/WarpMode.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/WrapMode.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/GraphicsState.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/GraphicsContainer.cs		\
+	$(COREFX)/System/Drawing/Drawing2D/Blend.cs			\
+	$(COREFX)/System/Drawing/Drawing2D/ColorBlend.cs		\
+	$(COREFX)/System/Drawing/Drawing2D/CombineMode.cs		\
+	$(COREFX)/System/Drawing/Drawing2D/CompositingMode.cs		\
+	$(COREFX)/System/Drawing/Drawing2D/CompositingQuality.cs	\
+	$(COREFX)/System/Drawing/Drawing2D/CoordinateSpace.cs		\
+	$(COREFX)/System/Drawing/Drawing2D/QualityMode.cs		\
+	$(COREFX)/System/Drawing/DashCap.cs				\
+	$(COREFX)/System/Drawing/Drawing2D/DashStyle.cs			\
+	$(COREFX)/System/Drawing/Drawing2D/FillMode.cs			\
+	$(COREFX)/System/Drawing/Drawing2D/FlushIntention.cs		\
+	$(COREFX)/System/Drawing/Drawing2D/InterpolationMode.cs		\
+	$(COREFX)/System/Drawing/Drawing2D/LineCap.cs			\
+	$(COREFX)/System/Drawing/Drawing2D/LineJoin.cs			\
+	$(COREFX)/System/Drawing/Drawing2D/LinearGradientMode.cs	\
+	$(COREFX)/System/Drawing/Drawing2D/MatrixOrder.cs		\
+	$(COREFX)/System/Drawing/Drawing2D/PathData.cs			\
+	$(COREFX)/System/Drawing/Drawing2D/PathPointType.cs		\
+	$(COREFX)/System/Drawing/Drawing2D/PixelOffsetMode.cs		\
+	$(COREFX)/System/Drawing/Drawing2D/SmoothingMode.cs		\
+	$(COREFX)/System/Drawing/Drawing2D/WarpMode.cs			\
+	$(COREFX)/System/Drawing/Drawing2D/WrapMode.cs			\
+	$(COREFX)/System/Drawing/Drawing2D/GraphicsState.cs		\
+	$(MONO_SYSD)/System.Drawing.Drawing2D/GraphicsContainer.cs	\
 	$(MONO_SYSD)/System.Drawing.Imaging/BitmapData.cs		\
-	$(MONO_SYSD)/System.Drawing.Imaging/ColorAdjustType.cs		\
-	$(MONO_SYSD)/System.Drawing.Imaging/ColorChannelFlag.cs		\
-	$(MONO_SYSD)/System.Drawing.Imaging/ColorMap.cs			\
-	$(MONO_SYSD)/System.Drawing.Imaging/ColorMatrix.cs		\
-	$(MONO_SYSD)/System.Drawing.Imaging/ColorMatrixFlag.cs		\
-	$(MONO_SYSD)/System.Drawing.Imaging/ImageFlags.cs		\
+	$(COREFX)/System/Drawing/Imaging/ColorAdjustType.cs		\
+	$(COREFX)/System/Drawing/Imaging/ColorChannelFlags.cs		\
+	$(COREFX)/System/Drawing/Imaging/ColorMap.cs			\
+	$(COREFX)/System/Drawing/Imaging/ColorMatrix.cs			\
+	$(COREFX)/System/Drawing/Imaging/ColorMatrixFlags.cs		\
+	$(COREFX)/System/Drawing/Imaging/ImageFlags.cs			\
 	$(MONO_SYSD)/System.Drawing.Imaging/ImageFormat.cs		\
-	$(MONO_SYSD)/System.Drawing.Imaging/ImageLockMode.cs		\
-	$(MONO_SYSD)/System.Drawing.Imaging/PixelFormat.cs		\
-	$(MONO_SYSD)/System.Drawing.Printing/PrintPageEventHandler.cs	\
-	$(MONO_SYSD)/System.Drawing.Text/GenericFontFamilies.cs		\
-	$(MONO_SYSD)/System.Drawing.Text/TextRenderingHint.cs		\
+	$(COREFX)/System/Drawing/Imaging/ImageLockMode.cs		\
+	$(COREFX)/System/Drawing/Imaging/PixelFormat.cs			\
+	$(COREFX)/System/Drawing/Printing/PrintPageEventHandler.cs	\
+	$(COREFX)/System/Drawing/Text/GenericFontFamilies.cs		\
+	$(COREFX)/System/Drawing/Text/TextRenderingHint.cs		\
 	$(MONO_SYSD)/System.Drawing/CharacterRange.cs			\
-	$(MONO_SYSD)/System.Drawing/FontStyle.cs			\
-	$(MONO_SYSD)/System.Drawing/GraphicsUnit.cs			\
+	$(COREFX)/System/Drawing/FontStyle.cs				\
+	$(COREFX)/System/Drawing/GraphicsUnit.cs			\
 	$(MONO_SYSD)/System.Drawing/IconConverter.cs			\
 	$(MONO_SYSD)/System.Drawing/ImageConverter.cs			\
 	$(MONO_SYSD)/System.Drawing/ImageFormatConverter.cs		\
-	$(MONO_SYSD)/System.Drawing/RotateFlipType.cs			\
-	$(MONO_SYSD)/System.Drawing/StringAligment.cs			\
-	$(MONO_SYSD)/System.Drawing/StringFormatFlags.cs		\
-	$(MONO_SYSD)/System.Drawing/StringTrimming.cs			\
+	$(COREFX)/System/Drawing/RotateFlipType.cs			\
+	$(COREFX)/System/Drawing/StringAlignment.cs			\
+	$(COREFX)/System/Drawing/StringFormatFlags.cs			\
+	$(COREFX)/System/Drawing/StringTrimming.cs			\
 	$(MONO_SYSD)/System.Drawing/ToolboxBitmapAttribute.cs		\
-	$(MONO_SYSD)/System.Drawing.Drawing2D/HatchStyle.cs		\
-	$(MONO_SYSD)/System.Drawing.Imaging/FrameDimension.cs		\
+	$(COREFX)/System/Drawing/Drawing2D/HatchStyle.cs		\
+	$(COREFX)/System/Drawing/Imaging/FrameDimension.cs		\
 	$(MONO_SYSD)/System.Drawing/Brushes.cs				\
 	$(MONO_SYSD)/System.Drawing/Pens.cs				\
 	$(MONO_SYSD)/System.Drawing/PointConverter.cs			\

@@ -1446,7 +1446,7 @@ namespace System.Drawing {
             // re-apply our ModelView to the graphics context
 			applyModelView();
 
-            statePos = state.nativeState - 1;
+	statePos = (uint) state.nativeState - 1;
 
 		}
 		
@@ -1458,8 +1458,8 @@ namespace System.Drawing {
                 statePos = 0;
             }
 
-			var gsCurrentState = new GraphicsState();
-            gsCurrentState.nativeState = ++statePos;
+			var gsCurrentState = new GraphicsState((int)++statePos);
+
 
             var currentState = new CGGraphicsState();
 

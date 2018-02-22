@@ -56,7 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\GraphicsState.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\GraphicsState.cs">
       <Link>External\GraphicsState.cs</Link>
     </Compile>
     <Compile Include="..\System.Drawing.Drawing2D\CGGraphicsState.cs">
@@ -92,7 +92,7 @@
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\ImageFormatConverter.cs">
       <Link>External\ImageFormatConverter.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\StringAligment.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\StringAlignment.cs">
       <Link>External\StringAligment.cs</Link>
     </Compile>
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\SystemColors.cs">
@@ -101,38 +101,38 @@
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\ToolboxBitmapAttribute.cs">
       <Link>External\ToolboxBitmapAttribute.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\ColorBlend.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\ColorBlend.cs">
       <Link>External\ColorBlend.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\CompostingMode.cs">
-      <Link>External\CompostingMode.cs</Link>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\CompositingMode.cs">
+      <Link>External\CompositingMode.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\FillMode.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\FillMode.cs">
       <Link>External\FillMode.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\MatrixOrder.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\MatrixOrder.cs">
       <Link>External\MatrixOrder.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\PathPointType.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\PathPointType.cs">
       <Link>External\PathPointType.cs</Link>
     </Compile>
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\ImageFormat.cs">
       <Link>External\ImageFormat.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\PixelFormat.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\PixelFormat.cs">
       <Link>External\PixelFormat.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Printing\PrintPageEventHandler.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintPageEventHandler.cs">
       <Link>External\PrintPageEventHandler.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\PathData.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\PathData.cs">
       <Link>External\PathData.cs</Link>
     </Compile>
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\GraphicsUnit.cs">
       <Link>External\GraphicsUnit.cs</Link>
     </Compile>
     <Compile Include="..\Utilities\Locale.cs" />
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Text\TextRenderingHint.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Text\TextRenderingHint.cs">
       <Link>External\TextRenderingHint.cs</Link>
     </Compile>
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\Pens.cs">
@@ -141,65 +141,68 @@
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\Brushes.cs">
       <Link>External\Brushes.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\CombineMode.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\CombineMode.cs">
       <Link>External\CombineMode.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\ImageLockMode.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\ImageLockMode.cs">
       <Link>External\ImageLockMode.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\DashCap.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\DashCap.cs">
       <Link>External\DashCap.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\DashStyle.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\DashStyle.cs">
       <Link>External\DashStyle.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\InterpolationMode.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\InterpolationMode.cs">
       <Link>External\InterpolationMode.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\LineCap.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\LineCap.cs">
       <Link>External\LineCap.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\LineJoin.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\LineJoin.cs">
       <Link>External\LineJoin.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\PixelOffsetMode.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\PixelOffsetMode.cs">
       <Link>External\PixelOffsetMode.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\SmoothingMode.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\SmoothingMode.cs">
       <Link>External\SmoothingMode.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\WarpMode.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\WarpMode.cs">
       <Link>External\WarpMode.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\WrapMode.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\WrapMode.cs">
       <Link>External\WrapMode.cs</Link>
     </Compile>
     <Compile Include="..\System.Drawing\Graphics-DrawImage.cs" />
     <Compile Include="..\System.Drawing.Imaging\ImageAttributes.cs" />
     <Compile Include="..\System.Drawing\Font.cs" />
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\FontStyle.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\FontStyle.cs">
       <Link>External\FontStyle.cs</Link>
     </Compile>
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\IconConverter.cs">
       <Link>External\IconConverter.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\StringFormatFlags.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\StringFormatFlags.cs">
       <Link>External\StringFormatFlags.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\FlushIntention.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\FlushIntention.cs">
       <Link>External\FlushIntention.cs</Link>
     </Compile>
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\CharacterRange.cs">
       <Link>External\CharacterRange.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\CoordinateSpace.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\CoordinateSpace.cs">
       <Link>External\CoordinateSpace.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\CompostingQuality.cs">
-      <Link>External\CompostingQuality.cs</Link>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\CompositingQuality.cs">
+      <Link>External\CompositingQuality.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\QualityMode.cs">
+      <Link>External\QualityMode.cs</Link>
     </Compile>
     <Compile Include="..\System.Drawing\Bitmap.cs" />
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\Blend.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\Blend.cs">
       <Link>External\Blend.cs</Link>
     </Compile>
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\BitmapData.cs">
@@ -207,45 +210,51 @@
     </Compile>
     <Compile Include="..\System.Drawing\Graphics-DrawEllipticalArc.cs" />
     <Compile Include="..\Utilities\ConversionHelpers.cs" />
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\HatchStyle.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\HatchStyle.cs">
       <Link>External\HatchStyle.cs</Link>
     </Compile>
     <Compile Include="..\System.Drawing.Drawing2D\HatchBrush.cs" />
     <Compile Include="..\System.Drawing\TextureBrush.cs" />
     <Compile Include="..\System.Drawing.Drawing2D\LinearGradientBrush.cs" />
     <Compile Include="..\Utilities\GeomUtilities.cs" />
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\LinearGradientMode.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\LinearGradientMode.cs">
       <Link>External\LinearGradientMode.cs</Link>
     </Compile>
     <Compile Include="..\System.Drawing\Icon.cs" />
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\FrameDimension.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\FrameDimension.cs">
       <Link>System.Drawing.Imaging\FrameDimension.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\RotateFlipType.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\RotateFlipType.cs">
       <Link>External\RotateFlipType.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\ImageFlags.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\ImageFlags.cs">
       <Link>External\ImageFlags.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\ColorMatrix.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\ColorMatrix.cs">
       <Link>External\ColorMatrix.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\ColorMatrixFlag.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\ColorChannelFlags.cs">
+      <Link>External\ColorChannelFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\ColorMatrixFlags.cs">
       <Link>External\ColorMatrixFlag.cs</Link>
     </Compile>
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\ColorAdjustType.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\ColorMap.cs">
+      <Link>External\ColorMap.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\ColorAdjustType.cs">
       <Link>External\ColorAdjustType.cs</Link>
     </Compile>
     <Compile Include="..\Utilities\ClipperLib\clipper.cs" />
     <Compile Include="..\System.Drawing\Graphics-DrawString.cs" />
     <Compile Include="..\System.Drawing.Drawing2D\GraphicsPathIterator.cs" />
     <Compile Include="..\System.Drawing.Drawing2D\GraphicsPath-AddString.cs" />
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\StringTrimming.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\StringTrimming.cs">
       <Link>External\StringTrimming.cs</Link>
     </Compile>
     <Compile Include="..\Utilities\GeomTransformUtils.cs" />
     <Compile Include="..\System.Drawing.Drawing2D\PathGradientBrush.cs" />
-    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Text\GenericFontFamilies.cs">
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Text\GenericFontFamilies.cs">
       <Link>External\GenericFontFamilies.cs</Link>
     </Compile>
     <Compile Include="..\System.Drawing\FontFamily-CoreText.cs" />
