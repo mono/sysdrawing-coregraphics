@@ -91,7 +91,7 @@ namespace System.Drawing.Imaging
 			SetColorKey (lowColor, highColor, ColorAdjustType.Default);
 		}
 
-		public void SetColorKey (Color lowColor, Color highColor ColorAdjustType type)
+		public void SetColorKey (Color lowColor, Color highColor, ColorAdjustType type)
 		{
 			// Not implemented
 		}
@@ -107,6 +107,7 @@ namespace System.Drawing.Imaging
 			copy.gamma = this.gamma;
 			copy.isColorMatrixSet = this.isColorMatrixSet;
 			copy.isGammaSet = this.isGammaSet;
+			return copy;
 		}
 		#endregion
 		

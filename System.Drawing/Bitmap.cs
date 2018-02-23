@@ -76,6 +76,10 @@ namespace System.Drawing {
 
 		private CGDataProvider dataProvider;
 
+		internal Bitmap (CGImage image)
+		{
+		}
+
 		public Bitmap (string filename, bool useIcm)
 		{
 			if (filename == null)

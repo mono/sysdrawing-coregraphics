@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\bin\mac\mobile</OutputPath>
-    <DefineConstants>DEBUG;MONOMAC</DefineConstants>
+    <DefineConstants>__UNIFIED__;__MACOS__;MONOMAC;MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -29,11 +29,12 @@
     <EnableCodeSigning>false</EnableCodeSigning>
     <EnablePackageSigning>false</EnablePackageSigning>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AOTMode>None</AOTMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin\mac\mobile</OutputPath>
+    <DefineConstants>__UNIFIED__;__MACOS__;MONO;MONOMAC</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -45,6 +46,7 @@
     <EnableCodeSigning>false</EnableCodeSigning>
     <EnablePackageSigning>false</EnablePackageSigning>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AOTMode>None</AOTMode>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -128,11 +130,64 @@
     <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintPageEventHandler.cs">
       <Link>External\PrintPageEventHandler.cs</Link>
     </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintRange.cs">
+      <Link>External\PrintRange.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\Duplex.cs">
+      <Link>External\Duplex.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PaperSize.cs">
+      <Link>External\PaperSize.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\Margins.cs">
+      <Link>External\Margins.cs</Link>
+    </Compile>
+    <Compile Include="..\System.Drawing.Printing\MarginsConverter.cs">
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PaperSource.cs">
+      <Link>External\PaperSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrinterResolution.cs">
+      <Link>External\PrinterResolution.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrinterResolutionKind.cs">
+      <Link>External\PrinterResolutionKind.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PaperKinds.cs">
+      <Link>External\PaperKinds.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PaperSourceKind.cs">
+      <Link>External\PaperSourceKind.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\GdiPlus.cs">
+      <Link>External\GdiPlus.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\NativeMethods.cs">
+      <Link>External\NativeMethods.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\UnsafeNativeMethods.cs">
+      <Link>External\UnsafeNativeMethods.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPPOINT.cs">
+      <Link>External\GPPOINT.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPPOINTF.cs">
+      <Link>External\GPPOINTF.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECT.cs">
+      <Link>External\GPRECT.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECTF.cs">
+      <Link>External\GPRECTF.cs</Link>
+    </Compile>
     <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\PathData.cs">
       <Link>External\PathData.cs</Link>
     </Compile>
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\GraphicsUnit.cs">
       <Link>External\GraphicsUnit.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\ExternDll.cs">
+      <Link>External\ExternDll.cs</Link>
     </Compile>
     <Compile Include="..\Utilities\Locale.cs" />
     <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Text\TextRenderingHint.cs">
@@ -180,6 +235,9 @@
     <Compile Include="..\System.Drawing\Graphics-DrawImage.cs" />
     <Compile Include="..\System.Drawing.Imaging\ImageAttributes.cs" />
     <Compile Include="..\System.Drawing\Font.cs" />
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\Misc\HandleCollector.cs">
+      <Link>External\HandleCollector.cs</Link>
+    </Compile>
     <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\FontStyle.cs">
       <Link>External\FontStyle.cs</Link>
     </Compile>
@@ -211,6 +269,12 @@
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\BitmapData.cs">
       <Link>External\BitmapData.cs</Link>
     </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\corefx\SR.cs">
+      <Link>External\SR.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\SR.cs">
+      <Link>External\SysDrawingSR.cs</Link>
+    </Compile>
     <Compile Include="..\System.Drawing\Graphics-DrawEllipticalArc.cs" />
     <Compile Include="..\Utilities\ConversionHelpers.cs" />
     <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\HatchStyle.cs">
@@ -223,7 +287,11 @@
     <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\LinearGradientMode.cs">
       <Link>External\LinearGradientMode.cs</Link>
     </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\ContentAlignment.cs">
+      <Link>External\ContentAlignment.cs</Link>
+    </Compile>
     <Compile Include="..\System.Drawing\Icon.cs" />
+    <Compile Include="..\System.Drawing\Extensions.cs" />
     <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\FrameDimension.cs">
       <Link>System.Drawing.Imaging\FrameDimension.cs</Link>
     </Compile>

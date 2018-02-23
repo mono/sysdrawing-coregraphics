@@ -6,6 +6,8 @@
 //   Herve Poussineau (hpoussineau@fr.st)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //   Sebastien Pouliot  <sebastien@xamarin.com>
+//   Filip Navara <filip.navara@gmail.com>
+//   Jiri Volejnik <aconcagua21@volny.cz>
 //
 // (C) 2002 Ximian, Inc
 // Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
@@ -30,20 +32,336 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
 
-namespace System.Drawing.Printing {
-	
+#if MONOMAC
+using AppKit;
+#endif
+
+namespace System.Drawing.Printing
+{
+
 	[Serializable]
-	public class PrinterSettings : ICloneable {
-		
+	public class PrinterSettings : ICloneable
+	{
+		private int from_page;
+		private int to_page;
+		private int minimum_page;
+		private int maximum_page;
+		private short copies;
+		private PrintRange print_range;
+		private string printer_name;
+#if MONOMAC
+		internal NSPrinter printer;
+#else
+		internal object printer;
+#endif
+		internal PageSettings page_settings;
+
 		public PrinterSettings ()
 		{
+#if MONOMAC
+			printer = NSPrintInfo.DefaultPrinter;
+			printer_name = printer?.Name;
+#endif
+			page_settings = new PageSettings (this);
+			//PaperSizes = new PaperSizeCollection(new[] { new PaperSize("Letter", (int)(8.5f * 72f), (int)(11f * 72f)) });
 		}
-		
+
 		public object Clone ()
 		{
 			// FIXME
 			return new PrinterSettings ();
+		}
+
+		public bool IsValid {
+			get { return printer != null; }
+		}
+
+		public int FromPage {
+			get { return from_page; }
+			set {
+				if (value < 0)
+					throw new ArgumentException ("The value of the FromPage property is less than zero");
+
+				from_page = value;
+			}
+		}
+
+		public int ToPage {
+			get { return to_page; }
+			set {
+				if (value < 0)
+					throw new ArgumentException ("The value of the FromPage property is less than zero");
+
+				to_page = value;
+			}
+		}
+
+		public int MaximumPage {
+			get { return maximum_page; }
+			set {
+				// This not documented but behaves like MinimumPage
+				if (value < 0)
+					throw new ArgumentException ("The value of the MaximumPage property is less than zero");
+
+				maximum_page = value;
+			}
+		}
+
+		public int MinimumPage {
+			get { return minimum_page; }
+			set {
+				if (value < 0)
+					throw new ArgumentException ("The value of the MaximumPage property is less than zero");
+
+				minimum_page = value;
+			}
+		}
+
+		public short Copies {
+			get { return copies; }
+			set {
+				if (value < 0)
+					throw new ArgumentException ("The value of the Copies property is less than zero.");
+
+				copies = value;
+			}
+		}
+
+		public PrintRange PrintRange {
+			get { return print_range; }
+			set {
+				if (value != PrintRange.AllPages && value != PrintRange.Selection &&
+					value != PrintRange.SomePages)
+					throw new InvalidEnumArgumentException ("The value of the PrintRange property is not one of the PrintRange values");
+
+				print_range = value;
+			}
+		}
+
+		public string PrinterName {
+			get { return printer_name; }
+			set {
+				printer_name = value;
+#if MONOMAC
+				printer = NSPrinter.PrinterWithName (value);
+#endif
+			}
+		}
+
+		public bool PrintToFile { get; set; }
+		public string PrintFileName { get; set; }
+		public bool CanDuplex { get; internal set; }
+		public Duplex Duplex { get; internal set; }
+		public bool Collate { get; set; }
+		public bool IsPlotter { get; set; }
+		public int LandscapeAngle { get; internal set; }
+		public bool SupportsColor { get; internal set; }
+		public bool PrintDialogDisplayed { get; set; }
+		public PrinterSettings.PaperSourceCollection PaperSources { get; set; }
+
+
+		public PrinterSettings.PaperSizeCollection PaperSizes {
+			get {
+				List<PaperSize> paper_sizes = new List<PaperSize> ();
+#if MONOMAC
+				if (printer != null) {
+					foreach (var paper_name in printer.StringListForKey ("PageSize", "PPD")) {
+						var size = printer.PageSizeForPaper (paper_name);
+						paper_sizes.Add (new PaperSize (paper_name, (int)size.Width, (int)size.Height));
+					}
+				}
+#endif
+				return new PaperSizeCollection (paper_sizes.ToArray ());
+			}
+		}
+		public PrinterResolutionCollection PrinterResolutions { get; internal set; }
+		public object printer_capabilities { get; internal set; }
+
+		public PageSettings DefaultPageSettings {
+			get {
+				return page_settings;
+			}
+		}
+
+		public static PrinterSettings.StringCollection InstalledPrinters {
+			get {
+#if MONOMAC
+				return new StringCollection (NSPrinter.PrinterNames); 
+#else
+				throw new NotImplementedException ();
+#endif
+			}
+		}
+
+		public class PaperSourceCollection : ICollection, IEnumerable
+		{
+			ArrayList _PaperSources = new ArrayList ();
+
+			public PaperSourceCollection (PaperSource [] array)
+			{
+				foreach (PaperSource ps in array)
+					_PaperSources.Add (ps);
+			}
+
+			public int Count { get { return _PaperSources.Count; } }
+			int ICollection.Count { get { return _PaperSources.Count; } }
+			bool ICollection.IsSynchronized { get { return false; } }
+			object ICollection.SyncRoot { get { return this; } }
+
+			[EditorBrowsable (EditorBrowsableState.Never)]
+			public int Add (PaperSource paperSource) { return _PaperSources.Add (paperSource); }
+			public void CopyTo (PaperSource [] paperSources, int index) { throw new NotImplementedException (); }
+
+			public virtual PaperSource this [int index] {
+				get { return _PaperSources [index] as PaperSource; }
+			}
+
+			IEnumerator IEnumerable.GetEnumerator ()
+			{
+				return _PaperSources.GetEnumerator ();
+			}
+
+			public IEnumerator GetEnumerator ()
+			{
+				return _PaperSources.GetEnumerator ();
+			}
+
+			void ICollection.CopyTo (Array array, int index)
+			{
+				_PaperSources.CopyTo (array, index);
+			}
+
+			internal void Clear ()
+			{
+				_PaperSources.Clear ();
+			}
+		}
+
+		public class PaperSizeCollection : ICollection, IEnumerable
+		{
+			ArrayList _PaperSizes = new ArrayList ();
+
+			public PaperSizeCollection (PaperSize [] array)
+			{
+				foreach (PaperSize ps in array)
+					_PaperSizes.Add (ps);
+			}
+
+			public int Count { get { return _PaperSizes.Count; } }
+			int ICollection.Count { get { return _PaperSizes.Count; } }
+			bool ICollection.IsSynchronized { get { return false; } }
+			object ICollection.SyncRoot { get { return this; } }
+			[EditorBrowsable (EditorBrowsableState.Never)]
+			public int Add (PaperSize paperSize) { return _PaperSizes.Add (paperSize); }
+			public void CopyTo (PaperSize [] paperSizes, int index) { throw new NotImplementedException (); }
+
+			public virtual PaperSize this [int index] {
+				get { return _PaperSizes [index] as PaperSize; }
+			}
+
+			IEnumerator IEnumerable.GetEnumerator ()
+			{
+				return _PaperSizes.GetEnumerator ();
+			}
+
+			public IEnumerator GetEnumerator ()
+			{
+				return _PaperSizes.GetEnumerator ();
+			}
+
+			void ICollection.CopyTo (Array array, int index)
+			{
+				_PaperSizes.CopyTo (array, index);
+			}
+
+			internal void Clear ()
+			{
+				_PaperSizes.Clear ();
+			}
+		}
+
+		public class PrinterResolutionCollection : ICollection, IEnumerable
+		{
+			ArrayList _PrinterResolutions = new ArrayList ();
+
+			public PrinterResolutionCollection (PrinterResolution [] array)
+			{
+				foreach (PrinterResolution pr in array)
+					_PrinterResolutions.Add (pr);
+			}
+
+			public int Count { get { return _PrinterResolutions.Count; } }
+			int ICollection.Count { get { return _PrinterResolutions.Count; } }
+			bool ICollection.IsSynchronized { get { return false; } }
+			object ICollection.SyncRoot { get { return this; } }
+			[EditorBrowsable (EditorBrowsableState.Never)]
+			public int Add (PrinterResolution printerResolution) { return _PrinterResolutions.Add (printerResolution); }
+			public void CopyTo (PrinterResolution [] printerResolutions, int index) { throw new NotImplementedException (); }
+
+			public virtual PrinterResolution this [int index] {
+				get { return _PrinterResolutions [index] as PrinterResolution; }
+			}
+
+			IEnumerator IEnumerable.GetEnumerator ()
+			{
+				return _PrinterResolutions.GetEnumerator ();
+			}
+
+			public IEnumerator GetEnumerator ()
+			{
+				return _PrinterResolutions.GetEnumerator ();
+			}
+
+			void ICollection.CopyTo (Array array, int index)
+			{
+				_PrinterResolutions.CopyTo (array, index);
+			}
+
+			internal void Clear ()
+			{
+				_PrinterResolutions.Clear ();
+			}
+		}
+		public class StringCollection : ICollection, IEnumerable
+		{
+			ArrayList _Strings = new ArrayList ();
+
+			public StringCollection (string [] array)
+			{
+				foreach (string s in array)
+					_Strings.Add (s);
+			}
+
+			public int Count { get { return _Strings.Count; } }
+			int ICollection.Count { get { return _Strings.Count; } }
+			bool ICollection.IsSynchronized { get { return false; } }
+			object ICollection.SyncRoot { get { return this; } }
+
+			public virtual string this [int index] {
+				get { return _Strings [index] as string; }
+			}
+			[EditorBrowsable (EditorBrowsableState.Never)]
+			public int Add (string value) { return _Strings.Add (value); }
+			public void CopyTo (string [] strings, int index) { throw new NotImplementedException (); }
+
+			IEnumerator IEnumerable.GetEnumerator ()
+			{
+				return _Strings.GetEnumerator ();
+			}
+
+			public IEnumerator GetEnumerator ()
+			{
+				return _Strings.GetEnumerator ();
+			}
+
+			void ICollection.CopyTo (Array array, int index)
+			{
+				_Strings.CopyTo (array, index);
+			}
 		}
 	}
 }
