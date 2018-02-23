@@ -95,6 +95,9 @@
     <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\StringAlignment.cs">
       <Link>External\StringAligment.cs</Link>
     </Compile>
+    <Compile Include="..\..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\ColorPalette.cs">
+      <Link>External\ColorPalette.cs</Link>
+    </Compile>
     <Compile Include="..\..\mono\mcs\class\System.Drawing\System.Drawing\SystemColors.cs">
       <Link>External\SystemColors.cs</Link>
     </Compile>
