@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>{1A376FEB-C2F1-4105-B3A9-DF1C6EC54573}</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Properties\AssemblyInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Bitmap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Brush.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Color.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Extensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Font.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Font-CoreText.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\FontFamily.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\FontFamily-CoreText.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Graphics.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Graphics-DrawImage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Graphics-DrawEllipticalArc.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Icon.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Image.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\KnownColor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\KnownColors.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Pen.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Region.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\SolidBrush.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\StringFormat.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\TextureBrush.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Graphics-DrawString.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\CGGraphicsState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\GraphicsPath.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\GraphicsPathIterator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\GraphicsPath-AddString.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\HatchBrush.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\LinearGradientBrush.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\Matrix.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\PathGradientBrush.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\MarginsConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PageSettings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PrintDocument.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PrinterSettings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PrintPageEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Imaging\ImageAttributes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Text\FontCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Text\InstalledFontCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Text\FontCollection-CoreText.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Text\PrivateFontCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Text\PrivateFontCollection-CoreText.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\ConversionHelpers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\GeomUtilities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\ClipperLib\clipper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\GeomTransformUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\Locale.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\GraphicsState.cs">
+      <Link>corefx\System.Drawing.Drawing2D\GraphicsState.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\StringAlignment.cs">
+      <Link>corefx\System.Drawing\StringAligment.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\ColorPalette.cs">
+      <Link>corefx\System.Drawing.Imaging\ColorPalette.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\ColorBlend.cs">
+      <Link>corefx\System.Drawing.Drawing2D\ColorBlend.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\CompositingMode.cs">
+      <Link>corefx\System.Drawing.Drawing2D\CompositingMode.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\FillMode.cs">
+      <Link>corefx\System.Drawing.Drawing2D\FillMode.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\MatrixOrder.cs">
+      <Link>corefx\System.Drawing.Drawing2D\MatrixOrder.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\PathPointType.cs">
+      <Link>corefx\System.Drawing.Drawing2D\PathPointType.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\PixelFormat.cs">
+      <Link>corefx\System.Drawing.Imaging\PixelFormat.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintPageEventHandler.cs">
+      <Link>corefx\System.Drawing.Printing\PrintPageEventHandler.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintRange.cs">
+      <Link>corefx\System.Drawing.Printing\PrintRange.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\Duplex.cs">
+      <Link>corefx\System.Drawing.Printing\Duplex.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PaperSize.cs">
+      <Link>corefx\System.Drawing.Printing\PaperSize.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\Margins.cs">
+      <Link>corefx\System.Drawing.Printing\Margins.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PaperSource.cs">
+      <Link>corefx\System.Drawing.Printing\PaperSource.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrinterResolution.cs">
+      <Link>corefx\System.Drawing.Printing\PrinterResolution.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrinterResolutionKind.cs">
+      <Link>corefx\System.Drawing.Printing\PrinterResolutionKind.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PaperKinds.cs">
+      <Link>corefx\System.Drawing.Printing\PaperKinds.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PaperSourceKind.cs">
+      <Link>corefx\System.Drawing.Printing\PaperSourceKind.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\GdiPlus.cs">
+      <Link>corefx\System.Drawing\GdiPlus.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\NativeMethods.cs">
+      <Link>corefx\System.Drawing\NativeMethods.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\UnsafeNativeMethods.cs">
+      <Link>corefx\System.Drawing\UnsafeNativeMethods.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPPOINT.cs">
+      <Link>corefx\System.Drawing.Internal\GPPOINT.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPPOINTF.cs">
+      <Link>corefx\System.Drawing.Internal\GPPOINTF.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECT.cs">
+      <Link>corefx\System.Drawing.Internal\GPRECT.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECTF.cs">
+      <Link>corefx\System.Drawing.Internal\GPRECTF.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\PathData.cs">
+      <Link>corefx\System.Drawing.Drawing2D\PathData.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Text\TextRenderingHint.cs">
+      <Link>corefx\System.Drawing.Text\TextRenderingHint.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\CombineMode.cs">
+      <Link>corefx\System.Drawing.Drawing2D\CombineMode.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\ImageLockMode.cs">
+      <Link>corefx\System.Drawing.Imaging\ImageLockMode.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\DashCap.cs">
+      <Link>corefx\System.Drawing\DashCap.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\DashStyle.cs">
+      <Link>corefx\System.Drawing.Drawing2D\DashStyle.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\InterpolationMode.cs">
+      <Link>corefx\System.Drawing.Drawing2D\InterpolationMode.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\LineCap.cs">
+      <Link>corefx\System.Drawing.Drawing2D\LineCap.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\LineJoin.cs">
+      <Link>corefx\System.Drawing.Drawing2D\LineJoin.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\PixelOffsetMode.cs">
+      <Link>corefx\System.Drawing.Drawing2D\PixelOffsetMode.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\SmoothingMode.cs">
+      <Link>corefx\System.Drawing.Drawing2D\SmoothingMode.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\WarpMode.cs">
+      <Link>corefx\System.Drawing.Drawing2D\WarpMode.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\WrapMode.cs">
+      <Link>corefx\System.Drawing.Drawing2D\WrapMode.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\Misc\HandleCollector.cs">
+      <Link>corefx\Misc\HandleCollector.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\FontStyle.cs">
+      <Link>corefx\System.Drawing\FontStyle.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\StringFormatFlags.cs">
+      <Link>corefx\System.Drawing\StringFormatFlags.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\FlushIntention.cs">
+      <Link>corefx\System.Drawing.Drawing2D\FlushIntention.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\CoordinateSpace.cs">
+      <Link>corefx\System.Drawing.Drawing2D\CoordinateSpace.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\CompositingQuality.cs">
+      <Link>corefx\System.Drawing.Drawing2D\CompositingQuality.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\QualityMode.cs">
+      <Link>corefx\System.Drawing.Drawing2D\QualityMode.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\Blend.cs">
+      <Link>corefx\System.Drawing.Drawing2D\Blend.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\HatchStyle.cs">
+      <Link>corefx\System.Drawing.Drawing2D\HatchStyle.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\LinearGradientMode.cs">
+      <Link>corefx\System.Drawing.Drawing2D\LinearGradientMode.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\ContentAlignment.cs">
+      <Link>corefx\System.Drawing\ContentAlignment.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\FrameDimension.cs">
+      <Link>System.Drawing.Imaging\FrameDimension.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\RotateFlipType.cs">
+      <Link>corefx\System.Drawing\RotateFlipType.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\ImageFlags.cs">
+      <Link>corefx\System.Drawing.Imaging\ImageFlags.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\ColorMatrix.cs">
+      <Link>corefx\System.Drawing.Imaging\ColorMatrix.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\ColorChannelFlags.cs">
+      <Link>corefx\System.Drawing.Imaging\ColorChannelFlags.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\ColorMatrixFlags.cs">
+      <Link>corefx\System.Drawing.Imaging\ColorMatrixFlag.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\ColorMap.cs">
+      <Link>corefx\System.Drawing.Imaging\ColorMap.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\ColorAdjustType.cs">
+      <Link>corefx\System.Drawing.Imaging\ColorAdjustType.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\StringTrimming.cs">
+      <Link>corefx\System.Drawing\StringTrimming.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Text\GenericFontFamilies.cs">
+      <Link>corefx\System.Drawing.Text\GenericFontFamilies.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing.Drawing2D\GraphicsContainer.cs">
+      <Link>mono\System.Drawing.Drawing2D\GraphicsContainer.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing\ImageConverter.cs">
+      <Link>mono\System.Drawing\ImageConverter.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing\ImageFormatConverter.cs">
+      <Link>mono\System.Drawing\ImageFormatConverter.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing\SystemColors.cs">
+      <Link>mono\System.Drawing\SystemColors.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing\ToolboxBitmapAttribute.cs">
+      <Link>mono\System.Drawing\ToolboxBitmapAttribute.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\ImageFormat.cs">
+      <Link>mono\System.Drawing.Imaging\ImageFormat.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing\GraphicsUnit.cs">
+      <Link>mono\System.Drawing\GraphicsUnit.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing\ExternDll.cs">
+      <Link>mono\System.Drawing\ExternDll.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing\Pens.cs">
+      <Link>mono\System.Drawing\Pens.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing\Brushes.cs">
+      <Link>mono\System.Drawing\Brushes.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing\IconConverter.cs">
+      <Link>mono\System.Drawing\IconConverter.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing\CharacterRange.cs">
+      <Link>mono\System.Drawing\CharacterRange.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\BitmapData.cs">
+      <Link>mono\System.Drawing.Imaging\BitmapData.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\corefx\SR.cs">
+      <Link>mono\corefx\SR.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing\SR.cs">
+      <Link>mono\System.Drawing\SR.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)corefx\" />
+    <Folder Include="$(MSBuildThisFileDirectory)mono\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Utilities\" />
+    <Folder Include="$(MSBuildThisFileDirectory)System.Drawing.Text\" />
+    <Folder Include="$(MSBuildThisFileDirectory)System.Drawing.Imaging\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Utilities\ClipperLib\" />
+  </ItemGroup>
+</Project>

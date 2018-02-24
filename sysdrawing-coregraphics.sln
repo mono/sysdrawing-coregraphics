@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sysdrawing-coregraphics.ios", "sysdrawing-coregraphics\sysdrawing-coregraphics.ios.csproj", "{B0192C07-5968-491F-8525-D1E2F71780E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iOS", "iOS.csproj", "{B0192C07-5968-491F-8525-D1E2F71780E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sysdrawing-coregraphics.mac", "sysdrawing-coregraphics\sysdrawing-coregraphics.mac.csproj", "{D08BBD20-EF4A-4921-9F24-29E56F7A6628}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mac", "Mac.csproj", "{D08BBD20-EF4A-4921-9F24-29E56F7A6628}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Shared", "Shared.shproj", "{1A376FEB-C2F1-4105-B3A9-DF1C6EC54573}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
