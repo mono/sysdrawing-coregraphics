@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
+  <Import Project="MacShared.projitems" Label="Shared" Condition="Exists('MacShared.projitems')" />
   <Import Project="Shared.projitems" Label="Shared" Condition="Exists('Shared.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 </Project>

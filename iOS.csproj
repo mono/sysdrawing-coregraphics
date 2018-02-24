@@ -36,6 +36,9 @@
     <Reference Include="System.Core" />
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="System.Drawing.Printing\PrinterSettings.ios.cs" />
+  </ItemGroup>
   <Import Project="Shared.projitems" Label="Shared" Condition="Exists('Shared.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

@@ -44,7 +44,7 @@ namespace System.Drawing.Printing
 {
 
 	[Serializable]
-	public class PrinterSettings : ICloneable
+	public partial class PrinterSettings : ICloneable
 	{
 		private int from_page;
 		private int to_page;
@@ -52,20 +52,11 @@ namespace System.Drawing.Printing
 		private int maximum_page;
 		private short copies;
 		private PrintRange print_range;
-		private string printer_name;
-#if MONOMAC
-		internal NSPrinter printer;
-#else
-		internal object printer;
-#endif
 		internal PageSettings page_settings;
 
 		public PrinterSettings ()
 		{
-#if MONOMAC
-			printer = NSPrintInfo.DefaultPrinter;
-			printer_name = printer?.Name;
-#endif
+			InitPrinterSettings ();
 			page_settings = new PageSettings (this);
 			//PaperSizes = new PaperSizeCollection(new[] { new PaperSize("Letter", (int)(8.5f * 72f), (int)(11f * 72f)) });
 		}
@@ -74,10 +65,6 @@ namespace System.Drawing.Printing
 		{
 			// FIXME
 			return new PrinterSettings ();
-		}
-
-		public bool IsValid {
-			get { return printer != null; }
 		}
 
 		public int FromPage {
@@ -142,15 +129,6 @@ namespace System.Drawing.Printing
 			}
 		}
 
-		public string PrinterName {
-			get { return printer_name; }
-			set {
-				printer_name = value;
-#if MONOMAC
-				printer = NSPrinter.PrinterWithName (value);
-#endif
-			}
-		}
 
 		public bool PrintToFile { get; set; }
 		public string PrintFileName { get; set; }
@@ -164,36 +142,12 @@ namespace System.Drawing.Printing
 		public PrinterSettings.PaperSourceCollection PaperSources { get; set; }
 
 
-		public PrinterSettings.PaperSizeCollection PaperSizes {
-			get {
-				List<PaperSize> paper_sizes = new List<PaperSize> ();
-#if MONOMAC
-				if (printer != null) {
-					foreach (var paper_name in printer.StringListForKey ("PageSize", "PPD")) {
-						var size = printer.PageSizeForPaper (paper_name);
-						paper_sizes.Add (new PaperSize (paper_name, (int)size.Width, (int)size.Height));
-					}
-				}
-#endif
-				return new PaperSizeCollection (paper_sizes.ToArray ());
-			}
-		}
 		public PrinterResolutionCollection PrinterResolutions { get; internal set; }
 		public object printer_capabilities { get; internal set; }
 
 		public PageSettings DefaultPageSettings {
 			get {
 				return page_settings;
-			}
-		}
-
-		public static PrinterSettings.StringCollection InstalledPrinters {
-			get {
-#if MONOMAC
-				return new StringCollection (NSPrinter.PrinterNames); 
-#else
-				throw new NotImplementedException ();
-#endif
 			}
 		}
 
