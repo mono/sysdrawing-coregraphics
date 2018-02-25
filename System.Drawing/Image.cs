@@ -60,6 +60,7 @@ namespace System.Drawing {
 		// This is obtained from a Bitmap
 		// Right now that is all we support
 		internal CGImage NativeCGImage;
+		protected ColorPalette palette;
 
 		// This is obtained from a PDF file.  Not supported right now.
 		internal CGPDFDocument nativeMetafile;
@@ -323,6 +324,11 @@ namespace System.Drawing {
 		public static bool IsExtendedPixelFormat1(PixelFormat pixfmt)
 		{
 			return (pixfmt & PixelFormat.Extended) != 0;
+		}
+
+		internal static int GetBitsPerPixel (PixelFormat pixfmt)
+		{
+			return (((int)pixfmt >> 8) & 0xff);
 		}
 
 		/// <summary>

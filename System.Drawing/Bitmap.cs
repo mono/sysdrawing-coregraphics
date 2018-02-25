@@ -8,12 +8,14 @@
 // Authors: 
 //	Alexandre Pigolkine (pigolkine@gmx.de)
 //	Christian Meyer (Christian.Meyer@cs.tum.edu)
-//	Miguel de Icaza (miguel@ximian.com)
+//	Miguel de Icaza (miguel@microsoft.com)
 //	Jordi Mas i Hernandez (jmas@softcatala.org)
 //	Ravindra (rkumar@novell.com)
 //	Sebastien Pouliot  <sebastien@xamarin.com>
 //	Kenneth J. Pouncey  <kjpou@pt.lu>
-//
+//      Jiri Volejnik <aconcagua21@volny.cz>
+//      Filip Navara <filip.navara@gmail.com>
+// 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -42,18 +44,9 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Collections.Generic;
 
-#if MONOMAC
 using CoreGraphics;
-using Foundation;
-using AppKit;
 using ImageIO;
-#else
-using CoreGraphics;
-using UIKit;
 using Foundation;
-using ImageIO;
-using MobileCoreServices;
-#endif
 
 namespace System.Drawing {
 	
@@ -66,6 +59,7 @@ namespace System.Drawing {
 
 		// we will default this to one for now until we get some tests for other image types
 		internal int frameCount = 1;
+		internal int currentFrame = 0;
 
 		internal PixelFormat pixelFormat;
 		internal float dpiWidth = 0;
@@ -74,11 +68,9 @@ namespace System.Drawing {
 		internal SizeF physicalDimension = SizeF.Empty;
 		internal ImageFormat rawFormat;
 
-		private CGDataProvider dataProvider;
-
-		internal Bitmap (CGImage image)
-		{
-		}
+		CGDataProvider dataProvider;
+		// For images created from PNG, JPEG or other data
+		CGImageSource imageSource;		
 
 		public Bitmap (string filename, bool useIcm)
 		{
@@ -88,21 +80,17 @@ namespace System.Drawing {
 			try 
 			{
 				// Use Image IO
-				dataProvider = new CGDataProvider(filename);
-				if (dataProvider == null)
+				imageSource = CGImageSource.FromUrl(NSUrl.FromFilename(filename));
+				if (imageSource == null)
 					throw new FileNotFoundException ("File {0} not found.", filename);
 
 				InitializeImageFrame (0);
-			}
-			catch (Exception exc) 
-			{
+			} catch (Exception)  {
 				throw new FileNotFoundException ("File {0} not found.", filename);
 			}
 		}
 
         	public Bitmap(string filename) : this(filename, false) { }
-
-
 		public Bitmap(Stream stream) : this(stream, false) { }
 
 
@@ -111,33 +99,32 @@ namespace System.Drawing {
 			if (stream == null)
 				throw new ArgumentNullException ("Value can not be null");
 
-			// false: stream is owned by user code
-			//nativeObject = InitFromStream (stream);
-			// TODO
-			// Use Image IO
-			byte[] buffer;
-			using(var memoryStream = new MemoryStream())
-			{
-				stream.CopyTo(memoryStream);
-				buffer = memoryStream.ToArray();
-			}
-
-			dataProvider = new CGDataProvider(buffer, 0, buffer.Length);
-
+			imageSource = CGImageSource.FromData(NSData.FromStream(stream));
 			InitializeImageFrame (0);
 		}
 
+                public Bitmap (Type type, string resource)
+                {
+                        if (resource == null)
+                                throw new ArgumentException ("resource");
+
+                        Stream s = type.Assembly.GetManifestResourceStream (type, resource);
+                        if (s == null) {
+                                string msg = Locale.GetText ("Resource '{0}' was not found.", resource);
+                                throw new FileNotFoundException (msg);
+                        }
+
+                        imageSource = CGImageSource.FromData(NSData.FromStream(s));
+                        InitializeImageFrame(0);
+                }
+		
 		public Bitmap (int width, int height) : 
 			this (width, height, PixelFormat.Format32bppArgb)
 		{
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="System.Drawing.Bitmap"/> class from the specified existing image..
-		/// </summary>
-		/// <param name="original">Image.</param>
-       		public Bitmap (Image original) :
-			this (original, original.Width, original.Height)
+       		public Bitmap (Image image) :
+			this (image, image.Width, image.Height)
 		{
 
 		}
@@ -162,6 +149,26 @@ namespace System.Drawing {
 	        {
 	        }
 
+		// Encodes the flags and color values, to avoid having to patch corefx
+		// Memory layout is:
+		//    UINT Flags
+		//    UINT Count
+		//    ARGB Entries[size]
+
+		IntPtr MakePalette (int flags, Color [] values)
+		{
+			int size = 4 + 4 + values.Length * 4;
+			var ptr = Marshal.AllocHGlobal (size);
+			Marshal.WriteInt32 (ptr, 0, flags);
+			Marshal.WriteInt32 (ptr, 4, values.Length);
+			int n = 0;
+			foreach (var c in values) {
+				Marshal.WriteInt32 (ptr, 8 + n, c.ToArgb ());
+				n += 4;
+			}
+			return ptr;
+		}
+
 		public Bitmap (int width, int height, PixelFormat format, IntPtr scan0)
 		{
 			imageTransform = new CGAffineTransform(1, 0, 0, -1, 0, height);
@@ -185,13 +192,13 @@ namespace System.Drawing {
 				colorSpace = CGColorSpace.CreateDeviceRGB ();
 				bitsPerComponent = 8;
 				bitsPerPixel = 32;
-				bitmapInfo = CGBitmapFlags.PremultipliedFirst;
+				bitmapInfo = CGBitmapFlags.PremultipliedLast;
 				break;
 			case PixelFormat.Format32bppArgb:
 				colorSpace = CGColorSpace.CreateDeviceRGB ();
 				bitsPerComponent = 8;
 				bitsPerPixel = 32;
-				bitmapInfo = CGBitmapFlags.PremultipliedFirst;
+				bitmapInfo = CGBitmapFlags.PremultipliedLast;
 				break;
 			case PixelFormat.Format32bppRgb:
 				colorSpace = CGColorSpace.CreateDeviceRGB ();
@@ -202,38 +209,56 @@ namespace System.Drawing {
 			case PixelFormat.Format24bppRgb:
 				colorSpace = CGColorSpace.CreateDeviceRGB ();
 				bitsPerComponent = 8;
-				bitsPerPixel = 32;
-				bitmapInfo = CGBitmapFlags.NoneSkipLast;
+				bitsPerPixel = 24;
+				bitmapInfo = CGBitmapFlags.None;
+				break;
+			case PixelFormat.Format8bppIndexed:
+				// FIXME: Default palette
+				colorSpace = CGColorSpace.CreateIndexed (CGColorSpace.CreateDeviceRGB (), 255, new byte[3 * 256]);
+				bitsPerComponent = 8;
+				bitsPerPixel = 8;
+				bitmapInfo = CGBitmapFlags.None;
+				palette = new ColorPalette (256);
+				break;
+			case PixelFormat.Format4bppIndexed:
+				// FIXME: Default palette
+				colorSpace = CGColorSpace.CreateIndexed (CGColorSpace.CreateDeviceRGB (), 15, new byte[3 * 16]);
+				bitsPerComponent = 4;
+				bitsPerPixel = 4;
+				bitmapInfo = CGBitmapFlags.None;
+				palette = new ColorPalette (16);
+				break;
+			case PixelFormat.Format1bppIndexed:
+				// FIXME: Default palette
+				colorSpace = CGColorSpace.CreateIndexed (CGColorSpace.CreateDeviceRGB (), 1, new byte[3 * 2]);
+				bitsPerComponent = 1;
+				bitsPerPixel = 1;
+				bitmapInfo = CGBitmapFlags.None;
+				var bwp = MakePalette (0, new Color [2] { Color.Black, Color.White });
+				palette = new ColorPalette (2);
+				palette.ConvertFromMemory (bwp);
+				Marshal.FreeHGlobal (bwp);
 				break;
 			default:
 				throw new Exception ("Format not supported: " + format);
 			}
-			bytesPerRow = width * bitsPerPixel/bitsPerComponent;
+
+			bytesPerRow = (int)(((long)width * bitsPerPixel + 7) / 8);
 			int size = bytesPerRow * height;
 
-            		bitmapBlock = Marshal.AllocHGlobal (size);
-			if (scan0 != IntPtr.Zero) {
-				unsafe
-				{
+			bitmapBlock = Marshal.AllocHGlobal (size);
+			unsafe {
+				if (scan0 != IntPtr.Zero) {
 					Buffer.MemoryCopy ((void*)scan0, (void*)bitmapBlock, size, size);
+				} else {
+					byte* b = (byte*)bitmapBlock;
+					for (int i = 0; i < size; i++)
+						b [i] = 0;
 				}
 			}
 
-			var bitmap = new CGBitmapContext (bitmapBlock,
-						      width, height,
-						      bitsPerComponent,
-						      bytesPerRow,
-						      colorSpace,
-						      bitmapInfo);
-
-			if (scan0 == IntPtr.Zero) {
-				// This works for now but we need to look into initializing the memory area itself
-				// TODO: Look at what we should do if the image does not have alpha channel
-				bitmap.ClearRect (new CGRect (0, 0, width, height));
-			}
-
-			var provider = new CGDataProvider (bitmapBlock, size, true);
-			NativeCGImage = new CGImage (width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace, bitmapInfo, provider, null, false, CGColorRenderingIntent.Default);
+			dataProvider = new CGDataProvider (bitmapBlock, size, true);
+			NativeCGImage = new CGImage (width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace, bitmapInfo, dataProvider, null, false, CGColorRenderingIntent.Default);
 
 			dpiWidth = dpiHeight = ConversionHelpers.MS_DPI;
 			physicalDimension.Width = width;
@@ -260,22 +285,68 @@ namespace System.Drawing {
 			rawFormat = ImageFormat.MemoryBmp;
 			pixelFormat = format;
 
+			if (premultiplied) { // make compiler happy
+			}
 		}
 
-		private void InitializeImageFrame(int frame)
+		private Bitmap (SerializationInfo info, StreamingContext context)
 		{
+			foreach (SerializationEntry serEnum in info) {
+				if (String.Compare(serEnum.Name, "Data", true) == 0) {
+					byte[] bytes = (byte[]) serEnum.Value;
+					if (bytes != null && bytes.Length > 0)
+					{
+						imageSource = CGImageSource.FromData(NSData.FromArray(bytes));
+						InitializeImageFrame(0);
+					}
+				}
+			}
+		}
+
+		internal Bitmap (CGImage image)
+		{
+			imageTransform = new CGAffineTransform(1, 0, 0, -1, 0, image.Height);
+			InitWithCGImage(image);
+			GuessPixelFormat();
+		}
+
+		public IntPtr GetHbitmap()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public IntPtr GetHbitmap(Color backgroundColor)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public IntPtr GetHicon()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public Bitmap FromHicon(IntPtr handle)
+		{
+			throw new NotImplementedException ();
+		}
+			
+		void InitializeImageFrame(int frame)
+		{
+			if (NativeCGImage != null)
+				NativeCGImage.Dispose ();
+			
 			imageTransform = CGAffineTransform.MakeIdentity();
 
 			SetImageInformation (frame);
-			var cg = CGImageSource.FromDataProvider(dataProvider).CreateImage(frame, null);
+			var cg = imageSource.CreateImage(frame, null);
 			imageTransform = new CGAffineTransform(1, 0, 0, -1, 0, cg.Height);
-			//InitWithCGImage (cg);
-			NativeCGImage = cg;
-
+			InitWithCGImage (cg);
 			GuessPixelFormat ();
+			
+			currentFrame = frame;
 		}
 
-		private void GuessPixelFormat()
+		void GuessPixelFormat()
 		{
 			bool hasAlpha;
 			CGColorSpace colorSpace;
@@ -355,11 +426,11 @@ namespace System.Drawing {
 		}
 
 
-		private void SetImageInformation(int frame)
+		void SetImageInformation(int frame)
 		{
-			var imageSource = CGImageSource.FromDataProvider (dataProvider);
-
 			frameCount = (int)imageSource.ImageCount;
+			if (frameCount == 0)
+				throw new ArgumentException("Invalid image");
 
 			var properties = imageSource.GetProperties (frame, null);
 
@@ -420,7 +491,7 @@ namespace System.Drawing {
 
 		}
 
-		private void InitWithCGImage (CGImage image)
+		void InitWithCGImage (CGImage image)
 		{
 			int	width, height;
 			CGBitmapContext bitmap = null;
@@ -429,7 +500,6 @@ namespace System.Drawing {
 			CGColorSpace colorSpace;
 			int bitsPerComponent, bytesPerRow;
 			CGBitmapFlags bitmapInfo;
-			bool premultiplied = false;
 			int bitsPerPixel = 0;
 
 			if (image == null) {
@@ -460,8 +530,7 @@ namespace System.Drawing {
 			// I left the call here just in case we find that this is not
 			// possible.  Read the comments for non alpha images.
 			if(colorSpace != null) {
-				if( hasAlpha ) {
-					premultiplied = true;
+				if (hasAlpha) {
 					colorSpace = CGColorSpace.CreateDeviceRGB ();
 					bitsPerComponent = 8;
 					bitsPerPixel = 32;
@@ -476,14 +545,12 @@ namespace System.Drawing {
 					// creating a Graphics to draw on was a nightmare.  This
 					// should probably be looked into or maybe it is ok and we
 					// can continue representing internally with this representation
-					premultiplied = true;
 					colorSpace = CGColorSpace.CreateDeviceRGB ();
 					bitsPerComponent = 8;
 					bitsPerPixel = 32;
 					bitmapInfo = CGBitmapFlags.NoneSkipLast;
 				}
 			} else {
-				premultiplied = true;
 				colorSpace = CGColorSpace.CreateDeviceRGB ();
 				bitsPerComponent = 8;
 				bitsPerPixel = 32;
@@ -493,7 +560,7 @@ namespace System.Drawing {
 			bytesPerRow = width * bitsPerPixel/bitsPerComponent;
 			size = bytesPerRow * height;
 
-			bitmapBlock = Marshal.AllocHGlobal (size);
+			var bitmapBlock = Marshal.AllocHGlobal (size);
 			bitmap = new CGBitmapContext (bitmapBlock, 
 			                              width, height, 
 			                              bitsPerComponent, 
@@ -503,21 +570,23 @@ namespace System.Drawing {
 
 			bitmap.ClearRect (new CGRect (0,0,width,height));
 
+#if NEED_TO_REVIEW_THIS_REMOVAL
+	
 			// We need to flip the Y axis to go from right handed to lefted handed coordinate system
 			var transform = new CGAffineTransform(1, 0, 0, -1, 0, image.Height);
 			bitmap.ConcatCTM(transform);
-
+#endif
 			bitmap.DrawImage (new CGRect (0, 0, image.Width, image.Height), image);
 
-			var provider = new CGDataProvider (bitmapBlock, size, true);
+			this.bitmapBlock = bitmapBlock;
+			this.dataProvider = new CGDataProvider (bitmapBlock, size);
 			NativeCGImage = new CGImage (width, height, bitsPerComponent, 
 			                             bitsPerPixel, bytesPerRow, 
 			                             colorSpace,
-			                             bitmapInfo,
-			                             provider, null, true, image.RenderingIntent);
+			                             bitmapInfo, dataProvider, null, true, image.RenderingIntent);
 
 			colorSpace.Dispose();
-			bitmap.Dispose();
+			cachedContext = bitmap;
 		}
 
 		internal CGBitmapContext GetRenderableContext()
@@ -526,6 +595,30 @@ namespace System.Drawing {
 			if (cachedContext != null && cachedContext.Handle != IntPtr.Zero)
 				return cachedContext;
 
+			if (bitmapBlock != IntPtr.Zero && (PixelFormat & PixelFormat.Indexed) == 0 && this.NativeCGImage.BitsPerPixel == 32) {
+				try {
+					cachedContext =
+						new CGBitmapContext (
+							bitmapBlock, 
+							this.NativeCGImage.Width,
+							this.NativeCGImage.Height, 
+							this.NativeCGImage.BitsPerComponent,
+							this.NativeCGImage.BytesPerRow,
+							this.NativeCGImage.ColorSpace,
+							this.NativeCGImage.BitmapInfo);
+				}
+				catch (Exception) {
+					InitWithCGImage (NativeCGImage);
+					GuessPixelFormat ();	
+				}
+			} else {
+				InitWithCGImage (NativeCGImage);
+				GuessPixelFormat ();	
+			}
+
+			return cachedContext;
+
+#if OLD_IMPLEMENTATION
 			var format = GetBestSupportedFormat (pixelFormat);
 			var bitmapContext = CreateCompatibleBitmapContext ((int)NativeCGImage.Width, (int)NativeCGImage.Height, format);
 
@@ -544,11 +637,11 @@ namespace System.Drawing {
 			cachedContext = bitmapContext;
 
 			return cachedContext;
+#endif
 		}
 
-		internal void RotateFlip (RotateFlipType rotateFlipType)
+		internal new void RotateFlip (RotateFlipType rotateFlipType)
 		{
-
 			CGAffineTransform rotateFlip = CGAffineTransform.MakeIdentity();
 
 			int width, height;
@@ -591,15 +684,12 @@ namespace System.Drawing {
 				break;
 			}
 
-			var format = GetBestSupportedFormat (pixelFormat);
-			var bitmapContext = CreateCompatibleBitmapContext (width, height, format);
-
-			bitmapContext.ConcatCTM (rotateFlip);
-
-			bitmapContext.DrawImage (new CGRect (0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
-
-			int size = (int)(bitmapContext.BytesPerRow * bitmapContext.Height);
-			var provider = new CGDataProvider (bitmapContext.Data, size, true);
+			var bytesPerRow = (width * (int)NativeCGImage.BitsPerPixel + 7) / 8;
+			var newBitmapBlock = Marshal.AllocHGlobal(height * bytesPerRow);
+			var newBitmapContext = new CGBitmapContext(newBitmapBlock, width, height, NativeCGImage.BitsPerComponent, bytesPerRow, NativeCGImage.ColorSpace, NativeCGImage.AlphaInfo);
+			newBitmapContext.ConcatCTM(rotateFlip);
+			newBitmapContext.DrawImage(new CGRect(0, 0, NativeCGImage.Width, NativeCGImage.Height), NativeCGImage);
+			newBitmapContext.Flush();
 
 			// If the width or height is not the seme we need to switch the dpiHeight and dpiWidth
 			// We should be able to get around this with set resolution later.
@@ -609,13 +699,6 @@ namespace System.Drawing {
 				dpiHeight = dpiWidth;
 				dpiWidth = temp;
 			}
-
-			NativeCGImage = new CGImage ((int)bitmapContext.Width, (int)bitmapContext.Height, (int)bitmapContext.BitsPerComponent, 
-			                             (int)bitmapContext.BitsPerPixel, (int)bitmapContext.BytesPerRow, 
-			                             bitmapContext.ColorSpace,
-			                             bitmapContext.AlphaInfo,
-			                             provider, null, true, CGColorRenderingIntent.Default);
-
 
 			physicalDimension.Width = (float)width;
 			physicalDimension.Height = (float)height;
@@ -630,9 +713,26 @@ namespace System.Drawing {
 			// Set our transform for this image for the new height
 			imageTransform = new CGAffineTransform(1, 0, 0, -1, 0, height);
 
+			if (bitmapBlock != IntPtr.Zero)
+				Marshal.FreeHGlobal(bitmapBlock);
+			if (cachedContext != null)
+				cachedContext.Dispose();
+			NativeCGImage.Dispose();
+
+			this.bitmapBlock = newBitmapBlock;
+			this.dataProvider = new CGDataProvider(bitmapBlock, height * bytesPerRow);
+			this.NativeCGImage = newBitmapContext.ToImage();
+			this.cachedContext = newBitmapContext;
+			this.imageSource = null;
+
+			// update the cached size
+			imageSize.Width = this.Width;
+			imageSize.Height = this.Height;
+
 		}
 
-		private PixelFormat GetBestSupportedFormat (PixelFormat pixelFormat)
+#if OLD_IMPLEMENTATION
+		PixelFormat GetBestSupportedFormat (PixelFormat pixelFormat)
 		{
 			switch (pixelFormat) 
 			{
@@ -650,7 +750,7 @@ namespace System.Drawing {
 
 		}
 
-		private CGBitmapContext CreateCompatibleBitmapContext(int width, int height, PixelFormat pixelFormat)
+		CGBitmapContext CreateCompatibleBitmapContext(int width, int height, PixelFormat pixelFormat)
 		{
 			int bitsPerComponent, bytesPerRow;
 			CGColorSpace colorSpace;
@@ -711,7 +811,7 @@ namespace System.Drawing {
 
 		}
 
-		private CGBitmapContext CreateCompatibleBitmapContext(int width, int height, PixelFormat pixelFormat, IntPtr pixelData)
+		CGBitmapContext CreateCompatibleBitmapContext(int width, int height, PixelFormat pixelFormat, IntPtr pixelData)
 		{
 			int bitsPerComponent, bytesPerRow;
 			CGColorSpace colorSpace;
@@ -777,7 +877,7 @@ namespace System.Drawing {
 		  *
 		  * Pixel reformatting may optionally be done here if needed.
 		*/
-		private void flipImageYAxis (IntPtr source, IntPtr dest, int stride, int height, int size)
+		void flipImageYAxis (IntPtr source, IntPtr dest, int stride, int height, int size)
 		{
 			
 			long top, bottom;
@@ -830,7 +930,7 @@ namespace System.Drawing {
 		  * 
 		  * NOTE: Not used right now
 		*/
-		private void flipImageYAxis (int width, int height, int size)
+		void flipImageYAxis (int width, int height, int size)
 		{
 			
 			long top, bottom;
@@ -869,15 +969,15 @@ namespace System.Drawing {
 			}
 
 			Marshal.Copy(mData, 0, bitmapBlock, size);
-
 		}
-
+#endif
+	
 		/// <summary>
 		/// Creates a copy of the section of this Bitmap defined by Rectangle structure and with a specified PixelFormat enumeration.
 		/// </summary>
 		/// <param name="rect">Rect.</param>
 		/// <param name="format">Pixel format.</param>
-       		public Bitmap Clone (Rectangle rect, PixelFormat format)
+       		public Bitmap Clone (Rectangle rect, PixelFormat pixelFormat)
 		{
 			if (rect.Width == 0 || rect.Height == 0)
 				throw new ArgumentException ("Width or Height of rect is 0.");
@@ -885,7 +985,7 @@ namespace System.Drawing {
 			var width = rect.Width;
 			var height = rect.Height;
 
-			var tmpImg = new Bitmap (width, height, format);
+			var tmpImg = new Bitmap (width, height, pixelFormat);
 
 			using (Graphics g = Graphics.FromImage (tmpImg)) {
 				g.DrawImage (this, new Rectangle(0,0, width, height), rect, GraphicsUnit.Pixel );
@@ -901,9 +1001,15 @@ namespace System.Drawing {
 					NativeCGImage.Dispose ();
 					NativeCGImage = null;
 				}
-				//Marshal.FreeHGlobal (bitmapBlock);
-				bitmapBlock = IntPtr.Zero;
-				Console.WriteLine("Bitmap Dispose");
+				if (dataProvider != null) {
+					dataProvider.Dispose ();
+					dataProvider = null;
+				}
+				if (imageSource != null)
+				{
+					imageSource.Dispose();
+					imageSource = null;
+				}
 			}
 			base.Dispose (disposing);
 		}
@@ -914,9 +1020,6 @@ namespace System.Drawing {
 				throw new InvalidEnumArgumentException ("Parameter must be positive and < Width.");
 			if (y < 0 || y > NativeCGImage.Height - 1)
 				throw new InvalidEnumArgumentException ("Parameter must be positive and < Height.");
-
-			// Need more tests to see if we need this call.
-			MakeSureWeHaveAnAlphaChannel ();
 
 			// We are going to cheat here and instead of reading the bytes of the original image
 			// parsing from there a pixel and converting to a format we will just create 
@@ -941,8 +1044,8 @@ namespace System.Drawing {
 			if (y < 0 || y > NativeCGImage.Height - 1)
 				throw new InvalidEnumArgumentException ("Parameter must be positive and < Height.");
 
-
-			MakeSureWeHaveAnAlphaChannel ();
+			if (cachedContext == null || cachedContext.Handle == IntPtr.Zero)
+				GetRenderableContext ();
 
 			// We are going to cheat here by drawing directly to the cached context that is 
 			// associated to the image.  This way we do not have to play with pixels and offsets
@@ -977,8 +1080,8 @@ namespace System.Drawing {
 
 		public void MakeTransparent(Color transparentColor)
 		{
-
-			MakeSureWeHaveAnAlphaChannel ();
+			// Question: why does the fork remove this call and add a FIXME: make sure we have an alpha channel?
+			//MakeSureWeHaveAnAlphaChannel ();
 
 
 			var colorValues = transparentColor.ElementsRGBA ();
@@ -1000,7 +1103,7 @@ namespace System.Drawing {
 		
 			bool match = false;
 
-			var pixelSize = GetPixelFormatComponents (pixelFormat);
+			var pixelSize = GetBitsPerPixel (pixelFormat) / 8 ;
 			unsafe 
 			{
 				for (int y=0; y<Height; y++) {
@@ -1038,7 +1141,8 @@ namespace System.Drawing {
 			UnlockBits(bmpData);
 		}
 
-		private void MakeSureWeHaveAnAlphaChannel ()
+#if OLD_IMPLEMENTATION
+		void MakeSureWeHaveAnAlphaChannel ()
 		{
 
 			// Initialize our prmultiplied tables.
@@ -1086,353 +1190,185 @@ namespace System.Drawing {
 			colorSpace.Dispose ();
 
 		}
-
-
-        public void Save (string filename, ImageFormat format)
+#endif
+	
+		private string GetTypeIdentifier(ImageFormat format)
 		{
-			if (filename == null)
-				throw new ArgumentNullException ("path");
-			
-			if (NativeCGImage == null)
-				throw new ObjectDisposedException ("cgimage");
-
-			// With MonoTouch we can use UTType from CoreMobileServices but since
-			// MonoMac does not have that yet (or at least can not find it) I will 
-			// use the string version of those for now.  I did not want to add another
-			// #if #else in here.
-
-
-			// for now we will just default this to png
-			var typeIdentifier = "public.png";
-
-			// Get the correct type identifier
 			if (format == ImageFormat.Bmp)
-				typeIdentifier = "com.microsoft.bmp";
-//			else if (format == ImageFormat.Emf)
-//				typeIdentifier = "image/emf";
-//			else if (format == ImageFormat.Exif)
-//				typeIdentifier = "image/exif";
-			else if (format == ImageFormat.Gif)
-				typeIdentifier = "com.compuserve.gif";
-			else if (format == ImageFormat.Icon)
-				typeIdentifier = "com.microsoft.ico";
-			else if (format == ImageFormat.Jpeg)
-				typeIdentifier = "public.jpeg";
-			else if (format == ImageFormat.Png)
-				typeIdentifier = "public.png";
-			else if (format == ImageFormat.Tiff)
-				typeIdentifier = "public.tiff";
-			else if (format == ImageFormat.Wmf)
-				typeIdentifier = "com.adobe.pdf";
-
-			// Not sure what this is yet
-			else if (format == ImageFormat.MemoryBmp)
+				return "com.microsoft.bmp";
+			if (format == ImageFormat.Gif)
+				return "com.compuserve.gif";
+			if (format == ImageFormat.Icon)
+				return "com.microsoft.ico";
+			if (format == ImageFormat.Jpeg)
+				return "public.jpeg";
+			if (format == ImageFormat.Png)
+				return "public.png";
+			if (format == ImageFormat.Tiff)
+				return "public.tiff";
+			if (format == ImageFormat.Wmf)
+				return "com.adobe.pdf"; // FIXME
+			if (format == ImageFormat.MemoryBmp)
 				throw new NotImplementedException("ImageFormat.MemoryBmp not supported");
+			// ImageFormat.Emf: // FIXME
+			// ImageFormat.Exif: // FIXME
+			return "public.png";
+		}
+
+		private void Save(CGImageDestination dest)
+		{
+			if (NativeCGImage == null)
+				throw new ObjectDisposedException("cgimage");
+
+			int savedFrame = currentFrame;
+			for (int frame = 0; frame < frameCount; frame++)
+			{
+				if (frame != currentFrame && imageSource != null)
+					InitializeImageFrame(frame);
+				dest.AddImage(NativeCGImage, (NSDictionary)null);
+			}
+			if (currentFrame != savedFrame)
+				InitializeImageFrame(savedFrame);
+
+			dest.Close();
+		}
+
+		public new void Save(string path, ImageCodecInfo encoder, EncoderParameters parameters)
+		{
+			// Workaround
+			Save(path, encoder.Format);
+		}
+
+		public void Save (string path, ImageFormat format)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
 
 			// Obtain a URL file path to be passed
-			NSUrl url = NSUrl.FromFilename(filename);
-
-			// * NOTE * we only support one image for right now.
+			NSUrl url = NSUrl.FromFilename(path);
 
 			// Create an image destination that saves into the path that is passed in
-			CGImageDestination dest = CGImageDestination.Create (url, typeIdentifier, frameCount); 
-
-			// Add an image to the destination
-			dest.AddImage(NativeCGImage, (NSDictionary)null);
-
-			// Finish the export
-			bool success = dest.Close ();
-//                        if (success == false)
-//                                Console.WriteLine("did not work");
-//                        else
-//                                Console.WriteLine("did work: " + path);
-			dest.Dispose();
-			dest = null;
-
+			using (var dest = CGImageDestination.Create(url, GetTypeIdentifier(format), frameCount))
+				Save(dest);
 		}
 
-        	public void Save (string filename)
+        	public new void Save (string path)
 		{
-			if (filename == null)
+			if (path == null)
 				throw new ArgumentNullException ("path");
+
 			var format = ImageFormat.Png;
-			
-			var p = filename.LastIndexOf (".");
-			if (p != -1 && p < filename.Length){
-				switch (filename.Substring (p + 1)){
-				case "png": break;
-				case "jpg": format = ImageFormat.Jpeg; break;
-				case "tiff": format = ImageFormat.Tiff; break;
-				case "bmp": format = ImageFormat.Bmp; break;
-				}
+			switch (Path.GetExtension (path)) {
+				case ".jpg": format = ImageFormat.Jpeg; break;
+				case ".tiff": format = ImageFormat.Tiff; break;
+				case ".bmp": format = ImageFormat.Bmp; break;
+				case ".gif": format = ImageFormat.Gif; break;
 			}
-			Save (filename, format);
+			Save (path, format);
 		}
 
-		public void Save (Stream stream, ImageFormat format)
+		public new void Save (Stream stream, ImageFormat format)
 		{
 			if (stream == null)
-				throw new ArgumentNullException ("stream");
+				throw new ArgumentNullException("stream");
 			
-			if (NativeCGImage == null)
-				throw new ObjectDisposedException ("cgimage");
-
-			// for now we will just default this to png
-			var typeIdentifier = "public.png";
-
-			// Get the correct type identifier
-			if (format == ImageFormat.Bmp)
-				typeIdentifier = "com.microsoft.bmp";
-//			else if (format == ImageFormat.Emf)
-//				typeIdentifier = "image/emf";
-//			else if (format == ImageFormat.Exif)
-//				typeIdentifier = "image/exif";
-			else if (format == ImageFormat.Gif)
-				typeIdentifier = "com.compuserve.gif";
-			else if (format == ImageFormat.Icon)
-				typeIdentifier = "com.microsoft.ico";
-			else if (format == ImageFormat.Jpeg)
-				typeIdentifier = "public.jpeg";
-			else if (format == ImageFormat.Png)
-				typeIdentifier = "public.png";
-			else if (format == ImageFormat.Tiff)
-				typeIdentifier = "public.tiff";
-			else if (format == ImageFormat.Wmf)
-				typeIdentifier = "com.adobe.pdf";
-
-			// Not sure what this is yet
-			else if (format == ImageFormat.MemoryBmp)
-				throw new NotImplementedException("ImageFormat.MemoryBmp not supported");
-
-			using (var imageData = new NSMutableData ())
+			using (var imageData = new NSMutableData())
 			{
-				using (var dest = CGImageDestination.Create (imageData, typeIdentifier, frameCount))
-				{
-					dest.AddImage (NativeCGImage, (NSDictionary)null);
-					dest.Close ();
-				}
+				using (var dest = CGImageDestination.Create(imageData, GetTypeIdentifier(format), frameCount))
+					Save(dest);
 
-				using (var ms = new MemoryStream (imageData.ToArray()))
-				{
-					ms.WriteTo (stream);
-					stream.Seek (0,System.IO.SeekOrigin.Begin);
-				}
+				using (var ms = imageData.AsStream())
+					ms.CopyTo(stream);
 			}
 		}
 
-     		public BitmapData LockBits (RectangleF rect, ImageLockMode flags, PixelFormat format)
+     		public BitmapData LockBits (RectangleF rect, ImageLockMode flags, PixelFormat pixelFormat)
 		{
+			// We don't support conversion
+			if (PixelFormat != pixelFormat)
+				throw new ArgumentException ("", "pixelFormat");
+			if (rect != new RectangleF (new PointF (0, 0), physicalDimension)) 
+				throw new NotImplementedException("Sub rectangles of bitmaps not supported yet.");
+
+			// Bitmap created from external data, convert it
+			if (bitmapBlock == IntPtr.Zero)
+				GetRenderableContext ();
 
 			BitmapData bitmapData = new BitmapData ();
 
-			if (!ConversionHelpers.sTablesInitialized)
-				ConversionHelpers.CalculateTables ();
+			bitmapData.Scan0 = bitmapBlock;
+			bitmapData.Height = (int)rect.Height;
+			bitmapData.Width = (int)rect.Width;
+			bitmapData.PixelFormat = pixelFormat;
+			bitmapData.Stride = (int)NativeCGImage.BytesPerRow;
+			bitmapData.Reserved = (int)flags;
 
-			// Calculate our strides
-			int srcStride = (int)((int)rect.Width * (NativeCGImage.BitsPerPixel / NativeCGImage.BitsPerComponent));
-
-			int numOfComponents = GetPixelFormatComponents(format);
-			int stride = (int)rect.Width * numOfComponents;
-
-			// Calculate our lengths
-			int srcScanLength  = (int)(Math.Abs(srcStride) * rect.Height);
-			int scanLength = (int)(Math.Abs(stride) * rect.Height);
-
-			// Declare an array to hold the scan bytes of the bitmap. 
-			byte[] scan0 = new byte[scanLength];
-			pinnedScanArray = GCHandle.Alloc(scan0, GCHandleType.Pinned);
-			bitmapData.Scan0 = pinnedScanArray.AddrOfPinnedObject();
-
-			byte[] srcScan0 = new byte[srcScanLength];
-
-			IntPtr ptr = bitmapBlock;
-			if (ptr == IntPtr.Zero) 
-			{
-				var pData = NativeCGImage.DataProvider;
-				var nData = pData.CopyData ();
-				ptr = nData.Bytes;
+			if (flags != ImageLockMode.WriteOnly) {
+				if (NativeCGImage.BitsPerPixel == 32) {
+					if (!ConversionHelpers.sTablesInitialized)
+						ConversionHelpers.CalculateTables ();
+					Convert_P_RGBA_8888_To_BGRA_8888 (bitmapBlock, bitmapData.Stride * bitmapData.Height);
+				}
 			}
-			// Copy the RGB values into the scan array.
-			System.Runtime.InteropServices.Marshal.Copy(ptr, srcScan0, 0, srcScanLength);
-
-			if (numOfComponents == 4)
-				Convert_P_RGBA_8888_To_BGRA_8888 (ref scan0, srcScan0);
-			else
-				Convert_P_RGBA_8888_To_BGR_888 (ref scan0, srcScan0);
-
-			// We need to support sub rectangles.
-			if (rect != new RectangleF (new PointF (0, 0), physicalDimension)) 
-			{
-				throw new NotImplementedException("Sub rectangles of bitmaps not supported yet.");
-			} 
-			else 
-			{
-				bitmapData.Height = (int)rect.Height;
-				bitmapData.Width = (int)rect.Width;
-				bitmapData.PixelFormat = format;
-
-				bitmapData.Stride = stride;
-			}
-
+				
 			return bitmapData;
 		}
 
-		[DllImport( "msvcrt.dll", EntryPoint = "memcpy", CallingConvention = CallingConvention.Cdecl, SetLastError = false )]
-		public static extern unsafe void memcpy( byte* dest, byte* src, int count );
-
-		static unsafe void RectangularCopy( byte* dstScanLine, byte* srcScanLine, int dstStride, int srcStride, int width, int height, int sizeOfPixel )
+        	public void UnlockBits (BitmapData data)
 		{
-			byte* srcRow = srcScanLine;
-			byte* dstRow = dstScanLine;
-			for( int y = 0; y < height; ++y ) {
-				memcpy( dstRow, srcRow, sizeOfPixel * width );
-				srcRow += srcStride;
-				dstRow += dstStride;
-			}
-		}
-
-		GCHandle pinnedScanArray;
-
-		ImageLockMode bitsLockMode = 0;
-
-        	public void UnlockBits (BitmapData bitmapdata)
-		{
-
-			if (bitsLockMode == ImageLockMode.ReadOnly)
-			{
-				pinnedScanArray.Free ();
-				bitsLockMode = 0;
+			if ((ImageLockMode)data.Reserved == ImageLockMode.ReadOnly)
 				return;
+			
+			if (NativeCGImage.BitsPerPixel == 32) {
+				if (!ConversionHelpers.sTablesInitialized)
+					ConversionHelpers.CalculateTables ();
+				Convert_BGRA_8888_To_P_RGBA_8888 (bitmapBlock, data.Stride * data.Height);
 			}
-
-			//int destStride = data.Width * (NativeCGImage.BitsPerPixel / NativeCGImage.BitsPerComponent);
-			int destStride = bitmapdata.Stride;
-
-			// Declare our size 
-			var scanLength  = destStride * Height;
-
-			// This is fine here for now until we support other formats but right now it is RGBA
-			var pixelSize = GetPixelFormatComponents (bitmapdata.PixelFormat);
-
-			if (pixelSize == 4)
-				Convert_BGRA_8888_To_P_RGBA_8888 (bitmapdata.Scan0, bitmapBlock, scanLength);
-			else
-				Convert_BGR_888_To_P_RGBA_8888 (bitmapdata.Scan0, bitmapBlock, scanLength);
-
-			// Create a bitmap context from the pixel data
-			var bitmapContext = CreateCompatibleBitmapContext (bitmapdata.Width, bitmapdata.Height, bitmapdata.PixelFormat, bitmapBlock);
-
-			// Dispose of the prevous image that is allocated.
-			NativeCGImage.Dispose ();
-
-			// Get the image from the bitmap context.
-			NativeCGImage = bitmapContext.ToImage ();
-
-			// Dispose of the bitmap context as it is no longer needed
-			bitmapContext.Dispose ();
-
-			// we need to free our pointer
-			pinnedScanArray.Free();
-			bitsLockMode = 0;
-
 		}
 
 		// Our internal format is pre-multiplied alpha
-		void Convert_P_RGBA_8888_To_BGRA_8888(ref byte[] scanLine, byte[] source)
+		static unsafe void Convert_P_RGBA_8888_To_BGRA_8888(IntPtr bitmapBlock, int size)
 		{
 			byte temp = 0;
 			byte alpha = 0;
-			for (int x = 0; x < source.Length; x+=4) 
+			byte* buffer = (byte*)bitmapBlock;
+
+			for (int x = 0; x < size; x+=4) 
 			{
-				alpha = source [x + 3];  // Save off alpha
-				temp = source [x];  // save off red
+				alpha = buffer [x + 3];  // Save off alpha
+				temp = buffer [x];  // save off red
 
 				if (alpha < 255) {
-					scanLine [x] = ConversionHelpers.UnpremultiplyValue (alpha, source [x + 2]);  // move blue to red
-					scanLine [x + 1] = ConversionHelpers.UnpremultiplyValue (alpha, source [x + 1]);
-					scanLine [x + 2] = ConversionHelpers.UnpremultiplyValue (alpha, temp);	// move the red to green
+					buffer [x] = ConversionHelpers.UnpremultiplyValue (alpha, buffer [x + 2]);  // move blue to red
+					buffer [x + 1] = ConversionHelpers.UnpremultiplyValue (alpha, buffer [x + 1]);
+					buffer [x + 2] = ConversionHelpers.UnpremultiplyValue (alpha, temp);	// move the red to green
 				} else {
-					scanLine [x] = source [x + 2];  // move blue to red
-					scanLine [x + 1] = source [x + 1];
-					scanLine [x + 2] = temp;  // move the red to green
+					buffer [x] = buffer [x + 2];  // move blue to red
+					buffer [x + 2] = temp;  // move the red to green
 				}
-//				var red = source [x];
-//				var green = source [x + 1];
-//				var blue = source [x + 1];
-
-
-				scanLine [x + 3] = alpha;
-				// Now we do the cha cha cha
 			}
 		}
-
+			
 		// Our internal format is pre-multiplied alpha
-		void Convert_P_RGBA_8888_To_BGR_888(ref byte[] scanLine, byte[] source)
+		static unsafe void Convert_BGRA_8888_To_P_RGBA_8888(IntPtr bitmapBlock, int size)
 		{
 			byte temp = 0;
 			byte alpha = 0;
-			for (int x = 0, y=0; x < source.Length; x+=4, y+=3) 
+			byte* buffer = (byte*)bitmapBlock;
+
+			for (int sd = 0; sd < size; sd+=4) 
 			{
-				alpha = source [x + 3];  // Save off alpha
-				temp = source [x];  // save off red
-
-				scanLine [y] = ConversionHelpers.PremultiplyValue(alpha,source [x + 2]);  // move blue to red
-				scanLine [y + 1] = ConversionHelpers.PremultiplyValue(alpha,source [x + 1]);
-				scanLine [y + 2] = ConversionHelpers.PremultiplyValue(alpha,temp);	// move the red to green
-				// Now we do the cha cha cha
-			}
-		}
-
-		// Our internal format is pre-multiplied alpha
-		void Convert_BGRA_8888_To_P_RGBA_8888(IntPtr source, IntPtr destination, int scanLength)
-		{
-
-			unsafe 
-			{
-				byte* src = (byte*)source;
-				byte* dest = (byte*)destination;
-
-				byte temp = 0;
-				byte alpha = 0;
-
-				for (int sd = 0; sd < scanLength; sd+=4) 
-				{
-					alpha = src [sd + 3];
-					temp = src [sd];  // save off blue
-					dest [sd] = ConversionHelpers.PremultiplyValue(alpha, src [sd + 2]);  // move red back
-					dest [sd + 1] = ConversionHelpers.PremultiplyValue(alpha, src [sd + 1]);
-					dest [sd + 2] = ConversionHelpers.PremultiplyValue(alpha, temp);
-					dest [sd + 3] = alpha;
-
+				alpha = buffer [sd + 3];
+				temp = buffer [sd];  // save off blue
+				if (alpha < 255) {					
+					buffer [sd] = ConversionHelpers.PremultiplyValue (alpha, buffer [sd + 2]);  // move red back
+					buffer [sd + 1] = ConversionHelpers.PremultiplyValue (alpha, buffer [sd + 1]);
+					buffer [sd + 2] = ConversionHelpers.PremultiplyValue (alpha, temp);
+				} else {
+					buffer [sd] = buffer [sd + 2];  // move red back
+					buffer [sd + 2] = temp;
 				}
 			}
-
 		}
-
-		// Our internal format is pre-multiplied alpha
-		void Convert_BGR_888_To_P_RGBA_8888(IntPtr source, IntPtr destination, int scanLength)
-		{
-
-			unsafe 
-			{
-				byte* src = (byte*)source;
-				byte* dest = (byte*)destination;
-
-				byte temp = 0;
-				byte alpha = 0;
-
-				for (int sourceOffset = 0, destinationOffset = 0; sourceOffset < scanLength; sourceOffset+=3, destinationOffset+=4) 
-				{
-					alpha = 255;
-					temp = src [sourceOffset];  // save off blue
-					dest [destinationOffset] = (byte)(src [sourceOffset + 2]);  // move red back
-					dest [destinationOffset + 1] = (byte)(src [sourceOffset + 1]);
-					dest [destinationOffset + 2] = (byte)(temp);
-					dest [destinationOffset + 3] = alpha;
-				}
-			}
-
-		}
-
 	}
 }
