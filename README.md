@@ -8,4 +8,19 @@ Unified.
 
 You will need a checkout of Mono as a peer module to this module.
 
-Open the solution 
+Open the solution and build
+
+Layout
+------
+
+The solution references code from mono and corefx, and expects Mono
+with submodules to be checked out as a peer directory to this directory.
+
+The Shared project contains most of the code that is used by both MacOS
+and iOS, and also references the mono and corefx code.
+
+The MacShared project contains the Mac specific bits, and is later consume
+by the Mac target, but in the future all three variations of mac projects
+that we support (.NET Desktop, Modern)
+
+

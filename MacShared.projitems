@@ -9,6 +9,7 @@
     <Import_RootNamespace>MacShared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="System.Drawing.Printing\PrinterSettings.mac.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PrinterSettings.mac.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\KnownColors.mac.cs" />
   </ItemGroup>
 </Project>

@@ -6,6 +6,9 @@ Directly from master, not partial:
 * PrinterSettings.cs 
 * PageSettings.cs
 * Extensions
+* Color
+* KnownColors
+* KnownColor
 
 On the first patch, fa17b7bb8140752280ff846d8fa97c7936cc1881, done everything up to
-Bitmap patch, next up Color.cs
+Color patch, next up Font.cs

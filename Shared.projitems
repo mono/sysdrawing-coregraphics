@@ -300,6 +300,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing\SR.cs">
       <Link>mono\System.Drawing\SR.cs</Link>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\\System.Drawing\System.Drawing\ColorConverter.cs">
+      <Link>mono\System.Drawing\ColorConverter.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Resources\" />
