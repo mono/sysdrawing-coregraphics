@@ -1,9 +1,13 @@
 using System;
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace System.Drawing
 {
-
+	[Serializable]
+	[ComVisible (true)]
+	[TypeConverter (typeof (FontConverter))]
 	public sealed partial class Font : MarshalByRefObject, ISerializable, ICloneable, IDisposable 
 	{
 	
@@ -19,7 +23,10 @@ namespace System.Drawing
 		byte gdiCharSet = 1;
 		bool  gdiVerticalFont;
 
-		static float dpiScale = 96f / 72f;
+		public Font (Font prototype, FontStyle newStyle)
+			: this (prototype.FontFamily, prototype.size, newStyle, prototype.unit, prototype.gdiCharSet, prototype.gdiVerticalFont)
+		{
+		}
 
 		public Font (FontFamily family, float emSize,  GraphicsUnit unit)
 			: this (family, emSize, FontStyle.Regular, unit, DefaultCharSet, false)
@@ -77,47 +84,46 @@ namespace System.Drawing
 		{
 		}
 
-        public Font (FontFamily family, float emSize, FontStyle style,
+        	public Font (FontFamily familyName, float emSize, FontStyle style,
 		             GraphicsUnit unit, byte gdiCharSet, bool  gdiVerticalFont )
 		{
-
-
 			if (emSize <= 0)
 				throw new ArgumentException("emSize is less than or equal to 0, evaluates to infinity, or is not a valid number.","emSize");
 
-			fontFamily = family;
+			fontFamily = familyName;
 			fontStyle = style;
 			this.gdiVerticalFont = gdiVerticalFont;
 			this.gdiCharSet = gdiCharSet;
 
-			CreateNativeFont (family, emSize, style, unit, gdiCharSet, gdiVerticalFont);
+			CreateNativeFont (familyName, emSize, style, unit, gdiCharSet, gdiVerticalFont);
 		}
 
-        public Font(Font prototype, FontStyle style)
-        {
-            // no null checks, MS throws a NullReferenceException if original is null
-            fontFamily = prototype.FontFamily;
-            fontStyle = style;
-            gdiVerticalFont = prototype.gdiVerticalFont;
-            gdiCharSet = prototype.gdiCharSet;
-            CreateNativeFont(fontFamily, sizeInPoints, style, Unit, gdiCharSet, gdiVerticalFont);
-		}
-
-		#region ISerializable implementation
-		public void GetObjectData (SerializationInfo info, StreamingContext context)
+		internal Font (string familyName, float emSize, string systemName) 
+			: this (familyName, emSize, FontStyle.Regular, GraphicsUnit.Point, DefaultCharSet, false)
 		{
-			throw new NotImplementedException ();
 		}
-		#endregion
 
-		#region ICloneable implementation
+		private Font (SerializationInfo info, StreamingContext context)
+			: this ((string)info.GetValue ("Name", typeof (string)),
+				(float)info.GetValue ("Size", typeof (float)),
+				(FontStyle)info.GetValue ("Style", typeof (FontStyle)),
+				(GraphicsUnit)info.GetValue ("Unit", typeof (GraphicsUnit)))
+		{
+		}
+
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue ("Name", Name);
+			info.AddValue ("Size", Size);
+			info.AddValue ("Style", Style);
+			info.AddValue ("Unit", Unit);
+		}
+
 		public object Clone ()
 		{
 			return new Font (fontFamily, size, fontStyle, unit, gdiCharSet, gdiVerticalFont);
 		}
-		#endregion
 
-		#region IDisposable implementation
 		~Font ()
 		{
 			Dispose (false);
@@ -138,65 +144,113 @@ namespace System.Drawing
 			}
 		}
 		
-#endregion
+		public float SizeInPoints => sizeInPoints;
+		public GraphicsUnit Unit => unit;
+		public float Size => size;
+		public bool Bold => bold;
+		public bool Italic => italic;
+		public bool Underline => underLine;
+		public bool Strikeout => strikeThrough;
+		public int Height => (int)Math.Round (GetHeight ());
+		public FontFamily FontFamily => fontFamily;
+		public FontStyle Style => fontStyle;
+		public float GetHeight() => GetNativeheight ();
+
+		public IntPtr ToHfont ()
+		{
+		        return nativeFont != null ? nativeFont.Handle : IntPtr.Zero;
+		}
 		
-		public float SizeInPoints 
+		public static Font FromHfont (IntPtr hfont)
 		{
-			get { return sizeInPoints; }
+		        throw new NotImplementedException ();
 		}
 		
-		public GraphicsUnit Unit 
+		public static Font FromLogFont (object logFont)
 		{
-			get { return unit; }
-			
+		        throw new NotImplementedException ();
 		}
 		
-		public float Size 
+		public void ToLogFont (object logFont)
 		{
-			get { 
-				return size; 
-			}
-			
+		        throw new NotImplementedException ();
 		}
-
-		public bool Bold 
-		{ 
-			get { return bold; }
-		}
-
-		public bool Italic
-		{ 
-			get { return italic; }
-		}
-
-		public bool Underline
-		{ 
-			get { return underLine; }
-		}
-
-		public bool Strikeout
-		{ 
-			get { return strikeThrough; }
-		}
-
-		public int Height {
-			get { return (int)Math.Round (GetHeight ()); }
-		}
-
-		public FontFamily FontFamily
+		
+		public void ToLogFont (object logFont, Graphics g)
 		{
-			get { return fontFamily; }
+		        throw new NotImplementedException ();
 		}
 
-		public FontStyle Style 
-		{ 
-			get { return fontStyle; }
-		}
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public string Name => fontFamily.Name;
 
-		public float GetHeight() 
+		public float GetHeight(Graphics g) => GetNativeheight ();
+
+		/// <devdoc>
+		///     Returns the GDI char set for this instance of a font. This will only
+		///     be valid if this font was created from a classic GDI font definition,
+		///     like a LOGFONT or HFONT, or it was passed into the constructor.
+		///
+		///     This is here for compatability with native Win32 intrinsic controls
+		///     on non-Unicode platforms.
+		/// </devdoc>
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public byte GdiCharSet => gdiCharSet;
+		[BrowsableAttribute (false)]
+		public bool IsSystemFont =>!String.IsNullOrEmpty(SystemFontName);
+
+		public String SystemFontName {
+			get {
+		                if (this.Equals(SystemFonts.CaptionFont))
+		                        return "CaptionFont";
+		
+		                if (this.Equals(SystemFonts.DefaultFont))
+		                        return "DefaultFont";
+		
+		                if (this.Equals(SystemFonts.DialogFont))
+		                        return "DialogFont";
+		
+		                if (this.Equals(SystemFonts.IconTitleFont))
+		                        return "IconTitleFont";
+		
+		                if (this.Equals(SystemFonts.MenuFont))
+		                        return "MenuFont";
+		
+		                if (this.Equals(SystemFonts.MessageBoxFont))
+		                        return "MessageBoxFont";
+		
+		                if (this.Equals(SystemFonts.SmallCaptionFont))					
+		                        return "SmallCaptionFont";
+		
+		                if (this.Equals(SystemFonts.StatusFont))
+		                        return "StatusFont";
+		
+		                return String.Empty;
+		        }
+		}
+		
+		internal static void NotImplemented (System.Reflection.MethodBase method, object details = null)
 		{
-			return GetNativeheight ();
+		        System.Diagnostics.Debug.WriteLine("Not Implemented: " + method.ReflectedType.Name + "." + method.Name + (details == null ? String.Empty : " (" + details.ToString() + ")"));
 		}
+		
+		public bool Equals (Font f)
+		{
+		        return f != null
+		                && this.Name == f.Name
+		                && (int) Math.Round(10.0 * this.Size) == (int)Math.Round(10.0 * f.Size)
+		                && this.Underline == f.Underline
+		                && this.Bold == f.Bold
+		                && this.Strikeout == f.Strikeout
+		                && this.FontFamily.Name == f.FontFamily.Name
+		                && this.Style == f.Style;
+		}
+		
+		public override string ToString ()
+		{
+		        return $"{Name}, {SizeInPoints}pt, {Style}{(Strikeout ? ", Strikeout" : "")}, Height {Height}";
+		}
+
 	}
 }
 

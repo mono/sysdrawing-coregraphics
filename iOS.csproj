@@ -39,6 +39,8 @@
   <ItemGroup>
     <Compile Include="System.Drawing.Printing\PrinterSettings.ios.cs" />
     <Compile Include="System.Drawing\KnownColors.ios.cs" />
+    <Compile Include="System.Drawing\Font-CoreText.ios.cs" />
+    <Compile Include="System.Drawing\SystemFonts.ios.cs" />
   </ItemGroup>
   <Import Project="Shared.projitems" Label="Shared" Condition="Exists('Shared.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

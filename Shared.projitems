@@ -56,6 +56,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\GeomTransformUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\Locale.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Imaging\ImageCodecInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\SystemFonts.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\GraphicsState.cs">
@@ -302,6 +303,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\\System.Drawing\System.Drawing\ColorConverter.cs">
       <Link>mono\System.Drawing\ColorConverter.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\\System.Drawing\System.Drawing\FontConverter.cs">
+      <Link>mono\System.Drawing\FontConverter.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

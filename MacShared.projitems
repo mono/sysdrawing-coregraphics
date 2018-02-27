@@ -11,5 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PrinterSettings.mac.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\KnownColors.mac.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Font-CoreText.mac.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\SystemFonts.mac.cs" />
   </ItemGroup>
 </Project>

@@ -27,18 +27,9 @@
 //
 using System;
 using System.Drawing.Text;
-
-#if MONOMAC
-using AppKit;
 using Foundation;
 using CoreGraphics;
 using CoreText;
-#else
-using UIKit;
-using Foundation;
-using CoreGraphics;
-using CoreText;
-#endif
 
 namespace System.Drawing
 {
