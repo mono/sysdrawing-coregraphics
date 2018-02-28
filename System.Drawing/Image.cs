@@ -7,6 +7,9 @@
 //		Sanjay Gupta (gsanjay@novell.com)
 //		Ravindra (rkumar@novell.com)
 //		Sebastien Pouliot  <sebastien@xamarin.com>
+//		Miguel de Icaza (miguel@microsoft.com)
+//		Jiri Volejnik <aconcagua21@volny.cz>
+// 		Filip Navara <filip.navara@gmail.com>
 //
 // Copyright (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
@@ -40,22 +43,16 @@ using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
-
-#if MONOMAC
 using CoreGraphics;
 using Foundation;
-using AppKit;
-#else
-using CoreGraphics;
-using UIKit;
-using Foundation;
-#endif
 
 namespace System.Drawing {
-	
+
 	[Serializable]
 	[TypeConverter (typeof (ImageConverter))]
-	public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISerializable {
+	public abstract class Image : MarshalByRefObject, IDisposable, ICloneable, ISerializable
+	{
+		public delegate bool GetThumbnailImageAbort ();
 
 		// This is obtained from a Bitmap
 		// Right now that is all we support
@@ -64,61 +61,58 @@ namespace System.Drawing {
 
 		// This is obtained from a PDF file.  Not supported right now.
 		internal CGPDFDocument nativeMetafile;
+		internal CGPDFPage nativeMetafilePage;
 		string tag = string.Empty;
 		internal SizeF physicalSize;
 
 		internal CGAffineTransform imageTransform;
 		protected ImageFlags pixelFlags;
 
-		// From microsoft documentation an image can also be described by a metafile which in
-		// Quartz2D is a PDF file.  Quartz2D for Mac OSX Developers provides more information
-		// on that but for right now only Bitmap will be supported.
-		internal enum ImageClass 
-		{
-			Bitmap,		// Concrete Pixel based class of this abstract class
-			PDFDocument	// Concrete PDF representation based class of this abstract class
-		}
-
-		internal ImageClass Implementaion { get; set; }
-
-
 		~Image ()
 		{
 			Dispose (false);
 		}
-		
+
 		[DefaultValue (false)]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Height {
 			get {
-				var b = this as Bitmap;
-				return b == null ? 0 : (int)b.NativeCGImage.Height;
+				if (NativeCGImage != null)
+					return (int)NativeCGImage.Height;
+				else if (nativeMetafilePage != null)
+					return (int)nativeMetafilePage.GetBoxRect (CGPDFBox.Media).Height;
+				else
+					return 0;
 			}
 		}
-		
+
 		public PixelFormat PixelFormat {
-			get {		
+			get {
 				var b = this as Bitmap;
 				return b == null ? 0 : b.pixelFormat;
 			}
 		}
-		
+
 		public ImageFormat RawFormat {
 			get {
 
 				var b = this as Bitmap;
-				return b == null ? new ImageFormat(new Guid()) : b.rawFormat;		
+				return b == null ? new ImageFormat (new Guid ()) : b.rawFormat;
 			}
 		}
-		
+
 		[DefaultValue (false)]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Width {
 			get {
-				var b = this as Bitmap;
-				return b == null ? 0 : (int)b.NativeCGImage.Width;
+				if (NativeCGImage != null)
+					return (int)NativeCGImage.Width;
+				else if (nativeMetafilePage != null)
+					return (int)nativeMetafilePage.GetBoxRect (CGPDFBox.Media).Width;
+				else
+					return 0;
 			}
 		}
 
@@ -126,11 +120,10 @@ namespace System.Drawing {
 		/// Gets the horizontal resolution, in pixels per inch, of this Image.
 		/// </summary>
 		/// <value>The horizontal resolution.</value>
-		public float HorizontalResolution 
-		{ 
-			get { 
+		public float HorizontalResolution {
+			get {
 				var b = this as Bitmap;
-				return b == null ? 0 : b.dpiWidth;			
+				return b == null ? 0 : b.dpiWidth;
 			}
 
 		}
@@ -139,19 +132,21 @@ namespace System.Drawing {
 		/// Gets the vertical resolution, in pixels per inch, of this Image.
 		/// </summary>
 		/// <value>The vertical resolution.</value>
-		public float VerticalResolution 
-		{ 
-			get { 				
+		public float VerticalResolution {
+			get {
 				var b = this as Bitmap;
-				return b == null ? 0 : b.dpiHeight;	 
+				return b == null ? 0 : b.dpiHeight;
 			}
 		}
 
-		public Size Size 
-		{ 
-			get { 
+		public Size Size {
+			get {
+				if (this.nativeMetafilePage != null) {
+					var cgsize = this.nativeMetafilePage.GetBoxRect (CGPDFBox.Media);
+					return new Size ((int)cgsize.Width, (int)cgsize.Height);
+				}
 				var b = this as Bitmap;
-				return b == null ? Size.Empty : b.imageSize;	 
+				return b == null ? Size.Empty : b.imageSize;
 			}
 		}
 
@@ -159,76 +154,146 @@ namespace System.Drawing {
 		/// Gets the attribute pixel flags representing the image data.
 		/// </summary>
 		/// <value>The bitwise integer of the ImageFlags combinations.</value>
-		[BrowsableAttribute(false)]
-		public int Flags 
-		{ 
-			get { return (int)pixelFlags; } 
+		[BrowsableAttribute (false)]
+		public int Flags {
+			get { return (int)pixelFlags; }
 		}
 
 		/// <summary>
 		/// Gets the width and height of this image.
 		/// </summary>
 		/// <value>A SizeF structure that represents the width and height of this Image.</value>
-		public SizeF PhysicalDimension
-		{
-			get { 
+		public SizeF PhysicalDimension {
+			get {
 				var b = this as Bitmap;
-				return b == null ? SizeF.Empty : b.physicalDimension;	 			
+				return b == null ? SizeF.Empty : b.physicalDimension;
+			}
+		}
+
+		[Browsable (false)]
+		public Guid [] FrameDimensionsList {
+			get {
+				return new Guid [] { FrameDimension.Time.Guid };
+			}
+		}
+
+		public int GetFrameCount (FrameDimension dimension)
+		{
+			return 1;
+		}
+
+		public int SelectActiveFrame (FrameDimension dimension, int frameIndex)
+		{
+			if (frameIndex != 1)
+				throw new NotImplementedException ();
+			return frameIndex;
+		}
+
+		public PropertyItem GetPropertyItem (int propid)
+		{
+			if (propid == 0x5100) // Frame delay
+				return new PropertyItem ();
+			throw new NotImplementedException ();
+		}
+
+		public ColorPalette Palette {
+			get { return palette; }
+			set {
+				if ((PixelFormat & PixelFormat.Indexed) != 0 && palette.Entries.Length == value.Entries.Length) {
+					palette = value;
+
+					// Update CGImage
+					byte [] paletteEntries = new byte [palette.Entries.Length * 3];
+					int index = 0;
+					foreach (var entry in palette.Entries) {
+						paletteEntries [index++] = entry.R;
+						paletteEntries [index++] = entry.G;
+						paletteEntries [index++] = entry.B;
+					}
+
+					NativeCGImage = NativeCGImage.WithColorSpace (CGColorSpace.CreateIndexed (CGColorSpace.CreateDeviceRGB (), palette.Entries.Length - 1, paletteEntries));
+				}
 			}
 		}
 
 		/// <summary>
 		/// Creates an exact copy of this Image.
 		/// </summary>
-		public object Clone ()
-		{
-			var bitmap = new Bitmap (this);
-			return bitmap;
-		}
+		public object Clone () => new Bitmap (this);
 
 		public void Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
-			Console.WriteLine("Image Dispose");
 		}
 
 		protected virtual void Dispose (bool disposing)
 		{
 			// TODO
 		}
-		
+
+		public static Image FromStream (Stream stream, bool useIcm)
+		{
+			if (stream == null)
+				throw new ArgumentNullException ("stream");
+			return new Bitmap (stream, useIcm);
+		}
+
 		public static Image FromStream (Stream stream)
 		{
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
-			return new Bitmap(stream, false);
+			return new Bitmap (stream, false);
 		}
 
 		public void Save (Stream stream, ImageFormat format)
 		{
 			var b = this as Bitmap;
 			if (b != null)
-				b.Save(stream, format);
+				b.Save (stream, format);
 		}
-		
+
+		public void Save (string path, ImageCodecInfo encoder, EncoderParameters parameters)
+		{
+			// FIXME: workaround
+			using (Bitmap b = new Bitmap (this))
+				b.Save (path, encoder, parameters);
+		}
+
 		public void Save (Stream stream)
 		{
-			throw new NotImplementedException ();
+			Save (stream, RawFormat);
 		}
-		
+
 		public void Save (string filename)
 		{
 			var b = this as Bitmap;
 			if (b != null)
-				b.Save(filename);
+				b.Save (filename);
+		}
+
+		public void Save (string filename, ImageFormat format)
+		{
+			var b = this as Bitmap ?? new Bitmap (this);
+			if (b != null)
+				b.Save (filename, format);
 		}
 
 		public static Bitmap FromFile (string filename)
 		{
-			return new Bitmap(filename);
+			return new Bitmap (filename);
 		}
-		
+
+		public static Bitmap FromHbitmap (IntPtr handle)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static Bitmap FromHbitmap (IntPtr handle, IntPtr palette)
+		{
+			throw new NotImplementedException ();
+		}
+
 		void ISerializable.GetObjectData (SerializationInfo si, StreamingContext context)
 		{
 			using (MemoryStream ms = new MemoryStream ()) {
@@ -341,5 +406,18 @@ namespace System.Drawing {
 			return (((int)pixfmt >> 8) & 0xff) / 8;
 		}
 
+		public Image GetThumbnailImage (int thumbWidth, int thumbHeight, Image.GetThumbnailImageAbort callback, IntPtr callbackData)
+		{
+		        if ((thumbWidth <= 0) || (thumbHeight <= 0))
+		                throw new OutOfMemoryException ("Invalid thumbnail size");
+		
+		        Image ThumbNail = new Bitmap (thumbWidth, thumbHeight);
+		
+		        using (Graphics g = Graphics.FromImage(ThumbNail)) {
+		                g.DrawImage(this, new RectangleF (0, 0, thumbWidth, thumbHeight), new Rectangle (0, 0, this.Width, this.Height), GraphicsUnit.Pixel);
+		        }
+		
+		        return ThumbNail;
+		}
 	}
 }

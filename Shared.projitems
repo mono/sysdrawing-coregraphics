@@ -62,6 +62,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\GraphicsState.cs">
       <Link>corefx\System.Drawing.Drawing2D\GraphicsState.cs</Link>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\PropertyItem.cs">
+      <Link>corefx\System.Drawing.Imaging\PropertyItem.cs</Link>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\StringAlignment.cs">
       <Link>corefx\System.Drawing\StringAligment.cs</Link>
     </Compile>
