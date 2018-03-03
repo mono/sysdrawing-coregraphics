@@ -30,6 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System.Drawing.Text;
 
 namespace System.Drawing {
 
@@ -37,6 +38,8 @@ namespace System.Drawing {
 
 
 		StringFormatFlags formatFlags = 0;
+		HotkeyPrefix hotkeyPrefix;
+		internal CharacterRange[] measurableCharacterRanges;
 
 		public StringFormat ()
 		{
@@ -51,6 +54,8 @@ namespace System.Drawing {
 			Alignment = format.Alignment;
 			LineAlignment = format.LineAlignment;
 			FormatFlags = format.FormatFlags;
+			Trimming = format.Trimming;
+			HotkeyPrefix = format.HotkeyPrefix;
 		}
 
 		public StringFormat(StringFormatFlags options) : this()
@@ -116,11 +121,51 @@ namespace System.Drawing {
 				formatFlags = value;
 			}
 		}
-		
-  		public void SetMeasurableCharacterRanges (CharacterRange [] ranges)
-		{					
-			throw new NotImplementedException ();
+
+		public HotkeyPrefix HotkeyPrefix {
+			get {
+				return hotkeyPrefix;
+			}
+
+			set {
+				hotkeyPrefix = value;
+			}
 		}
 		
+  		public void SetMeasurableCharacterRanges (CharacterRange [] ranges)
+		{
+			this.measurableCharacterRanges = ranges;
+		}
+		
+		public void SetTabStops(float firstTabOffset, float[] tabStops)
+		{
+			//throw new NotImplementedException ();
+		}
+
+		/*public void SetDigitSubstitution(int language,  StringDigitSubstitute substitute)
+		{
+			throw new NotImplementedException ();
+		}*/
+
+		public float[] GetTabStops(out float firstTabOffset)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override bool Equals(object obj)
+		{
+			return (obj is StringFormat f)
+				&& FormatFlags.Equals(f.FormatFlags)
+				&& HotkeyPrefix.Equals(f.HotkeyPrefix)
+				&& measurableCharacterRanges == f.measurableCharacterRanges
+				&& Alignment.Equals(f.Alignment)
+				&& LineAlignment.Equals(f.LineAlignment)
+				&& Trimming.Equals(f.Trimming);
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 	}
 }

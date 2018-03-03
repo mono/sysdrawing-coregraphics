@@ -31,6 +31,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\StringFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\TextureBrush.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Graphics-DrawString.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Graphics-DrawStringCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\CGGraphicsState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\GraphicsPath.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\GraphicsPathIterator.cs" />
@@ -55,6 +56,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\ClipperLib\clipper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\GeomTransformUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\Locale.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\HashUtilities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\LurchTable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\IDictionaryEx.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\IConcurrentDictionary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Imaging\ImageCodecInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\SystemFonts.cs" />
   </ItemGroup>
@@ -145,6 +150,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Text\TextRenderingHint.cs">
       <Link>corefx\System.Drawing.Text\TextRenderingHint.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Text\HotKeyPrefix.cs">
+      <Link>corefx\System.Drawing.Text\HotKeyPrefix.cs</Link>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\CombineMode.cs">
       <Link>corefx\System.Drawing.Drawing2D\CombineMode.cs</Link>

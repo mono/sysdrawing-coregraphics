@@ -13,6 +13,9 @@ Directly from master, not partial:
 * SystemFonts.cs
 	- Had to create an iOS version, but this one is not complete (SystemFonts.ios.cs)
 * Graphics-DrawImage.cs 
+* Graphics-DrawString.cs
+* Graphics-DrawStringCache.cs
+* StringFormat.cs
 * Image.cs
 
 On the first patch, fa17b7bb8140752280ff846d8fa97c7936cc1881, done everything up to
