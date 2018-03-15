@@ -26,3 +26,7 @@ Challenges with Graphics.cs:
 	mac-playground abandoned support for retina displays (screenScale in Graphics),
 	so we need to proceed with caution.   The patch so far merely splits code in Mac/iOS
 	but does not attempt to do much else as this will require the test harness to be setup
+
+	MIght be possible to compare not against master, but against the version before,
+	which was 772ab833835d9b221c915536be993a8d503d05d3, and does not include the 
+	changes to the retina code
