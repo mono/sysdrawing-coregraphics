@@ -18,5 +18,11 @@ Directly from master, not partial:
 * StringFormat.cs
 * Image.cs
 
-On the first patch, fa17b7bb8140752280ff846d8fa97c7936cc1881, done everything up to
-Color patch, next up Font.cs
+On the first patch, fa17b7bb8140752280ff846d8fa97c7936cc1881, next up
+Graphics.cs
+
+Challenges with Graphics.cs:
+
+	mac-playground abandoned support for retina displays (screenScale in Graphics),
+	so we need to proceed with caution.   The patch so far merely splits code in Mac/iOS
+	but does not attempt to do much else as this will require the test harness to be setup
