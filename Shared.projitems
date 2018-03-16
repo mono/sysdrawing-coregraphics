@@ -33,6 +33,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Graphics-DrawString.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Graphics-DrawStringCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\CGGraphicsState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\GraphicsState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\GraphicsPath.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\GraphicsPathIterator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\GraphicsPath-AddString.cs" />
@@ -64,9 +65,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\SystemFonts.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\GraphicsState.cs">
-      <Link>corefx\System.Drawing.Drawing2D\GraphicsState.cs</Link>
-    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\PropertyItem.cs">
       <Link>corefx\System.Drawing.Imaging\PropertyItem.cs</Link>
     </Compile>

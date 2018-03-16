@@ -875,5 +875,11 @@ namespace System.Drawing
 			
 			reader.Close();
 		}
+
+		public Bitmap ToBitmap ()
+{
+	throw new NotImplementedException ();
+}
+
 	}
 }

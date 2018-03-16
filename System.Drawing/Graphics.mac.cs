@@ -37,7 +37,6 @@ namespace System.Drawing
 		{ 
 		}
 
-
 		Graphics (NSGraphicsContext context)  
 		{
 			var gc = context;
@@ -45,17 +44,9 @@ namespace System.Drawing
 			if (gc.IsFlipped)
 				gc = NSGraphicsContext.FromGraphicsPort (gc.GraphicsPort, false);
 
-			// testing for now
-			//			var attribs = gc.Attributes;
-			//			attribs = NSScreen.MainScreen.DeviceDescription;
-			//			NSValue asdf = (NSValue)attribs["NSDeviceResolution"];
-			//			var size = asdf.SizeFValue;
-			// ----------------------
 			screenScale = 1;
 			nativeObject = gc;
-
 			isFlipped = gc.IsFlipped;
-
 			InitializeContext (gc.GraphicsPort);
 
 		}
@@ -72,15 +63,23 @@ namespace System.Drawing
 		
 		        Graphics g;
 		        NSView view = (NSView)ObjCRuntime.Runtime.GetNSObject (hwnd);
-		        if (NSView.FocusView () != view && view.LockFocusIfCanDraw()) {
+
+		        if (NSView.FocusView () != view && view.LockFocusIfCanDraw())
 		                g = new Graphics (view.Window.GraphicsContext) { focusedView = view };
-		        } else if (view.Window != null && view.Window.GraphicsContext != null) {
+		        else if (view.Window != null && view.Window.GraphicsContext != null)
 		                g = new Graphics (view.Window.GraphicsContext);
-		        } else {
+		        else 
 		                g = Graphics.FromImage(new Bitmap (1, 1));
-		        }
 		
 		        return g;
+		}
+
+		void PlatformDispose ()
+		{
+			if (focusedView != null) {
+				focusedView.UnlockFocus ();
+				focusedView = null;
+			}
 		}
 	}
 }

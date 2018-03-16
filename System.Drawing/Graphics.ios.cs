@@ -56,5 +56,8 @@ namespace System.Drawing
 			return new Graphics (context, screenScale);
 		}
 
+		void PlatformDispose ()
+		{
+		}
 	}
 }
