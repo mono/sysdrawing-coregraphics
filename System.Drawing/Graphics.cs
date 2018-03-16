@@ -16,26 +16,17 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Diagnostics.Contracts;
-
-#if MONOMAC
 using CoreGraphics;
-using AppKit;
 using Foundation;
 using CoreText;
-#else
-using CoreGraphics;
-using UIKit;
-using Foundation;
-using CoreText;
-#endif
 
 namespace System.Drawing {
 
-	public sealed partial class Graphics : MarshalByRefObject, IDisposable {
+	public sealed partial class Graphics : MarshalByRefObject, IDisposable{
 		internal CGContext context;
+		bool hasClientTransform;
 		internal Pen LastPen;
 		internal Brush LastBrush;
-		internal SizeF contextUserSpace;
 		internal RectangleF boundingBox;
 		internal GraphicsUnit quartzUnit = GraphicsUnit.Point;
 		internal object nativeObject;
@@ -72,69 +63,6 @@ namespace System.Drawing {
 			screenScale = 1;
 			InitializeContext(context);
 		}
-
-#if MONOTOUCH
-		private Graphics() :
-			this (UIGraphics.GetCurrentContext(), UIScreen.MainScreen.Scale)
-		{	}
-
-		private Graphics(CGContext context) :
-			this (context, UIScreen.MainScreen.Scale)
-		{	}
-
-		private Graphics(CGContext context, nfloat screenScale)
-		{
-			var gc = context;
-			nativeObject = gc;
-			this.screenScale = (float)screenScale;
-			InitializeContext(gc);
-
-		}
-
-		public static Graphics FromContext(CGContext context)
-		{
-			return new Graphics (context, UIScreen.MainScreen.Scale);
-		}
-
-		public static Graphics FromContext(CGContext context, float screenScale)
-		{
-			return new Graphics (context, screenScale);
-		}
-
-#endif
-
-#if MONOMAC
-		private Graphics() :
-			this (NSGraphicsContext.CurrentContext)
-		{	}
-
-		private Graphics (NSGraphicsContext context)
-		{
-			var gc = context;
-
-			if (gc.IsFlipped)
-				gc = NSGraphicsContext.FromGraphicsPort (gc.GraphicsPort, false);
-
-			// testing for now
-			//			var attribs = gc.Attributes;
-			//			attribs = NSScreen.MainScreen.DeviceDescription;
-			//			NSValue asdf = (NSValue)attribs["NSDeviceResolution"];
-			//			var size = asdf.SizeFValue;
-			// ----------------------
-			screenScale = 1;
-			nativeObject = gc;
-
-			isFlipped = gc.IsFlipped;
-
-			InitializeContext(gc.GraphicsPort);
-
-		}
-
-		public static Graphics FromContext (NSGraphicsContext context)
-		{
-			return new Graphics (context);
-		}
-#endif
 
 		public static Graphics FromCurrentContext()
 		{

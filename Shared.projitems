@@ -163,6 +163,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\DashCap.cs">
       <Link>corefx\System.Drawing\DashCap.cs</Link>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\IDeviceContext.cs">
+      <Link>corefx\System.Drawing\IDeviceContext.cs</Link>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\DashStyle.cs">
       <Link>corefx\System.Drawing.Drawing2D\DashStyle.cs</Link>
     </Compile>
