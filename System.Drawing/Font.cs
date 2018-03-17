@@ -103,7 +103,7 @@ namespace System.Drawing
 		{
 		}
 
-		private Font (SerializationInfo info, StreamingContext context)
+		Font (SerializationInfo info, StreamingContext context)
 			: this ((string)info.GetValue ("Name", typeof (string)),
 				(float)info.GetValue ("Size", typeof (float)),
 				(FontStyle)info.GetValue ("Style", typeof (FontStyle)),

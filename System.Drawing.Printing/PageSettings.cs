@@ -42,7 +42,7 @@ namespace System.Drawing.Printing
 
 	public partial class PageSettings : ICloneable
 	{
-		private PaperSize paper_size;
+		PaperSize paper_size;
 
 		public PageSettings ()
 			: this (new PrinterSettings ())

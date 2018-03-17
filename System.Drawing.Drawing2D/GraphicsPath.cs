@@ -1343,7 +1343,7 @@ namespace System.Drawing.Drawing2D {
 			types = cleared;
 		}
 
-		private PathPointType GetFirstPointType()
+		PathPointType GetFirstPointType()
 		{
 			/* check for a new figure flag or an empty path */ 
 			if (start_new_fig || (points.Count == 0))

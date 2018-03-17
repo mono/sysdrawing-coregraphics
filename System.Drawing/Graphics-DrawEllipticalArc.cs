@@ -66,12 +66,12 @@ namespace System.Drawing
 		**/
 
 		// A little pre computation here
-		private const double twoPi = 2 * Math.PI;
+		const double twoPi = 2 * Math.PI;
 		
 		// coefficients for error estimation
 		// while using quadratic Bézier curves for approximation
 		// 0 < b/a < 1/4
-		private readonly double[][][] coeffs2Low = new double[][][] {
+		readonly double[][][] coeffs2Low = new double[][][] {
 			new double[][] {
 				new double[] {  3.92478,   -13.5822,     -0.233377,    0.0128206   },
 				new double[] { -1.08814,     0.859987,    0.000362265, 0.000229036 },
@@ -88,7 +88,7 @@ namespace System.Drawing
 		// coefficients for error estimation
 		// while using quadratic Bézier curves for approximation
 		// 1/4 <= b/a <= 1
-		private readonly double[][][] coeffs2High = new double[][][] {
+		readonly double[][][] coeffs2High = new double[][][] {
 			new double[][] {
 				new double[]{  0.0863805, -11.5595,     -2.68765,     0.181224    },
 				new double[]{  0.242856,   -1.81073,     1.56876,     1.68544     },
@@ -104,12 +104,12 @@ namespace System.Drawing
 		
 		// safety factor to convert the "best" error approximation
 		// into a "max bound" error
-		private readonly double[] safety2 = new double[] { 0.02, 2.83, 0.125, 0.01 };
+		readonly double[] safety2 = new double[] { 0.02, 2.83, 0.125, 0.01 };
 		
 		// coefficients for error estimation
 		// while using cubic Bézier curves for approximation
 		// 0 < b/a < 1/4
-		private readonly double[][][] coeffs3Low = new double[][][] {
+		readonly double[][][] coeffs3Low = new double[][][] {
 			new double[][] {
 				new double[] {  3.85268,   -21.229,      -0.330434,    0.0127842  },
 				new double[] { -1.61486,     0.706564,    0.225945,    0.263682   },
@@ -126,7 +126,7 @@ namespace System.Drawing
 		// coefficients for error estimation
 		// while using cubic Bézier curves for approximation
 		// 1/4 <= b/a <= 1
-		private readonly double[][][] coeffs3High = new double[][][] {
+		readonly double[][][] coeffs3High = new double[][][] {
 			new double[][]{
 				new double[]{  0.0899116, -19.2349,     -4.11711,     0.183362   },
 				new double[]{  0.138148,   -1.45804,     1.32044,     1.38474    },
@@ -142,24 +142,24 @@ namespace System.Drawing
 		
 		// safety factor to convert the "best" error approximation
 		// into a "max bound" error
-		private double[] safety3 = new double[] { 0.001, 4.98, 0.207, 0.0067 };
+		double[] safety3 = new double[] { 0.001, 4.98, 0.207, 0.0067 };
 		
 		/** Abscissa of the center of the ellipse. */
-		private double cx;
+		double cx;
 
 		/** Ordinate of the center of the ellipse. */
-		private double cy;
+		double cy;
 		
 		/** Semi-major axis. */
-		private double a;
+		double a;
 		
 		/** Semi-minor axis. */
-		private double b;
+		double b;
 		
 		/** Orientation of the major axis with respect to the x axis. */
-		private double theta;
-		private double cosTheta;
-		private double sinTheta;
+		double theta;
+		double cosTheta;
+		double sinTheta;
 		
 		/** Start angle of the arc. */
 		protected double eta1;
@@ -314,7 +314,7 @@ namespace System.Drawing
 		}
 		
 		/** Compute the locations of the focii. */
-		private void computeFocii()
+		void computeFocii()
 		{
 			
 			double d = Math.Sqrt(a * a - b * b);
@@ -334,7 +334,7 @@ namespace System.Drawing
 		* @param x absissa for which the value should be computed
 		* @param c coefficients array of the rational function
 		*/
-		private static double rationalFunction(double x, double[] c)
+		static double rationalFunction(double x, double[] c)
 		{
 			return (x * (x * c[0] + c[1]) + c[2]) / (x + c[3]);
 		}
@@ -346,7 +346,7 @@ namespace System.Drawing
 		* @return upper bound of the approximation error between the Bézier
 		* curve and the real ellipse
 		*/
-		private double estimateError(int degree, double etaA, double etaB)
+		double estimateError(int degree, double etaA, double etaB)
 		{
 			
 			double eta = 0.5 * (etaA + etaB);

@@ -17,9 +17,9 @@ namespace System.Drawing
 	public partial class Graphics {
 		public delegate bool DrawImageAbort (IntPtr callbackData);
 
-		private CIContext ciContext;
+		CIContext ciContext;
 
-		private void DrawImage(RectangleF rect, CGImage image, CGAffineTransform transform)
+		void DrawImage(RectangleF rect, CGImage image, CGAffineTransform transform)
 		{
 			var trans = transform;
 			// Do our translation on the image transform
@@ -808,16 +808,6 @@ namespace System.Drawing
 			DrawImageUnscaled (image, rect.X, rect.Y, width, height);			
 		}
 
-		private void InitializeImagingContext ()
-		{
-#if MONOTOUCH
-			if (ciContext == null)
-				ciContext = CIContext.FromOptions(null);
-#else
-			if (ciContext == null)
-				ciContext = CIContext.FromContext (context);
-#endif
-		}
 	}
 }
 

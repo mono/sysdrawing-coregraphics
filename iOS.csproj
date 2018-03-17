@@ -43,6 +43,8 @@
     <Compile Include="System.Drawing\SystemFonts.ios.cs" />
     <Compile Include="System.Drawing\Graphics.ios.cs" />
     <Compile Include="System.Drawing.Printing\PageSettings.ios.cs" />
+    <Compile Include="System.Drawing\Extensions.ios.cs" />
+    <Compile Include="System.Drawing\SystemIcons.ios.cs" />
   </ItemGroup>
   <Import Project="Shared.projitems" Label="Shared" Condition="Exists('Shared.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

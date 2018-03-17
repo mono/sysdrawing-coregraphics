@@ -43,7 +43,7 @@ namespace System.Drawing.Printing
 	public partial class PrinterSettings : ICloneable
 	{
 		internal NSPrinter printer;
-		private string printer_name;
+		string printer_name;
 
 		void InitPrinterSettings ()
 		{

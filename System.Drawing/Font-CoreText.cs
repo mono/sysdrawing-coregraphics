@@ -65,7 +65,7 @@ namespace System.Drawing
                  * 2355*(0.3/2048)*96 = 33.11719
                  * 
                  **/
-		private float GetNativeheight ()
+		float GetNativeheight ()
 		{
 			return (float)nativeFont.BoundingBox.Height;
 		}

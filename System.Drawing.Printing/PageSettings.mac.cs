@@ -17,7 +17,7 @@ namespace System.Drawing.Printing
 			paper_size = new PaperSize (print_info.PaperName, (int)print_info.PaperSize.Width, (int)print_info.PaperSize.Height);
 		}
 
-		private PageSettings (PageSettings pageSettings)
+		PageSettings (PageSettings pageSettings)
 		{
 			this.PrinterSettings = pageSettings.PrinterSettings;
 			print_info = new NSPrintInfo (pageSettings.print_info.Dictionary);

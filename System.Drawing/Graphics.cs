@@ -47,13 +47,13 @@ namespace System.Drawing {
 		internal Matrix viewMatrix;
 		internal Matrix modelViewMatrix;
 		float userspaceScaleX = 1, userspaceScaleY = 1;
-		private GraphicsUnit graphicsUnit = GraphicsUnit.Display;
-		private float pageScale = 1;
-		private PointF renderingOrigin = PointF.Empty;
-		private RectangleF subviewClipOffset = RectangleF.Empty;
-		private static Region infiniteRegion = new Region ();
-		private Region clip;
-		private float screenScale;
+		GraphicsUnit graphicsUnit = GraphicsUnit.Display;
+		float pageScale = 1;
+		PointF renderingOrigin = PointF.Empty;
+		RectangleF subviewClipOffset = RectangleF.Empty;
+		static Region infiniteRegion = new Region ();
+		Region clip;
+		float screenScale;
 
 		public Graphics (CGContext context, bool flipped = true)
 		{
@@ -69,7 +69,7 @@ namespace System.Drawing {
 			return new Graphics ();
 		}
 
-		private void InitializeContext(CGContext context) 
+		void InitializeContext(CGContext context) 
 		{
 			this.context = context;
 
@@ -90,7 +90,7 @@ namespace System.Drawing {
 			setupView ();
 		}
 
-		private void initializeMatrix(ref Matrix matrix, bool isFlipped) 
+		void initializeMatrix(ref Matrix matrix, bool isFlipped) 
 		{
 			if (!isFlipped) 
 			{
@@ -589,7 +589,7 @@ namespace System.Drawing {
 			FillEllipse (brush, new RectangleF (x1, y1, x2, y2));
 		}
 
-		private void applyModelView() {
+		void applyModelView() {
 			
 			// Since there is no context.SetCTM, only ConcatCTM
 			// get the current transform, invert it, and concat this to

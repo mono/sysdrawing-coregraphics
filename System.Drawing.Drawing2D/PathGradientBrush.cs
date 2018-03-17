@@ -682,7 +682,7 @@ namespace System.Drawing.Drawing2D {
 		}
 
 		float[] colorOutput = new float[4];
-		private void GradientLerp3(float alpha, float beta, float gamma)
+		void GradientLerp3(float alpha, float beta, float gamma)
 		{
 
 			var resRed = (alpha * edge32Red) + ((beta * edge13Red) + (gamma * edge21Red));

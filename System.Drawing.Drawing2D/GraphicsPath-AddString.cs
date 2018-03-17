@@ -253,7 +253,7 @@ namespace System.Drawing.Drawing2D
 
 		}	
 
-		private static NSMutableAttributedString buildAttributedString(string text, Font font, 
+		static NSMutableAttributedString buildAttributedString(string text, Font font, 
 		                                                        Color? fontColor=null) 
 		{
 

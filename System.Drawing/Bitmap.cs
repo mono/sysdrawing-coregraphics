@@ -289,7 +289,7 @@ namespace System.Drawing {
 			}
 		}
 
-		private Bitmap (SerializationInfo info, StreamingContext context)
+		 Bitmap (SerializationInfo info, StreamingContext context)
 		{
 			foreach (SerializationEntry serEnum in info) {
 				if (String.Compare(serEnum.Name, "Data", true) == 0) {
@@ -1192,7 +1192,7 @@ namespace System.Drawing {
 		}
 #endif
 	
-		private string GetTypeIdentifier(ImageFormat format)
+		 string GetTypeIdentifier(ImageFormat format)
 		{
 			if (format == ImageFormat.Bmp)
 				return "com.microsoft.bmp";
@@ -1215,7 +1215,7 @@ namespace System.Drawing {
 			return "public.png";
 		}
 
-		private void Save(CGImageDestination dest)
+		 void Save(CGImageDestination dest)
 		{
 			if (NativeCGImage == null)
 				throw new ObjectDisposedException("cgimage");

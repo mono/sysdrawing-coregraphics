@@ -26,20 +26,21 @@ using System.Drawing.Mac;
 using System.Collections.Generic;
 using UIKit;
 using CoreGraphics;
+using CoreImage;
 
 namespace System.Drawing
 {
 
 	public partial class Graphics {
-		private Graphics () :
+		Graphics () :
 			this (UIGraphics.GetCurrentContext (), UIScreen.MainScreen.Scale)
 		{ }
 
-		private Graphics (CGContext context) :
+		Graphics (CGContext context) :
 			this (context, UIScreen.MainScreen.Scale)
 		{ }
 
-		private Graphics (CGContext context, nfloat screenScale)
+		Graphics (CGContext context, nfloat screenScale)
 		{
 			var gc = context;
 			this.screenScale = (float)screenScale;
@@ -59,5 +60,12 @@ namespace System.Drawing
 		void PlatformDispose ()
 		{
 		}
+
+		void InitializeImagingContext ()
+		{
+			if (ciContext == null)
+				ciContext = CIContext.FromOptions (null);
+		}
+
 	}
 }

@@ -103,7 +103,7 @@ namespace System.Drawing
 			}
 		}
 		
-		private Icon (SerializationInfo info, StreamingContext context)
+		Icon (SerializationInfo info, StreamingContext context)
 		{
 			MemoryStream dataStream = null;
 			int width=0;
@@ -156,7 +156,7 @@ namespace System.Drawing
 			GC.SuppressFinalize(this);
 		}
 
-		private void Dispose(bool disposing)
+		void Dispose(bool disposing)
 		{
 			if (image != null){
 				image.Dispose();
@@ -233,7 +233,7 @@ namespace System.Drawing
 			Dispose (false);
 		}
 		
-		private void InitFromStreamWithSize (Stream stream, int width, int height)
+		void InitFromStreamWithSize (Stream stream, int width, int height)
 		{
 			var data = NSData.FromStream(stream);
 			imageData = new ReferencedImageData(data, CGImageSource.FromData(data));
@@ -241,7 +241,7 @@ namespace System.Drawing
 				throw new ArgumentOutOfRangeException(nameof(stream));
 		}
 
-		private bool LoadImageWithSize(Size size)
+		bool LoadImageWithSize(Size size)
 		{
 			var imageSource = imageData.ImageSource;
 			int bestIndex = (int)imageSource.ImageCount - 1;

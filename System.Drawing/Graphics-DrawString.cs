@@ -152,13 +152,13 @@ namespace System.Drawing
 			DrawString (s, font, brush, new RectangleF (x, y, 0, 0), format);
 		}
 
-		private CTLine EllipsisToken (Font font, StringFormat format)
+		 CTLine EllipsisToken (Font font, StringFormat format)
 		{
 			var attrStr = buildAttributedString ("\u2026", font, format, lastBrushColor);
 			return new CTLine (attrStr);
 		}
 
-		private List<CTLine> CreateLines (Font font, NSAttributedString attributedString, SizeF layoutBox, StringFormat format, float lineHeight)
+		 List<CTLine> CreateLines (Font font, NSAttributedString attributedString, SizeF layoutBox, StringFormat format, float lineHeight)
 		{
 			bool noWrap = (format.FormatFlags & StringFormatFlags.NoWrap) != 0;
 			bool wholeLines = (format.FormatFlags & StringFormatFlags.LineLimit) != 0;
@@ -422,7 +422,7 @@ namespace System.Drawing
 			SmoothingMode = savedSmoothingMode;
 		}	
 
-        private static NSAttributedString buildAttributedString(string text, Font font, StringFormat format = null, Color? fontColor = null) 
+         static NSAttributedString buildAttributedString(string text, Font font, StringFormat format = null, Color? fontColor = null) 
 		{
 			var ctAttributes = new CTStringAttributes ();
 			ctAttributes.Font = font.nativeFont;

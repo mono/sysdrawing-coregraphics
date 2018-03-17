@@ -32,7 +32,7 @@
 namespace System.Drawing
 {
 
-	public sealed class SystemIcons
+	public sealed partial class SystemIcons
 	{
 		static Icon FromResource (string name)
 		{
@@ -40,25 +40,7 @@ namespace System.Drawing
 				return new Icon (stream) { undisposable = true };			
 		}
 
-		static SystemIcons ()
-		{
-			WinLogo = FromResource ("Mono.ico");
-			Shield = FromResource ("Shield.ico");
-#if MONOMAC
-			Information = new Icon("/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/ToolbarInfo.icns") { undisposable = true };
-			Error = new Icon("/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertStopIcon.icns") { undisposable = true };
-			Warning = new Icon("/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertCautionIcon.icns") { undisposable = true };
-			Question = new Icon("/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertNoteIcon.icns") { undisposable = true };
-#else
-			Information = FromResource ("Information.ico");
-			Error = FromResource ("Error.ico");
-			Warning = FromResource ("Warning.ico");
-			Question = FromResource ("Question.ico");
-			WinLogo = FromResource ("WinLogo.ico");
-#endif
-		}
-
-		private SystemIcons ()
+		SystemIcons ()
 		{
 		}
 

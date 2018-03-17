@@ -26,6 +26,7 @@ using System.Drawing.Mac;
 using System.Collections.Generic;
 using AppKit;
 using CoreGraphics;
+using CoreImage;
 
 namespace System.Drawing
 {
@@ -81,5 +82,12 @@ namespace System.Drawing
 				focusedView = null;
 			}
 		}
+
+		void InitializeImagingContext ()
+		{
+			if (ciContext == null)
+				ciContext = CIContext.FromContext (context);
+		}
+
 	}
 }

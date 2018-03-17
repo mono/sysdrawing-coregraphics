@@ -15,5 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\SystemFonts.mac.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Graphics.mac.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PageSettings.mac.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Extensions.mac.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\SystemIcons.mac.cs" />
   </ItemGroup>
 </Project>

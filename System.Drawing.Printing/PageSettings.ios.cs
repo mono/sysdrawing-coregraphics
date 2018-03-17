@@ -10,7 +10,7 @@ namespace System.Drawing.Printing
 			this.PrinterSettings = printerSettings;
 		}
 
-		private PageSettings (PageSettings pageSettings)
+		PageSettings (PageSettings pageSettings)
 		{
 			this.PrinterSettings = pageSettings.PrinterSettings;
 		}

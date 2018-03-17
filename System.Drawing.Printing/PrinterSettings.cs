@@ -42,12 +42,12 @@ namespace System.Drawing.Printing
 	[Serializable]
 	public partial class PrinterSettings : ICloneable
 	{
-		private int from_page;
-		private int to_page;
-		private int minimum_page;
-		private int maximum_page;
-		private short copies;
-		private PrintRange print_range;
+		int from_page;
+		int to_page;
+		int minimum_page;
+		int maximum_page;
+		short copies;
+		PrintRange print_range;
 		internal PageSettings page_settings;
 
 		public PrinterSettings ()

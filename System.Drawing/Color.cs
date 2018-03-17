@@ -246,7 +246,7 @@ namespace System.Drawing
 			return String.Format ("Color [A={0}, R={1}, G={2}, B={3}]", A, R, G, B);
 		}
  
-		private static ArgumentException CreateColorArgumentException (int value, string color)
+		static ArgumentException CreateColorArgumentException (int value, string color)
 		{
 			return new ArgumentException (string.Format ("'{0}' is not a valid"
 				+ " value for '{1}'. '{1}' should be greater or equal to 0 and"
