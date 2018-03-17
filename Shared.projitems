@@ -63,6 +63,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\IConcurrentDictionary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Imaging\ImageCodecInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\SystemFonts.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\SystemIcons.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\PropertyItem.cs">
@@ -330,5 +331,14 @@
     <Folder Include="$(MSBuildThisFileDirectory)System.Drawing.Text\" />
     <Folder Include="$(MSBuildThisFileDirectory)System.Drawing.Imaging\" />
     <Folder Include="$(MSBuildThisFileDirectory)Utilities\ClipperLib\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Resources\Error.ico" />
+    <None Include="$(MSBuildThisFileDirectory)Resources\Information.ico" />
+    <None Include="$(MSBuildThisFileDirectory)Resources\Mono.ico" />
+    <None Include="$(MSBuildThisFileDirectory)Resources\Question.ico" />
+    <None Include="$(MSBuildThisFileDirectory)Resources\Shield.ico" />
+    <None Include="$(MSBuildThisFileDirectory)Resources\Warning.ico" />
+    <None Include="$(MSBuildThisFileDirectory)Resources\WinLogo.ico" />
   </ItemGroup>
 </Project>

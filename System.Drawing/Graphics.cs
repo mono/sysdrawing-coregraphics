@@ -495,7 +495,7 @@ namespace System.Drawing {
 		public void FillRectangle (Brush brush, Rectangle rect)
 		{
 			if (brush == null)
-				throw new ArgumentNullException (nameeof (brush));
+				throw new ArgumentNullException (nameof (brush));
 			RectanglePath (new CGRect(rect.X, rect.Y, rect.Width, rect.Height));
 			FillBrush (brush);
 		}
