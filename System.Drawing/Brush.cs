@@ -12,7 +12,7 @@ using CoreGraphics;
 namespace System.Drawing {
 
 	public abstract partial class Brush : MarshalByRefObject, IDisposable, ICloneable {
-		internal bool changed = true;
+		protected bool changed = true;
 		
 		~Brush ()
 		{

@@ -2,30 +2,6 @@ This file describes the progress in code integration from the mac-playground con
 
 Directly from master, and adjusted, not partial:
 
-* Bitmap.cs - imported directly from master
-* PrinterSettings.cs 
-* PageSettings.cs
-* Extensions
-* Color
-* KnownColors
-* KnownColor
-* Font.cs
-* SystemFonts.cs
-	- Had to create an iOS version, but this one is not complete (SystemFonts.ios.cs)
-* Graphics-DrawImage.cs 
-* Graphics-DrawString.cs
-* Graphics-DrawStringCache.cs
-* StringFormat.cs
-* Image.cs
-* Region.cs
-* Graphics.cs
-* SystemIcons.cs
-* Icon.cs
-* Image.cs
-
-On the first patch, fa17b7bb8140752280ff846d8fa97c7936cc1881, next up
-Graphics.cs
-
 Challenges with Graphics.cs:
 
 	mac-playground abandoned support for retina displays (screenScale in Graphics),
@@ -35,3 +11,44 @@ Challenges with Graphics.cs:
 	MIght be possible to compare not against master, but against the version before,
 	which was 772ab833835d9b221c915536be993a8d503d05d3, and does not include the 
 	changes to the retina code
+
+Pending Files:
+System.Drawing.Drawing2D/GraphicsContainer.cs
+System.Drawing.Drawing2D/GraphicsPath-AddString.cs
+System.Drawing.Drawing2D/GraphicsPath.cs
+System.Drawing.Drawing2D/GraphicsPathIterator.cs
+System.Drawing.Drawing2D/GraphicsState.cs
+System.Drawing.Drawing2D/HatchBrush.cs
+System.Drawing.Drawing2D/LinearGradientBrush.cs
+System.Drawing.Drawing2D/Matrix.cs
+System.Drawing.Drawing2D/PathGradientBrush.cs
+System.Drawing.Imaging/ColorPalette.cs
+System.Drawing.Imaging/Encoder.cs
+System.Drawing.Imaging/EncoderParameter.cs
+System.Drawing.Imaging/EncoderParameterValueType.cs
+System.Drawing.Imaging/EncoderParameters.cs
+System.Drawing.Imaging/ImageAttributes.cs
+System.Drawing.Imaging/ImageCodecFlags.cs
+System.Drawing.Imaging/ImageCodecInfo.cs
+System.Drawing.Printing/PreviewPageInfo.cs
+System.Drawing.Printing/PreviewPrintController.cs
+System.Drawing.Printing/PrintDocument.cs
+System.Drawing.Printing/PrintEventArgs.cs
+System.Drawing.Printing/PrintPageEventArgs.cs
+System.Drawing.Printing/PrinterSettings.cs
+System.Drawing.Printing/StandardPrintController.cs
+System.Drawing.Text/FontCollection-CoreText.cs
+System.Drawing.Text/FontCollection.cs
+System.Drawing.Text/InstalledFontCollection.cs
+System.Drawing.Text/PrivateFontCollection-CoreText.cs
+System.Drawing.Text/PrivateFontCollection.cs
+System.Drawing/Font-CoreText.cs
+System.Drawing/FontFamily-CoreText.cs
+System.Drawing/FontFamily.cs
+System.Drawing/GDIPlus.cs
+System.Drawing/Graphics-DrawEllipticalArc.cs
+System.Drawing/SolidBrush.cs
+System.Drawing/SystemFonts.cs
+System.Drawing/TextureBrush.cs
+Utilities/ClipperLib/clipper.cs
+sysdrawing-coregraphics-Mac/System.Drawing/GDIPlus.cs
