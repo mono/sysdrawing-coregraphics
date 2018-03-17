@@ -10,16 +10,8 @@
 using System.Drawing;
 using System.ComponentModel;
 
-#if MONOMAC
-using AppKit;
 using Foundation;
 using CoreGraphics;
-#else
-using UIKit;
-using Foundation;
-using CoreGraphics;
-#endif
-
 
 namespace System.Drawing.Drawing2D {
 

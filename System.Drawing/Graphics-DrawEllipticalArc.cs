@@ -2,14 +2,8 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-#if MONOMAC
 using CoreGraphics;
-using AppKit;
 using Foundation;
-#else
-using CoreGraphics;
-using UIKit;
-#endif
 
 namespace System.Drawing
 {

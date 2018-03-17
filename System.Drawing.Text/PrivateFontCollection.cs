@@ -35,10 +35,6 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing.Text 
 {
-
-#if !NET_2_0
-	[ComVisible(false)]
-#endif
 	public sealed partial class PrivateFontCollection : FontCollection 
 	{
 

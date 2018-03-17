@@ -7,11 +7,7 @@
 // Copyright 2012
 //
 using System;
-#if MONOMAC
 using CoreGraphics;
-#else
-using CoreGraphics;
-#endif
 
 namespace System.Drawing.Drawing2D 
 {

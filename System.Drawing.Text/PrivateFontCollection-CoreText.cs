@@ -29,15 +29,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-#if MONOMAC
 using CoreText;
 using Foundation;
 using CoreGraphics;
-#else
-using CoreText;
-using Foundation;
-using CoreGraphics;
-#endif
 
 namespace System.Drawing.Text
 {

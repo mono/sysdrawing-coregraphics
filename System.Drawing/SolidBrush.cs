@@ -8,17 +8,13 @@
 //
 using System;
 using System.Drawing.Drawing2D;
-#if MONOMAC
 using CoreGraphics;
-#else
-using CoreGraphics;
-#endif
 
 namespace System.Drawing {
 
 	public partial class SolidBrush : Brush {
 		Color color;
-		bool isModifiable;
+		internal bool isModifiable;
 		bool isModified;
 
 		public SolidBrush (Color color)

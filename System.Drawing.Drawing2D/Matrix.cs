@@ -35,11 +35,7 @@
 
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
-#if MONOMAC
 using CoreGraphics;
-#else
-using CoreGraphics;
-#endif
 
 namespace System.Drawing.Drawing2D
 {

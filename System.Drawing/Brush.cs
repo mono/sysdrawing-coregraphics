@@ -7,11 +7,7 @@
 // Copyright 2011-2013 Xamarin Inc
 //
 using System;
-#if MONOMAC
 using CoreGraphics;
-#else
-using CoreGraphics;
-#endif
 
 namespace System.Drawing {
 

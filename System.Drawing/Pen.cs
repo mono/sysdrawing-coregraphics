@@ -9,12 +9,7 @@
 using System;
 using System.Drawing.Drawing2D;
 using System.ComponentModel;
-
-#if MONOMAC
 using CoreGraphics;
-#else
-using CoreGraphics;
-#endif
 
 namespace System.Drawing
 {
@@ -50,6 +45,7 @@ namespace System.Drawing
 		public Pen (Color color, float width)
 		{
 			brush = new SolidBrush (color);
+			this.color = color;
 			this.width = width;
 		}
 
@@ -178,7 +174,8 @@ namespace System.Drawing
 				if (Enum.IsDefined(typeof(DashStyle), value)) {
 					dashStyle = value;
 					changed = true;
-
+					if (dashStyle != DashStyle.Custom)
+						dashPattern = null;
 				}
 				else
 					throw new InvalidEnumArgumentException ("value", (int)value, typeof(DashStyle));
@@ -195,6 +192,25 @@ namespace System.Drawing
 				// fixme for error checking and range
 				dashOffset = value;
 				changed = true;
+			}
+		}
+
+		float[] dashPattern = null;
+
+		public float[] DashPattern {
+			get {
+				return dashPattern;
+			}
+			set {
+				if (value != null) {
+					dashStyle = DashStyle.Custom;
+					dashPattern = value;
+					changed = true;
+				} else {
+					dashStyle = DashStyle.Solid;
+					dashPattern = null;
+					changed = true;
+				}
 			}
 		}
 
@@ -223,6 +239,17 @@ namespace System.Drawing
 			}
 		}
 
+		PenAlignment alignment;
+		public PenAlignment Alignment {
+			get {
+				return alignment;
+			}
+
+			set {
+				alignment = value;
+				changed = true;
+			}
+		}
 
 		static float[] Dot = { 1.0f, 1.0f };
 		static float[] Dash = { 3.0f, 1.0f };
@@ -250,7 +277,7 @@ namespace System.Drawing
 			switch (startCap) 
 			{
 			case LineCap.Flat:
-				context.SetLineCap(CGLineCap.Butt);
+				context.SetLineCap(width > 1f || dashStyle != DashStyle.Solid ? CGLineCap.Butt : CGLineCap.Square);
 				break;
 			case LineCap.Square:
 				context.SetLineCap(CGLineCap.Square);
@@ -274,6 +301,9 @@ namespace System.Drawing
 
 			switch (dashStyle) 
 			{
+			case DashStyle.Custom:
+				context.SetLineDash(dashOffset,setupMorseCode(dashPattern));
+				break;
 			case DashStyle.Dash:
 				context.SetLineDash(dashOffset,setupMorseCode(Dash));
 				break;

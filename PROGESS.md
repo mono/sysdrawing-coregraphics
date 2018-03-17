@@ -21,6 +21,7 @@ Directly from master, and adjusted, not partial:
 * Graphics.cs
 * SystemIcons.cs
 * Icon.cs
+* Image.cs
 
 On the first patch, fa17b7bb8140752280ff846d8fa97c7936cc1881, next up
 Graphics.cs

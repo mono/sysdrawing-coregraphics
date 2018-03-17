@@ -14,8 +14,6 @@ using UIKit;
 using CoreGraphics;
 using CoreText;
 using Foundation;
-//using ObjCRuntime = ObjCRuntime;
-
 
 namespace System.Drawing.Mac
 {

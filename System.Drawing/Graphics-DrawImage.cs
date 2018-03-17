@@ -12,7 +12,6 @@ using Foundation;
 using CoreImage;
 using ImageIO;
 
-
 namespace System.Drawing
 {
 	public partial class Graphics {

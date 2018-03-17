@@ -36,11 +36,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
 using System.Linq;
-#if MONOMAC
 using CoreGraphics;
-#else
-using CoreGraphics;
-#endif
 using ClipperLib;
 
 namespace System.Drawing.Drawing2D {

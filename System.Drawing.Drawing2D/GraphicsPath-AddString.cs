@@ -30,17 +30,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-#if MONOMAC
 using CoreGraphics;
-using AppKit;
 using Foundation;
 using CoreText;
-#else
-using CoreGraphics;
-using UIKit;
-using Foundation;
-using CoreText;
-#endif
 
 namespace System.Drawing.Drawing2D 
 {

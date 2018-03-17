@@ -8,11 +8,7 @@
 //
 using System;
 using System.Drawing.Drawing2D;
-#if MONOMAC
 using CoreGraphics;
-#else
-using CoreGraphics;
-#endif
 
 namespace System.Drawing 
 {
