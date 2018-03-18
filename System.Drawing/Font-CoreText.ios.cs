@@ -65,10 +65,10 @@ namespace System.Drawing
 
 		void CreateNativeFont (FontFamily familyName, float emSize, FontStyle style, GraphicsUnit unit, byte gdiCharSet, bool gdiVerticalFont)
 		{
-			this.sizeInPoints = ConversionHelpers.GraphicsUnitConversion (unit, GraphicsUnit.Point, 96f, emSize);
-			this.bold = FontStyle.Bold == (style & FontStyle.Bold);
-			this.italic = FontStyle.Italic == (style & FontStyle.Italic);
-			this.underLine = FontStyle.Underline == (style & FontStyle.Underline);
+			sizeInPoints = ConversionHelpers.GraphicsUnitConversion (unit, GraphicsUnit.Point, 96f, emSize);
+			bold = FontStyle.Bold == (style & FontStyle.Bold);
+			italic = FontStyle.Italic == (style & FontStyle.Italic);
+			underLine = FontStyle.Underline == (style & FontStyle.Underline);
 			this.size = emSize;
 			this.unit = unit;
 
@@ -85,7 +85,7 @@ namespace System.Drawing
 			else
 				NSThread.MainThread.InvokeOnMainThread (() => { font = MakeFont (familyName.Name, size, traits); });
 			
-			this.nativeFont = font.ToCTFont ();
+			nativeFont = font.ToCTFont ();
 		}
 	}
 }

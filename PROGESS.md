@@ -1,29 +1,10 @@
-This file describes the progress in code integration from the mac-playground contribution
+This now integrates the sysdrawing-coregraphics changes from
+https://github.com/filipnavara/mac-playground.git
 
-Directly from master, and adjusted, not partial:
+It does so by keeping the iOS backend working, and uses
+partial classes to split the platform specific capabilites.
 
-Challenges with Graphics.cs:
-
-	mac-playground abandoned support for retina displays (screenScale in Graphics),
-	so we need to proceed with caution.   The patch so far merely splits code in Mac/iOS
-	but does not attempt to do much else as this will require the test harness to be setup
-
-	MIght be possible to compare not against master, but against the version before,
-	which was 772ab833835d9b221c915536be993a8d503d05d3, and does not include the 
-	changes to the retina code
-
-Pending Files:
-System.Drawing.Text/FontCollection-CoreText.cs
-System.Drawing.Text/FontCollection.cs
-System.Drawing.Text/InstalledFontCollection.cs
-System.Drawing.Text/PrivateFontCollection-CoreText.cs
-System.Drawing.Text/PrivateFontCollection.cs
-System.Drawing/Font-CoreText.cs
-System.Drawing/FontFamily-CoreText.cs
-System.Drawing/FontFamily.cs
-System.Drawing/GDIPlus.cs
-System.Drawing/Graphics-DrawEllipticalArc.cs
-System.Drawing/SystemFonts.cs
-System.Drawing/TextureBrush.cs
-Utilities/ClipperLib/clipper.cs
-sysdrawing-coregraphics-Mac/System.Drawing/GDIPlus.cs
+This also removes some of the historical artifacts from
+the upgrade, the move to support MonoMac, Xamarin.Mac and
+so on and drops support for the Classic API which is no
+longer around.

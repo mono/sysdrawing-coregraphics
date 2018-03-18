@@ -20,7 +20,7 @@ namespace System.Drawing
 		Image textureImage;
 		Matrix textureTransform = new Matrix();
 		WrapMode wrapMode = WrapMode.Tile;
-		bool changed = false;
+		new bool changed = false;
 		
 		public TextureBrush(Image bitmap) : this(bitmap, WrapMode.Tile)
 		{
@@ -142,7 +142,7 @@ namespace System.Drawing
 		{
 			get
 			{
-				return null;
+				return textureImage;
 			}
 		}
 
@@ -180,60 +180,42 @@ namespace System.Drawing
 		}
 
 		// test draw pattern
-		protected void DrawTexture (CGContext context)
+		private void DrawTexture (CGContext context)
 		{
-			var destRect = new CGRect (0,0,textureImage.Width,textureImage.Height);
+			var destRect = context.ConvertRectToUserSpace(new CGRect(0,0,textureImage.Width,textureImage.Height));
+			context.ConcatCTM (textureImage.imageTransform);
 			context.DrawImage(destRect, textureImage.NativeCGImage);
+			context.ConcatCTM (textureImage.imageTransform.Invert());
 
-			if (wrapMode == WrapMode.TileFlipX) 
+			if (wrapMode == WrapMode.TileFlipX || wrapMode == WrapMode.TileFlipXY) 
 			{
 				context.ConcatCTM(CGAffineTransform.MakeScale(-1,1));
+				context.ConcatCTM (textureImage.imageTransform);
 				context.DrawImage(destRect, textureImage.NativeCGImage);
+				context.ConcatCTM (textureImage.imageTransform.Invert());
 			}
 
-			if (wrapMode == WrapMode.TileFlipY) 
+			if (wrapMode == WrapMode.TileFlipY || wrapMode == WrapMode.TileFlipXY) 
 			{
 				var transformY = new CGAffineTransform(1, 0, 0, -1, 
-				                                       textureImage.Width, 
-				                                       textureImage.Height);
+					destRect.Width, 
+					destRect.Height);
 				context.ConcatCTM(transformY);
+				context.ConcatCTM (textureImage.imageTransform);
 				context.DrawImage(destRect, textureImage.NativeCGImage);
+				context.ConcatCTM (textureImage.imageTransform.Invert());
 			}
 
 
 			if (wrapMode == WrapMode.TileFlipXY) 
 			{
-				// draw the original
-				var transform = new CGAffineTransform(1, 0, 0, 1, 
-				                                       0, textureImage.Height);
-				context.ConcatCTM(transform);
-				context.DrawImage(destRect, textureImage.NativeCGImage);
-
-				// reset the transform
-				context.ConcatCTM (context.GetCTM().Invert());
-
-				// draw next to original one that is flipped by x axis
-				transform = new CGAffineTransform(-1, 0, 0, 1, 
-				                                  textureImage.Width * 2, textureImage.Height);
-				context.ConcatCTM(transform);
-				context.DrawImage(destRect, textureImage.NativeCGImage);
-
-
-				// reset the transform
-				context.ConcatCTM (context.GetCTM().Invert());
-
-				// draw one that is flipped by Y axis under the oricinal
-				transform = new CGAffineTransform(1, 0, 0, -1, 
-				                                  0, textureImage.Height);
-				context.ConcatCTM(transform);
-				context.DrawImage(destRect, textureImage.NativeCGImage);
-
 				// draw the last one of the quadrant which is flipped by both the y and x axis
-				context.ConcatCTM (context.GetCTM().Invert());
-				transform = new CGAffineTransform(-1, 0, 0, -1, 
-				                                  textureImage.Width * 2, textureImage.Height);
+				var transform = new CGAffineTransform(-1, 0, 0, -1, 
+					destRect.Width * 2, destRect.Height);
 				context.ConcatCTM(transform);
+				context.ConcatCTM (textureImage.imageTransform);
 				context.DrawImage(destRect, textureImage.NativeCGImage);
+				context.ConcatCTM (textureImage.imageTransform.Invert());
 			}
 		}
 
@@ -262,35 +244,19 @@ namespace System.Drawing
 				textureHeight *= 2;
 			}
 
-			// this is here for testing only
-			var textureOffset = new PointF(0,-0);
-
 			//choose the pattern to be filled based on the currentPattern selected
 			var patternSpace = CGColorSpace.CreatePattern(null);
 			graphics.context.SetFillColorSpace(patternSpace);
 			patternSpace.Dispose();
 			
 			// Pattern default work variables
-			var patternRect = new CGRect (HALF_PIXEL_X,HALF_PIXEL_Y,
+			var patternRect = new CGRect(HALF_PIXEL_X,HALF_PIXEL_Y,
 			                                 textureWidth+HALF_PIXEL_X,
 			                                 textureHeight+HALF_PIXEL_Y);
-			var patternTransform = CGAffineTransform.MakeIdentity();
-			
-			// We need to take into account the orientation of the graphics object
-#if MONOMAC
-			if (!graphics.isFlipped)
-				patternTransform = new CGAffineTransform(1, 0, 0, -1, 
-				                                         textureOffset.X, 
-				                                         textureHeight + textureOffset.Y);
-#endif
-#if MONOTOUCH
-			if (graphics.isFlipped)
-				patternTransform = new CGAffineTransform(1, 0, 0, -1, 
-				                                         textureOffset.X, 
-				                                         textureHeight + textureOffset.Y);
-#endif
 
-			patternTransform = CGAffineTransform.Multiply(patternTransform, textureTransform.transform);
+			var patternTransform = graphics.context.GetCTM();
+
+			patternTransform = CGAffineTransform.Multiply(textureTransform.transform, patternTransform);
 
 			// DrawPattern callback which will be set depending on hatch style
 			CGPattern.DrawPattern drawPattern;
@@ -314,6 +280,13 @@ namespace System.Drawing
 			// I am setting this to be used for Text coloring in DrawString
 			//graphics.lastBrushColor = foreColor;
 		}
-		
+
+		public override bool Equals(object obj)
+		{
+			return (obj is TextureBrush b)
+				&& textureImage.Equals(b.textureImage)
+				&& wrapMode.Equals(b.wrapMode)
+				&& textureTransform.Equals(b.textureTransform);
+		}
 	}
 }

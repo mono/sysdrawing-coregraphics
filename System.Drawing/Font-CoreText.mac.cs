@@ -60,20 +60,22 @@ namespace System.Drawing
 
 		void CreateNativeFont (FontFamily familyName, float emSize, FontStyle style, GraphicsUnit unit, byte gdiCharSet, bool gdiVerticalFont)
 		{
-			this.sizeInPoints = ConversionHelpers.GraphicsUnitConversion (unit, GraphicsUnit.Point, 96f, emSize);
-			this.bold = FontStyle.Bold == (style & FontStyle.Bold);
-			this.italic = FontStyle.Italic == (style & FontStyle.Italic);
-			this.underLine = FontStyle.Underline == (style & FontStyle.Underline);
+			sizeInPoints = ConversionHelpers.GraphicsUnitConversion (unit, GraphicsUnit.Point, 96f, emSize);
+			bold = FontStyle.Bold == (style & FontStyle.Bold);
+			italic = FontStyle.Italic == (style & FontStyle.Italic);
+			underLine = FontStyle.Underline == (style & FontStyle.Underline);
 			this.size = emSize;
 			this.unit = unit;
 
 			var size = sizeInPoints * 96f / 72f;
 			var traits = (NSFontTraitMask)0;
-			if (bold) traits |= NSFontTraitMask.Bold;
-			if (italic) traits |= NSFontTraitMask.Italic;
+			if (bold) 
+				traits |= NSFontTraitMask.Bold;
+			if (italic) 
+				traits |= NSFontTraitMask.Italic;
 
 			var f = NSFontWithFamily (familyName.Name, traits, RegularWeight, size) ?? NSSystemFont (RegularWeight, size);
-			this.nativeFont = f.ToCTFont ();
+			nativeFont = f.ToCTFont ();
 		}
 
 		static NSFont NSSystemFont (int weight, float size)
