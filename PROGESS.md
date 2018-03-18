@@ -13,18 +13,7 @@ Challenges with Graphics.cs:
 	changes to the retina code
 
 Pending Files:
-System.Drawing.Imaging/ColorPalette.cs
-System.Drawing.Imaging/Encoder.cs
-System.Drawing.Imaging/EncoderParameter.cs
-System.Drawing.Imaging/EncoderParameterValueType.cs
-System.Drawing.Imaging/EncoderParameters.cs
-System.Drawing.Imaging/ImageAttributes.cs
-System.Drawing.Imaging/ImageCodecFlags.cs
-System.Drawing.Imaging/ImageCodecInfo.cs
-System.Drawing.Printing/PreviewPageInfo.cs
-System.Drawing.Printing/PreviewPrintController.cs
 System.Drawing.Printing/PrintDocument.cs
-System.Drawing.Printing/PrintEventArgs.cs
 System.Drawing.Printing/PrintPageEventArgs.cs
 System.Drawing.Printing/PrinterSettings.cs
 System.Drawing.Printing/StandardPrintController.cs

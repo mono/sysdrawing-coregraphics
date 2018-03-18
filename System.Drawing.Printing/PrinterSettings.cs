@@ -136,7 +136,7 @@ namespace System.Drawing.Printing
 		public bool SupportsColor { get; internal set; }
 		public bool PrintDialogDisplayed { get; set; }
 		public PrinterSettings.PaperSourceCollection PaperSources { get; set; }
-
+		public bool IsDefaultPrinter { get; set; }
 
 		public PrinterResolutionCollection PrinterResolutions { get; internal set; }
 		public object printer_capabilities { get; internal set; }

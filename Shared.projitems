@@ -44,6 +44,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\MarginsConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PageSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PrintDocument.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PreviewPrintController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PrinterSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PrintPageEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Imaging\ImageAttributes.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Imaging\ImageCodecInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\SystemFonts.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\SystemIcons.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PrintEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\PropertyItem.cs">
@@ -99,6 +101,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintPageEventHandler.cs">
       <Link>corefx\System.Drawing.Printing\PrintPageEventHandler.cs</Link>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintAction.cs">
+      <Link>corefx\System.Drawing.Printing\PrintAction.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\InvalidPrinterException.cs">
+      <Link>corefx\System.Drawing.Printing\InvalidPrinterException.cs</Link>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintRange.cs">
       <Link>corefx\System.Drawing.Printing\PrintRange.cs</Link>
     </Compile>
@@ -125,6 +133,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PaperSourceKind.cs">
       <Link>corefx\System.Drawing.Printing\PaperSourceKind.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PreviewPageInfo.cs">
+      <Link>corefx\System.Drawing.Printing\PreviewPageInfo.cs</Link>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\GdiPlus.cs">
       <Link>corefx\System.Drawing\GdiPlus.cs</Link>
@@ -310,6 +321,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing.Imaging\BitmapData.cs">
       <Link>mono\System.Drawing.Imaging\BitmapData.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing.Printing\PrintController.cs">
+      <Link>mono\System.Drawing.Printing\PrintController.cs</Link>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\corefx\SR.cs">
       <Link>mono\corefx\SR.cs</Link>
