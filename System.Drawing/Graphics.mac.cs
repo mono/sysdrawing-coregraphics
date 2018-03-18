@@ -27,12 +27,14 @@ using System.Collections.Generic;
 using AppKit;
 using CoreGraphics;
 using CoreImage;
+using ObjCRuntime;
 
 namespace System.Drawing
 {
 	public partial class Graphics
 	{
 		NSView focusedView;
+		internal object nativeObject;
 
 		Graphics () : this (NSGraphicsContext.CurrentContext)
 		{ 
@@ -57,22 +59,51 @@ namespace System.Drawing
 			return new Graphics (context);
 		}
 
+		public static Graphics FromHwnd (IntPtr hwnd, bool client)
+		{
+			if (hwnd == IntPtr.Zero) {
+				var scaleFactor = NSScreen.MainScreen.BackingScaleFactor;
+				var context = new CGBitmapContext (IntPtr.Zero, 1, 1, 8, 4, CGColorSpace.CreateDeviceRGB (), CGImageAlphaInfo.PremultipliedFirst);
+				context.ScaleCTM (scaleFactor, -scaleFactor);
+				return new Graphics (context);
+			}
+
+			Graphics g;
+			var obj = ObjCRuntime.Runtime.GetNSObject (hwnd);
+			var view = obj as NSView;
+			if (view == null && obj is NSWindow && ((NSWindow)obj).GraphicsContext != null) {
+				g = new Graphics (((NSWindow)obj).GraphicsContext);
+			} else if (NSView.FocusView () == view) {
+				if (NSGraphicsContext.CurrentContext == null)
+					return FromHwnd (IntPtr.Zero, false);
+				g = Graphics.FromCurrentContext ();
+			} else if (view.LockFocusIfCanDraw ()) {
+				if (NSGraphicsContext.CurrentContext == null)
+					return FromHwnd (IntPtr.Zero, false);
+				g = Graphics.FromCurrentContext ();
+				g.focusedView = view;
+			} else if (view.Window != null && view.Window.GraphicsContext != null) {
+				g = new Graphics (view.Window.GraphicsContext);
+			} else {
+				return Graphics.FromImage (new Bitmap (1, 1));
+			}
+
+			if (client) {
+				if (view is IClientView clientView) {
+					var clientBounds = clientView.ClientBounds;
+					g.context.ClipToRect (clientBounds);
+					g.context.TranslateCTM (clientBounds.Left, clientBounds.Top);
+					g.context.SaveState ();
+					g.hasClientTransform = true;
+				}
+			}
+
+			return g;
+		}
+
 		public static Graphics FromHwnd (IntPtr hwnd)
 		{
-		        if (hwnd == IntPtr.Zero)
-		                return Graphics.FromImage(new Bitmap (1, 1));
-		
-		        Graphics g;
-		        NSView view = (NSView)ObjCRuntime.Runtime.GetNSObject (hwnd);
-
-		        if (NSView.FocusView () != view && view.LockFocusIfCanDraw())
-		                g = new Graphics (view.Window.GraphicsContext) { focusedView = view };
-		        else if (view.Window != null && view.Window.GraphicsContext != null)
-		                g = new Graphics (view.Window.GraphicsContext);
-		        else 
-		                g = Graphics.FromImage(new Bitmap (1, 1));
-		
-		        return g;
+			return FromHwnd (hwnd, true);
 		}
 
 		void PlatformDispose ()

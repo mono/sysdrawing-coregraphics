@@ -68,6 +68,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\SystemIcons.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PrintEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PrintController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\IClientView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\external\corefx\src\System.Drawing.Common\src\System\Drawing\Imaging\PropertyItem.cs">
