@@ -13,8 +13,6 @@ Challenges with Graphics.cs:
 	changes to the retina code
 
 Pending Files:
-System.Drawing.Drawing2D/HatchBrush.cs
-System.Drawing.Drawing2D/LinearGradientBrush.cs
 System.Drawing.Drawing2D/Matrix.cs
 System.Drawing.Drawing2D/PathGradientBrush.cs
 System.Drawing.Imaging/ColorPalette.cs

@@ -364,23 +364,19 @@ namespace System.Drawing.Drawing2D
 
 			// Make sure we put the linear distance value back into the 0.0 .. 1.0 range
 			// depending on the wrap mode
-			if (wrapMode == WrapMode.Tile || wrapMode == WrapMode.TileFlipY)
-			{
+			if (wrapMode == WrapMode.Tile || wrapMode == WrapMode.TileFlipY) {
 				// Repeat
-				lerpDist = lerpDist - (nfloat)Math.Floor(lerpDist);
-			}
-			else 
-			{
+				lerpDist = lerpDist - (nfloat)Math.Floor (lerpDist);
+			} else {
 				// Reflect
-				lerpDist = (nfloat)Math.Abs(lerpDist) % 2.0f;
+				lerpDist = (nfloat)Math.Abs (lerpDist) % 2.0f;
 				if (lerpDist > 1.0f) {
 					lerpDist = 2.0f - lerpDist;
 				}
 			}
 
-			for (i = 0; i < numPositions; i++)
-			{
-				if (positions[i] > lerpDist)
+			for (i = 0; i < numPositions; i++) {
+				if (positions [i] > lerpDist)
 					break;
 			}
 
@@ -401,20 +397,15 @@ namespace System.Drawing.Drawing2D
 				// been setup with the color factors taken into account.
 
 				// Get the distance between current position and last position
-				dist = factors[i] - prevPosition;
+				dist = factors [i] - prevPosition;
 				// normalized value between the two shading colors
-                normalized = (lerpDist - prevPosition)/dist;
-//				Console.WriteLine("prev {0} dist {1} normal {2} i {3} t {4}", 
-//				                  prevPosition, dist, normalized, i, t);
-				for(ushort ctr = 0; ctr < 4; ctr++) {
-					
-					outData[ctr] = (nfloat)GeomUtilities.Lerp(shadingColors[0][ctr], 
-					                    shadingColors[1][ctr],
-					                    (float)normalized);
+				normalized = (lerpDist - prevPosition) / dist;
+				for (ushort ctr = 0; ctr < 4; ctr++) {
+					outData [ctr] = (nfloat)GeomUtilities.Lerp (shadingColors [0] [ctr],
+							    shadingColors [1] [ctr],
+							    (float)normalized);
 				}
-			} 
-			else 
-			{
+			} else {
 				// When we have multiple positions we need to interpolate the colors
 				// between the two positions.  
 				// normalized will be the normalized [0,1] amount
@@ -422,39 +413,31 @@ namespace System.Drawing.Drawing2D
 				//
 				// The shading colors have already
 				// been setup with the color factors taken into account.
-				prevPosition = positions[i-1];
+				prevPosition = positions [i - 1];
 				// Get the distance between current position and last position
-				dist = positions[i] - prevPosition;
+				dist = positions [i] - prevPosition;
 				// normalized value between the two shading colors
-                normalized = (lerpDist - prevPosition)/dist;
+				normalized = (lerpDist - prevPosition) / dist;
 
-				for(ushort ctr = 0; ctr < 4; ctr++) {
+				for (ushort ctr = 0; ctr < 4; ctr++) {
 
-					outData[ctr] = (nfloat)GeomUtilities.Lerp(shadingColors[i-1][ctr], 
-					                    shadingColors[i][ctr],
-					                    (float)normalized);
+					outData [ctr] = (nfloat)GeomUtilities.Lerp (shadingColors [i - 1] [ctr],
+							    shadingColors [i] [ctr],
+							    (float)normalized);
 				}
 			}
 
 
-			if (gammaCorrection) 
-			{
+			if (gammaCorrection) {
 				// * NOTE * Here I am only computing the gamma correction for RGB values not alpha
 				// I am really not sure if this is correct or not but from my reading on this topic
 				// it is really never mentioned that alpha is included.
-				for(ushort ctr = 0; ctr < 3; ctr++) {
-					
-					outData[ctr] = (nfloat)Math.Pow(outData[ctr], gamma);
+				for (ushort ctr = 0; ctr < 3; ctr++) {
+
+					outData [ctr] = (nfloat)Math.Pow (outData [ctr], gamma);
 				}
 
 			}
-
-//			Console.WriteLine("R: {0}, G: {1}, B: {2}, A: {3}", 
-//			                  outData[0],
-//			                  outData[1],
-//			                  outData[2],
-//			                  outData[3]);
-
 		}
 
 		void setupShadingColors()
