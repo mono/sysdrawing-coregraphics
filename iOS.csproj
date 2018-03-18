@@ -41,8 +41,6 @@
   <ItemGroup>
     <Compile Include="System.Drawing.Printing\PrinterSettings.ios.cs" />
     <Compile Include="System.Drawing\KnownColors.ios.cs" />
-    <Compile Include="System.Drawing\Font-CoreText.ios.cs" />
-    <Compile Include="System.Drawing\SystemFonts.ios.cs" />
     <Compile Include="System.Drawing\Graphics.ios.cs" />
     <Compile Include="System.Drawing.Printing\PageSettings.ios.cs" />
     <Compile Include="System.Drawing\Extensions.ios.cs" />

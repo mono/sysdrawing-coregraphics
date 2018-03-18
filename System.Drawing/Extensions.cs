@@ -98,6 +98,6 @@ namespace System.Drawing.Mac
 		public static Bitmap ToBitmap (this CGImage cgImage)
 		{
 			return new Bitmap (cgImage);
-		}
+		}		
 	}
 }

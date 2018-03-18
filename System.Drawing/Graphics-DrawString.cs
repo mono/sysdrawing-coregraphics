@@ -121,7 +121,7 @@ namespace System.Drawing
 			var atts = buildAttributedString (text, font, format);
 			if ((format.FormatFlags & StringFormatFlags.DirectionVertical) == StringFormatFlags.DirectionVertical)
 				area = new SizeF (area.Height, area.Width);
-			float lineHeight = (float)NMath.Ceiling (font.nativeFont.AscentMetric + font.nativeFont.DescentMetric + font.nativeFont.LeadingMetric + 1);
+			float lineHeight = font.GetHeight();
 			var lines = CreateLines (font, atts, area, format, lineHeight);
 			foreach (var line in lines) {
 				if (line != null) {
@@ -242,7 +242,7 @@ namespace System.Drawing
 
 			var c = DrawStringCache.GetOrCreate(s, font, brush, layoutRectangle, format ?? StringFormat.GenericDefault, CreateCacheEntry);
 			DrawString(c, layoutRectangle.Location);
-			}
+		}
 
 		internal DrawStringCache.Entry CreateCacheEntry(string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
 		{
@@ -265,9 +265,9 @@ namespace System.Drawing
 				insetBounds.Width = float.MaxValue;
 				insetBounds.Height = float.MaxValue;
 				c.layoutAvailable = false;
-				}
+			}
 
-			c.lineHeight = (float)NMath.Ceiling(font.nativeFont.AscentMetric + font.nativeFont.DescentMetric + font.nativeFont.LeadingMetric + 1);
+			c.lineHeight = font.GetHeight();
 			c.lines = new List<CTLine>();
             c.verticalMatrix = default(CGAffineTransform);
 
