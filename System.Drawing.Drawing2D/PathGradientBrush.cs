@@ -20,14 +20,8 @@ namespace System.Drawing.Drawing2D {
 		PointF[] pathPoints;
 
 		// Fields
-		bool interpolationColorsWasSet;
 		WrapMode wrapMode = WrapMode.Clamp;
-		bool gammaCorrection;
-		//bool changed;
 		Matrix gradientTransform = new Matrix();
-
-		Color[] colors = new Color[2];
-
 		Blend blend;
 		Color centerColor = Color.White;
 		PointF focusScales = PointF.Empty;
@@ -39,10 +33,7 @@ namespace System.Drawing.Drawing2D {
 		// Everything I have read on the internet shows Microsoft 
 		// using a 2.2 gamma correction for colors.
 		// for instance: http://msdn.microsoft.com/en-gb/library/windows/desktop/hh972627(v=vs.85).aspx
-		float gamma = 1.0f / 2.2f;
-
-		// Shading
-		float[][] shadingColors;
+		//float gamma = 1.0f / 2.2f;
 
 		// When stroking with a gradient we have to use Transparency Layers.
 		bool hasTransparencyLayer = false;
@@ -682,19 +673,38 @@ namespace System.Drawing.Drawing2D {
 		}
 
 		float[] colorOutput = new float[4];
-		void GradientLerp3(float alpha, float beta, float gamma)
+		private void GradientLerp3 (float alpha, float beta, float gamma)
 		{
 
 			var resRed = (alpha * edge32Red) + ((beta * edge13Red) + (gamma * edge21Red));
-			var resGreen = (alpha * edge32Green) + ((beta * edge13Green) + (gamma  * edge21Green));
+			var resGreen = (alpha * edge32Green) + ((beta * edge13Green) + (gamma * edge21Green));
 			var resBlue = (alpha * edge32Blue) + ((beta * edge13Blue) + (gamma * edge21Blue));
 			var resAlpha = (alpha * edge32Alpha) + ((beta * edge13Alpha) + (gamma * edge21Alpha));
 
-			colorOutput [0] = resRed/ 255f;
+			colorOutput [0] = resRed / 255f;
 			colorOutput [1] = resGreen / 255;
-        	colorOutput [2] = resBlue / 255f; 
-        	colorOutput [3] = resAlpha / 255f;
+			colorOutput [2] = resBlue / 255f;
+			colorOutput [3] = resAlpha / 255f;
+		}
+		public override bool Equals (object obj)
+		{
+			return (obj is PathGradientBrush b)
+				&& pathPoints.Equals (b.pathPoints)
+				&& wrapMode.Equals (b.wrapMode)
+				&& gradientTransform.Equals (b.gradientTransform)
+		    		&& centerColor.Equals (b.centerColor)
+		    		&& focusScales.Equals (b.focusScales)
+		    		&& surroundColors.Equals (b.surroundColors)
+		    		&& colorBlend.Equals (b.colorBlend)
+		    		&& rectangle.Equals (b.rectangle)
+		    		&& centerPoint.Equals (b.centerPoint)
+		    		&& polygonWinding.Equals (b.polygonWinding)
+				&& blend.Equals (b.blend);
 		}
 
+		public override int GetHashCode ()
+		{
+			return (int)wrapMode ^ gradientTransform.GetHashCode () ^ rectangle.GetHashCode () ^ centerPoint.GetHashCode ();
+		}
 	}
 }
