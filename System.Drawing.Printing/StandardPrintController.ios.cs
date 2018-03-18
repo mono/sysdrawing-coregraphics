@@ -1,7 +1,8 @@
 ﻿using System;
-namespace System.Drawing
+
+namespace System.Drawing.Printing
 {
-	public class StandardPrintController
+	public partial class StandardPrintController
 	{
 		public StandardPrintController ()
 		{

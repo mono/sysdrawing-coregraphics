@@ -13,10 +13,6 @@ Challenges with Graphics.cs:
 	changes to the retina code
 
 Pending Files:
-System.Drawing.Printing/PrintDocument.cs
-System.Drawing.Printing/PrintPageEventArgs.cs
-System.Drawing.Printing/PrinterSettings.cs
-System.Drawing.Printing/StandardPrintController.cs
 System.Drawing.Text/FontCollection-CoreText.cs
 System.Drawing.Text/FontCollection.cs
 System.Drawing.Text/InstalledFontCollection.cs
@@ -27,7 +23,6 @@ System.Drawing/FontFamily-CoreText.cs
 System.Drawing/FontFamily.cs
 System.Drawing/GDIPlus.cs
 System.Drawing/Graphics-DrawEllipticalArc.cs
-System.Drawing/SolidBrush.cs
 System.Drawing/SystemFonts.cs
 System.Drawing/TextureBrush.cs
 Utilities/ClipperLib/clipper.cs

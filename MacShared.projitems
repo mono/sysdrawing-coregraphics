@@ -17,5 +17,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PageSettings.mac.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\Extensions.mac.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\SystemIcons.mac.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\StandardPrintController.mac.cs" />
   </ItemGroup>
 </Project>

@@ -43,25 +43,18 @@ namespace System.Drawing.Text
 				var collectionOptions = new CTFontCollectionOptions ();
 				collectionOptions.RemoveDuplicates = true;
 				nativeFontCollection = new CTFontCollection (collectionOptions);
-				nativeFontDescriptors = new Dictionary<string, CTFontDescriptor> ();
-			}
+				nativeFontDescriptors = new Dictionary<string, CTFontDescriptor>();
 
-			var fontdescs = nativeFontCollection.GetMatchingFontDescriptors ();
-
-			foreach (var fontdesc in fontdescs) 
-			{
-				var font = new CTFont (fontdesc, 0);
-
-				// Just in case RemoveDuplicates collection option is not working
-				if (!nativeFontDescriptors.ContainsKey (font.FamilyName)) 
+				var fontdescs = nativeFontCollection.GetMatchingFontDescriptors();
+				foreach (var fontdesc in fontdescs)
 				{
-					nativeFontDescriptors.Add (font.FamilyName, fontdesc);
+					var name = fontdesc.GetAttribute(CTFontDescriptorAttributeKey.FamilyName).ToString();
+					if (!nativeFontDescriptors.ContainsKey(name))
+						nativeFontDescriptors.Add(name, fontdesc);
 				}
-
 			}
-			var fontFamilies = new List<string> (nativeFontDescriptors.Keys);
 
-			return fontFamilies;
+			return new List<string>(nativeFontDescriptors.Keys);
 		}
 
 	}

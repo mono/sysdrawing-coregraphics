@@ -39,10 +39,16 @@ namespace System.Drawing.Printing {
 	[ToolboxItemFilter ("System.Drawing.Printing", ToolboxItemFilterType.Allow)]
 	public class PrintDocument : Component {
 		
+		public event PrintEventHandler BeginPrint;
+		public event PrintEventHandler EndPrint;
+		public event PrintPageEventHandler PrintPage;
+		public event QueryPageSettingsEventHandler QueryPageSettings;
+
 		public PrintDocument ()
 		{
 			DefaultPageSettings = new PageSettings ();
 			PrinterSettings = new PrinterSettings ();
+			PrintController = new StandardPrintController();
 		}
 		
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -53,12 +59,73 @@ namespace System.Drawing.Printing {
 		[Browsable (false)]
 		public PrinterSettings PrinterSettings { get; set; }
 		
-		
-		public void Print ()
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		public PrintController PrintController { get; set; }
+
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		public bool OriginAtMargins { get; set; }
+
+		public string DocumentName { get; set; }
+
+		internal void _OnBeginPrint(PrintEventArgs e)
 		{
+			OnBeginPrint(e);
 		}
 
-		
-		public event PrintPageEventHandler PrintPage;
+		internal void _OnEndPrint(PrintEventArgs e)
+		{
+			OnEndPrint(e);
+		}
+
+		internal void _OnPrintPage(PrintPageEventArgs e)
+		{
+			OnPrintPage(e);
+		}
+
+		internal void _OnQueryPageSettings(QueryPageSettingsEventArgs e)
+		{
+			OnQueryPageSettings(e);
+		}
+
+		protected virtual void OnBeginPrint(PrintEventArgs e)
+		{
+			if (BeginPrint != null)
+				BeginPrint(this, e);
+		}
+
+		protected virtual void OnEndPrint(PrintEventArgs e)
+		{
+			if (EndPrint != null)
+				EndPrint(this, e);
+		}
+
+		protected virtual void OnPrintPage(PrintPageEventArgs e)
+		{
+			if (PrintPage != null)
+				PrintPage(this, e);
+		}
+
+		protected virtual void OnQueryPageSettings(QueryPageSettingsEventArgs e)
+		{
+			if (QueryPageSettings != null)
+				QueryPageSettings(this, e);
+		}
+
+		public void Print()
+		{
+			//if (!this.PrinterSettings.IsDefaultPrinter && !this.PrinterSettings.PrintDialogDisplayed)
+			//{
+			//	IntSecurity.AllPrinting.Demand();
+			//}
+			PrintController controller = PrintController;
+			controller.Print(this);
+		}
+
+		public override string ToString()
+		{
+			return "[PrintDocument " + DocumentName + "]";
+		}
 	}
 }

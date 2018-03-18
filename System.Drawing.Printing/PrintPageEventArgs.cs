@@ -53,5 +53,18 @@ namespace System.Drawing.Printing {
 		public Rectangle PageBounds { get; private set; }
 
 		public PageSettings PageSettings { get; private set; }
+
+		public bool CopySettingsToDevMode { get; internal set; }
+
+		internal void SetGraphics(Graphics graphics)
+		{
+			this.Graphics = graphics;
+		}
+
+		internal void Dispose()
+		{
+			this.Graphics.Dispose();
+			this.Graphics = null;
+		}
 	}
 }
