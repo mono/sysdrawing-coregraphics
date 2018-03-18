@@ -351,7 +351,7 @@ namespace System.Drawing {
 			bool hasAlpha;
 			CGColorSpace colorSpace;
 			int bitsPerComponent;
-			bool premultiplied = false;
+			//bool premultiplied = false;
 			int bitsPerPixel = 0;
 			CGImageAlphaInfo alphaInfo;
 
@@ -382,7 +382,7 @@ namespace System.Drawing {
 						if (hasAlpha) {
 							if (alphaInfo == CGImageAlphaInfo.PremultipliedFirst) 
 							{
-								premultiplied = true;
+								//premultiplied = true;
 								pixelFormat = PixelFormat.Format32bppPArgb;
 							}
 
@@ -394,7 +394,7 @@ namespace System.Drawing {
 
 							if (alphaInfo == CGImageAlphaInfo.PremultipliedLast) 
 							{
-								premultiplied = true;
+								//premultiplied = true;
 								pixelFormat = PixelFormat.Format32bppRgb;
 							}
 
@@ -413,16 +413,11 @@ namespace System.Drawing {
 					// need more test cases to verify
 					pixelFormat = PixelFormat.Format32bppArgb;
 				}
-
-			}
-			else
-			{
+			} else {
 				// need more test cases to verify
 				pixelFormat = PixelFormat.Format32bppArgb;
 
 			}
-
-
 		}
 
 
@@ -1215,7 +1210,7 @@ namespace System.Drawing {
 			return "public.png";
 		}
 
-		 void Save(CGImageDestination dest)
+		void Save(CGImageDestination dest)
 		{
 			if (NativeCGImage == null)
 				throw new ObjectDisposedException("cgimage");
@@ -1233,13 +1228,13 @@ namespace System.Drawing {
 			dest.Close();
 		}
 
-		public new void Save(string path, ImageCodecInfo encoder, EncoderParameters parameters)
+		internal void BitmapSave(string path, ImageCodecInfo encoder, EncoderParameters parameters)
 		{
 			// Workaround
-			Save(path, encoder.Format);
+			BitmapSave(path, encoder.Format);
 		}
 
-		public void Save (string path, ImageFormat format)
+		internal void BitmapSave (string path, ImageFormat format)
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
@@ -1252,7 +1247,7 @@ namespace System.Drawing {
 				Save(dest);
 		}
 
-        	public new void Save (string path)
+        	internal void BitmapSave (string path)
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
@@ -1264,10 +1259,10 @@ namespace System.Drawing {
 				case ".bmp": format = ImageFormat.Bmp; break;
 				case ".gif": format = ImageFormat.Gif; break;
 			}
-			Save (path, format);
+			BitmapSave (path, format);
 		}
 
-		public new void Save (Stream stream, ImageFormat format)
+		internal void BitmapSave (Stream stream, ImageFormat format)
 		{
 			if (stream == null)
 				throw new ArgumentNullException("stream");

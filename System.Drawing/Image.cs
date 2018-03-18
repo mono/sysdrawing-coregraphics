@@ -259,14 +259,14 @@ namespace System.Drawing {
 		{
 			var b = this as Bitmap ?? new Bitmap(this);
 			if (b != null)
-				b.Save(stream, format);
+				b.BitmapSave(stream, format);
 		}
 
 		public void Save(string path, ImageCodecInfo encoder, EncoderParameters parameters)
 		{
 			// FIXME: Workaround
 			using (Bitmap b = new Bitmap(this))
-				b.Save(path, encoder, parameters);
+				b.BitmapSave(path, encoder, parameters);
 		}
 
 		public void Save (Stream stream)
@@ -278,14 +278,14 @@ namespace System.Drawing {
 		{
 			var b = this as Bitmap ?? new Bitmap(this);
 			if (b != null)
-				b.Save(filename, format);
+				b.BitmapSave(filename, format);
 		}
 
 		public void Save (string filename)
 		{
 			var b = this as Bitmap ?? new Bitmap(this);
 			if (b != null)
-				b.Save(filename);
+				b.BitmapSave(filename);
 		}
 			
 		public static Bitmap FromHbitmap (IntPtr handle)

@@ -31,7 +31,6 @@ namespace System.Drawing {
 		internal Brush LastBrush;
 		internal CGRect boundingBox;
 		internal GraphicsUnit quartzUnit = GraphicsUnit.Point;
-		internal object nativeObject;
 		internal bool isFlipped;
 		internal InterpolationMode interpolationMode;
 		// Need to keep a transform around, since it is not possible to

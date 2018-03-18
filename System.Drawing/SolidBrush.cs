@@ -77,5 +77,10 @@ namespace System.Drawing {
 		{
 			return (obj is SolidBrush sb) && color.Equals(sb.Color);
 		}
+
+		public override int GetHashCode ()
+		{
+			return color.GetHashCode ();
+		}
 	}
 }

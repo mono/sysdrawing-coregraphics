@@ -55,10 +55,12 @@ namespace System.Drawing.Imaging
 		public string FormatDescription { get; set; }
 		public Guid FormatID { get; set; }
 		public string MimeType { get; set; }
+		#pragma warning disable 3021
 		[CLSCompliant (false)]
 		public byte [] [] SignatureMasks { get; set; }
 		[CLSCompliant (false)]
 		public byte [] [] SignaturePatterns { get; set; }
+		#pragma warning restore 3021
 		public int Version { get; set; }
 
 

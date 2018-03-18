@@ -288,5 +288,10 @@ namespace System.Drawing
 				&& wrapMode.Equals(b.wrapMode)
 				&& textureTransform.Equals(b.textureTransform);
 		}
+
+		public override int GetHashCode ()
+		{
+			return (int) WrapMode ^ textureImage.GetHashCode ();
+		}
 	}
 }

@@ -19,7 +19,7 @@ namespace System.Drawing.Drawing2D
 		Color backColor;
 		Color foreColor;
 		HatchStyle hatchStyle;
-		
+
 		public HatchBrush (HatchStyle hatchStyle, Color foreColor)
 			: this (hatchStyle, foreColor, Color.Black)
 		{
@@ -1362,6 +1362,11 @@ namespace System.Drawing.Drawing2D
 				&& backColor.Equals (hb.backColor)
 				&& foreColor.Equals (hb.foreColor)
 		            	&& hatchStyle.Equals (hb.hatchStyle);
+		}
+
+		public override int GetHashCode ()
+		{
+			return (backColor.GetHashCode () << 16) | foreColor.GetHashCode () ^ (int)hatchStyle;
 		}
 	}
 }

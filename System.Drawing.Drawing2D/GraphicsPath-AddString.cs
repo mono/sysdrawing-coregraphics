@@ -167,25 +167,15 @@ namespace System.Drawing.Drawing2D
 
 				var glyphRuns = line.GetGlyphRuns ();
 
-				for (int glyphRunIndex = 0; glyphRunIndex < glyphRuns.Length; glyphRunIndex++)
-				{
-					
+				for (int glyphRunIndex = 0; glyphRunIndex < glyphRuns.Length; glyphRunIndex++){
 					var glyphRun = glyphRuns [glyphRunIndex];
 					var glyphs = glyphRun.GetGlyphs ();
 					var glyphPositions = glyphRun.GetPositions ();
-					//var textMatrix = glyphRun.TextMatrix;
-
-					// Create and initialize some values from the bounds.
-					float glyphAscent;
-					float glyphDescent;
-					float glyphLeading;
 
 					var elementPoints = new PointF [3];
 
-					for (int glyphIndex = 0; glyphIndex < glyphs.Length; glyphIndex++) 
-					{
-						if (glyphIndex > 0) 
-						{
+					for (int glyphIndex = 0; glyphIndex < glyphs.Length; glyphIndex++) {
+						if (glyphIndex > 0){
 							textMatrix.x0 += glyphPositions [glyphIndex].X - glyphPositions[glyphIndex - 1].X;
 							textMatrix.y0 += glyphPositions [glyphIndex].Y - glyphPositions[glyphIndex - 1].Y;
 						}
@@ -194,53 +184,46 @@ namespace System.Drawing.Drawing2D
 
 						// glyphPath = null if it is a white space character
 						if (glyphPath != null) {
-
 							glyphPath.Apply (
 								delegate (CGPathElement pathElement) {
 
-									elementPoints[0] = textMatrix.TransformPoint(pathElement.Point1).ToPointF ();
-									elementPoints[1] = textMatrix.TransformPoint(pathElement.Point2).ToPointF ();
-								        elementPoints[2] = textMatrix.TransformPoint(pathElement.Point3).ToPointF ();
-								//Console.WriteLine ("Applying {0} - {1}, {2}, {3}", pathElement.Type, elementPoints[0], elementPoints[1], elementPoints[2]);
-										
-										
-										// now add position offsets
-										switch(pathElement.Type)
-										{
-										case CGPathElementType.MoveToPoint:
-											start_new_fig = true;
-											Append(elementPoints[0].X, elementPoints[0].Y,PathPointType.Line,true);
-											break;
-										case CGPathElementType.AddLineToPoint:
-											var lastPoint = points[points.Count - 1];
-											AppendPoint(lastPoint, PathPointType.Line, false);
-											AppendPoint(elementPoints[0], PathPointType.Line, false);
-											break;
-										case CGPathElementType.AddCurveToPoint:
-										case CGPathElementType.AddQuadCurveToPoint:
-											//  This is the only thing I can think of right now for the fonts that
-											//  I have tested.  See the description of the quadraticToCubic method for
-											//  more information
+									elementPoints [0] = textMatrix.TransformPoint (pathElement.Point1).ToPointF ();
+									elementPoints [1] = textMatrix.TransformPoint (pathElement.Point2).ToPointF ();
+									elementPoints [2] = textMatrix.TransformPoint (pathElement.Point3).ToPointF ();
 
-											// Get the last point
-											var pt1 = points[points.Count - 1];
-											var pt2 = PointF.Empty;
-											var pt3 = PointF.Empty;
-											var pt4 = elementPoints[1];
-											GeomUtilities.QuadraticToCubic(pt1, elementPoints[0], elementPoints[1], out pt2, out pt3);
-											Append (pt1.X, pt1.Y, PathPointType.Line, true);
-											AppendBezier (pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
-											break;
-										case CGPathElementType.CloseSubpath:
-											CloseFigure();
-											break;
-										}
-			
+									// now add position offsets
+									switch (pathElement.Type) {
+									case CGPathElementType.MoveToPoint:
+										start_new_fig = true;
+										Append (elementPoints [0].X, elementPoints [0].Y, PathPointType.Line, true);
+										break;
+									case CGPathElementType.AddLineToPoint:
+										var lastPoint = points [points.Count - 1];
+										AppendPoint (lastPoint, PathPointType.Line, false);
+										AppendPoint (elementPoints [0], PathPointType.Line, false);
+										break;
+									case CGPathElementType.AddCurveToPoint:
+									case CGPathElementType.AddQuadCurveToPoint:
+										//  This is the only thing I can think of right now for the fonts that
+										//  I have tested.  See the description of the quadraticToCubic method for
+										//  more information
+
+										// Get the last point
+										var pt1 = points [points.Count - 1];
+										var pt2 = PointF.Empty;
+										var pt3 = PointF.Empty;
+										var pt4 = elementPoints [1];
+										GeomUtilities.QuadraticToCubic (pt1, elementPoints [0], elementPoints [1], out pt2, out pt3);
+										Append (pt1.X, pt1.Y, PathPointType.Line, true);
+										AppendBezier (pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
+										break;
+									case CGPathElementType.CloseSubpath:
+										CloseFigure ();
+										break;
+									}
 								}
-		
 							);
 						}
-
 					}
 				}
 
@@ -248,9 +231,7 @@ namespace System.Drawing.Drawing2D
 				start += count;
 				textPosition.Y += (float)Math.Ceiling(ascent + descent + leading + 1); // +1 matches best to CTFramesetter's behavior  
 				line.Dispose();
-
 			}
-
 		}	
 
 		static NSMutableAttributedString buildAttributedString(string text, Font font, 
