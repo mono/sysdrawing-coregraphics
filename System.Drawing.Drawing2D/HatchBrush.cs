@@ -162,7 +162,7 @@ namespace System.Drawing.Drawing2D
 		static float HALF_PIXEL_X = 0.5f;
 		static float HALF_PIXEL_Y = 0.5f;
 
-		protected void HatchHorizontal (CGContext context)
+		void HatchHorizontal (CGContext context)
 		{
 			var hatchSize = getHatchWidth (hatchStyle);
 			var lineWidth = getLineWidth (hatchStyle);
@@ -184,7 +184,7 @@ namespace System.Drawing.Drawing2D
 			context.StrokePath();
 		}
 
-		protected void HatchVertical (CGContext context)
+		void HatchVertical (CGContext context)
 		{
 			var hatchSize = getHatchWidth (hatchStyle);
 			var lineWidth = getLineWidth (hatchStyle);
@@ -199,7 +199,7 @@ namespace System.Drawing.Drawing2D
 			context.SetLineWidth(lineWidth);
 			context.SetLineCap(CGLineCap.Square);
 
-			float halfMe = hatchSize / 2.0f;
+			//float halfMe = hatchSize / 2.0f;
 
 			// draw a horizontal line
 			context.MoveTo(0, 0);
@@ -208,7 +208,7 @@ namespace System.Drawing.Drawing2D
 			context.StrokePath();
 		}
 
-		protected void HatchGrid (CGContext context)
+		void HatchGrid (CGContext context)
 		{
 			var hatchSize = getHatchWidth (hatchStyle);
 			var lineWidth = getLineWidth (hatchStyle);
@@ -250,7 +250,7 @@ namespace System.Drawing.Drawing2D
 		 * and looking at the patterns at the pixel level.  A little tedious to say the least
 		 * but they do seem correct and recreate the same pattern from windows to here.
 		 */
-		protected void HatchPercentage (CGContext context)
+		void HatchPercentage (CGContext context)
 		{
 			var hatchWidth = getHatchWidth (hatchStyle);
 			var hatchHeight = getHatchHeight (hatchStyle);
@@ -362,7 +362,7 @@ namespace System.Drawing.Drawing2D
 
 		}
 
-		protected void HatchUpwardDiagonal (CGContext context)
+		void HatchUpwardDiagonal (CGContext context)
 		{
 			var hatchSize = getHatchWidth (hatchStyle);
 			var lineWidth = getLineWidth (hatchStyle);
@@ -432,7 +432,7 @@ namespace System.Drawing.Drawing2D
 			context.SetLineWidth(lineWidth);
 			context.SetLineCap(CGLineCap.Square);
 			
-			float halfMe = hatchHeight / 2.0f;
+			//float halfMe = hatchHeight / 2.0f;
 			
 			context.MoveTo(0, 0);
 			context.AddLineToPoint(hatchWidth, hatchHeight);
@@ -447,10 +447,10 @@ namespace System.Drawing.Drawing2D
 		 * This is fill of hackish stuff.
 		 * Thought this was going to be easier but that just did not work out.
 		 **/
-		protected void HatchSphere (CGContext context)
+		void HatchSphere (CGContext context)
 		{
 			var hatchSize = getHatchWidth (hatchStyle);
-			var lineWidth = getLineWidth (hatchStyle);
+			//var lineWidth = getLineWidth (hatchStyle);
 
 			initializeContext(context, hatchSize, false);
 
@@ -621,7 +621,7 @@ namespace System.Drawing.Drawing2D
 		{
 			var hatchWidth = getHatchWidth (hatchStyle);
 			var hatchHeight = getHatchHeight (hatchStyle);
-			var lineWidth = getLineWidth (hatchStyle);
+			//var lineWidth = getLineWidth (hatchStyle);
 			
 			initializeContext(context, hatchHeight, false);
 
@@ -730,7 +730,7 @@ namespace System.Drawing.Drawing2D
 		{
 			var hatchWidth = getHatchWidth (hatchStyle);
 			var hatchHeight = getHatchHeight (hatchStyle);
-			var lineWidth = getLineWidth (hatchStyle);
+			//var lineWidth = getLineWidth (hatchStyle);
 			
 			initializeContext(context, hatchHeight, false);
 
@@ -849,7 +849,7 @@ namespace System.Drawing.Drawing2D
 			float halfWidth = hatchWidth / 2.0f;
 			float halfHeight = hatchHeight / 2.0f;
 			
-			CGRect rect = new CGRect (0,0,1,1);
+			//CGRect rect = new CGRect (0,0,1,1);
 			
 			
 			// Add upward diagonals
@@ -879,7 +879,7 @@ namespace System.Drawing.Drawing2D
 		{
 			var hatchWidth = getHatchWidth (hatchStyle);
 			var hatchHeight = getHatchHeight (hatchStyle);
-			var lineWidth = getLineWidth (hatchStyle);
+			//var lineWidth = getLineWidth (hatchStyle);
 			
 			initializeContext(context, hatchHeight, false);
 
@@ -1179,7 +1179,7 @@ namespace System.Drawing.Drawing2D
 		}
 
 		// Purple poka dots test
-		protected void DrawPolkaDotPattern (CGContext context)
+		void DrawPolkaDotPattern (CGContext context)
 		{
 			context.SetFillColor(Color.Purple.ToCGColor());
 			context.FillEllipseInRect (new CGRect (4, 4, 8, 8));
@@ -1200,6 +1200,7 @@ namespace System.Drawing.Drawing2D
 			//choose the pattern to be filled based on the currentPattern selected
 			var patternSpace = CGColorSpace.CreatePattern(null);
 			graphics.context.SetFillColorSpace(patternSpace);
+			graphics.context.SetStrokeColorSpace (patternSpace);
 			patternSpace.Dispose();
 
 			// Pattern default work variables
@@ -1346,12 +1347,21 @@ namespace System.Drawing.Drawing2D
 			                            CGPatternTiling.NoDistortion,
 			                        true, drawPattern);
 			//we dont need to set any color, as the pattern cell itself has chosen its own color
-			graphics.context.SetFillPattern(pattern, new nfloat[] { 1 });
-
+			var aone = new nfloat [] { 1 };
+			graphics.context.SetFillPattern(pattern, aone);
+			graphics.context.SetStrokePattern (pattern, aone);
 
 			graphics.LastBrush = this;
 			// I am setting this to be used for Text coloring in DrawString
 			graphics.lastBrushColor = foreColor;
+		}
+
+		public override bool Equals (object obj)
+		{
+			return (obj is HatchBrush hb)
+				&& backColor.Equals (hb.backColor)
+				&& foreColor.Equals (hb.foreColor)
+		            	&& hatchStyle.Equals (hb.hatchStyle);
 		}
 	}
 }
