@@ -59,10 +59,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\ClipperLib\clipper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\GeomTransformUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\Locale.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utilities\HashUtilities.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utilities\LurchTable.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utilities\IDictionaryEx.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utilities\IConcurrentDictionary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\LruCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Imaging\ImageCodecInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\SystemFonts.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing\SystemIcons.cs" />
