@@ -16,8 +16,6 @@ namespace System.Drawing
 		float sizeInPoints = 0;
 		GraphicsUnit unit = GraphicsUnit.Point;
 		float size;
-		bool underLine = false;
-		bool strikeThrough = false;
 		FontFamily fontFamily;
 		FontStyle fontStyle;
 		byte gdiCharSet = 1;
@@ -147,10 +145,10 @@ namespace System.Drawing
 		public float SizeInPoints => sizeInPoints;
 		public GraphicsUnit Unit => unit;
 		public float Size => size;
-		public bool Bold => bold;
-		public bool Italic => italic;
-		public bool Underline => underLine;
-		public bool Strikeout => strikeThrough;
+		public bool Bold => fontStyle.HasFlag(FontStyle.Bold);
+		public bool Italic => fontStyle.HasFlag(FontStyle.Italic);
+		public bool Underline => fontStyle.HasFlag(FontStyle.Underline);
+		public bool Strikeout => fontStyle.HasFlag(FontStyle.Strikeout);
 		public int Height => (int)Math.Round (GetHeight ());
 		public FontFamily FontFamily => fontFamily;
 		public FontStyle Style => fontStyle;

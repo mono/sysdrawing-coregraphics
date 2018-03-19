@@ -41,6 +41,8 @@ namespace System.Drawing
 		// Just because it ships does not mean we have to use it though.
 		const string SANS_SERIF = "Microsoft Sans Serif";  // "Arial";  or even "Helvetica";
 		const string SERIF = "Times New Roman";
+		const string SEMIBOLD_SUFFIX = " Semibold";
+
 
 		enum Metric
 		{
@@ -62,8 +64,10 @@ namespace System.Drawing
 			CreateNativeFontFamily (name, null, createDefaultIfNotExists);
 		}
 
-		void CreateNativeFontFamily(string name, FontCollection fontCollection, bool createDefaultIfNotExists)
+		void CreateNativeFontFamily(string extendedName, FontCollection fontCollection, bool createDefaultIfNotExists)
 		{
+			RemoveSemiboldSuffix(extendedName, out string name);
+
 			if (fontCollection != null) 
 			{
 				if (fontCollection.nativeFontDescriptors.ContainsKey (name))
@@ -95,7 +99,7 @@ namespace System.Drawing
 				if (string.IsNullOrEmpty (familyName)) 
 				{
 					var font = new CTFont (nativeFontDescriptor, 0);
-					familyName = font.FamilyName;
+					familyName = extendedName;
 				}
 			}
 
@@ -185,6 +189,18 @@ namespace System.Drawing
 			return 0;
 		}
 
+		// Semibold font hack support (the MS-Windows way)
+		internal static bool RemoveSemiboldSuffix(string name, out string plain)
+		{
+			if (name.EndsWith(SEMIBOLD_SUFFIX, StringComparison.InvariantCulture))
+			{
+				plain = name.Substring(0, name.Length - SEMIBOLD_SUFFIX.Length);
+				return true;
+			}
+
+			plain = name;
+			return false;
+		}
 	}
 }
 
