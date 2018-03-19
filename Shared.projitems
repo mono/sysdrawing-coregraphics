@@ -41,7 +41,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\LinearGradientBrush.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\Matrix.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Drawing2D\PathGradientBrush.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\MarginsConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PageSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PrintDocument.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System.Drawing.Printing\PreviewPrintController.cs" />
@@ -337,11 +336,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing\SR.cs">
       <Link>mono\System.Drawing\SR.cs</Link>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\\System.Drawing\System.Drawing\ColorConverter.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing\ColorConverter.cs">
       <Link>mono\System.Drawing\ColorConverter.cs</Link>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\\System.Drawing\System.Drawing\FontConverter.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing\FontConverter.cs">
       <Link>mono\System.Drawing\FontConverter.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)..\mono\mcs\class\System.Drawing\System.Drawing.Printing\MarginsConverter.cs">
+      <Link>mono\System.Drawing.Printing\MarginsConverter</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
