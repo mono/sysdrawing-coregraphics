@@ -8,7 +8,7 @@ namespace System.Drawing {
 		static SystemFonts ()
 		{
 			CaptionFont = new Font(new CTFont(CTFontUIFontType.WindowTitle, 0, null));
-			DefaultFont = new Font(new CTFont(CTFontUIFontType.Label, 0, null));
+			DefaultFont = new Font(new CTFont(CTFontUIFontType.ControlContent, 0, null));
 			DialogFont = new Font(new CTFont(CTFontUIFontType.Label, 0, null));
 			IconTitleFont = new Font(new CTFont(CTFontUIFontType.Label, 0, null));
 			MenuFont = new Font(new CTFont(CTFontUIFontType.MenuItem, 0, null));
