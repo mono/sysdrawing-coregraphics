@@ -384,6 +384,13 @@ namespace System.Drawing {
 			"WhiteSmoke",
 			"Yellow",
 			"YellowGreen",
+			"ButtonFace",
+			"ButtonHighlight",
+			"ButtonShadow",
+			"GradientActiveCaption",
+			"GradientInactiveCaption",
+			"MenuBar",
+			"MenuHighlight"
 		};
 
 		static Dictionary<String, uint> argbByName = null;
