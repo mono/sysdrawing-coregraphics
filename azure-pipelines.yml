@@ -1,0 +1,25 @@
+# Xamarin.iOS
+# Build a Xamarin.iOS project.
+# Add steps that install certificates, test, sign, and distribute an app, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/xamarin
+
+trigger:
+- master
+
+jobs:
+- job: iOS
+  pool:
+    vmImage: 'macos-latest'
+  steps:
+  - script: sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh 5_18_1
+    displayName: 'Select Xamarin SDK version'
+  - task: NuGetToolInstaller@0
+  - task: NuGetCommand@2
+    inputs:
+      restoreSolution: 'sysdrawing-coregraphics.sln'
+  - task: XamariniOS@2
+    inputs:
+      solutionFile: 'sysdrawing-coregraphics.sln'
+      configuration: 'Release'
+      buildForSimulator: true
+      packageApp: false
