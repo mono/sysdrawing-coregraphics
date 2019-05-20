@@ -43,6 +43,7 @@ using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 using CoreGraphics;
 using ImageIO;
@@ -456,34 +457,22 @@ namespace System.Drawing {
 
 			// Set the raw image format
 			// We will use the UTI from the image source
-			switch (imageSource.TypeIdentifier) 
-			{
-			case "public.png":
-				rawFormat = ImageFormat.Png;
-				break;
-			case "com.microsoft.bmp":
-				rawFormat = ImageFormat.Bmp;
-				break;
-			case "com.compuserve.gif":
-				rawFormat = ImageFormat.Gif;
-				break;
-			case "public.jpeg":
-				rawFormat = ImageFormat.Jpeg;
-				break;
-			case "public.tiff":
-				rawFormat = ImageFormat.Tiff;
-				break;
-			case "com.microsoft.ico":
-				rawFormat = ImageFormat.Icon;
-				break;
-			case "com.adobe.pdf":
-				rawFormat = ImageFormat.Wmf;
-				break;
-			default:
-				rawFormat = ImageFormat.Png;
-				break;
-			}
+			rawFormat = ImageFormatFromUTI(imageSource.TypeIdentifier);
+		}
 
+		internal static ImageFormat ImageFormatFromUTI(string uti)
+		{
+			switch (uti)
+			{
+				case "public.png":return ImageFormat.Png;
+				case "com.microsoft.bmp": return ImageFormat.Bmp;
+				case "com.compuserve.gif": return ImageFormat.Gif;
+				case "public.jpeg": return ImageFormat.Jpeg;
+				case "public.tiff": return ImageFormat.Tiff;
+				case "com.microsoft.ico": return ImageFormat.Icon;
+				case "com.adobe.pdf": return ImageFormat.Wmf;
+				default: return ImageFormat.Png;
+			}
 		}
 
 		void InitWithCGImage (CGImage image)
@@ -974,7 +963,7 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="rect">Rect.</param>
 		/// <param name="format">Pixel format.</param>
-       		public Bitmap Clone (Rectangle rect, PixelFormat pixelFormat)
+		public Bitmap Clone (Rectangle rect, PixelFormat pixelFormat)
 		{
 			if (rect.Width == 0 || rect.Height == 0)
 				throw new ArgumentException ("Width or Height of rect is 0.");
@@ -1217,17 +1206,41 @@ namespace System.Drawing {
 			if (NativeCGImage == null)
 				throw new ObjectDisposedException("cgimage");
 
-			int savedFrame = currentFrame;
+			bool lastOK = true;
+			int savedFrame = currentFrame, framesSaved = 0;
 			for (int frame = 0; frame < frameCount; frame++)
 			{
-				if (frame != currentFrame && imageSource != null)
-					InitializeImageFrame(frame);
-				dest.AddImage(NativeCGImage, (NSDictionary)null);
+				if (lastOK = TryAddFrame(dest, frame))
+					++framesSaved;
 			}
-			if (currentFrame != savedFrame)
+
+			if (currentFrame != savedFrame || !lastOK)
 				InitializeImageFrame(savedFrame);
 
+			if (framesSaved == 0)
+				throw new ArgumentException("No frame could be saved");
+
 			dest.Close();
+		}
+
+		bool TryAddFrame(CGImageDestination dest, int frame)
+		{
+			try
+			{
+				var corrupted = imageSource != null && imageSource.CopyProperties((NSDictionary)null, frame) == null;
+				if (frame != currentFrame && imageSource != null && !corrupted)
+					InitializeImageFrame(frame);
+
+				if (!corrupted)
+					dest.AddImage(NativeCGImage, (NSDictionary)null);
+
+				return true;
+			}
+			catch (Exception e)
+			{
+				Debug.Assert(false, "Failed adding destination: " + e.ToString());
+				return false;
+			}
 		}
 
 		internal void BitmapSave(string path, ImageCodecInfo encoder, EncoderParameters parameters)
@@ -1249,7 +1262,7 @@ namespace System.Drawing {
 				Save(dest);
 		}
 
-        	internal void BitmapSave (string path)
+		internal void BitmapSave (string path)
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
