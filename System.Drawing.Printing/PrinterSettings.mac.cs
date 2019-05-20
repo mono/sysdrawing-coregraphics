@@ -37,17 +37,18 @@ using System.Collections.Generic;
 using System.ComponentModel;
 
 using AppKit;
+using PrintCore;
 
 namespace System.Drawing.Printing
 {
 	public partial class PrinterSettings : ICloneable
 	{
-		internal NSPrinter printer;
+		internal PMPrinter printer;
 		string printer_name;
 
 		void InitPrinterSettings ()
 		{
-			printer = NSPrintInfo.DefaultPrinter;
+			PMPrinter.TryCreate(out printer);
 			printer_name = printer?.Name;
 		}
 
@@ -55,21 +56,21 @@ namespace System.Drawing.Printing
 			get { return printer_name; }
 			set {
 				printer_name = value;
-				printer = NSPrinter.PrinterWithName (value);
+				printer = PMPrinter.TryCreate (value);
 			}
 		}
-		public PrinterSettings.PaperSizeCollection PaperSizes {
+		public PaperSizeCollection PaperSizes {
 			get {
-				List<PaperSize> paper_sizes = new List<PaperSize> ();
+				PaperSizeCollection sizes = new PaperSizeCollection ();
 				if (printer != null) {
-					foreach (var paper_name in printer.StringListForKey ("PageSize", "PPD")) {
-						var size = printer.PageSizeForPaper (paper_name);
-						paper_sizes.Add (new PaperSize (paper_name, (int)size.Width, (int)size.Height));
+					foreach (var paper in printer.PaperList) {
+						sizes.Add (new PaperSize (paper.GetLocalizedName(printer), (int)paper.Width, (int)paper.Height));
 					}
 				}
-				return new PaperSizeCollection (paper_sizes.ToArray ());
+				return sizes;
 			}
 		}
+
 		public static PrinterSettings.StringCollection InstalledPrinters {
 			get {
 				return new StringCollection (NSPrinter.PrinterNames); 

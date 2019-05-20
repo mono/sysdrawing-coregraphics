@@ -136,7 +136,7 @@ namespace System.Drawing.Printing
 		public int LandscapeAngle { get; internal set; }
 		public bool SupportsColor { get; internal set; }
 		public bool PrintDialogDisplayed { get; set; }
-		public PrinterSettings.PaperSourceCollection PaperSources { get; set; }
+		public PaperSourceCollection PaperSources { get; set; }
 		public bool IsDefaultPrinter { get; set; }
 
 		public PrinterResolutionCollection PrinterResolutions { get; internal set; }
@@ -195,6 +195,10 @@ namespace System.Drawing.Printing
 		public class PaperSizeCollection : ICollection, IEnumerable
 		{
 			ArrayList _PaperSizes = new ArrayList ();
+
+			internal PaperSizeCollection ()
+			{
+			}
 
 			public PaperSizeCollection (PaperSize [] array)
 			{
