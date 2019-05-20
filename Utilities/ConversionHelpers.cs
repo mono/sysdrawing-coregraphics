@@ -1,12 +1,8 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-
-#if MONOMAC
 using CoreGraphics;
-#else
-using CoreGraphics;
-#endif
+using MatrixOrder = System.Drawing.Drawing2D.MatrixOrder;
 
 namespace System.Drawing
 {

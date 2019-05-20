@@ -21,6 +21,7 @@ using System.Diagnostics.Contracts;
 using CoreGraphics;
 using Foundation;
 using CoreText;
+using MatrixOrder = System.Drawing.Drawing2D.MatrixOrder;
 
 namespace System.Drawing {
 

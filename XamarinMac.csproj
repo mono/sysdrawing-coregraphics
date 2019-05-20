@@ -16,7 +16,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\bin\mac\mobile</OutputPath>
+    <OutputPath>bin\mac\mobile\Debug</OutputPath>
+    <IntermediateOutputPath>obj\mac\mobile\Debug</IntermediateOutputPath>
     <DefineConstants>__UNIFIED__;__MACOS__;MONOMAC;MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -34,7 +35,8 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
-    <OutputPath>..\bin\mac\mobile</OutputPath>
+    <OutputPath>bin\mac\mobile\Release</OutputPath>
+    <IntermediateOutputPath>obj\mac\mobile\Release</IntermediateOutputPath>
     <DefineConstants>__UNIFIED__;__MACOS__;MONO;MONOMAC</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

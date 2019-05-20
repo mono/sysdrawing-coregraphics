@@ -255,18 +255,25 @@ namespace System.Drawing {
 			return new Bitmap(stream, useIcm);
 		}
 
-		public void Save(Stream stream, ImageFormat format)
+		public void Save (Stream stream, ImageFormat format)
 		{
 			var b = this as Bitmap ?? new Bitmap(this);
 			if (b != null)
 				b.BitmapSave(stream, format);
 		}
 
+		public void Save (Stream stream, ImageCodecInfo encoder, EncoderParameters parameters)
+		{
+			// FIXME: Workaround
+			using (Bitmap b = new Bitmap (this))
+				b.BitmapSave (stream, encoder.Format);
+		}
+
 		public void Save(string path, ImageCodecInfo encoder, EncoderParameters parameters)
 		{
 			// FIXME: Workaround
 			using (Bitmap b = new Bitmap(this))
-				b.BitmapSave(path, encoder, parameters);
+				b.BitmapSave (path, encoder, parameters);
 		}
 
 		public void Save (Stream stream)

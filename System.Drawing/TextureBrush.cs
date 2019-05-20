@@ -9,6 +9,7 @@
 using System;
 using System.Drawing.Drawing2D;
 using CoreGraphics;
+using MatrixOrder = System.Drawing.Drawing2D.MatrixOrder;
 
 namespace System.Drawing 
 {
