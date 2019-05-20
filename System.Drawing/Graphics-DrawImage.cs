@@ -422,16 +422,7 @@ namespace System.Drawing
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, 
                                 ImageAttributes imageAttr)
 		{
-			if (image == null)
-				throw new ArgumentNullException ("image");
-			if (destPoints == null)
-				throw new ArgumentNullException ("destPoints");
-			throw new NotImplementedException ();
-			//Status status = GDIPlus.GdipDrawImagePointsRectI (nativeObject, image.NativeObject,
-			//	destPoints, destPoints.Length , srcRect.X, srcRect.Y,
-			//	srcRect.Width, srcRect.Height, srcUnit,
-			//	imageAttr != null ? imageAttr.NativeObject : IntPtr.Zero, null, IntPtr.Zero);
-			//GDIPlus.CheckStatus (status);
+			DrawImage (image, destPoints, srcRect, srcUnit, imageAttr, null, 0);
 		}
 		
 		public void DrawImage (Image image, float x, float y, float width, float height)
@@ -522,31 +513,12 @@ namespace System.Drawing
 
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
-			if (image == null)
-				throw new ArgumentNullException ("image");
-			if (destPoints == null)
-				throw new ArgumentNullException ("destPoints");
-			throw new NotImplementedException ();
-			//Status status = GDIPlus.GdipDrawImagePointsRect (nativeObject, image.NativeObject,
-			//	destPoints, destPoints.Length , srcRect.X, srcRect.Y,
-			//	srcRect.Width, srcRect.Height, srcUnit, 
-			//	imageAttr != null ? imageAttr.NativeObject : IntPtr.Zero, callback, IntPtr.Zero);
-			//GDIPlus.CheckStatus (status);
+			DrawImage (image, destPoints, srcRect, srcUnit, imageAttr, callback, 0);
 		}
 
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
-			if (image == null)
-				throw new ArgumentNullException ("image");
-			if (destPoints == null)
-				throw new ArgumentNullException ("destPoints");
-			
-			throw new NotImplementedException ();
-			//Status status = GDIPlus.GdipDrawImagePointsRectI (nativeObject, image.NativeObject,
-			//	destPoints, destPoints.Length , srcRect.X, srcRect.Y,
-			//	srcRect.Width, srcRect.Height, srcUnit, 
-			//	imageAttr != null ? imageAttr.NativeObject : IntPtr.Zero, callback, IntPtr.Zero);
-			//GDIPlus.CheckStatus (status);
+			DrawImage (image, destPoints, srcRect, srcUnit, imageAttr, callback, 0);
 		}
 
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
@@ -652,51 +624,56 @@ namespace System.Drawing
 //			float scaleX = subImage.Width/srcRect1.Width;
 //			float scaleY = subImage.Height/srcRect1.Height;
 //			transform.Scale (scaleX, scaleY);
-			bool attributesSet = imageAttrs != null && (imageAttrs.isColorMatrixSet || imageAttrs.isGammaSet);
 
-			if (attributesSet) {
-				InitializeImagingContext ();
-				CIImage result = subImage;
-
-				if (imageAttrs.isColorMatrixSet) {
-
-					var ciFilter = CIFilter.FromName ("CIColorMatrix");
-					ciFilter.SetDefaults ();
-
-					ciFilter.SetValueForKey (result, new NSString ("inputImage"));
-
-					var inputRVector = new CIVector (imageAttrs.colorMatrix.Matrix00, imageAttrs.colorMatrix.Matrix01, imageAttrs.colorMatrix.Matrix02, imageAttrs.colorMatrix.Matrix03);
-					var inputGVector = new CIVector (imageAttrs.colorMatrix.Matrix10, imageAttrs.colorMatrix.Matrix11, imageAttrs.colorMatrix.Matrix12, imageAttrs.colorMatrix.Matrix13);
-					var inputBVector = new CIVector (imageAttrs.colorMatrix.Matrix20, imageAttrs.colorMatrix.Matrix21, imageAttrs.colorMatrix.Matrix22, imageAttrs.colorMatrix.Matrix23);
-					var inputAVector = new CIVector (imageAttrs.colorMatrix.Matrix30, imageAttrs.colorMatrix.Matrix31, imageAttrs.colorMatrix.Matrix32, imageAttrs.colorMatrix.Matrix33);
-					var inputBiasVector = new CIVector (imageAttrs.colorMatrix.Matrix40, imageAttrs.colorMatrix.Matrix41, imageAttrs.colorMatrix.Matrix42, imageAttrs.colorMatrix.Matrix43);
-
-					ciFilter.SetValueForKey (inputRVector, new NSString ("inputRVector"));
-					ciFilter.SetValueForKey (inputGVector, new NSString ("inputGVector"));
-					ciFilter.SetValueForKey (inputBVector, new NSString ("inputBVector"));
-					ciFilter.SetValueForKey (inputAVector, new NSString ("inputAVector"));
-					ciFilter.SetValueForKey (inputBiasVector, new NSString ("inputBiasVector"));
-					result = (CIImage)ciFilter.ValueForKey (new NSString ("outputImage"));
+			bool resetAlpha = false;
+			if (imageAttrs != null) {
+				if (!imageAttrs.isGammaSet && imageAttrs.isColorMatrixSet && IsAlphaOnlyColorMatrix(imageAttrs.colorMatrix)) {
+					resetAlpha = true;
+					context.SetAlpha (imageAttrs.colorMatrix.Matrix33);
 				}
+				else if (imageAttrs.isColorMatrixSet || imageAttrs.isGammaSet) {
+					InitializeImagingContext ();
+					CIImage result = subImage;
 
-				if (imageAttrs.isGammaSet) {
+					if (imageAttrs.isColorMatrixSet) {
 
-					var ciFilter = CIFilter.FromName ("CIGammaAdjust");
-					ciFilter.SetDefaults ();
+						var ciFilter = CIFilter.FromName ("CIColorMatrix");
+						ciFilter.SetDefaults ();
 
-					ciFilter.SetValueForKey (result, new NSString ("inputImage"));
+						ciFilter.SetValueForKey (result, new NSString ("inputImage"));
 
-					var inputPower = NSNumber.FromFloat (imageAttrs.gamma);
+						var inputRVector = new CIVector (imageAttrs.colorMatrix.Matrix00, imageAttrs.colorMatrix.Matrix01, imageAttrs.colorMatrix.Matrix02, imageAttrs.colorMatrix.Matrix03);
+						var inputGVector = new CIVector (imageAttrs.colorMatrix.Matrix10, imageAttrs.colorMatrix.Matrix11, imageAttrs.colorMatrix.Matrix12, imageAttrs.colorMatrix.Matrix13);
+						var inputBVector = new CIVector (imageAttrs.colorMatrix.Matrix20, imageAttrs.colorMatrix.Matrix21, imageAttrs.colorMatrix.Matrix22, imageAttrs.colorMatrix.Matrix23);
+						var inputAVector = new CIVector (imageAttrs.colorMatrix.Matrix30, imageAttrs.colorMatrix.Matrix31, imageAttrs.colorMatrix.Matrix32, imageAttrs.colorMatrix.Matrix33);
+						var inputBiasVector = new CIVector (imageAttrs.colorMatrix.Matrix40, imageAttrs.colorMatrix.Matrix41, imageAttrs.colorMatrix.Matrix42, imageAttrs.colorMatrix.Matrix43);
 
-					ciFilter.SetValueForKey (inputPower, new NSString ("inputPower"));
-					result = (CIImage)ciFilter.ValueForKey (new NSString ("outputImage"));
+						ciFilter.SetValueForKey (inputRVector, new NSString ("inputRVector"));
+						ciFilter.SetValueForKey (inputGVector, new NSString ("inputGVector"));
+						ciFilter.SetValueForKey (inputBVector, new NSString ("inputBVector"));
+						ciFilter.SetValueForKey (inputAVector, new NSString ("inputAVector"));
+						ciFilter.SetValueForKey (inputBiasVector, new NSString ("inputBiasVector"));
+						result = (CIImage)ciFilter.ValueForKey (new NSString ("outputImage"));
+					}
+
+					if (imageAttrs.isGammaSet) {
+
+						var ciFilter = CIFilter.FromName ("CIGammaAdjust");
+						ciFilter.SetDefaults ();
+
+						ciFilter.SetValueForKey (result, new NSString ("inputImage"));
+
+						var inputPower = NSNumber.FromFloat (imageAttrs.gamma);
+
+						ciFilter.SetValueForKey (inputPower, new NSString ("inputPower"));
+						result = (CIImage)ciFilter.ValueForKey (new NSString ("outputImage"));
+					}
+
+					subImage = ciContext.CreateCGImage (result, result.Extent);
 				}
-
-
-				subImage = ciContext.CreateCGImage (result, result.Extent);
 			}
 
-			transform = image.imageTransform;
+			var transform = image.imageTransform;
 			transform.y0 = subImage.Height;
 			float scaleX1 = subImage.Width/srcRect1.Width;
 			float scaleY1 = subImage.Height/srcRect1.Height;
@@ -704,6 +681,8 @@ namespace System.Drawing
 			// Now draw our image
 			DrawImage (destRect, subImage, transform);
 
+			if (resetAlpha)
+				context.SetAlpha (1.0f);
 		}
 
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr)
@@ -808,6 +787,15 @@ namespace System.Drawing
 			DrawImageUnscaled (image, rect.X, rect.Y, width, height);			
 		}
 
+		private bool IsAlphaOnlyColorMatrix (ColorMatrix colorMatrix)
+		{
+			return 
+				colorMatrix.Matrix00 == 1.0f && colorMatrix.Matrix01 == 0f && colorMatrix.Matrix02 == 0f && colorMatrix.Matrix03 == 0f && colorMatrix.Matrix04 == 0f &&
+				colorMatrix.Matrix10 == 0f && colorMatrix.Matrix11 == 1.0f && colorMatrix.Matrix12 == 0f && colorMatrix.Matrix13 == 0f && colorMatrix.Matrix14 == 0f &&
+				colorMatrix.Matrix20 == 0f && colorMatrix.Matrix21 == 0f && colorMatrix.Matrix22 == 1.0f && colorMatrix.Matrix23 == 0f && colorMatrix.Matrix24 == 0f &&
+				colorMatrix.Matrix30 == 0f && colorMatrix.Matrix31 == 0f && colorMatrix.Matrix32 == 0f && colorMatrix.Matrix34 == 0f &&
+				colorMatrix.Matrix40 == 0f && colorMatrix.Matrix41 == 0f && colorMatrix.Matrix42 == 0f && colorMatrix.Matrix43 == 0f && colorMatrix.Matrix44 == 1.0f;
+		}
 	}
 }
 
