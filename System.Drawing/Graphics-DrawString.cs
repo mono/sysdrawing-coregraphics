@@ -106,10 +106,16 @@ namespace System.Drawing
 #endif
 			if (font == null)
 				throw new ArgumentNullException(nameof(font));
+
+			if (text == null) {
+				charactersFitted = linesFilled = 0;
+				return SizeF.Empty;
+			}
+
 			var c = MeasureStringCache.GetOrCreate (text, font, area, format ?? StringFormat.GenericDefault, CreateMeasureStringCacheEntry);
 			charactersFitted = c.charactersFitted;
 			linesFilled = c.linesFilled;
-                       return c.measure;
+			return c.measure;
 		}
 
 		internal MeasureStringCache.Entry CreateMeasureStringCacheEntry (string text, Font font, SizeF area, StringFormat format)
