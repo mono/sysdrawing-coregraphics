@@ -244,26 +244,43 @@ namespace System.Drawing
 		bool LoadImageWithSize(Size size)
 		{
 			var imageSource = imageData.ImageSource;
-			int bestIndex = (int)imageSource.ImageCount - 1;
+			int bestIndex = (int)imageSource.ImageCount; // intentionally out of range
+			int highestGoodIndex = -1;
 			Size bestSize = Size.Empty;
+			
 			for (int imageIndex = 0; imageIndex < imageSource.ImageCount; imageIndex++)
 			{
-				var properties = imageSource.GetProperties(imageIndex);
-				if (properties.PixelWidth.Value <= size.Width && properties.PixelHeight.Value <= size.Height)
-				{
-					if (properties.PixelWidth.Value > bestSize.Width || properties.PixelHeight.Value > bestSize.Height)
-					{
-						bestSize = new Size(properties.PixelWidth.Value, properties.PixelHeight.Value);
-						bestIndex = imageIndex;
+				var properties = GetPropertiesSafe(imageSource, imageIndex);
+				if (properties != null) {
+					if (properties.PixelWidth.Value <= size.Width && properties.PixelHeight.Value <= size.Height) {
+						if (properties.PixelWidth.Value > bestSize.Width || properties.PixelHeight.Value > bestSize.Height)
+						{
+							bestSize = new Size(properties.PixelWidth.Value, properties.PixelHeight.Value);
+							bestIndex = imageIndex;
+						}
 					}
+					highestGoodIndex = imageIndex;
 				}
 				if (bestSize == size)
 					break;
 			}
-			if (bestIndex >= imageSource.ImageCount)
-				return false;
+
+			if (bestIndex >= imageSource.ImageCount) {
+				if (highestGoodIndex == -1) {
+					return false;
+				}
+				bestIndex = highestGoodIndex;
+			}
+
 			image = imageSource.CreateImage(bestIndex, null);
 			return image != null;
+		}
+
+		// Does not throw, but returns null if properties can't be retrieved. 
+		private static CoreGraphics.CGImageProperties GetPropertiesSafe(CGImageSource imageSource, int imageIndex)
+		{
+			NSDictionary dictionary = imageSource.CopyProperties ((NSDictionary)null, imageIndex);
+			return dictionary == null ? null : new CoreGraphics.CGImageProperties(dictionary);
 		}
 
 		public static Icon ExtractAssociatedIcon(string filePath)
