@@ -104,8 +104,9 @@ namespace System.Drawing
 		public SizeF MeasureStringInternal(string text, Font font, SizeF area, StringFormat format, out int charactersFitted, out int linesFilled)
 		{
 #endif
-			if (font == null)
-				throw new ArgumentNullException(nameof(font));
+			if (font == null) {
+				font = SystemFonts.DefaultFont;
+			}
 
 			if (text == null) {
 				charactersFitted = linesFilled = 0;
