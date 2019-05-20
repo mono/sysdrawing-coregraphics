@@ -14,7 +14,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\bin\ios</OutputPath>
+    <OutputPath>bin\ios\Release</OutputPath>
+    <IntermediateOutputPath>obj\ios\Release</IntermediateOutputPath>
     <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;MONOTOUCH;MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,7 +25,8 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
-    <OutputPath>..\bin\ios</OutputPath>
+    <OutputPath>bin\ios\Debug</OutputPath>
+    <IntermediateOutputPath>obj\ios\Debug</IntermediateOutputPath>
     <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;MONO;MONOTOUCH</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
