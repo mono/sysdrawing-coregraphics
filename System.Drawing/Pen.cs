@@ -18,7 +18,6 @@ namespace System.Drawing
 		Brush brush;
 		Color color;
 		bool changed = true;
-		internal bool isModifiable;
 		float width;
 		
 		public Pen (Brush brush) : this (brush, 1f)
@@ -28,6 +27,8 @@ namespace System.Drawing
 		public Pen (Color color) : this (color, 1f)
 		{
 		}
+
+		internal Pen (Color color, bool immutable) : this (color) { }
 
 		public Pen (Brush brush, float width)
 		{
