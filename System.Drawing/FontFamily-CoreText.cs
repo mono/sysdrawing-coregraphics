@@ -99,7 +99,7 @@ namespace System.Drawing
 				if (string.IsNullOrEmpty (familyName)) 
 				{
 					var font = new CTFont (nativeFontDescriptor, 0);
-					familyName = extendedName;
+					familyName = font.FamilyName;
 				}
 			}
 
