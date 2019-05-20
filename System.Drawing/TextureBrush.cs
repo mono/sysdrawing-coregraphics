@@ -257,6 +257,7 @@ namespace System.Drawing
 
 			var patternTransform = graphics.context.GetCTM();
 
+			patternTransform = CGAffineTransform.Multiply(patternTransform, new CGAffineTransform(1f / graphics.screenScaleTexture, 0, 0, 1f / graphics.screenScaleTexture, 0, 0));
 			patternTransform = CGAffineTransform.Multiply(textureTransform.transform, patternTransform);
 
 			// DrawPattern callback which will be set depending on hatch style

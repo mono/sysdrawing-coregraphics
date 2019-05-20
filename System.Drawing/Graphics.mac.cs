@@ -98,6 +98,8 @@ namespace System.Drawing
 				}
 			}
 
+			g.screenScaleTexture = g.context.GetCTM().xx; // view.Layer?.ContentsScale ?? 1f;
+
 			return g;
 		}
 

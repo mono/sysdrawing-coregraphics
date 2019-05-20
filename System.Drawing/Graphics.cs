@@ -54,6 +54,7 @@ namespace System.Drawing {
 		static Region infiniteRegion = new Region ();
 		Region clip;
 		float screenScale;
+		internal nfloat screenScaleTexture;
 
 		public Graphics (CGContext context, bool flipped = true)
 		{
