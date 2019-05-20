@@ -9,6 +9,7 @@ using System.Drawing.Text;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
+using ValueStringBuilder = System.Text.StringBuilder;
 
 namespace System.Drawing
 {
