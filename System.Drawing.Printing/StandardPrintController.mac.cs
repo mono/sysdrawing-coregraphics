@@ -1,4 +1,5 @@
 ﻿using System;
+using AppKit;
 using PrintCore;
 using CoreFoundation;
 using CoreGraphics;
@@ -16,8 +17,6 @@ namespace System.Drawing.Printing
 
 		public override void OnStartPrint (PrintDocument document, PrintEventArgs e)
 		{
-			sessionHandle = document.DefaultPageSettings.print_info.GetPMPrintSession ();
-
 			var printSettings = new PMPrintSettings ();
 			printSettings.Collate = document.PrinterSettings.Collate;
 			switch (document.PrinterSettings.Duplex) {
@@ -33,10 +32,15 @@ namespace System.Drawing.Printing
 					PMPrintSettingsSetJobName (printSettings.Handle, jobName.Handle);
 			}
 
+			var printInfo = document.DefaultPageSettings.print_info;
+			printInfo.Printer = NSPrinter.PrinterWithName (document.PrinterSettings.PrinterName);
+
+			sessionHandle = printInfo.GetPMPrintSession ();
+			
 			var result = PMSessionBeginCGDocumentNoDialog (
 				sessionHandle,
 				printSettings.Handle,
-				document.DefaultPageSettings.print_info.GetPMPageFormat ());
+				printInfo.GetPMPageFormat ());
 		}
 
 		public override void OnEndPrint (PrintDocument document, PrintEventArgs e)
